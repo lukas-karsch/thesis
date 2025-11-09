@@ -1,6 +1,5 @@
 package karsch.lukas;
 
-import karsch.lukas.EsCqrsApplication;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.test.context.TestConfiguration;
 
