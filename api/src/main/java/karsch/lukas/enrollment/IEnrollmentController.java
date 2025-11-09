@@ -8,9 +8,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseStatus;
 
 @RequestMapping("/enrollment")
-public abstract class AbstractEnrollmentController {
+public interface IEnrollmentController {
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    public abstract ResponseEntity<CourseDto> enrollToCourse(String courseId);
+    ResponseEntity<CourseDto> enrollToCourse(String courseId);
 }
