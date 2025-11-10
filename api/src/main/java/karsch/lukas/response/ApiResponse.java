@@ -1,19 +1,36 @@
 package karsch.lukas.response;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.Getter;
-import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 
-@RequiredArgsConstructor
+import java.time.LocalDateTime;
+
+@JsonInclude(JsonInclude.Include.NON_NULL)
 @Getter
 public class ApiResponse<T> {
-    private final ResponseType result;
+    private final HttpStatus httpStatus;
+
+    private final String status;
+
+    private final int code;
+
+    private final String message;
+
     private final T data;
 
-    public static <T> ApiResponse<T> error(T data) {
-        return new ApiResponse<T>(ResponseType.ERROR, data);
+    private final LocalDateTime timestamp;
+
+    public ApiResponse(HttpStatus httpStatus, String message, T data) {
+        this.httpStatus = httpStatus;
+        this.status = httpStatus.is2xxSuccessful() ? "success" : "error";
+        this.code = httpStatus.value();
+        this.message = message;
+        this.data = data;
+        this.timestamp = LocalDateTime.now();
     }
 
-    public static <T> ApiResponse<T> success(T data) {
-        return new ApiResponse<T>(ResponseType.SUCCESS, data);
+    public ApiResponse(HttpStatus httpStatus, String message) {
+        this(httpStatus, message, null);
     }
 }

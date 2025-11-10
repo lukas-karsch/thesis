@@ -4,9 +4,9 @@ As discussed in [[2025-11-09 API Design (2f6e551d)]], this will be the endpoints
 | --------------------- | ------ | ------------------------------------------ | ----------------------------------------------------------------------------- |
 | /courses              | GET    |                                            | 200, list of all courses                                                      |
 | /courses              | POST   |                                            | 201, create a new course                                                      |
-| /courses/course_id    | POST   | professor_id                               | 201, create a lecture from the course                                         |
 | /lectures             | GET    | student_id                                 | 200, list of all lectures the student is enrolled in                          |
-| /lectures/enroll      | `POST` | studentId                                  | 201, `{success: true}`                                                        |
+| /lectures/create      | POST   | course_id, professor_id                    | 201, create a lecture from the course                                         |
+| /lectures/enroll      | `POST` | studentId                                  | 201                                                                           |
 | /lectures/lecture_id  | GET    |                                            | 200 return the lecture & enrolled students                                    |
 | /lectures/lecture_id  | POST   | student_id, professor_id, grade            | 201, assign a grade to the student                                            |
 | /lectures/lecture_id  | PATCH  | student_id, professor_id, grad             | 200, update a grade                                                           |
