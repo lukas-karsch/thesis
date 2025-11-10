@@ -1,0 +1,15 @@
+- think about database migrations and tools (e.g. FlyWay)
+- think about the database that stores projections
+    - i want to use postgres
+    - but maybe its not good to use the same db instance as the instance that logs the event stream?
+- find and read papers relevant to the topics
+    - DDD
+    - ES
+    - Audit Logs
+    - Performance measurement best practices
+    - (maybe) schema evolution in ES
+    - CQRS
+- create a GEMINI.md file in the project root
+- code
+    - global exception handler / exception interfaces
+    - move ApplicationRunners to `test-suite` package
