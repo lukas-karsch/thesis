@@ -12,11 +12,15 @@ public interface ILecturesController {
     @ResponseStatus(HttpStatus.OK)
     ResponseEntity<ApiResponse<GetLecturesForStudentResponse>> getLecturesForStudent(@RequestParam Long studentId);
 
-    @PostMapping("/enroll")
+    @PostMapping("enroll")
     @ResponseStatus(HttpStatus.CREATED)
     ResponseEntity<ApiResponse<Void>> enrollToLecture(@RequestParam Long studentId, @RequestParam Long lectureId);
 
-    @PostMapping("/create")
+    @DeleteMapping("enroll")
+    @ResponseStatus(HttpStatus.OK)
+    ResponseEntity<ApiResponse<Void>> disenrollFromLecture(@RequestParam Long studentId, @RequestParam Long lectureId);
+
+    @PostMapping("create")
     @ResponseStatus(HttpStatus.CREATED)
     ResponseEntity<ApiResponse<Void>> createLectureFromCourse(@RequestParam Long professorId, @RequestParam Long courseId);
 

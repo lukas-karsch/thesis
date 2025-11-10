@@ -23,17 +23,15 @@
             }
           },
           {
-            "id": "87b9c916703f1a6d",
+            "id": "6bfe2d83e0943c01",
             "type": "leaf",
             "state": {
-              "type": "markdown",
+              "type": "pdf",
               "state": {
-                "file": "Technical Design Log/2025-11-09 API Design (2f6e551d).md",
-                "mode": "source",
-                "source": false
+                "file": "Documents/Expose Lukas Karsch Bachelorarbeit_02.pdf"
               },
-              "icon": "lucide-file",
-              "title": "2025-11-09 API Design (2f6e551d)"
+              "icon": "lucide-file-text",
+              "title": "Expose Lukas Karsch Bachelorarbeit_02"
             }
           }
         ]
@@ -203,12 +201,15 @@
   },
   "active": "04018e97ec951d01",
   "lastOpenFiles": [
-    "System Design/API Design.md",
-    "Technologies/Springboot Validation.md",
-    "Technical Design Log/2025-11-09 API Design (2f6e551d).md",
-    "Technical Design Log/2025-11-09 Testing the API (2f6e551d).md",
+    "Thesis - Landing Page.md",
     "Technical Design Log/2025-11-10 DTOs (f1872c82).md",
+    "Technical Design Log/2025-11-09 Testing the API (2f6e551d).md",
+    "Technical Design Log/2025-11-09 API Design (2f6e551d).md",
+    "System Design/API Design.md",
+    "Documents/Expose Lukas Karsch Bachelorarbeit_02.pdf",
     "Technologies/CQRS (Command Query Responsibility Segregation).md",
+    "CQRS.md",
+    "Technologies/Springboot Validation.md",
     "Technical Design Log/Untitled.md",
     "Technologies/Testcontainers.md",
     "Technologies/Testing in SpringBoot.md",
@@ -217,7 +218,6 @@
     "Advice",
     "Literature/Literature.md",
     "Literature/An empirical characterization of event sourced systems and their schema evolution — Lessons from industry.md",
-    "Documents/Expose Lukas Karsch Bachelorarbeit_02.pdf",
     "Technologies/SpringBoot.md",
     "docs.spring.io/spring-boot/api/java/org/springframework/boot/test/context/SpringBootTest.html.md",
     "Technologies/Spring Devtools.md",
@@ -228,7 +228,6 @@
     "docs.spring.io/spring-boot/api/java/org",
     "docs.spring.io/spring-boot/api/java",
     "docs.spring.io/spring-boot/api",
-    "Thesis - Landing Page.md",
     "Technical Design Log/2025-11-08 Initial Setup (6840cebf).md",
     "Untitled.canvas",
     "create a link.md"
