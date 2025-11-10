@@ -14,12 +14,12 @@
             "state": {
               "type": "markdown",
               "state": {
-                "file": "System Design/API Design.md",
+                "file": "Technical Design Log/2025-11-10 DTOs (f1872c82).md",
                 "mode": "source",
                 "source": false
               },
               "icon": "lucide-file",
-              "title": "API Design"
+              "title": "2025-11-10 DTOs (f1872c82)"
             }
           },
           {
@@ -126,7 +126,7 @@
             "state": {
               "type": "backlink",
               "state": {
-                "file": "System Design/API Design.md",
+                "file": "Technical Design Log/2025-11-10 DTOs (f1872c82).md",
                 "collapseAll": false,
                 "extraContext": false,
                 "sortOrder": "alphabetical",
@@ -136,7 +136,7 @@
                 "unlinkedCollapsed": true
               },
               "icon": "links-coming-in",
-              "title": "Backlinks for API Design"
+              "title": "Backlinks for 2025-11-10 DTOs (f1872c82)"
             }
           },
           {
@@ -203,8 +203,8 @@
   },
   "active": "04018e97ec951d01",
   "lastOpenFiles": [
-    "Technologies/Springboot Validation.md",
     "System Design/API Design.md",
+    "Technologies/Springboot Validation.md",
     "Technical Design Log/2025-11-09 API Design (2f6e551d).md",
     "Technical Design Log/2025-11-09 Testing the API (2f6e551d).md",
     "Technical Design Log/2025-11-10 DTOs (f1872c82).md",

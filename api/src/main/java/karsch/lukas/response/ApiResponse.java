@@ -1,5 +1,6 @@
 package karsch.lukas.response;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.Getter;
 import org.springframework.http.HttpStatus;
@@ -9,6 +10,7 @@ import java.time.LocalDateTime;
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @Getter
 public class ApiResponse<T> {
+    @JsonIgnore
     private final HttpStatus httpStatus;
 
     private final String status;
