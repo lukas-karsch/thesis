@@ -1,3 +1,4 @@
+#maven
 ## Regenerate the maven wrapper script
 
 ```bash
