@@ -17,6 +17,6 @@ Meeting was held on 2025-11-12, 5.30PM
 - maybe!
 - depends on the literature
     - if literature has opinions on architecture, try to suggest one
-    - otherwise, don't put a random one!
+    - otherwise, don't put a random hypothesis!
 
 > This does mean that [[Expose Lukas Karsch Bachelorarbeit_02.pdf]] is the final version. 

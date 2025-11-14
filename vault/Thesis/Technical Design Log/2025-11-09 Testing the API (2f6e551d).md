@@ -11,10 +11,18 @@ Test technologies are layed out here: [[Testing in SpringBoot]]
 ### End to end tests 
 Those will be contract tests - no performance. Test that the interfaces are implemented correctly and identically by both applications. 
 
+### Performance tests
+
+#performance
+Repeated (e2e) tests that measure performance.
+Requirements here:
+
+- make sure to save all data points
+- make sure that test setups are identical
+- repeat the tests an appropriate number of times
+
 ## Problem with Axon
-
 I tried the following approach:
-
 - test-suite package contains two application runners that start the impl-crud and impl-es-cqrs implementations
 - problem was: the impl-crud started together with the axon server container (and then couldnt even connect to it?)
 - reason unclear
@@ -25,6 +33,5 @@ I tried the following approach:
       `@ServiceConnection`
 
 ### Solution
-
 - main() method MUST be static in ApplicationRunner
 - updated axon version to 4.11.3 (latest) https://github.com/AxonFramework/axon-bom

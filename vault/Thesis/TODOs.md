@@ -6,23 +6,31 @@
     - DDD #DDD
         - [[Domain-Driven Design Quickly, A Summary of Eric Evans' Domain-Driven Design]]
     - ES #es
+        - Projections!
+        - read "Evaluation and Use of Event Sourcing" (Bachelorarbeit)
     - Audit Logs #audit-log
+        - "Evaluation and Use of Event Sourcing (BA)"
     - Performance measurement best practices #performance
     - (maybe) schema evolution in ES #es #schema
     - CQRS #cqrs
     - -> check HdM library for some books
         - DDD full version?
+  - anemic domain model?
+      - what is it, opposite of DDD, relevance?
+- roter Faden / Gliederung entwickeln (und besprechen)
 - create GEMINI.md file in the project root #llm
 - code
     - global exception handler / exception interfaces
     - move ApplicationRunners to `test-suite` package
-  - set up swagger
+  - set up swagger docs
 - explicitly work on my system's requirements
-    - then refine the interfaces
+    - find invariants and business logic!!
+      - then refine the interfaces
 - Anmeldung ausfüllen und schicken (Link in Hinweisen zur Abschlussarbeit von Jordine)
+- Zitationsstil klären
+- [[LLMs bei der Bachelorarbeit (Infoveranstaltung)]] MindMap abholen
 
 ## Before Finishing
-
 - Check README
 - Clone repo in blank folder, check everything works
     - -> refine "installation" section of README

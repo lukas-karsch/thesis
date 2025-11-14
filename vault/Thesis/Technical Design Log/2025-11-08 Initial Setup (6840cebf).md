@@ -7,5 +7,5 @@
   
 Both the `impl-crud` and `impl-es-cqrs` project are set up and can run using testcontainers. (`CrudApplicationRunner.java` and `EsCqrsApplicationRunner.java`)
 
-Set up [[Testcontainers]]
-Using [[Spring Devtools]]
+-> Set up [[Testcontainers]]
+-> Using [[Spring Devtools]]

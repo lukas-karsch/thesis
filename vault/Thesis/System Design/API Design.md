@@ -1,4 +1,8 @@
-As discussed in [[2025-11-09 API Design (2f6e551d)]], this will be the endpoints: 
+This file always contains the most current version of my endpoints.
+
+## Included
+
+- [[2025-11-09 API Design (2f6e551d)]]
 
 | endpoint              | method   | query parameters                           | returns                                                                       |
 |-----------------------|----------|--------------------------------------------|-------------------------------------------------------------------------------|
