@@ -5,6 +5,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.Collections;
 import java.util.List;
 
 @RestController
@@ -14,7 +15,7 @@ public class CoursesController implements ICoursesController {
         var response = new ApiResponse<>(
                 HttpStatus.OK,
                 null,
-                List.of(new CourseDTO(1L, "Maths", "Basic math topics", 5))
+                List.of(new CourseDTO(1L, "Maths", "Basic math topics", 5, Collections.emptyList()))
         );
         return new ResponseEntity<>(response, response.getHttpStatus());
     }

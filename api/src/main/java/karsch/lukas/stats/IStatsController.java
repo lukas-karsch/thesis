@@ -9,7 +9,6 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseStatus;
 
 import java.time.LocalDateTime;
-import java.util.List;
 
 @RequestMapping("stats")
 public interface IStatsController {
@@ -24,7 +23,7 @@ public interface IStatsController {
 
     @GetMapping("grades/history")
     @ResponseStatus(HttpStatus.OK)
-    ResponseEntity<ApiResponse<List<GradesResponse>>> getGradesHistory(@RequestParam Long studentId,
+    ResponseEntity<ApiResponse<GradeHistoryResponse>> getGradesHistory(@RequestParam Long studentId,
                                                                        @RequestParam Long lectureId,
                                                                        @RequestParam(required = false) LocalDateTime startDate,
                                                                        @RequestParam(required = false) LocalDateTime endDate
