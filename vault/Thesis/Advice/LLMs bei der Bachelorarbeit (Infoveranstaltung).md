@@ -3,7 +3,6 @@ Infoveranstaltung am 14.11.
 MindMap wird nachgeliefert (im Moodle Kurs 119710, "Anleitung zum wissenschaftlichen Arbeiten")
 
 ## KI-Tools im Prozess
-
 ### Vorbereitung
 
 - Thema
@@ -29,7 +28,6 @@ MindMap wird nachgeliefert (im Moodle Kurs 119710, "Anleitung zum wissenschaftli
     - Exposé als Zusammenfassung der Ergebnisse von oben
 
 ### Stand der Technik erarbeiten
-
 - Literatur suchen
     - Google Scholar
         - Filter verwenden
@@ -59,7 +57,6 @@ MindMap wird nachgeliefert (im Moodle Kurs 119710, "Anleitung zum wissenschaftli
     - dann Antworten recherchieren
 
 ### Vorbereitung der Ausarbeitung
-
 - Stichpunkte
 - Gliederung = roter Faden
     - zu jeder Überschrift eine Leitfrage überlegen, die beantwortet werden soll
@@ -70,12 +67,10 @@ MindMap wird nachgeliefert (im Moodle Kurs 119710, "Anleitung zum wissenschaftli
 - Menge des Textes pro Punkt bestimmen
 
 ### Schreiben der Ausarbeitung
-
 - erst Inhalt, dann Abstract und Conclusion
 - Schreiben = Eigenleistung
 
 ### Lektorat
-
 - Schreib-, Zeichensetzungs-, Satzbau- und Darstellungsfehler finden
 - inhaltliche Konsistenz prüfen
     - ist alles eingeführt, was ich später verwende
@@ -85,7 +80,6 @@ MindMap wird nachgeliefert (im Moodle Kurs 119710, "Anleitung zum wissenschaftli
 - Jede Korrektur / Feedback nochmal händisch überprüfen!
 
 ## Kennzeichnung von KI-Tools
-
 - In der ehrenwörtlichen Erklärung. Vor dem letzten Satz: "Ki-Tools wurden an den folgenden Stellen für folgende Zwecke
   verwendet: ... (evtl mit Prompt)"
 - Transparenz

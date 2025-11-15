@@ -20,15 +20,13 @@
 - create GEMINI.md file in the project root #llm
 - code
     - global exception handler / exception interfaces
-    - move ApplicationRunners to `test-suite` package
-  - set up swagger docs
+- set up swagger docs
 - explicitly work on my system's requirements
     - find invariants and business logic!!
-      - then refine the interfaces
+    - then refine the interfaces
 - Anmeldung ausfüllen und schicken (Link in Hinweisen zur Abschlussarbeit von Jordine)
 - Zitationsstil klären
 - [[LLMs bei der Bachelorarbeit (Infoveranstaltung)]] MindMap abholen
-
 ## Before Finishing
 - Check README
 - Clone repo in blank folder, check everything works

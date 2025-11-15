@@ -21,7 +21,7 @@ public class CoursesController implements ICoursesController {
     }
 
     @Override
-    public ResponseEntity<ApiResponse<Void>> createCourse(Long professorId, CreateCourseRequest createCourseRequest) {
+    public ResponseEntity<ApiResponse<Void>> createCourse(CreateCourseRequest createCourseRequest) {
         return null;
     }
 }
