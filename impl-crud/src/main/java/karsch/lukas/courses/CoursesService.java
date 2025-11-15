@@ -1,5 +1,6 @@
 package karsch.lukas.courses;
 
+import jakarta.transaction.Transactional;
 import karsch.lukas.course.CourseDTO;
 import karsch.lukas.course.CreateCourseRequest;
 import lombok.RequiredArgsConstructor;
@@ -22,6 +23,7 @@ class CoursesService {
         return courseDtoMapper.map(findAll);
     }
 
+    @Transactional
     void createCourse(CreateCourseRequest createCourseRequest) {
         var prerequisites = new HashSet<>(
                 coursesRepository.findAllById(createCourseRequest.prerequisiteCourseIds())
