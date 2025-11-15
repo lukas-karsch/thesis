@@ -18,7 +18,7 @@ class CoursesService {
     private final CourseDtoMapper courseDtoMapper;
 
     Set<CourseDTO> getAllCourses() {
-        var findAll = coursesRepository.findAll();
+        var findAll = coursesRepository.findAllDetailed();
         return courseDtoMapper.map(findAll);
     }
 

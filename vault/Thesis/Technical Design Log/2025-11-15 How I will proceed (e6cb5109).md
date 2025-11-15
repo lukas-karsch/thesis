@@ -15,7 +15,9 @@ ChatGPT suggested to import the jars of both implementations and start those via
 - Apps would have to have managed their own testcontainers via beans 
 	- -> Additional configuration using @Profile
 - Logs not shown 
-### What worked: reversing the dependency 
+### > What worked: reversing the dependency 
 Now, both implementations import the `test-suite` package via test-jar. `test-suite` includes abstract base classes that can simply be extended by both implementations. Both implementations can manage their own testcontainer setup via test code. 
 
 ChatGPT said this was a bad approach but so far I am happy with it. It's clean, both app test directories manage their own external infrastructure and I get no classpath leakage. 
+## CoursesController
+Today, I implemented the `impl-crud` CoursesController. Both endpoints that are currently contained in the interface (`GET` and `POST`) are implemented and access the repository. 
