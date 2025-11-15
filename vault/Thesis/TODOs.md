@@ -1,4 +1,3 @@
-- think about database migrations and tools (e.g. FlyWay) #migration
 - think about the database that stores projections #database #projection
     - i want to use postgres
     - but maybe its not good to use the same db instance as the instance that logs the event stream?

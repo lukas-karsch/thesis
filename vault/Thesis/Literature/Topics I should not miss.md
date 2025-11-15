@@ -1,11 +1,14 @@
-According to Gemini (https://gemini.google.com/gem/2aaacb9c5388/0c11a84a524eb28d)
+## Overview on the topic by ChatGPT 
+https://chatgpt.com/c/6908f33e-8718-832b-81ad-5b8f8b2d0590
+
+## What Gemini had to say 
+According to Gemini (https://gemini.google.com/gem/2aaacb9c5388/0c11a84a524eb28d) -> review needed! 
 
 Here are essential questions and topics, grouped by theme, that you absolutely must include in your research to deliver a deep, critical comparison of Event Sourcing (ES) and typical CRUD architectures.
 ## 🛠️ Implementation and Technical Complexity
 
 A critical comparison requires looking at the actual effort and tools involved.
 - **Learning Curve and Team Experience:**
-    
     - **Question:** What is the quantifiable (or at least qualitatively documented) impact of the **steep learning curve** of Event Sourcing and associated patterns (like **CQRS** and **Domain-Driven Design - DDD**) on development speed, initial project cost, and time-to-market compared to CRUD, which generally uses more established patterns and tooling (e.g., ORMs)?
         
     - **Topics to Research:** Required skill set for developers, availability of tooling/frameworks (Event Store, Kafka, etc.) versus common CRUD tools (SQL, ORMs). The necessity of combining ES with CQRS for practical read models.
