@@ -16,6 +16,7 @@ import java.util.Collections;
 import java.util.Set;
 
 import static io.restassured.RestAssured.given;
+import static org.hamcrest.Matchers.containsString;
 import static org.hamcrest.Matchers.equalTo;
 
 public abstract class AbstractCoursesE2ETest implements BaseE2ETest {
@@ -93,5 +94,83 @@ public abstract class AbstractCoursesE2ETest implements BaseE2ETest {
                 .then()
                 .statusCode(200)
                 .body("data[0].name", equalTo("Maths"));
+    }
+
+    @Test
+    @DisplayName("POST /courses should 404 when prerequisite course does not exist")
+    void createCourses_should404_whenPrerequisiteCourseDoesNotExist() {
+        var request = new CreateCourseRequest(
+                "Advanced Maths",
+                "Only for nerds",
+                5,
+                Set.of(1L),
+                Set.of(
+                        new CourseAssessmentDTO(AssessmentType.EXAM, 1)
+                )
+        );
+
+        given()
+                .body(request)
+                .header(new Header("customAuth", "professor_1"))
+                .contentType(ContentType.JSON)
+                .when()
+                .post("/courses")
+                .then()
+                .statusCode(404)
+                .body("status", equalTo("error"))
+                .body("message", containsString("[1]"));
+    }
+
+    @Test
+    @DisplayName("POST /courses with prerequisites")
+    void createCourses_withPrerequisites() {
+        var baseRequest = new CreateCourseRequest(
+                "Maths",
+                "Basic",
+                5,
+                Collections.emptySet(),
+                Set.of(
+                        new CourseAssessmentDTO(AssessmentType.EXAM, 1)
+                )
+        );
+
+        var advancedRequest = new CreateCourseRequest(
+                "Advanced Maths",
+                "Only for nerds",
+                5,
+                Set.of(1L),
+                Set.of(
+                        new CourseAssessmentDTO(AssessmentType.EXAM, 1)
+                )
+        );
+
+        given()
+                .body(baseRequest)
+                .header(new Header("customAuth", "professor_1"))
+                .contentType(ContentType.JSON)
+                .when()
+                .post("/courses")
+                .then()
+                .statusCode(201)
+                .body("status", equalTo("success"));
+
+        given()
+                .body(advancedRequest)
+                .header(new Header("customAuth", "professor_1"))
+                .contentType(ContentType.JSON)
+                .when()
+                .post("/courses")
+                .then()
+                .statusCode(201)
+                .body("status", equalTo("success"));
+
+        given()
+                .when()
+                .get("/courses")
+                .then()
+                .statusCode(200)
+                .body("data[0].name", equalTo("Maths"))
+                .body("data[1].name", equalTo("Advanced Maths"))
+                .body("data[1].prerequisites[0].name", equalTo("Maths"));
     }
 }

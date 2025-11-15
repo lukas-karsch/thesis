@@ -3,7 +3,7 @@ package karsch.lukas.response;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.Getter;
-import org.springframework.http.HttpStatus;
+import org.springframework.http.HttpStatusCode;
 
 import java.time.LocalDateTime;
 
@@ -11,7 +11,7 @@ import java.time.LocalDateTime;
 @Getter
 public class ApiResponse<T> {
     @JsonIgnore
-    private final HttpStatus httpStatus;
+    private final HttpStatusCode httpStatus;
 
     private final String status;
 
@@ -23,7 +23,7 @@ public class ApiResponse<T> {
 
     private final LocalDateTime timestamp;
 
-    public ApiResponse(HttpStatus httpStatus, String message, T data) {
+    public ApiResponse(HttpStatusCode httpStatus, String message, T data) {
         this.httpStatus = httpStatus;
         this.status = httpStatus.is2xxSuccessful() ? "success" : "error";
         this.code = httpStatus.value();
@@ -32,7 +32,7 @@ public class ApiResponse<T> {
         this.timestamp = LocalDateTime.now();
     }
 
-    public ApiResponse(HttpStatus httpStatus, String message) {
+    public ApiResponse(HttpStatusCode httpStatus, String message) {
         this(httpStatus, message, null);
     }
 }
