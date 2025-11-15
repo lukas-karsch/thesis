@@ -29,3 +29,16 @@ Additions:
 ### (+) Assessment
 - `assessmentType`: e.g. exam, project, paper
 - `grade` 
+## Resulting changes to endpoints 
+### Lecture 
+(+) `POST` /lectures/{lecture_id}/dates
+Add dates to a lecture (for professors)
+
+(+) `POST` /lectures/{lecture_id}/lifecycle
+Advance the life cycle of a lecture (for professors)
+
+(+) `GET` /lectures/{lecture_id}/waitingList
+Get the waitlist of a lecture 
+
+(+) `POST` /lectures/{lecture_id}/assessments 
+Add an assessment to a lecture (for professors)
