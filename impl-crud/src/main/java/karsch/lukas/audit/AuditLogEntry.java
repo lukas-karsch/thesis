@@ -32,7 +32,9 @@ public class AuditLogEntry {
     @NotNull
     private LocalDateTime timestamp;
 
+    @Column(columnDefinition = "TEXT")
     private String oldValueJson;
 
+    @Column(columnDefinition = "TEXT")
     private String newValueJson;
 }

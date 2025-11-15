@@ -6,14 +6,14 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
+import java.util.Set;
 
 @RequestMapping("courses")
 public interface ICoursesController {
 
     @GetMapping
     @ResponseStatus(HttpStatus.OK)
-    ResponseEntity<ApiResponse<List<CourseDTO>>> getCourses();
+    ResponseEntity<ApiResponse<Set<CourseDTO>>> getCourses();
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)

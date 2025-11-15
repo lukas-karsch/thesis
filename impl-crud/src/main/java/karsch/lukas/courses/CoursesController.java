@@ -12,8 +12,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.util.Collections;
-import java.util.List;
+import java.util.Set;
 
 @RestController
 @RequiredArgsConstructor
@@ -21,18 +20,30 @@ public class CoursesController implements ICoursesController {
 
     private final RequestContext requestContext;
 
+    private final CoursesService coursesService;
+
     private final static Logger log = LoggerFactory.getLogger(CoursesController.class);
 
     @Override
-    public ResponseEntity<ApiResponse<List<CourseDTO>>> getCourses() {
-        return ResponseEntity.ok(
-                new ApiResponse<>(HttpStatus.OK, null, Collections.emptyList())
+    public ResponseEntity<ApiResponse<Set<CourseDTO>>> getCourses() {
+        var allCourses = coursesService.getAllCourses();
+
+        return new ResponseEntity<>(
+                new ApiResponse<>(HttpStatus.OK, null, allCourses), HttpStatus.OK
         );
     }
 
     @Override
     public ResponseEntity<ApiResponse<Void>> createCourse(CreateCourseRequest createCourseRequest) {
-        log.info("this works. requestContext: {}", requestContext);
+        if (!"professor".equals(requestContext.getUserType())) {
+            log.error("Invalid user type {} for CoursesController.createCourse", requestContext.getUserType());
+            return new ResponseEntity<>(
+                    new ApiResponse<>(HttpStatus.FORBIDDEN, "Must be authenticated as professor to create courses"), HttpStatus.FORBIDDEN
+            );
+        }
+
+        coursesService.createCourse(createCourseRequest);
+
         return new ResponseEntity<>(
                 new ApiResponse<>(HttpStatus.CREATED, "Created"), HttpStatus.CREATED
         );

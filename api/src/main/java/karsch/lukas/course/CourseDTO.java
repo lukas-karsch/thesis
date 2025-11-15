@@ -1,7 +1,7 @@
 package karsch.lukas.course;
 
-import java.util.List;
+import java.util.Set;
 
-public record CourseDTO(Long id, String name, String description, int credits, List<CourseDTO> prerequisites,
-                        List<CourseAssessment> assessments) {
+public record CourseDTO(Long id, String name, String description, int credits, Set<SimpleCourseDTO> prerequisites,
+                        Set<CourseAssessmentDTO> assessments) {
 }
