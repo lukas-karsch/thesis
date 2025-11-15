@@ -1,5 +1,8 @@
-package karsch.lukas.course;
+package karsch.lukas.courses;
 
+import karsch.lukas.course.CourseDTO;
+import karsch.lukas.course.CreateCourseRequest;
+import karsch.lukas.course.ICoursesController;
 import karsch.lukas.response.ApiResponse;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -10,18 +13,18 @@ import java.util.List;
 
 @RestController
 public class CoursesController implements ICoursesController {
+
     @Override
     public ResponseEntity<ApiResponse<List<CourseDTO>>> getCourses() {
-        var response = new ApiResponse<>(
-                HttpStatus.OK,
-                null,
-                List.of(new CourseDTO(1L, "Maths", "Basic math topics", 5, Collections.emptyList(), Collections.emptyList()))
+        return ResponseEntity.ok(
+                new ApiResponse<>(HttpStatus.OK, null, Collections.emptyList())
         );
-        return new ResponseEntity<>(response, response.getHttpStatus());
     }
 
     @Override
     public ResponseEntity<ApiResponse<Void>> createCourse(Long professorId, CreateCourseRequest createCourseRequest) {
-        return null;
+        return new ResponseEntity<>(
+                new ApiResponse<>(HttpStatus.CREATED, "Created"), HttpStatus.CREATED
+        );
     }
 }

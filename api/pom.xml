@@ -13,8 +13,7 @@
     <packaging>jar</packaging>
 
     <name>api</name>
-    <!-- FIXME change it to the project's website -->
-    <url>http://www.example.com</url>
+    <url>https://gitlab.mi.hdm-stuttgart.de/lk224/thesis/-/tree/master/api</url>
 
     <dependencies>
         <dependency>

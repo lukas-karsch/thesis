@@ -12,8 +12,7 @@
     <version>1.0-SNAPSHOT</version>
 
     <name>impl-es-cqrs</name>
-    <!-- FIXME change it to the project's website -->
-    <url>http://www.example.com</url>
+    <url>https://gitlab.mi.hdm-stuttgart.de/lk224/thesis/-/tree/master/impl-es-cqrs</url>
 
     <dependencies>
         <!-- Internal Dependency -->
