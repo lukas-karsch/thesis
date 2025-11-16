@@ -5,6 +5,7 @@ import jakarta.persistence.PostLoad;
 import jakarta.persistence.PrePersist;
 import jakarta.persistence.PreRemove;
 import jakarta.persistence.PreUpdate;
+import karsch.lukas.context.RequestContext;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 import org.slf4j.Logger;
@@ -25,6 +26,8 @@ public class AuditEntityListener {
 
     private static final ObjectMapper objectMapper = new ObjectMapper();
     private static final Logger logger = LoggerFactory.getLogger(AuditEntityListener.class);
+
+    private final RequestContext requestContext;
 
     @PostLoad
     public void postLoad(Object entity) {
@@ -62,7 +65,9 @@ public class AuditEntityListener {
             log.setEntityName(entity.getClass().getSimpleName());
             log.setOperation(operation);
             log.setTimestamp(LocalDateTime.now());
-            log.setModifiedBy(null); // TODO access user here
+            log.setModifiedBy(
+                    String.format("%s_%d", requestContext.getUserType(), requestContext.getUserId())
+            );
 
             log.setOldValueJson(oldJson);
             if (!DELETE.equals(operation)) {
@@ -73,7 +78,8 @@ public class AuditEntityListener {
                 Field idField = entity.getClass().getDeclaredField("id");
                 idField.setAccessible(true);
                 log.setEntityId((Long) idField.get(entity));
-            } catch (Exception ignored) {
+            } catch (Exception e) {
+                logger.error(e.getMessage(), e);
             }
 
             auditLogRepository.save(log);
