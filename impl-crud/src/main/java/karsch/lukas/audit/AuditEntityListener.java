@@ -1,6 +1,7 @@
 package karsch.lukas.audit;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import jakarta.persistence.PostLoad;
 import jakarta.persistence.PrePersist;
 import jakarta.persistence.PreRemove;
@@ -28,6 +29,14 @@ public class AuditEntityListener {
     private static final Logger logger = LoggerFactory.getLogger(AuditEntityListener.class);
 
     private final RequestContext requestContext;
+
+    static {
+        // better LocalDateTime serialization
+        objectMapper.registerModule(new JavaTimeModule());
+
+        // module which handles serialization for the audit log: only store the ids of nested entities
+        objectMapper.registerModule(new IdSerializationModule());
+    }
 
     @PostLoad
     public void postLoad(Object entity) {
@@ -87,4 +96,5 @@ public class AuditEntityListener {
             logger.error(e.getMessage(), e);
         }
     }
+
 }

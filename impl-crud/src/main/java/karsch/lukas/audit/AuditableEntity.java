@@ -8,7 +8,8 @@ import lombok.Getter;
 import lombok.Setter;
 
 /**
- * Base class for entities. Subclasses are monitored for changes and persisted to an audit log before any change.
+ * Base class for entities. Subclasses are monitored for changes and persisted to an audit log before any change. References
+ * to other entities are references via the "id" field, they are not serialized.
  */
 @MappedSuperclass
 @EntityListeners(AuditEntityListener.class)
