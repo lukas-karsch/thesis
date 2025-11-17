@@ -2,21 +2,23 @@ package karsch.lukas.courses;
 
 import jakarta.persistence.*;
 import karsch.lukas.audit.AuditableEntity;
+import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
 
 import java.util.HashSet;
-import java.util.Objects;
 import java.util.Set;
 
 @Entity
 @Table(name = "courses")
 @Getter
 @Setter
+@EqualsAndHashCode(onlyExplicitlyIncluded = true, callSuper = false)
 public class CourseEntity extends AuditableEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @EqualsAndHashCode.Include
     private Long id;
 
     @Column(nullable = false)
@@ -40,15 +42,4 @@ public class CourseEntity extends AuditableEntity {
     @CollectionTable(name = "course_assessments", joinColumns = @JoinColumn(name = "course_id"))
     private Set<CourseAssessmentValueObject> courseAssessments = new HashSet<>();
 
-    @Override
-    public boolean equals(Object o) {
-        if (o == null || getClass() != o.getClass()) return false;
-        CourseEntity that = (CourseEntity) o;
-        return Objects.equals(id, that.id);
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hashCode(id);
-    }
 }

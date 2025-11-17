@@ -1,6 +1,7 @@
-package karsch.lukas.courses;
+package karsch.lukas.e2e.courses;
 
 import karsch.lukas.PostgresTestcontainerConfiguration;
+import karsch.lukas.courses.AbstractCoursesE2ETest;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;

@@ -93,7 +93,7 @@ public abstract class AbstractCoursesE2ETest implements BaseE2ETest {
                 .get("/courses")
                 .then()
                 .statusCode(200)
-                .body("data[0].name", equalTo("Maths"));
+                .body("data[0].courseName", equalTo("Maths"));
     }
 
     @Test
@@ -169,8 +169,8 @@ public abstract class AbstractCoursesE2ETest implements BaseE2ETest {
                 .get("/courses")
                 .then()
                 .statusCode(200)
-                .body("data[0].name", equalTo("Maths"))
-                .body("data[1].name", equalTo("Advanced Maths"))
-                .body("data[1].prerequisites[0].name", equalTo("Maths"));
+                .body("data[0].courseName", equalTo("Maths"))
+                .body("data[1].courseName", equalTo("Advanced Maths"))
+                .body("data[1].prerequisites[0].courseName", equalTo("Maths"));
     }
 }

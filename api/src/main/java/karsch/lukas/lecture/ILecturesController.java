@@ -46,7 +46,7 @@ public interface ILecturesController {
 
     @GetMapping("{lectureId}/waitingList")
     @ResponseStatus(HttpStatus.OK)
-    ResponseEntity<ApiResponse<WaitingListDTO>> getWaitingListForLecture(@PathVariable Long lectureId);
+    ResponseEntity<ApiResponse<WaitlistDTO>> getWaitingListForLecture(@PathVariable Long lectureId);
 
     @PostMapping("{lectureId}/lifecycle")
     @ResponseStatus(HttpStatus.CREATED)

@@ -1,6 +1,7 @@
 package karsch.lukas.mappers;
 
 import java.util.Collection;
+import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -9,5 +10,9 @@ public interface Mapper<From, To> {
 
     default Set<To> map(Collection<From> from) {
         return from.stream().map(this::map).collect(Collectors.toSet());
+    }
+
+    default List<To> mapToList(List<From> from) {
+        return from.stream().map(this::map).toList();
     }
 }
