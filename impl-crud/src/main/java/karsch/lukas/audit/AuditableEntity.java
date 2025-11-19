@@ -6,13 +6,14 @@ import jakarta.persistence.MappedSuperclass;
 import jakarta.persistence.Transient;
 import lombok.Getter;
 import lombok.Setter;
+import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 /**
  * Base class for entities. Subclasses are monitored for changes and persisted to an audit log before any change. References
  * to other entities are references via the "id" field, they are not serialized.
  */
 @MappedSuperclass
-@EntityListeners(AuditEntityListener.class)
+@EntityListeners({AuditEntityListener.class, AuditingEntityListener.class})
 public abstract class AuditableEntity {
     @Transient
     @JsonIgnore
