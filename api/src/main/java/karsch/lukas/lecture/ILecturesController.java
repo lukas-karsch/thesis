@@ -1,5 +1,6 @@
 package karsch.lukas.lecture;
 
+import jakarta.validation.Valid;
 import karsch.lukas.response.ApiResponse;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -14,7 +15,7 @@ public interface ILecturesController {
 
     @PostMapping("{lectureId}/enroll")
     @ResponseStatus(HttpStatus.CREATED)
-    ResponseEntity<ApiResponse<Void>> enrollToLecture(@PathVariable Long lectureId);
+    ResponseEntity<ApiResponse<EnrollStudentResponse>> enrollToLecture(@PathVariable Long lectureId);
 
     @DeleteMapping("{lectureId}/enroll")
     @ResponseStatus(HttpStatus.OK)
@@ -22,7 +23,7 @@ public interface ILecturesController {
 
     @PostMapping("create")
     @ResponseStatus(HttpStatus.CREATED)
-    ResponseEntity<ApiResponse<Void>> createLectureFromCourse(@RequestParam Long courseId);
+    ResponseEntity<ApiResponse<Void>> createLectureFromCourse(@RequestBody @Valid CreateLectureRequest createLectureRequest);
 
     @GetMapping("{lectureId}")
     @ResponseStatus(HttpStatus.OK)

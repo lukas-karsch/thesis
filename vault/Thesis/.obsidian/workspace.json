@@ -13,12 +13,12 @@
             "state": {
               "type": "markdown",
               "state": {
-                "file": "System Design/API Design.md",
+                "file": "Technical Design Log/2025-11-17 Returning values from command handlers (c54fefc4).md",
                 "mode": "source",
                 "source": false
               },
               "icon": "lucide-file",
-              "title": "API Design"
+              "title": "2025-11-17 Returning values from command handlers (c54fefc4)"
             }
           },
           {
@@ -185,13 +185,14 @@
   },
   "active": "8b95d7f72ee4d65c",
   "lastOpenFiles": [
+    "System Design/API Design.md",
+    "Technical Design Log/2025-11-17 Returning values from command handlers (c54fefc4).md",
     "Technical Design Log/2025-11-16 Audit Log Problems (f48fc294).md",
     "Technical Design Log/2025-11-13 Defining additional requirements (9aa823f1, 1c08c5be).md",
     "Technical Design Log/2025-11-15 How I will proceed (e6cb5109).md",
     "Technical Design Log/2025-11-14 Audit Log (c5367a6b).md",
     "Technical Design Log/2025-11-15 Add a user filter (c487bce7).md",
     "Advice/JPA.md",
-    "System Design/API Design.md",
     "Technical Design Log/2025-11-10 Using DTOs (f1872c82).md",
     "Technical Design Log/2025-11-09 API Design (2f6e551d).md",
     "Advice/(How To Fake) Authentication.md",
@@ -211,7 +212,6 @@
     "Technical Design Log/2025-11-08 Initial Setup (6840cebf).md",
     "Meetings/2025-11-12 Exposé Feedback.md",
     "Meetings",
-    "Advice/Maven tips.md",
     "Untitled.canvas",
     "Documents/Expose Lukas Karsch Bachelorarbeit_02.pdf",
     "Documents/Hinweise_zur_Abschlussarbeit_Jordine_v1-2-0.pdf",

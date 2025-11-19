@@ -1,0 +1,119 @@
+package karsch.lukas.lectures;
+
+import karsch.lukas.context.RequestContext;
+import karsch.lukas.lecture.*;
+import karsch.lukas.response.ApiResponse;
+import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.RestController;
+
+@RestController
+@RequiredArgsConstructor
+public class LecturesController implements ILecturesController {
+
+    private final LecturesService lecturesService;
+    private final RequestContext requestContext;
+
+    @Override
+    public ResponseEntity<ApiResponse<GetLecturesForStudentResponse>> getLecturesForStudent(Long studentId) {
+        var lecturesForStudent = lecturesService.getLecturesForStudent(studentId);
+
+        return new ResponseEntity<>(
+                new ApiResponse<>(HttpStatus.OK, null, lecturesForStudent), HttpStatus.OK
+        );
+    }
+
+    @Override
+    public ResponseEntity<ApiResponse<EnrollStudentResponse>> enrollToLecture(Long lectureId) {
+        if (!"student".equals(requestContext.getUserType())) {
+            return new ResponseEntity<>(
+                    new ApiResponse<>(HttpStatus.FORBIDDEN, "Only users can enroll to courses"), HttpStatus.FORBIDDEN
+            );
+        }
+
+        var enrollmentResult = lecturesService.enrollStudent(requestContext.getUserId(), lectureId);
+
+        return new ResponseEntity<>(
+                new ApiResponse<>(HttpStatus.CREATED, null, new EnrollStudentResponse(enrollmentResult)),
+                HttpStatus.CREATED
+        );
+    }
+
+    @Override
+    public ResponseEntity<ApiResponse<Void>> disenrollFromLecture(Long lectureId) {
+        if (!"student".equals(requestContext.getUserType())) {
+            return new ResponseEntity<>(
+                    new ApiResponse<>(HttpStatus.FORBIDDEN, "Only users can disenroll from courses"), HttpStatus.FORBIDDEN
+            );
+        }
+
+        lecturesService.disenrollStudent(requestContext.getUserId(), lectureId);
+
+        return new ResponseEntity<>(
+                new ApiResponse<>(HttpStatus.OK, null), HttpStatus.OK
+        );
+    }
+
+    @Override
+    public ResponseEntity<ApiResponse<Void>> createLectureFromCourse(CreateLectureRequest createLectureRequest) {
+        if (!"professor".equals(requestContext.getUserType())) {
+            return new ResponseEntity<>(
+                    new ApiResponse<>(HttpStatus.FORBIDDEN, "Only professors can create lectures"), HttpStatus.FORBIDDEN
+            );
+        }
+
+        lecturesService.createLectureFromCourse(requestContext.getUserId(), createLectureRequest);
+
+        return new ResponseEntity<>(
+                new ApiResponse<>(HttpStatus.CREATED, null), HttpStatus.CREATED
+        );
+    }
+
+    @Override
+    public ResponseEntity<ApiResponse<LectureDetailDTO>> getLectureDetails(Long lectureId) {
+        return new ResponseEntity<>(
+                new ApiResponse<>(HttpStatus.OK, null, lecturesService.getLectureDetails(lectureId)), HttpStatus.OK
+        );
+    }
+
+    @Override
+    public ResponseEntity<ApiResponse<Void>> assignGrade(Long lectureId, AssignGradeRequest assignGradeRequest) {
+        throw new RuntimeException();
+    }
+
+    @Override
+    public ResponseEntity<ApiResponse<Void>> updateGrade(Long lectureId, AssignGradeRequest assignGradeRequest) {
+        throw new RuntimeException();
+    }
+
+    @Override
+    public ResponseEntity<ApiResponse<Void>> addDatesToLecture(Long lectureId, AssignDatesToLectureRequest assignDatesToLectureRequest) {
+        throw new RuntimeException();
+    }
+
+    @Override
+    public ResponseEntity<ApiResponse<Void>> addAssessmentForLecture(Long lectureId, LectureAssessmentDTO lectureAssessmentDTO) {
+        throw new RuntimeException();
+    }
+
+    @Override
+    public ResponseEntity<ApiResponse<WaitlistDTO>> getWaitingListForLecture(Long lectureId) {
+        throw new RuntimeException();
+    }
+
+    @Override
+    public ResponseEntity<ApiResponse<Void>> advanceLifecycleOfLecture(Long lectureId, LectureStatus newLectureStatus) {
+        if (!"professor".equals(requestContext.getUserType())) {
+            return new ResponseEntity<>(
+                    new ApiResponse<>(HttpStatus.FORBIDDEN, "Only professors can advance a lecture's lifecycle"), HttpStatus.FORBIDDEN
+            );
+        }
+
+        lecturesService.advanceLifecycleOfLecture(lectureId, newLectureStatus, requestContext.getUserId());
+
+        return new ResponseEntity<>(
+                new ApiResponse<>(HttpStatus.CREATED, String.format("Lifecycle advanced to %s", newLectureStatus)), HttpStatus.CREATED
+        );
+    }
+}

@@ -46,7 +46,7 @@ public class LectureEntity extends AuditableEntity {
     private ProfessorEntity professor;
 
     @Column(nullable = false)
-    private LectureStatus lectureStatus = LectureStatus.ARCHIVED;
+    private LectureStatus lectureStatus = LectureStatus.DRAFT;
 
     @OneToMany(mappedBy = "lecture", cascade = CascadeType.ALL, orphanRemoval = true)
     @OrderBy("createdDate ASC")

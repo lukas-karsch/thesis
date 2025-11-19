@@ -11,6 +11,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.web.context.request.RequestContextHolder;
 
 import java.lang.reflect.Field;
 import java.time.LocalDateTime;
@@ -74,9 +75,13 @@ public class AuditEntityListener {
             log.setEntityName(entity.getClass().getSimpleName());
             log.setOperation(operation);
             log.setTimestamp(LocalDateTime.now());
-            log.setModifiedBy(
-                    String.format("%s_%d", requestContext.getUserType(), requestContext.getUserId())
-            );
+            if (RequestContextHolder.getRequestAttributes() != null) {
+                log.setModifiedBy(
+                        String.format("%s_%d", requestContext.getUserType(), requestContext.getUserId())
+                );
+            } else {
+                log.setModifiedBy("SYSTEM");
+            }
 
             log.setOldValueJson(oldJson);
             if (!DELETE.equals(operation)) {
