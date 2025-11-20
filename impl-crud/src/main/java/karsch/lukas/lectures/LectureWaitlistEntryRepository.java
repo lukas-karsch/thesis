@@ -10,4 +10,8 @@ public interface LectureWaitlistEntryRepository extends JpaRepository<LectureWai
     List<LectureWaitlistEntryEntity> findAllByStudentId(Long studentId);
 
     void deleteByStudentIdAndLectureId(Long studentId, Long lectureId);
+
+    List<LectureWaitlistEntryEntity> findByLecture(LectureEntity lecture);
+
+    List<LectureWaitlistEntryEntity> findByLectureOrderByCreatedDateAsc(LectureEntity lecture);
 }

@@ -99,7 +99,9 @@ public class LecturesController implements ILecturesController {
 
     @Override
     public ResponseEntity<ApiResponse<WaitlistDTO>> getWaitingListForLecture(Long lectureId) {
-        throw new RuntimeException();
+        return new ResponseEntity<>(
+                new ApiResponse<>(HttpStatus.OK, null, lecturesService.getWaitlistForLecture(lectureId)), HttpStatus.OK
+        );
     }
 
     @Override

@@ -32,6 +32,8 @@ class LecturesService {
     private final LectureDetailDtoMapper lectureDetailDtoMapper;
 
     private final EntityManager entityManager;
+    private final WaitlistedStudentMapper waitlistedStudentMapper;
+    private final SimpleLectureDtoMapper simpleLectureDtoMapper;
 
     public GetLecturesForStudentResponse getLecturesForStudent(Long studentId) {
         var enrolledLectures = enrollmentRepository.findAllByStudentId(studentId)
@@ -140,6 +142,18 @@ class LecturesService {
                 .orElseThrow(() -> new LectureNotFoundException(lectureId));
 
         return lectureDetailDtoMapper.map(lecture);
+    }
+
+    public WaitlistDTO getWaitlistForLecture(Long lectureId) {
+        var lecture = lecturesRepository.findById(lectureId)
+                .orElseThrow(() -> new LectureNotFoundException(lectureId));
+
+        var waitlistEntries = lectureWaitlistEntryRepository.findByLectureOrderByCreatedDateAsc(lecture);
+
+        return new WaitlistDTO(
+                waitlistedStudentMapper.mapToList(waitlistEntries),
+                simpleLectureDtoMapper.map(lecture)
+        );
     }
 
     public void advanceLifecycleOfLecture(Long lectureId, LectureStatus newLectureStatus, Long professorId) {
