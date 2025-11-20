@@ -2,8 +2,7 @@ package karsch.lukas.e2e.lectures;
 
 import karsch.lukas.PostgresTestcontainerConfiguration;
 import karsch.lukas.lectures.AbstractLecturesE2ETest;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.web.server.LocalServerPort;
@@ -18,9 +17,8 @@ import java.sql.Statement;
         webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT
 )
 @Import(PostgresTestcontainerConfiguration.class)
+@Slf4j
 public class LecturesE2ETest extends AbstractLecturesE2ETest {
-
-    private static final Logger log = LoggerFactory.getLogger(LecturesE2ETest.class);
 
     @LocalServerPort
     private Integer port;
