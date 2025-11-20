@@ -9,5 +9,6 @@ import java.util.Set;
 
 public record LectureDetailDTO(Long lectureId, CourseDTO course, int maximumStudents, List<TimeSlot> dates,
                                ProfessorDTO professor, Set<StudentDTO> enrolledStudents,
-                               List<WaitlistEntryDTO> waitingList, LectureStatus status) {
+                               List<WaitlistEntryDTO> waitingList, LectureStatus status,
+                               Set<LectureAssessmentDTO> assessments) {
 }

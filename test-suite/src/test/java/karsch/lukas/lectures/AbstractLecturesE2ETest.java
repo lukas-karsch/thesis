@@ -85,7 +85,7 @@ public abstract class AbstractLecturesE2ETest implements BaseE2ETest {
     @Test
     @DisplayName("POST /lectures/{lectureId} should return status code 201")
     void assignGrade_shouldReturn201() {
-        var request = new AssignGradeRequest(1L, AssessmentType.EXAM, 90);
+        var request = new AssignGradeRequest(1L, 1L, 90);
         given()
                 .body(request)
                 .contentType(ContentType.JSON)
@@ -99,7 +99,7 @@ public abstract class AbstractLecturesE2ETest implements BaseE2ETest {
     @Test
     @DisplayName("PATCH /lectures/{lectureId} should return status code 200")
     void updateGrade_shouldReturn200() {
-        var request = new AssignGradeRequest(1L, AssessmentType.EXAM, 95);
+        var request = new AssignGradeRequest(1L, 1L, 95);
 
         given()
                 .body(request)
@@ -131,8 +131,8 @@ public abstract class AbstractLecturesE2ETest implements BaseE2ETest {
     @Test
     @DisplayName("POST /lectures/{lectureId}/assessments should return status code 201")
     void addAssessmentForLecture_shouldReturn201() {
-        var request = new LectureAssessmentDTO(
-                AssessmentType.EXAM, new TimeSlot(LocalDate.now(), LocalTime.of(10, 0), LocalTime.of(12, 0))
+        var request = new CreateLectureAssessmentRequest(
+                AssessmentType.EXAM, new TimeSlot(LocalDate.now(), LocalTime.of(10, 0), LocalTime.of(12, 0)), 1f
         );
 
         given()

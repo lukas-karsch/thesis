@@ -4,6 +4,8 @@ import jakarta.persistence.*;
 import karsch.lukas.audit.AuditableEntity;
 import karsch.lukas.courses.CourseEntity;
 import karsch.lukas.lecture.LectureStatus;
+import karsch.lukas.time.TimeSlotComparator;
+import karsch.lukas.time.TimeSlotValueObject;
 import karsch.lukas.users.ProfessorEntity;
 import karsch.lukas.users.StudentEntity;
 import lombok.EqualsAndHashCode;
@@ -11,7 +13,10 @@ import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
 import org.hibernate.annotations.SortComparator;
+import org.springframework.data.annotation.CreatedDate;
+import org.springframework.data.annotation.LastModifiedDate;
 
+import java.time.LocalDateTime;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -34,6 +39,9 @@ public class LectureEntity extends AuditableEntity {
     @Column(nullable = false)
     private int maximumStudents;
 
+    @Column(nullable = false)
+    private int minimumCreditsRequired = 0;
+
     @ElementCollection
     @CollectionTable(name = "lecture_timeslots", joinColumns = @JoinColumn(name = "lecture_id"))
     @SortComparator(TimeSlotComparator.class)
@@ -53,8 +61,17 @@ public class LectureEntity extends AuditableEntity {
     @OneToMany(mappedBy = "lecture", cascade = CascadeType.ALL, orphanRemoval = true)
     private Set<EnrollmentEntity> enrollments = new HashSet<>();
 
+    @OneToMany(mappedBy = "lecture", cascade = CascadeType.ALL, orphanRemoval = true)
+    private Set<LectureAssessmentEntity> assessments = new HashSet<>();
+
     @Version
     private Long version;
+
+    @CreatedDate
+    private LocalDateTime createdAt;
+
+    @LastModifiedDate
+    private LocalDateTime updatedAt;
 
     @Transient
     public List<StudentEntity> getWaitlistedStudents() {

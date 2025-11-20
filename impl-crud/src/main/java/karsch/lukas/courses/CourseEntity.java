@@ -5,7 +5,10 @@ import karsch.lukas.audit.AuditableEntity;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
+import org.springframework.data.annotation.CreatedDate;
+import org.springframework.data.annotation.LastModifiedDate;
 
+import java.time.LocalDateTime;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -41,5 +44,11 @@ public class CourseEntity extends AuditableEntity {
     @ElementCollection
     @CollectionTable(name = "course_assessments", joinColumns = @JoinColumn(name = "course_id"))
     private Set<CourseAssessmentValueObject> courseAssessments = new HashSet<>();
+
+    @CreatedDate
+    private LocalDateTime createdAt;
+
+    @LastModifiedDate
+    private LocalDateTime updatedAt;
 
 }

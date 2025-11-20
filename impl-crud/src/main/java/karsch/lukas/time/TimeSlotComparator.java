@@ -1,4 +1,4 @@
-package karsch.lukas.lectures;
+package karsch.lukas.time;
 
 import java.util.Comparator;
 

@@ -3,6 +3,7 @@ package karsch.lukas.lectures;
 import karsch.lukas.courses.SimpleCourseDtoMapper;
 import karsch.lukas.lecture.LectureDTO;
 import karsch.lukas.mappers.Mapper;
+import karsch.lukas.time.TimeSlotMapper;
 import karsch.lukas.users.ProfessorDtoMapper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;

@@ -79,12 +79,32 @@ public class LecturesController implements ILecturesController {
 
     @Override
     public ResponseEntity<ApiResponse<Void>> assignGrade(Long lectureId, AssignGradeRequest assignGradeRequest) {
-        throw new RuntimeException();
+        if (!"professor".equals(requestContext.getUserType())) {
+            return new ResponseEntity<>(
+                    new ApiResponse<>(HttpStatus.FORBIDDEN, "Only professors can assign grades"), HttpStatus.FORBIDDEN
+            );
+        }
+
+        lecturesService.assignGrade(lectureId, assignGradeRequest, requestContext.getUserId());
+
+        return new ResponseEntity<>(
+                new ApiResponse<>(HttpStatus.CREATED, null), HttpStatus.CREATED
+        );
     }
 
     @Override
     public ResponseEntity<ApiResponse<Void>> updateGrade(Long lectureId, AssignGradeRequest assignGradeRequest) {
-        throw new RuntimeException();
+        if (!"professor".equals(requestContext.getUserType())) {
+            return new ResponseEntity<>(
+                    new ApiResponse<>(HttpStatus.FORBIDDEN, "Only professors can update grades"), HttpStatus.FORBIDDEN
+            );
+        }
+
+        lecturesService.updateGrade(lectureId, assignGradeRequest, requestContext.getUserId());
+
+        return new ResponseEntity<>(
+                new ApiResponse<>(HttpStatus.CREATED, null), HttpStatus.CREATED
+        );
     }
 
     @Override
@@ -103,8 +123,18 @@ public class LecturesController implements ILecturesController {
     }
 
     @Override
-    public ResponseEntity<ApiResponse<Void>> addAssessmentForLecture(Long lectureId, LectureAssessmentDTO lectureAssessmentDTO) {
-        throw new RuntimeException();
+    public ResponseEntity<ApiResponse<Void>> addAssessmentForLecture(Long lectureId, CreateLectureAssessmentRequest createLectureAssessmentRequest) {
+        if (!"professor".equals(requestContext.getUserType())) {
+            return new ResponseEntity<>(
+                    new ApiResponse<>(HttpStatus.FORBIDDEN, "Only professors can add dates to a lecture"), HttpStatus.FORBIDDEN
+            );
+        }
+
+        lecturesService.addAssessmentForLecture(lectureId, createLectureAssessmentRequest, requestContext.getUserId());
+
+        return new ResponseEntity<>(
+                new ApiResponse<>(HttpStatus.CREATED, null), HttpStatus.CREATED
+        );
     }
 
     @Override

@@ -2,5 +2,6 @@ package karsch.lukas.lecture;
 
 import karsch.lukas.stats.AssessmentType;
 
-public record LectureAssessmentDTO(AssessmentType assessmentType, TimeSlot timeSlot) {
+public record LectureAssessmentDTO(SimpleLectureDTO lecture, AssessmentType assessmentType, TimeSlot timeSlot,
+                                   float weight) {
 }

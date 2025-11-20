@@ -6,6 +6,8 @@ import karsch.lukas.auth.NotAuthenticatedException;
 import karsch.lukas.courses.CoursesNotFoundException;
 import karsch.lukas.courses.CoursesRepository;
 import karsch.lukas.lecture.*;
+import karsch.lukas.time.TimeSlotService;
+import karsch.lukas.time.TimeSlotValueObject;
 import karsch.lukas.users.ProfessorRepository;
 import karsch.lukas.users.StudentEntity;
 import lombok.RequiredArgsConstructor;
@@ -28,13 +30,16 @@ class LecturesService {
     private final LectureWaitlistEntryRepository lectureWaitlistEntryRepository;
     private final CoursesRepository courseEntityRepository;
     private final ProfessorRepository professorRepository;
+    private final LectureAssessmentRepository lectureAssessmentRepository;
 
     private final LectureDtoMapper lectureDtoMapper;
     private final LectureDetailDtoMapper lectureDetailDtoMapper;
-
-    private final EntityManager entityManager;
     private final WaitlistedStudentMapper waitlistedStudentMapper;
     private final SimpleLectureDtoMapper simpleLectureDtoMapper;
+
+    private final EntityManager entityManager;
+    private final TimeSlotService timeSlotService;
+    private final AssessmentGradeRepository assessmentGradeRepository;
 
     public GetLecturesForStudentResponse getLecturesForStudent(Long studentId) {
         var enrolledLectures = enrollmentRepository.findAllByStudentId(studentId)
@@ -191,5 +196,78 @@ class LecturesService {
                 .addAll(newTimeSlots);
 
         lecturesRepository.save(lecture);
+    }
+
+    @Transactional
+    public void addAssessmentForLecture(Long lectureId, CreateLectureAssessmentRequest lectureAssessmentDTO, Long professorId) {
+        // TODO: can assessments always be created? do i check that the weight is not > 1?
+        var lecture = lecturesRepository.findDetailsById(lectureId)
+                .orElseThrow(() -> new LectureNotFoundException(lectureId));
+
+        if (!Objects.equals(lecture.getProfessor().getId(), professorId)) {
+            throw new NotAuthenticatedException();
+        }
+
+        final TimeSlot timeSlot = lectureAssessmentDTO.timeSlot();
+        var assessment = new LectureAssessmentEntity();
+        assessment.setLecture(lecture);
+        assessment.setWeight(lectureAssessmentDTO.weight());
+        assessment.setTimeSlot(new TimeSlotValueObject(
+                timeSlot.date(),
+                timeSlot.startTime(),
+                timeSlot.endTime())
+        );
+        assessment.setAssessmentType(lectureAssessmentDTO.assessmentType());
+
+        lectureAssessmentRepository.save(assessment);
+    }
+
+    @Transactional
+    public void assignGrade(Long lectureId, AssignGradeRequest assignGradeRequest, Long professorId) {
+        var lecture = lecturesRepository.findWithProfessorAndTimeSlotsById(lectureId)
+                .orElseThrow(() -> new LectureNotFoundException(lectureId));
+
+        if (!Objects.equals(lecture.getProfessor().getId(), professorId)) {
+            throw new NotAuthenticatedException();
+        }
+
+        var assessment = lectureAssessmentRepository.findById(assignGradeRequest.assessmentId())
+                .orElseThrow(() -> new ResponseStatusException(
+                        HttpStatus.NOT_FOUND,
+                        String.format("Assessment with ID %d not found.", assignGradeRequest.assessmentId())
+                ));
+
+        if (!timeSlotService.hasEnded(assessment.getTimeSlot())) {
+            throw new ResponseStatusException(HttpStatus.CONFLICT, "Can not assign grades for a assessment that has not ended");
+        }
+
+        var grade = new AssessmentGradeEntity();
+        grade.setStudent(
+                entityManager.getReference(StudentEntity.class, assignGradeRequest.studentId())
+        );
+        grade.setLectureAssessment(assessment);
+        grade.setGrade(assignGradeRequest.grade());
+
+        assessmentGradeRepository.save(grade);
+    }
+
+    @Transactional
+    public void updateGrade(Long lectureId, AssignGradeRequest assignGradeRequest, Long professorId) {
+        var lecture = lecturesRepository.findWithProfessorAndTimeSlotsById(lectureId)
+                .orElseThrow(() -> new LectureNotFoundException(lectureId));
+
+        if (!Objects.equals(lecture.getProfessor().getId(), professorId)) {
+            throw new NotAuthenticatedException();
+        }
+
+        var existingGrade = assessmentGradeRepository.findByStudentAndLectureAssessment(
+                entityManager.getReference(StudentEntity.class, assignGradeRequest.studentId()),
+                entityManager.getReference(LectureAssessmentEntity.class, assignGradeRequest.assessmentId())
+        ).orElseThrow(() -> new ResponseStatusException(
+                HttpStatus.NOT_FOUND,
+                String.format("No existing grade for student %d on assessment %d", assignGradeRequest.studentId(), assignGradeRequest.assessmentId())
+        ));
+
+        existingGrade.setGrade(assignGradeRequest.grade());
     }
 }
