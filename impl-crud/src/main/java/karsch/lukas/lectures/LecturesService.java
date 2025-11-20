@@ -16,6 +16,7 @@ import org.springframework.web.server.ResponseStatusException;
 
 import java.util.Collections;
 import java.util.Objects;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -130,9 +131,9 @@ class LecturesService {
         lecture.setCourse(course);
         lecture.setProfessor(professor);
         lecture.setMaximumStudents(createLectureRequest.maximumStudents());
-        lecture.setTimeSlots(createLectureRequest.dates().stream().map(
-                t -> new TimeSlotValueObject(t.date(), t.startTime(), t.endTime())
-        ).toList());
+        lecture.getTimeSlots().addAll(createLectureRequest.dates().stream()
+                .map(t -> new TimeSlotValueObject(t.date(), t.startTime(), t.endTime())
+                ).collect(Collectors.toSet()));
 
         lecturesRepository.save(lecture);
     }
@@ -168,6 +169,26 @@ class LecturesService {
         }
 
         lecture.setLectureStatus(newLectureStatus);
+
+        lecturesRepository.save(lecture);
+    }
+
+    @Transactional
+    public void addDatesToLecture(AssignDatesToLectureRequest assignDatesToLectureRequest, Long lectureId, Long professorId) {
+        var lecture = lecturesRepository.findWithProfessorAndTimeSlotsById(lectureId)
+                .orElseThrow(() -> new LectureNotFoundException(lectureId));
+
+        if (!Objects.equals(lecture.getProfessor().getId(), professorId)) {
+            throw new NotAuthenticatedException();
+        }
+
+        var newTimeSlots = assignDatesToLectureRequest.dates().stream()
+                .map(t -> new TimeSlotValueObject(t.date(), t.startTime(), t.endTime()))
+                .collect(Collectors.toSet());
+
+        lecture
+                .getTimeSlots()
+                .addAll(newTimeSlots);
 
         lecturesRepository.save(lecture);
     }

@@ -115,7 +115,7 @@ public class SeedDataRunner implements CommandLineRunner {
             var lecture = new LectureEntity();
             lecture.setCourse(course);
             lecture.setMaximumStudents(10);
-            lecture.setTimeSlots(List.of(
+            lecture.getTimeSlots().addAll(Set.of(
                     new TimeSlotValueObject(LocalDate.parse("2025-11-17"), LocalTime.of(10, 0), LocalTime.of(11, 30)),
                     new TimeSlotValueObject(LocalDate.parse("2025-11-24"), LocalTime.of(10, 0), LocalTime.of(11, 30)),
                     new TimeSlotValueObject(LocalDate.parse("2025-12-01"), LocalTime.of(10, 0), LocalTime.of(11, 30))

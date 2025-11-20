@@ -10,11 +10,9 @@ import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
+import org.hibernate.annotations.SortComparator;
 
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Entity
@@ -38,8 +36,8 @@ public class LectureEntity extends AuditableEntity {
 
     @ElementCollection
     @CollectionTable(name = "lecture_timeslots", joinColumns = @JoinColumn(name = "lecture_id"))
-    @OrderColumn(name = "slot_index")
-    private List<TimeSlotValueObject> timeSlots = new ArrayList<>();
+    @SortComparator(TimeSlotComparator.class)
+    private SortedSet<TimeSlotValueObject> timeSlots = new TreeSet<>(new TimeSlotComparator());
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "professor_id", nullable = false)

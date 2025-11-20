@@ -89,7 +89,17 @@ public class LecturesController implements ILecturesController {
 
     @Override
     public ResponseEntity<ApiResponse<Void>> addDatesToLecture(Long lectureId, AssignDatesToLectureRequest assignDatesToLectureRequest) {
-        throw new RuntimeException();
+        if (!"professor".equals(requestContext.getUserType())) {
+            return new ResponseEntity<>(
+                    new ApiResponse<>(HttpStatus.FORBIDDEN, "Only professors can add dates to a lecture"), HttpStatus.FORBIDDEN
+            );
+        }
+
+        lecturesService.addDatesToLecture(assignDatesToLectureRequest, lectureId, requestContext.getUserId());
+
+        return new ResponseEntity<>(
+                new ApiResponse<>(HttpStatus.CREATED, null), HttpStatus.CREATED
+        );
     }
 
     @Override

@@ -10,4 +10,7 @@ import java.util.Optional;
 public interface LecturesRepository extends JpaRepository<LectureEntity, Long> {
     @EntityGraph(attributePaths = {"course", "timeSlots", "professor", "waitlist", "enrollments", "course.courseAssessments", "course.prerequisites"})
     Optional<LectureEntity> findDetailsById(Long lectureId);
+
+    @EntityGraph(attributePaths = {"timeSlots", "professor"})
+    Optional<LectureEntity> findWithProfessorAndTimeSlotsById(Long id);
 }

@@ -1,0 +1,1149 @@
+{
+  "snapshot": {
+    "created": "2025-11-20T08:48:35.721",
+    "database": {
+      "productVersion": "2025.2.4",
+      "shortName": "intellijPsiClass",
+      "majorVersion": "0",
+      "minorVersion": "0",
+      "user": "lukas",
+      "productName": "IDEA Data Grid Snapshot",
+      "url": "jpab?generationContext=0497164d-5a82-4860-bc63-e4d7791cb6ab"
+    },
+    "metadata": {
+      "generationContext": {
+        "dbmsType": "postgresql"
+      }
+    },
+    "objects": {
+      "liquibase.structure.core.Catalog": [
+        {
+          "catalog": {
+            "default": true,
+            "name": "JPA_BUDDY",
+            "snapshotId": "921b179"
+          }
+        }
+      ],
+      "liquibase.structure.core.Column": [
+        {
+          "column": {
+            "certainDataType": false,
+            "name": "assessment_type",
+            "nullable": true,
+            "relation": "liquibase.structure.core.Table#921b181",
+            "snapshotId": "921b183",
+            "type": {
+              "typeName": "SMALLINT"
+            }
+          }
+        },
+        {
+          "column": {
+            "certainDataType": false,
+            "name": "course_id",
+            "nullable": false,
+            "relation": "liquibase.structure.core.Table#921b181",
+            "snapshotId": "921b182",
+            "type": {
+              "typeName": "BIGINT"
+            }
+          }
+        },
+        {
+          "column": {
+            "certainDataType": false,
+            "name": "course_id",
+            "nullable": false,
+            "relation": "liquibase.structure.core.Table#921b220",
+            "snapshotId": "921b221",
+            "type": {
+              "typeName": "BIGINT"
+            }
+          }
+        },
+        {
+          "column": {
+            "certainDataType": false,
+            "name": "course_id",
+            "nullable": false,
+            "relation": "liquibase.structure.core.Table#921b199",
+            "snapshotId": "921b202",
+            "type": {
+              "typeName": "BIGINT"
+            }
+          }
+        },
+        {
+          "column": {
+            "certainDataType": false,
+            "name": "created_date",
+            "nullable": true,
+            "relation": "liquibase.structure.core.Table#921b251",
+            "snapshotId": "921b256",
+            "type": {
+              "typeName": "DATETIME"
+            }
+          }
+        },
+        {
+          "column": {
+            "certainDataType": false,
+            "name": "credits",
+            "nullable": false,
+            "relation": "liquibase.structure.core.Table#921b187",
+            "snapshotId": "921b191",
+            "type": {
+              "typeName": "INT"
+            }
+          }
+        },
+        {
+          "column": {
+            "certainDataType": false,
+            "name": "date",
+            "nullable": true,
+            "relation": "liquibase.structure.core.Table#921b243",
+            "snapshotId": "921b245",
+            "type": {
+              "typeName": "DATE"
+            }
+          }
+        },
+        {
+          "column": {
+            "certainDataType": false,
+            "name": "description",
+            "nullable": true,
+            "relation": "liquibase.structure.core.Table#921b187",
+            "snapshotId": "921b190",
+            "type": {
+              "typeName": "TEXT"
+            }
+          }
+        },
+        {
+          "column": {
+            "certainDataType": false,
+            "name": "end_time",
+            "nullable": true,
+            "relation": "liquibase.structure.core.Table#921b243",
+            "snapshotId": "921b247",
+            "type": {
+              "typeName": "TIME"
+            }
+          }
+        },
+        {
+          "column": {
+            "certainDataType": false,
+            "name": "enrollment_date",
+            "nullable": true,
+            "relation": "liquibase.structure.core.Table#921b226",
+            "snapshotId": "921b231",
+            "type": {
+              "typeName": "DATETIME"
+            }
+          }
+        },
+        {
+          "column": {
+            "certainDataType": false,
+            "name": "entity_id",
+            "nullable": true,
+            "relation": "liquibase.structure.core.Table#921b209",
+            "snapshotId": "921b213",
+            "type": {
+              "typeName": "BIGINT"
+            }
+          }
+        },
+        {
+          "column": {
+            "certainDataType": false,
+            "name": "entity_name",
+            "nullable": true,
+            "relation": "liquibase.structure.core.Table#921b209",
+            "snapshotId": "921b212",
+            "type": {
+              "columnSize": "255!{java.lang.Integer}",
+              "typeName": "VARCHAR"
+            }
+          }
+        },
+        {
+          "column": {
+            "certainDataType": false,
+            "name": "first_name",
+            "nullable": true,
+            "relation": "liquibase.structure.core.Table#921b193",
+            "snapshotId": "921b196",
+            "type": {
+              "columnSize": "255!{java.lang.Integer}",
+              "typeName": "VARCHAR"
+            }
+          }
+        },
+        {
+          "column": {
+            "certainDataType": false,
+            "name": "first_name",
+            "nullable": true,
+            "relation": "liquibase.structure.core.Table#921b234",
+            "snapshotId": "921b238",
+            "type": {
+              "columnSize": "255!{java.lang.Integer}",
+              "typeName": "VARCHAR"
+            }
+          }
+        },
+        {
+          "column": {
+            "autoIncrementInformation": {
+              "incrementBy": "1!{java.math.BigInteger}",
+              "startWith": "1!{java.math.BigInteger}"
+            },
+            "certainDataType": false,
+            "name": "id",
+            "nullable": false,
+            "relation": "liquibase.structure.core.Table#921b209",
+            "snapshotId": "921b211",
+            "type": {
+              "typeName": "BIGINT"
+            }
+          }
+        },
+        {
+          "column": {
+            "autoIncrementInformation": {
+              "incrementBy": "1!{java.math.BigInteger}",
+              "startWith": "1!{java.math.BigInteger}"
+            },
+            "certainDataType": false,
+            "name": "id",
+            "nullable": false,
+            "relation": "liquibase.structure.core.Table#921b187",
+            "snapshotId": "921b186",
+            "type": {
+              "typeName": "BIGINT"
+            }
+          }
+        },
+        {
+          "column": {
+            "autoIncrementInformation": {
+              "incrementBy": "1!{java.math.BigInteger}",
+              "startWith": "1!{java.math.BigInteger}"
+            },
+            "certainDataType": false,
+            "name": "id",
+            "nullable": false,
+            "relation": "liquibase.structure.core.Table#921b226",
+            "snapshotId": "921b228",
+            "type": {
+              "typeName": "BIGINT"
+            }
+          }
+        },
+        {
+          "column": {
+            "autoIncrementInformation": {
+              "incrementBy": "1!{java.math.BigInteger}",
+              "startWith": "1!{java.math.BigInteger}"
+            },
+            "certainDataType": false,
+            "name": "id",
+            "nullable": false,
+            "relation": "liquibase.structure.core.Table#921b251",
+            "snapshotId": "921b253",
+            "type": {
+              "typeName": "BIGINT"
+            }
+          }
+        },
+        {
+          "column": {
+            "autoIncrementInformation": {
+              "incrementBy": "1!{java.math.BigInteger}",
+              "startWith": "1!{java.math.BigInteger}"
+            },
+            "certainDataType": false,
+            "name": "id",
+            "nullable": false,
+            "relation": "liquibase.structure.core.Table#921b199",
+            "snapshotId": "921b201",
+            "type": {
+              "typeName": "BIGINT"
+            }
+          }
+        },
+        {
+          "column": {
+            "autoIncrementInformation": {
+              "incrementBy": "1!{java.math.BigInteger}",
+              "startWith": "1!{java.math.BigInteger}"
+            },
+            "certainDataType": false,
+            "name": "id",
+            "nullable": false,
+            "relation": "liquibase.structure.core.Table#921b193",
+            "snapshotId": "921b195",
+            "type": {
+              "typeName": "BIGINT"
+            }
+          }
+        },
+        {
+          "column": {
+            "autoIncrementInformation": {
+              "incrementBy": "1!{java.math.BigInteger}",
+              "startWith": "1!{java.math.BigInteger}"
+            },
+            "certainDataType": false,
+            "name": "id",
+            "nullable": false,
+            "relation": "liquibase.structure.core.Table#921b234",
+            "snapshotId": "921b233",
+            "type": {
+              "typeName": "BIGINT"
+            }
+          }
+        },
+        {
+          "column": {
+            "certainDataType": false,
+            "name": "last_name",
+            "nullable": true,
+            "relation": "liquibase.structure.core.Table#921b193",
+            "snapshotId": "921b197",
+            "type": {
+              "columnSize": "255!{java.lang.Integer}",
+              "typeName": "VARCHAR"
+            }
+          }
+        },
+        {
+          "column": {
+            "certainDataType": false,
+            "name": "last_name",
+            "nullable": true,
+            "relation": "liquibase.structure.core.Table#921b234",
+            "snapshotId": "921b239",
+            "type": {
+              "columnSize": "255!{java.lang.Integer}",
+              "typeName": "VARCHAR"
+            }
+          }
+        },
+        {
+          "column": {
+            "certainDataType": false,
+            "name": "lecture_id",
+            "nullable": true,
+            "relation": "liquibase.structure.core.Table#921b226",
+            "snapshotId": "921b230",
+            "type": {
+              "typeName": "BIGINT"
+            }
+          }
+        },
+        {
+          "column": {
+            "certainDataType": false,
+            "name": "lecture_id",
+            "nullable": false,
+            "relation": "liquibase.structure.core.Table#921b243",
+            "snapshotId": "921b244",
+            "type": {
+              "typeName": "BIGINT"
+            }
+          }
+        },
+        {
+          "column": {
+            "certainDataType": false,
+            "name": "lecture_id",
+            "nullable": false,
+            "relation": "liquibase.structure.core.Table#921b251",
+            "snapshotId": "921b254",
+            "type": {
+              "typeName": "BIGINT"
+            }
+          }
+        },
+        {
+          "column": {
+            "certainDataType": false,
+            "name": "lecture_status",
+            "nullable": false,
+            "relation": "liquibase.structure.core.Table#921b199",
+            "snapshotId": "921b205",
+            "type": {
+              "typeName": "SMALLINT"
+            }
+          }
+        },
+        {
+          "column": {
+            "certainDataType": false,
+            "name": "maximum_students",
+            "nullable": false,
+            "relation": "liquibase.structure.core.Table#921b199",
+            "snapshotId": "921b203",
+            "type": {
+              "typeName": "INT"
+            }
+          }
+        },
+        {
+          "column": {
+            "certainDataType": false,
+            "name": "modified_by",
+            "nullable": true,
+            "relation": "liquibase.structure.core.Table#921b209",
+            "snapshotId": "921b214",
+            "type": {
+              "columnSize": "255!{java.lang.Integer}",
+              "typeName": "VARCHAR"
+            }
+          }
+        },
+        {
+          "column": {
+            "certainDataType": false,
+            "name": "name",
+            "nullable": false,
+            "relation": "liquibase.structure.core.Table#921b187",
+            "snapshotId": "921b189",
+            "type": {
+              "columnSize": "255!{java.lang.Integer}",
+              "typeName": "VARCHAR"
+            }
+          }
+        },
+        {
+          "column": {
+            "certainDataType": false,
+            "name": "new_value_json",
+            "nullable": true,
+            "relation": "liquibase.structure.core.Table#921b209",
+            "snapshotId": "921b218",
+            "type": {
+              "typeName": "TEXT"
+            }
+          }
+        },
+        {
+          "column": {
+            "certainDataType": false,
+            "name": "old_value_json",
+            "nullable": true,
+            "relation": "liquibase.structure.core.Table#921b209",
+            "snapshotId": "921b217",
+            "type": {
+              "typeName": "TEXT"
+            }
+          }
+        },
+        {
+          "column": {
+            "certainDataType": false,
+            "name": "operation",
+            "nullable": true,
+            "relation": "liquibase.structure.core.Table#921b209",
+            "snapshotId": "921b215",
+            "type": {
+              "columnSize": "255!{java.lang.Integer}",
+              "typeName": "VARCHAR"
+            }
+          }
+        },
+        {
+          "column": {
+            "certainDataType": false,
+            "name": "prerequisite_id",
+            "nullable": false,
+            "relation": "liquibase.structure.core.Table#921b220",
+            "snapshotId": "921b222",
+            "type": {
+              "typeName": "BIGINT"
+            }
+          }
+        },
+        {
+          "column": {
+            "certainDataType": false,
+            "name": "professor_id",
+            "nullable": false,
+            "relation": "liquibase.structure.core.Table#921b199",
+            "snapshotId": "921b204",
+            "type": {
+              "typeName": "BIGINT"
+            }
+          }
+        },
+        {
+          "column": {
+            "certainDataType": false,
+            "name": "semester",
+            "nullable": false,
+            "relation": "liquibase.structure.core.Table#921b234",
+            "snapshotId": "921b237",
+            "type": {
+              "typeName": "INT"
+            }
+          }
+        },
+        {
+          "column": {
+            "certainDataType": false,
+            "name": "slot_index",
+            "nullable": true,
+            "relation": "liquibase.structure.core.Table#921b243",
+            "snapshotId": "921b248",
+            "type": {
+              "typeName": "INT"
+            }
+          }
+        },
+        {
+          "column": {
+            "certainDataType": false,
+            "name": "start_time",
+            "nullable": true,
+            "relation": "liquibase.structure.core.Table#921b243",
+            "snapshotId": "921b246",
+            "type": {
+              "typeName": "TIME"
+            }
+          }
+        },
+        {
+          "column": {
+            "certainDataType": false,
+            "name": "student_id",
+            "nullable": true,
+            "relation": "liquibase.structure.core.Table#921b226",
+            "snapshotId": "921b229",
+            "type": {
+              "typeName": "BIGINT"
+            }
+          }
+        },
+        {
+          "column": {
+            "certainDataType": false,
+            "name": "student_id",
+            "nullable": false,
+            "relation": "liquibase.structure.core.Table#921b251",
+            "snapshotId": "921b255",
+            "type": {
+              "typeName": "BIGINT"
+            }
+          }
+        },
+        {
+          "column": {
+            "certainDataType": false,
+            "name": "timestamp",
+            "nullable": false,
+            "relation": "liquibase.structure.core.Table#921b209",
+            "snapshotId": "921b216",
+            "type": {
+              "typeName": "DATETIME"
+            }
+          }
+        },
+        {
+          "column": {
+            "certainDataType": false,
+            "name": "weight",
+            "nullable": true,
+            "relation": "liquibase.structure.core.Table#921b181",
+            "snapshotId": "921b184",
+            "type": {
+              "typeName": "FLOAT"
+            }
+          }
+        }
+      ],
+      "liquibase.structure.core.ForeignKey": [
+        {
+          "foreignKey": {
+            "foreignKeyColumns": [
+              "liquibase.structure.core.Column#921b230"
+            ],
+            "foreignKeyTable": "liquibase.structure.core.Table#921b226",
+            "name": "FK_ENROLLMENTS_ON_LECTURE",
+            "primaryKeyColumns": [
+              "liquibase.structure.core.Column#921b201"
+            ],
+            "primaryKeyTable": "liquibase.structure.core.Table#921b199",
+            "snapshotId": "921b241"
+          }
+        },
+        {
+          "foreignKey": {
+            "foreignKeyColumns": [
+              "liquibase.structure.core.Column#921b229"
+            ],
+            "foreignKeyTable": "liquibase.structure.core.Table#921b226",
+            "name": "FK_ENROLLMENTS_ON_STUDENT",
+            "primaryKeyColumns": [
+              "liquibase.structure.core.Column#921b233"
+            ],
+            "primaryKeyTable": "liquibase.structure.core.Table#921b234",
+            "snapshotId": "921b232"
+          }
+        },
+        {
+          "foreignKey": {
+            "foreignKeyColumns": [
+              "liquibase.structure.core.Column#921b202"
+            ],
+            "foreignKeyTable": "liquibase.structure.core.Table#921b199",
+            "name": "FK_LECTURES_ON_COURSE",
+            "primaryKeyColumns": [
+              "liquibase.structure.core.Column#921b186"
+            ],
+            "primaryKeyTable": "liquibase.structure.core.Table#921b187",
+            "snapshotId": "921b206"
+          }
+        },
+        {
+          "foreignKey": {
+            "foreignKeyColumns": [
+              "liquibase.structure.core.Column#921b204"
+            ],
+            "foreignKeyTable": "liquibase.structure.core.Table#921b199",
+            "name": "FK_LECTURES_ON_PROFESSOR",
+            "primaryKeyColumns": [
+              "liquibase.structure.core.Column#921b195"
+            ],
+            "primaryKeyTable": "liquibase.structure.core.Table#921b193",
+            "snapshotId": "921b207"
+          }
+        },
+        {
+          "foreignKey": {
+            "foreignKeyColumns": [
+              "liquibase.structure.core.Column#921b254"
+            ],
+            "foreignKeyTable": "liquibase.structure.core.Table#921b251",
+            "name": "FK_LECTURE_WAITLIST_ON_LECTURE",
+            "primaryKeyColumns": [
+              "liquibase.structure.core.Column#921b201"
+            ],
+            "primaryKeyTable": "liquibase.structure.core.Table#921b199",
+            "snapshotId": "921b257"
+          }
+        },
+        {
+          "foreignKey": {
+            "foreignKeyColumns": [
+              "liquibase.structure.core.Column#921b255"
+            ],
+            "foreignKeyTable": "liquibase.structure.core.Table#921b251",
+            "name": "FK_LECTURE_WAITLIST_ON_STUDENT",
+            "primaryKeyColumns": [
+              "liquibase.structure.core.Column#921b233"
+            ],
+            "primaryKeyTable": "liquibase.structure.core.Table#921b234",
+            "snapshotId": "921b258"
+          }
+        },
+        {
+          "foreignKey": {
+            "foreignKeyColumns": [
+              "liquibase.structure.core.Column#921b221"
+            ],
+            "foreignKeyTable": "liquibase.structure.core.Table#921b220",
+            "name": "fk_coupre_on_course",
+            "primaryKeyColumns": [
+              "liquibase.structure.core.Column#921b186"
+            ],
+            "primaryKeyTable": "liquibase.structure.core.Table#921b187",
+            "snapshotId": "921b223"
+          }
+        },
+        {
+          "foreignKey": {
+            "foreignKeyColumns": [
+              "liquibase.structure.core.Column#921b222"
+            ],
+            "foreignKeyTable": "liquibase.structure.core.Table#921b220",
+            "name": "fk_coupre_on_prerequisite",
+            "primaryKeyColumns": [
+              "liquibase.structure.core.Column#921b186"
+            ],
+            "primaryKeyTable": "liquibase.structure.core.Table#921b187",
+            "snapshotId": "921b224"
+          }
+        },
+        {
+          "foreignKey": {
+            "foreignKeyColumns": [
+              "liquibase.structure.core.Column#921b182"
+            ],
+            "foreignKeyTable": "liquibase.structure.core.Table#921b181",
+            "name": "fk_course_assessments_on_course_entity",
+            "primaryKeyColumns": [
+              "liquibase.structure.core.Column#921b186"
+            ],
+            "primaryKeyTable": "liquibase.structure.core.Table#921b187",
+            "snapshotId": "921b185"
+          }
+        },
+        {
+          "foreignKey": {
+            "foreignKeyColumns": [
+              "liquibase.structure.core.Column#921b244"
+            ],
+            "foreignKeyTable": "liquibase.structure.core.Table#921b243",
+            "name": "fk_lecture_timeslots_on_lecture_entity",
+            "primaryKeyColumns": [
+              "liquibase.structure.core.Column#921b201"
+            ],
+            "primaryKeyTable": "liquibase.structure.core.Table#921b199",
+            "snapshotId": "921b249"
+          }
+        }
+      ],
+      "liquibase.structure.core.Index": [
+        {
+          "index": {
+            "columns": [
+              {
+                "column": {
+                  "name": "id"
+                }
+              }
+            ],
+            "name": "IX_pk_audit_log",
+            "snapshotId": "921b210",
+            "table": "liquibase.structure.core.Table#921b209",
+            "unique": true
+          }
+        },
+        {
+          "index": {
+            "columns": [
+              {
+                "column": {
+                  "name": "id"
+                }
+              }
+            ],
+            "name": "IX_pk_courses",
+            "snapshotId": "921b188",
+            "table": "liquibase.structure.core.Table#921b187",
+            "unique": true
+          }
+        },
+        {
+          "index": {
+            "columns": [
+              {
+                "column": {
+                  "name": "id"
+                }
+              }
+            ],
+            "name": "IX_pk_enrollments",
+            "snapshotId": "921b227",
+            "table": "liquibase.structure.core.Table#921b226",
+            "unique": true
+          }
+        },
+        {
+          "index": {
+            "columns": [
+              {
+                "column": {
+                  "name": "id"
+                }
+              }
+            ],
+            "name": "IX_pk_lecture_waitlist",
+            "snapshotId": "921b252",
+            "table": "liquibase.structure.core.Table#921b251",
+            "unique": true
+          }
+        },
+        {
+          "index": {
+            "columns": [
+              {
+                "column": {
+                  "name": "id"
+                }
+              }
+            ],
+            "name": "IX_pk_lectures",
+            "snapshotId": "921b200",
+            "table": "liquibase.structure.core.Table#921b199",
+            "unique": true
+          }
+        },
+        {
+          "index": {
+            "columns": [
+              {
+                "column": {
+                  "name": "id"
+                }
+              }
+            ],
+            "name": "IX_pk_professors",
+            "snapshotId": "921b194",
+            "table": "liquibase.structure.core.Table#921b193",
+            "unique": true
+          }
+        },
+        {
+          "index": {
+            "columns": [
+              {
+                "column": {
+                  "name": "id"
+                }
+              }
+            ],
+            "name": "IX_pk_students",
+            "snapshotId": "921b235",
+            "table": "liquibase.structure.core.Table#921b234",
+            "unique": true
+          }
+        },
+        {
+          "index": {
+            "columns": [
+              {
+                "column": {
+                  "name": "semester"
+                }
+              }
+            ],
+            "name": "idx_student_semester",
+            "snapshotId": "921b236",
+            "table": "liquibase.structure.core.Table#921b234",
+            "unique": false
+          }
+        }
+      ],
+      "liquibase.structure.core.PrimaryKey": [
+        {
+          "primaryKey": {
+            "backingIndex": "liquibase.structure.core.Index#921b210",
+            "columns": [
+              "liquibase.structure.core.Column#921b211"
+            ],
+            "name": "pk_audit_log",
+            "snapshotId": "921b219",
+            "table": "liquibase.structure.core.Table#921b209"
+          }
+        },
+        {
+          "primaryKey": {
+            "columns": [
+              "liquibase.structure.core.Column#921b221",
+              "liquibase.structure.core.Column#921b222"
+            ],
+            "name": "pk_course_prerequisites",
+            "snapshotId": "921b225",
+            "table": "liquibase.structure.core.Table#921b220"
+          }
+        },
+        {
+          "primaryKey": {
+            "backingIndex": "liquibase.structure.core.Index#921b188",
+            "columns": [
+              "liquibase.structure.core.Column#921b186"
+            ],
+            "name": "pk_courses",
+            "snapshotId": "921b192",
+            "table": "liquibase.structure.core.Table#921b187"
+          }
+        },
+        {
+          "primaryKey": {
+            "backingIndex": "liquibase.structure.core.Index#921b227",
+            "columns": [
+              "liquibase.structure.core.Column#921b228"
+            ],
+            "name": "pk_enrollments",
+            "snapshotId": "921b242",
+            "table": "liquibase.structure.core.Table#921b226"
+          }
+        },
+        {
+          "primaryKey": {
+            "columns": [
+              "liquibase.structure.core.Column#921b244",
+              "liquibase.structure.core.Column#921b248"
+            ],
+            "name": "pk_lecture_timeslots",
+            "snapshotId": "921b250",
+            "table": "liquibase.structure.core.Table#921b243"
+          }
+        },
+        {
+          "primaryKey": {
+            "backingIndex": "liquibase.structure.core.Index#921b252",
+            "columns": [
+              "liquibase.structure.core.Column#921b253"
+            ],
+            "name": "pk_lecture_waitlist",
+            "snapshotId": "921b259",
+            "table": "liquibase.structure.core.Table#921b251"
+          }
+        },
+        {
+          "primaryKey": {
+            "backingIndex": "liquibase.structure.core.Index#921b200",
+            "columns": [
+              "liquibase.structure.core.Column#921b201"
+            ],
+            "name": "pk_lectures",
+            "snapshotId": "921b208",
+            "table": "liquibase.structure.core.Table#921b199"
+          }
+        },
+        {
+          "primaryKey": {
+            "backingIndex": "liquibase.structure.core.Index#921b194",
+            "columns": [
+              "liquibase.structure.core.Column#921b195"
+            ],
+            "name": "pk_professors",
+            "snapshotId": "921b198",
+            "table": "liquibase.structure.core.Table#921b193"
+          }
+        },
+        {
+          "primaryKey": {
+            "backingIndex": "liquibase.structure.core.Index#921b235",
+            "columns": [
+              "liquibase.structure.core.Column#921b233"
+            ],
+            "name": "pk_students",
+            "snapshotId": "921b240",
+            "table": "liquibase.structure.core.Table#921b234"
+          }
+        }
+      ],
+      "liquibase.structure.core.Schema": [
+        {
+          "schema": {
+            "catalog": "liquibase.structure.core.Catalog#921b179",
+            "default": true,
+            "snapshotId": "921b180"
+          }
+        }
+      ],
+      "liquibase.structure.core.Table": [
+        {
+          "table": {
+            "columns": [
+              "liquibase.structure.core.Column#921b211",
+              "liquibase.structure.core.Column#921b212",
+              "liquibase.structure.core.Column#921b213",
+              "liquibase.structure.core.Column#921b214",
+              "liquibase.structure.core.Column#921b215",
+              "liquibase.structure.core.Column#921b216",
+              "liquibase.structure.core.Column#921b217",
+              "liquibase.structure.core.Column#921b218"
+            ],
+            "indexes": [
+              "liquibase.structure.core.Index#921b210"
+            ],
+            "name": "audit_log",
+            "primaryKey": "liquibase.structure.core.PrimaryKey#921b219",
+            "schema": "liquibase.structure.core.Schema#921b180",
+            "snapshotId": "921b209"
+          }
+        },
+        {
+          "table": {
+            "columns": [
+              "liquibase.structure.core.Column#921b182",
+              "liquibase.structure.core.Column#921b183",
+              "liquibase.structure.core.Column#921b184"
+            ],
+            "name": "course_assessments",
+            "outgoingForeignKeys": [
+              "liquibase.structure.core.ForeignKey#921b185"
+            ],
+            "schema": "liquibase.structure.core.Schema#921b180",
+            "snapshotId": "921b181"
+          }
+        },
+        {
+          "table": {
+            "columns": [
+              "liquibase.structure.core.Column#921b221",
+              "liquibase.structure.core.Column#921b222"
+            ],
+            "name": "course_prerequisites",
+            "outgoingForeignKeys": [
+              "liquibase.structure.core.ForeignKey#921b223",
+              "liquibase.structure.core.ForeignKey#921b224"
+            ],
+            "primaryKey": "liquibase.structure.core.PrimaryKey#921b225",
+            "schema": "liquibase.structure.core.Schema#921b180",
+            "snapshotId": "921b220"
+          }
+        },
+        {
+          "table": {
+            "columns": [
+              "liquibase.structure.core.Column#921b186",
+              "liquibase.structure.core.Column#921b189",
+              "liquibase.structure.core.Column#921b190",
+              "liquibase.structure.core.Column#921b191"
+            ],
+            "indexes": [
+              "liquibase.structure.core.Index#921b188"
+            ],
+            "name": "courses",
+            "primaryKey": "liquibase.structure.core.PrimaryKey#921b192",
+            "schema": "liquibase.structure.core.Schema#921b180",
+            "snapshotId": "921b187"
+          }
+        },
+        {
+          "table": {
+            "columns": [
+              "liquibase.structure.core.Column#921b228",
+              "liquibase.structure.core.Column#921b229",
+              "liquibase.structure.core.Column#921b230",
+              "liquibase.structure.core.Column#921b231"
+            ],
+            "indexes": [
+              "liquibase.structure.core.Index#921b227"
+            ],
+            "name": "enrollments",
+            "outgoingForeignKeys": [
+              "liquibase.structure.core.ForeignKey#921b232",
+              "liquibase.structure.core.ForeignKey#921b241"
+            ],
+            "primaryKey": "liquibase.structure.core.PrimaryKey#921b242",
+            "schema": "liquibase.structure.core.Schema#921b180",
+            "snapshotId": "921b226"
+          }
+        },
+        {
+          "table": {
+            "columns": [
+              "liquibase.structure.core.Column#921b244",
+              "liquibase.structure.core.Column#921b245",
+              "liquibase.structure.core.Column#921b246",
+              "liquibase.structure.core.Column#921b247",
+              "liquibase.structure.core.Column#921b248"
+            ],
+            "name": "lecture_timeslots",
+            "outgoingForeignKeys": [
+              "liquibase.structure.core.ForeignKey#921b249"
+            ],
+            "primaryKey": "liquibase.structure.core.PrimaryKey#921b250",
+            "schema": "liquibase.structure.core.Schema#921b180",
+            "snapshotId": "921b243"
+          }
+        },
+        {
+          "table": {
+            "columns": [
+              "liquibase.structure.core.Column#921b253",
+              "liquibase.structure.core.Column#921b254",
+              "liquibase.structure.core.Column#921b255",
+              "liquibase.structure.core.Column#921b256"
+            ],
+            "indexes": [
+              "liquibase.structure.core.Index#921b252"
+            ],
+            "name": "lecture_waitlist",
+            "outgoingForeignKeys": [
+              "liquibase.structure.core.ForeignKey#921b257",
+              "liquibase.structure.core.ForeignKey#921b258"
+            ],
+            "primaryKey": "liquibase.structure.core.PrimaryKey#921b259",
+            "schema": "liquibase.structure.core.Schema#921b180",
+            "snapshotId": "921b251"
+          }
+        },
+        {
+          "table": {
+            "columns": [
+              "liquibase.structure.core.Column#921b201",
+              "liquibase.structure.core.Column#921b202",
+              "liquibase.structure.core.Column#921b203",
+              "liquibase.structure.core.Column#921b204",
+              "liquibase.structure.core.Column#921b205"
+            ],
+            "indexes": [
+              "liquibase.structure.core.Index#921b200"
+            ],
+            "name": "lectures",
+            "outgoingForeignKeys": [
+              "liquibase.structure.core.ForeignKey#921b206",
+              "liquibase.structure.core.ForeignKey#921b207"
+            ],
+            "primaryKey": "liquibase.structure.core.PrimaryKey#921b208",
+            "schema": "liquibase.structure.core.Schema#921b180",
+            "snapshotId": "921b199"
+          }
+        },
+        {
+          "table": {
+            "columns": [
+              "liquibase.structure.core.Column#921b195",
+              "liquibase.structure.core.Column#921b196",
+              "liquibase.structure.core.Column#921b197"
+            ],
+            "indexes": [
+              "liquibase.structure.core.Index#921b194"
+            ],
+            "name": "professors",
+            "primaryKey": "liquibase.structure.core.PrimaryKey#921b198",
+            "schema": "liquibase.structure.core.Schema#921b180",
+            "snapshotId": "921b193"
+          }
+        },
+        {
+          "table": {
+            "columns": [
+              "liquibase.structure.core.Column#921b233",
+              "liquibase.structure.core.Column#921b238",
+              "liquibase.structure.core.Column#921b239",
+              "liquibase.structure.core.Column#921b237"
+            ],
+            "indexes": [
+              "liquibase.structure.core.Index#921b235",
+              "liquibase.structure.core.Index#921b236"
+            ],
+            "name": "students",
+            "primaryKey": "liquibase.structure.core.PrimaryKey#921b240",
+            "schema": "liquibase.structure.core.Schema#921b180",
+            "snapshotId": "921b234"
+          }
+        }
+      ]
+    },
+    "snapshotControl": {
+      "snapshotControl": {
+        "includedType": [
+          "liquibase.structure.core.Catalog",
+          "liquibase.structure.core.Column",
+          "liquibase.structure.core.ForeignKey",
+          "liquibase.structure.core.Index",
+          "liquibase.structure.core.PrimaryKey",
+          "liquibase.structure.core.Schema",
+          "liquibase.structure.core.Sequence",
+          "liquibase.structure.core.Table",
+          "liquibase.structure.core.UniqueConstraint",
+          "liquibase.structure.core.View"
+        ]
+      }
+    }
+  }
+}
