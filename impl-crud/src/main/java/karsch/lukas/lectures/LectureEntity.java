@@ -53,6 +53,9 @@ public class LectureEntity extends AuditableEntity {
     @OneToMany(mappedBy = "lecture", cascade = CascadeType.ALL, orphanRemoval = true)
     private Set<EnrollmentEntity> enrollments = new HashSet<>();
 
+    @Version
+    private Long version;
+
     @Transient
     public List<StudentEntity> getWaitlistedStudents() {
         return waitlist.stream()

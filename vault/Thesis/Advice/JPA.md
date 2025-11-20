@@ -274,3 +274,5 @@ spring.jpa.properties.hibernate.session_factory.statement_inspector=com.vladmiha
 ```
 ## Related 
 - Migrations with [[Flyway]]
+## Links 
+- Count rows https://www.baeldung.com/spring-data-jpa-row-count

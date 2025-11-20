@@ -92,8 +92,7 @@ public class AuditEntityListener {
                 Field idField = entity.getClass().getDeclaredField("id");
                 idField.setAccessible(true);
                 log.setEntityId((Long) idField.get(entity));
-            } catch (Exception e) {
-                logger.error(e.getMessage(), e);
+            } catch (Exception ignored) {
             }
 
             auditLogRepository.save(log);

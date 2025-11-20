@@ -5,20 +5,20 @@ import com.fasterxml.jackson.databind.JsonSerializer;
 import com.fasterxml.jackson.databind.SerializerProvider;
 
 import java.io.IOException;
-import java.lang.reflect.Field;
+import java.lang.reflect.Method;
 import java.util.concurrent.ConcurrentHashMap;
 
 class DynamicIdSerializer extends JsonSerializer<Object> {
 
-    private final Field idField;
-    private static final ConcurrentHashMap<Class<?>, Field> fieldCache = new ConcurrentHashMap<>();
+    private final Method idGetter;
+    private static final ConcurrentHashMap<Class<?>, Method> methodCache = new ConcurrentHashMap<>();
 
     public DynamicIdSerializer(Class<?> type) {
-        idField = fieldCache.computeIfAbsent(type, k -> {
+        idGetter = methodCache.computeIfAbsent(type, k -> {
             try {
-                return k.getDeclaredField("id");
-            } catch (NoSuchFieldException e) {
-                throw new RuntimeException("Type " + k.getName() + " missing expected 'id' field.", e);
+                return k.getMethod("getId");
+            } catch (NoSuchMethodException e) {
+                throw new RuntimeException("Type " + k.getName() + " missing expected getId() method.", e);
             }
         });
     }
@@ -30,9 +30,7 @@ class DynamicIdSerializer extends JsonSerializer<Object> {
             return;
         }
         try {
-            idField.setAccessible(true);
-            Object idValue = idField.get(value);
-
+            Object idValue = idGetter.invoke(value);
             gen.writeObject(idValue);
         } catch (Exception e) {
             throw new IOException("Failed to dynamically access ID on object of type " + value.getClass().getName(), e);
