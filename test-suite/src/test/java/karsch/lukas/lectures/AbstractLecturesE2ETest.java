@@ -43,7 +43,7 @@ public abstract class AbstractLecturesE2ETest implements BaseE2ETest {
     protected abstract CreateCourseSeedData createCourseSeedData();
 
     @Test
-    @DisplayName("POST /lectures/create should return status code 201")
+    @DisplayName("Creating a lecture from a course should return 201")
     void createLectureFromCourse_shouldReturn201() {
         var seedData = createCourseSeedData();
 
@@ -74,7 +74,7 @@ public abstract class AbstractLecturesE2ETest implements BaseE2ETest {
     protected abstract LectureSeedData createLectureSeedData();
 
     @Test
-    @DisplayName("POST /lectures/{lectureId}/enroll should return 201, GET /lectures should return status code 200, DELETE should be 200")
+    @DisplayName("Enrolling in a lecture, then getting the enrolled lecture, then disenrolling should return 201, 200, 200 respectively")
     void enroll_thenGet_thenDisenroll() {
         var lectureSeedData = createLectureSeedData();
 
@@ -105,7 +105,7 @@ public abstract class AbstractLecturesE2ETest implements BaseE2ETest {
     }
 
     @Test
-    @DisplayName("GET /lectures/{lectureId} should return status code 200")
+    @DisplayName("Getting lecture details for an existing lecture should return 200")
     void getLectureDetails_shouldReturn200() {
         var lectureSeedData = createLectureSeedData();
 
@@ -117,7 +117,7 @@ public abstract class AbstractLecturesE2ETest implements BaseE2ETest {
     }
 
     @Test
-    @DisplayName("GET /lectures/{lectureId} should return status code 404 if lecture does not exist")
+    @DisplayName("Getting lecture details for a non-existent lecture should return 404")
     void getLectureDetails_shouldReturn404_ifLectureDoesNotExist() {
         given()
                 .when()
@@ -127,7 +127,7 @@ public abstract class AbstractLecturesE2ETest implements BaseE2ETest {
     }
 
     @Test
-    @DisplayName("POST /lectures/{lectureId}/dates should return status code 201")
+    @DisplayName("Adding dates to a lecture should return 201")
     void addDatesToLecture_shouldReturn201() {
         var lectureSeedData = createLectureSeedData();
 
@@ -154,7 +154,7 @@ public abstract class AbstractLecturesE2ETest implements BaseE2ETest {
     protected abstract AssignGradeSeedData createAssignGradeSeedData(LectureSeedData lectureSeedData, TimeSlot assessmentTimeSlot);
 
     @Test
-    @DisplayName("POST /lectures/{lectureId} should return status code 201; PATCH /lectures/{lectureId} should return 200")
+    @DisplayName("Assigning a grade to an enrolled student should return 201 and updating it should return 200")
     void assignGrade_shouldReturn201_ifStudentIsEnrolled() {
         // System date is 02.12.2025
         setSystemTime(Clock.fixed(
@@ -227,7 +227,7 @@ public abstract class AbstractLecturesE2ETest implements BaseE2ETest {
     }
 
     @Test
-    @DisplayName("PATCH /lectures/{lectureId} should return status code 404 if no grade exists")
+    @DisplayName("Updating a grade that does not exist should return 404")
     void updateGrade_shouldReturn404_ifNoGradeExists() {
         var lectureSeedData = createLectureSeedData();
 
@@ -245,7 +245,7 @@ public abstract class AbstractLecturesE2ETest implements BaseE2ETest {
     }
 
     @Test
-    @DisplayName("POST /lectures/{lectureId}/assessments should return status code 201")
+    @DisplayName("Adding an assessment for a lecture should return 201 and the assessment should be visible in the lecture details")
     void addAssessmentForLecture_shouldReturn201() {
         // set time to 1.11.2025, 12:00
         setSystemTime(Clock.fixed(
@@ -278,7 +278,7 @@ public abstract class AbstractLecturesE2ETest implements BaseE2ETest {
     }
 
     @Test
-    @DisplayName("POST /lectures/{lectureId}/assessments should return status code 400 if date is in the past")
+    @DisplayName("Adding an assessment with a date in the past should return 400")
     void addAssessmentForLecture_shouldReturn400_ifDateIsInThePast() {
         // set time to 1.11.2025, 12:00
         setSystemTime(Clock.fixed(
@@ -312,7 +312,7 @@ public abstract class AbstractLecturesE2ETest implements BaseE2ETest {
     protected abstract WaitingListSeedData createWaitingListSeedData();
 
     @Test
-    @DisplayName("GET /lectures/{lectureId}/waitingList should return status code 200")
+    @DisplayName("Enrolling a student when a lecture is full should add them to the waiting list and getting the waiting list should return 200")
     void getWaitingListForLecture_shouldReturn200() {
         var lectureSeedData = createLectureSeedData();
         var waitingListSeedData = createWaitingListSeedData();
@@ -352,7 +352,7 @@ public abstract class AbstractLecturesE2ETest implements BaseE2ETest {
     }
 
     @Test
-    @DisplayName("POST /lectures/{lectureId}/lifecycle should return status code 201")
+    @DisplayName("Advancing the lifecycle of a lecture should return 201")
     void advanceLifecycleOfLecture_shouldReturn201() {
         var lectureSeedData = createLectureSeedData();
 
@@ -366,7 +366,7 @@ public abstract class AbstractLecturesE2ETest implements BaseE2ETest {
     }
 
     @Test
-    @DisplayName("POST /lectures/{lectureId}/lifecycle should return status code 400 if lifecycle is invalid")
+    @DisplayName("Advancing the lifecycle of a lecture with an invalid status transition should return 400")
     void advanceLifecycleOfLecture_shouldReturn400_ifLifecycleInvalid() {
         var lectureSeedData = createLectureSeedData();
 
