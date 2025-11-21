@@ -112,8 +112,8 @@ class LecturesService {
     public void disenrollStudent(Long studentId, Long lectureId) {
         var lecture = lecturesRepository.findById(lectureId);
         if (lecture.isEmpty()
-                || lecture.get().getLectureStatus() == LectureStatus.ARCHIVED
                 || lecture.get().getLectureStatus() == LectureStatus.FINISHED
+                || lecture.get().getLectureStatus() == LectureStatus.ARCHIVED
         ) {
             return;
         }

@@ -156,6 +156,19 @@ public class LecturesE2ETest extends AbstractLecturesE2ETest {
         });
     }
 
+    @Override
+    protected SecondProfessorSeedData createSecondProfessorSeedData() {
+        return inTransaction(() -> {
+            var professor = new ProfessorEntity();
+            professor.setFirstName("Funny");
+            professor.setLastName("Fox");
+
+            entityManager.persist(professor);
+
+            return new SecondProfessorSeedData(professor.getId());
+        });
+    }
+
     private <T> T inTransaction(Supplier<T> supplier) {
         var tx = transactionManager.getTransaction(new DefaultTransactionDefinition());
         try {

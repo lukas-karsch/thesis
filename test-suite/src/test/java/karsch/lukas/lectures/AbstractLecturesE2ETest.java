@@ -60,6 +60,24 @@ public abstract class AbstractLecturesE2ETest implements BaseE2ETest {
                 .statusCode(201);
     }
 
+    @Test
+    @DisplayName("Creating a lecture from a non-existent course should return 404")
+    void createLectureFromCourse_shouldReturn404_ifCourseDoesNotExist() {
+        var seedData = createCourseSeedData();
+
+        given()
+                .when()
+                .header(getProfessorAuthHeader(seedData.professorId()))
+                .queryParam("courseId", 999L)
+                .body(new CreateLectureRequest(999L, 5, List.of(
+                        new TimeSlot(LocalDate.of(2025, 11, 1), LocalTime.of(10, 0), LocalTime.of(11, 30))
+                )))
+                .contentType(ContentType.JSON)
+                .post("/lectures/create")
+                .then()
+                .statusCode(404);
+    }
+
     public record LectureSeedData(Long lectureId, Long studentId, Long professorId) {
     }
 
@@ -105,6 +123,94 @@ public abstract class AbstractLecturesE2ETest implements BaseE2ETest {
     }
 
     @Test
+    @DisplayName("Enrolling in a lecture that is not open for enrollment should return 400")
+    void enroll_shouldReturn400_ifLectureNotOpenForEnrollment() {
+        var lectureSeedData = createLectureSeedData();
+
+        // advance lifecycle
+        given()
+                .when()
+                .header(getProfessorAuthHeader(lectureSeedData.professorId()))
+                .queryParam("newLectureStatus", LectureStatus.IN_PROGRESS)
+                .post("/lectures/{lectureId}/lifecycle", lectureSeedData.lectureId())
+                .then()
+                .statusCode(201);
+
+        // enroll
+        given()
+                .when()
+                .header(getStudentAuthHeader(lectureSeedData.studentId()))
+                .post("/lectures/{lectureId}/enroll", lectureSeedData.lectureId())
+                .then()
+                .statusCode(400);
+    }
+
+    @Test
+    @DisplayName("Enrolling in a lecture twice should return 400")
+    void enroll_shouldReturn400_ifAlreadyEnrolled() {
+        var lectureSeedData = createLectureSeedData();
+
+        // enroll
+        given()
+                .when()
+                .header(getStudentAuthHeader(lectureSeedData.studentId()))
+                .post("/lectures/{lectureId}/enroll", lectureSeedData.lectureId())
+                .then()
+                .statusCode(201);
+
+        // enrolling again should error
+        given()
+                .when()
+                .header(getStudentAuthHeader(lectureSeedData.studentId()))
+                .post("/lectures/{lectureId}/enroll", lectureSeedData.lectureId())
+                .then()
+                .statusCode(400);
+    }
+
+    @Test
+    @DisplayName("Disenrolling from a finished or archived lecture should have no effect")
+    void disenroll_shouldHaveNoEffect_ifLectureIsFinished() {
+        var lectureSeedData = createLectureSeedData();
+
+        // enroll
+        given()
+                .when()
+                .header(getStudentAuthHeader(lectureSeedData.studentId()))
+                .post("/lectures/{lectureId}/enroll", lectureSeedData.lectureId())
+                .then()
+                .statusCode(201);
+
+        Runnable disenroll = () -> given()
+                .when()
+                .header(getStudentAuthHeader(lectureSeedData.studentId()))
+                .delete("/lectures/{lectureId}/enroll", lectureSeedData.lectureId())
+                .then()
+                .statusCode(200);
+
+        // advance lifecycle to finished
+        given()
+                .when()
+                .header(getProfessorAuthHeader(lectureSeedData.professorId()))
+                .queryParam("newLectureStatus", LectureStatus.FINISHED)
+                .post("/lectures/{lectureId}/lifecycle", lectureSeedData.lectureId())
+                .then()
+                .statusCode(201);
+
+        // disenroll
+        disenroll.run();
+
+        // check enrollments
+        given()
+                .when()
+                .header(getStudentAuthHeader(lectureSeedData.studentId()))
+                .queryParam("studentId", lectureSeedData.studentId())
+                .get("/lectures")
+                .then()
+                .statusCode(200)
+                .body("data.enrolled", hasSize(1));
+    }
+
+    @Test
     @DisplayName("Getting lecture details for an existing lecture should return 200")
     void getLectureDetails_shouldReturn200() {
         var lectureSeedData = createLectureSeedData();
@@ -143,6 +249,31 @@ public abstract class AbstractLecturesE2ETest implements BaseE2ETest {
                 .post("/lectures/{lectureId}/dates", lectureSeedData.lectureId())
                 .then()
                 .statusCode(201);
+    }
+
+    public record SecondProfessorSeedData(Long professorId) {
+    }
+
+    protected abstract SecondProfessorSeedData createSecondProfessorSeedData();
+
+    @Test
+    @DisplayName("Adding dates to a lecture by a professor that does not own it should return 403")
+    void addDatesToLecture_shouldReturn403_ifNotOwnedByProfessor() {
+        var lectureSeedData = createLectureSeedData();
+        var professor2Id = createSecondProfessorSeedData().professorId();
+
+        var request = new AssignDatesToLectureRequest(
+                Collections.singleton(new TimeSlot(LocalDate.of(2025, 1, 1), LocalTime.of(10, 0), LocalTime.of(12, 0)))
+        );
+
+        given()
+                .body(request)
+                .contentType(ContentType.JSON)
+                .when()
+                .header(getProfessorAuthHeader(professor2Id))
+                .post("/lectures/{lectureId}/dates", lectureSeedData.lectureId())
+                .then()
+                .statusCode(403);
     }
 
     public record AssignGradeSeedData(Long assessmentId) {
@@ -245,6 +376,123 @@ public abstract class AbstractLecturesE2ETest implements BaseE2ETest {
     }
 
     @Test
+    @DisplayName("Assigning a grade by a professor that does not own the lecture should return 403")
+    void assignGrade_shouldReturn403_ifNotOwnedByProfessor() {
+        // System date is 02.12.2025
+        setSystemTime(Clock.fixed(
+                LocalDateTime.of(2025, 12, 2, 10, 0).toInstant(ZoneOffset.UTC),
+                ZoneId.of("UTC")));
+
+        // 01.12.2025 -> it's allowed to assign a grade
+        TimeSlot assessmentTimeSlot = new TimeSlot(
+                LocalDate.of(2025, 12, 1),
+                LocalTime.of(10, 0),
+                LocalTime.of(12, 0)
+        );
+
+        var lectureSeedData = createLectureSeedData();
+        var assignGradeSeedData = createAssignGradeSeedData(lectureSeedData, assessmentTimeSlot);
+        var professor2Id = createSecondProfessorSeedData().professorId();
+
+        var request = new AssignGradeRequest(lectureSeedData.studentId(), assignGradeSeedData.assessmentId(), 90);
+
+        // enroll the student
+        given()
+                .header(getStudentAuthHeader(lectureSeedData.studentId()))
+                .post("/lectures/{lectureId}/enroll", lectureSeedData.lectureId())
+                .then()
+                .statusCode(201);
+
+        given()
+                .body(request)
+                .contentType(ContentType.JSON)
+                .when()
+                .header(getProfessorAuthHeader(professor2Id))
+                .post("/lectures/{lectureId}", lectureSeedData.lectureId())
+                .then()
+                .statusCode(403);
+    }
+
+    @Test
+    @DisplayName("Assigning a grade for a non-existent assessment should return 404")
+    void assignGrade_shouldReturn404_ifAssessmentDoesNotExist() {
+        // System date is 02.12.2025
+        setSystemTime(Clock.fixed(
+                LocalDateTime.of(2025, 12, 2, 10, 0).toInstant(ZoneOffset.UTC),
+                ZoneId.of("UTC")));
+
+        var lectureSeedData = createLectureSeedData();
+
+        var request = new AssignGradeRequest(lectureSeedData.studentId(), 999L, 90);
+
+        // enroll the student
+        given()
+                .header(getStudentAuthHeader(lectureSeedData.studentId()))
+                .post("/lectures/{lectureId}/enroll", lectureSeedData.lectureId())
+                .then()
+                .statusCode(201);
+
+        given()
+                .body(request)
+                .contentType(ContentType.JSON)
+                .when()
+                .header(getProfessorAuthHeader(lectureSeedData.professorId()))
+                .post("/lectures/{lectureId}", lectureSeedData.lectureId())
+                .then()
+                .statusCode(404);
+    }
+
+    @Test
+    @DisplayName("Updating a grade by a professor that does not own the lecture should return 403")
+    void updateGrade_shouldReturn403_ifNotOwnedByProfessor() {
+        // System date is 02.12.2025
+        setSystemTime(Clock.fixed(
+                LocalDateTime.of(2025, 12, 2, 10, 0).toInstant(ZoneOffset.UTC),
+                ZoneId.of("UTC")));
+
+        // 01.12.2025 -> it's allowed to assign a grade
+        TimeSlot assessmentTimeSlot = new TimeSlot(
+                LocalDate.of(2025, 12, 1),
+                LocalTime.of(10, 0),
+                LocalTime.of(12, 0)
+        );
+
+        var lectureSeedData = createLectureSeedData();
+        var assignGradeSeedData = createAssignGradeSeedData(lectureSeedData, assessmentTimeSlot);
+        var professor2Id = createCourseSeedData().professorId();
+
+        var request = new AssignGradeRequest(lectureSeedData.studentId(), assignGradeSeedData.assessmentId(), 90);
+
+        // enroll the student
+        given()
+                .header(getStudentAuthHeader(lectureSeedData.studentId()))
+                .post("/lectures/{lectureId}/enroll", lectureSeedData.lectureId())
+                .then()
+                .statusCode(201);
+
+        // assign grade
+        given()
+                .body(request)
+                .contentType(ContentType.JSON)
+                .when()
+                .header(getProfessorAuthHeader(lectureSeedData.professorId()))
+                .post("/lectures/{lectureId}", lectureSeedData.lectureId())
+                .then()
+                .statusCode(201);
+
+        // update grade with wrong professor
+        var updateRequest = new AssignGradeRequest(lectureSeedData.studentId(), assignGradeSeedData.assessmentId(), 100);
+        given()
+                .body(updateRequest)
+                .contentType(ContentType.JSON)
+                .when()
+                .header(getProfessorAuthHeader(professor2Id))
+                .patch("/lectures/{lectureId}", lectureSeedData.lectureId())
+                .then()
+                .statusCode(403);
+    }
+
+    @Test
     @DisplayName("Adding an assessment for a lecture should return 201 and the assessment should be visible in the lecture details")
     void addAssessmentForLecture_shouldReturn201() {
         // set time to 1.11.2025, 12:00
@@ -303,6 +551,33 @@ public abstract class AbstractLecturesE2ETest implements BaseE2ETest {
                 .statusCode(400);
     }
 
+    @Test
+    @DisplayName("Adding an assessment to a lecture by a professor that does not own it should return 403")
+    void addAssessmentForLecture_shouldReturn403_ifNotOwnedByProfessor() {
+        // set time to 1.11.2025, 12:00
+        setSystemTime(Clock.fixed(
+                LocalDateTime.of(2025, 11, 1, 12, 0).toInstant(ZoneOffset.UTC),
+                ZoneId.of("UTC")
+        ));
+
+        var lectureSeedData = createLectureSeedData();
+        var professor2Id = createCourseSeedData().professorId();
+
+        var request = new CreateLectureAssessmentRequest(
+                // assessment date is in the future
+                AssessmentType.EXAM, new TimeSlot(LocalDate.of(2025, 12, 1), LocalTime.of(10, 0), LocalTime.of(12, 0)), 1f
+        );
+
+        given()
+                .body(request)
+                .contentType(ContentType.JSON)
+                .when()
+                .header(getProfessorAuthHeader(professor2Id))
+                .post("/lectures/{lectureId}/assessments", lectureSeedData.lectureId())
+                .then()
+                .statusCode(403);
+    }
+
     public record WaitingListSeedData(Long student2Id) {
     }
 
@@ -352,6 +627,16 @@ public abstract class AbstractLecturesE2ETest implements BaseE2ETest {
     }
 
     @Test
+    @DisplayName("Getting the waitlist for a non-existent lecture should return 404")
+    void getWaitlistForLecture_shouldReturn404_ifLectureDoesNotExist() {
+        given()
+                .when()
+                .get("/lectures/{lectureId}/waitingList", 999L)
+                .then()
+                .statusCode(404);
+    }
+
+    @Test
     @DisplayName("Advancing the lifecycle of a lecture should return 201")
     void advanceLifecycleOfLecture_shouldReturn201() {
         var lectureSeedData = createLectureSeedData();
@@ -378,5 +663,20 @@ public abstract class AbstractLecturesE2ETest implements BaseE2ETest {
                 .post("/lectures/{lectureId}/lifecycle", lectureSeedData.lectureId())
                 .then()
                 .statusCode(400);
+    }
+
+    @Test
+    @DisplayName("Advancing the lifecycle of a lecture by a professor that does not own it should return 403")
+    void advanceLifecycleOfLecture_shouldReturn403_ifNotOwnedByProfessor() {
+        var lectureSeedData = createLectureSeedData();
+        var professor2Id = createCourseSeedData().professorId();
+
+        given()
+                .when()
+                .header(getProfessorAuthHeader(professor2Id))
+                .queryParam("newLectureStatus", LectureStatus.IN_PROGRESS)
+                .post("/lectures/{lectureId}/lifecycle", lectureSeedData.lectureId())
+                .then()
+                .statusCode(403);
     }
 }
