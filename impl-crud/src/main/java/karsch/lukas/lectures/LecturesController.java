@@ -103,7 +103,7 @@ public class LecturesController implements ILecturesController {
         lecturesService.updateGrade(lectureId, assignGradeRequest, requestContext.getUserId());
 
         return new ResponseEntity<>(
-                new ApiResponse<>(HttpStatus.CREATED, null), HttpStatus.CREATED
+                new ApiResponse<>(HttpStatus.OK, null), HttpStatus.OK
         );
     }
 

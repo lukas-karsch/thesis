@@ -209,14 +209,19 @@ class LecturesService {
         }
 
         final TimeSlot timeSlot = lectureAssessmentDTO.timeSlot();
+
         var assessment = new LectureAssessmentEntity();
         assessment.setLecture(lecture);
         assessment.setWeight(lectureAssessmentDTO.weight());
-        assessment.setTimeSlot(new TimeSlotValueObject(
+        var timeSlotValueObject = new TimeSlotValueObject(
                 timeSlot.date(),
                 timeSlot.startTime(),
-                timeSlot.endTime())
+                timeSlot.endTime()
         );
+        if (timeSlotService.hasEnded(timeSlotValueObject)) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Date for this assessment is in the past.");
+        }
+        assessment.setTimeSlot(timeSlotValueObject);
         assessment.setAssessmentType(lectureAssessmentDTO.assessmentType());
 
         lectureAssessmentRepository.save(assessment);
@@ -237,8 +242,16 @@ class LecturesService {
                         String.format("Assessment with ID %d not found.", assignGradeRequest.assessmentId())
                 ));
 
+        var studentIsEnrolledToLecture = enrollmentRepository.existsByStudentIdAndLectureId(assignGradeRequest.studentId(), lectureId);
+        if (!studentIsEnrolledToLecture) {
+            throw new ResponseStatusException(
+                    HttpStatus.BAD_REQUEST,
+                    String.format("Student %d is not enrolled to lecture %d", assignGradeRequest.studentId(), lectureId)
+            );
+        }
+
         if (!timeSlotService.hasEnded(assessment.getTimeSlot())) {
-            throw new ResponseStatusException(HttpStatus.CONFLICT, "Can not assign grades for a assessment that has not ended");
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Can not assign grades for a assessment that has not ended");
         }
 
         var grade = new AssessmentGradeEntity();

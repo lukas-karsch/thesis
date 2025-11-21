@@ -2,6 +2,7 @@ package karsch.lukas.e2e.courses;
 
 import karsch.lukas.PostgresTestcontainerConfiguration;
 import karsch.lukas.courses.AbstractCoursesE2ETest;
+import karsch.lukas.time.DateTimeProvider;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -12,6 +13,7 @@ import javax.sql.DataSource;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.time.Clock;
 
 @SpringBootTest(
         webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT
@@ -26,9 +28,18 @@ public class CoursesE2ETest extends AbstractCoursesE2ETest {
     @Autowired
     private DataSource dataSource;
 
+    @Autowired
+    private DateTimeProvider dateTimeProvider;
+
     @Override
     public int getPort() {
         return port;
+    }
+
+
+    @Override
+    public void setSystemTime(Clock clock) {
+        dateTimeProvider.setClock(clock);
     }
 
     @Override

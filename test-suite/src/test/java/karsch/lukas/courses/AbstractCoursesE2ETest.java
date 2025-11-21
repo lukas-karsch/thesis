@@ -2,7 +2,6 @@ package karsch.lukas.courses;
 
 import io.restassured.RestAssured;
 import io.restassured.http.ContentType;
-import io.restassured.http.Header;
 import karsch.lukas.BaseE2ETest;
 import karsch.lukas.course.CourseAssessmentDTO;
 import karsch.lukas.course.CreateCourseRequest;
@@ -16,6 +15,8 @@ import java.util.Collections;
 import java.util.Set;
 
 import static io.restassured.RestAssured.given;
+import static karsch.lukas.helper.AuthHelper.getProfessorAuthHeader;
+import static karsch.lukas.helper.AuthHelper.getStudentAuthHeader;
 import static org.hamcrest.Matchers.containsString;
 import static org.hamcrest.Matchers.equalTo;
 
@@ -56,7 +57,7 @@ public abstract class AbstractCoursesE2ETest implements BaseE2ETest {
 
         given()
                 .body(request)
-                .header(new Header("customAuth", "student_1"))
+                .header(getStudentAuthHeader(1L))
                 .contentType(ContentType.JSON)
                 .when()
                 .post("/courses")
@@ -80,7 +81,7 @@ public abstract class AbstractCoursesE2ETest implements BaseE2ETest {
 
         given()
                 .body(request)
-                .header(new Header("customAuth", "professor_1"))
+                .header(getProfessorAuthHeader(1L))
                 .contentType(ContentType.JSON)
                 .when()
                 .post("/courses")
@@ -111,7 +112,7 @@ public abstract class AbstractCoursesE2ETest implements BaseE2ETest {
 
         given()
                 .body(request)
-                .header(new Header("customAuth", "professor_1"))
+                .header(getProfessorAuthHeader(1L))
                 .contentType(ContentType.JSON)
                 .when()
                 .post("/courses")
@@ -146,7 +147,7 @@ public abstract class AbstractCoursesE2ETest implements BaseE2ETest {
 
         given()
                 .body(baseRequest)
-                .header(new Header("customAuth", "professor_1"))
+                .header(getProfessorAuthHeader(1L))
                 .contentType(ContentType.JSON)
                 .when()
                 .post("/courses")
@@ -156,7 +157,7 @@ public abstract class AbstractCoursesE2ETest implements BaseE2ETest {
 
         given()
                 .body(advancedRequest)
-                .header(new Header("customAuth", "professor_1"))
+                .header(getProfessorAuthHeader(1L))
                 .contentType(ContentType.JSON)
                 .when()
                 .post("/courses")
