@@ -1,0 +1,13 @@
+<component name="ProjectRunConfigurationManager">
+    <configuration default="false" name="impl-crud test application" type="SpringBootApplicationConfigurationType"
+                   factoryName="Spring Boot">
+        <option name="ACTIVE_PROFILES" value="dev"/>
+        <option name="ALTERNATIVE_JRE_PATH" value="25"/>
+        <option name="ALTERNATIVE_JRE_PATH_ENABLED" value="true"/>
+        <module name="impl-crud"/>
+        <option name="SPRING_BOOT_MAIN_CLASS" value="karsch.lukas.TestCrudApplication"/>
+        <method v="2">
+            <option name="Make" enabled="true"/>
+        </method>
+    </configuration>
+</component>

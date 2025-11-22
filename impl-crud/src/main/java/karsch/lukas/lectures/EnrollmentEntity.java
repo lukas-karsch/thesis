@@ -5,7 +5,6 @@ import karsch.lukas.audit.AuditableEntity;
 import karsch.lukas.users.StudentEntity;
 import lombok.Getter;
 import lombok.Setter;
-import lombok.ToString;
 import org.springframework.data.annotation.CreatedDate;
 
 import java.time.LocalDateTime;
@@ -14,21 +13,30 @@ import java.time.LocalDateTime;
 @Table(name = "enrollments")
 @Getter
 @Setter
-@ToString
 public class EnrollmentEntity extends AuditableEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "student_id")
     private StudentEntity student;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "lecture_id")
     private LectureEntity lecture;
 
     @CreatedDate
     private LocalDateTime enrollmentDate;
+
+    @Override
+    public String toString() {
+        return "EnrollmentEntity{" +
+                "id=" + id +
+                ", student=" + student.getId() +
+                ", lecture=" + lecture.getId() +
+                ", enrollmentDate=" + enrollmentDate +
+                '}';
+    }
 }

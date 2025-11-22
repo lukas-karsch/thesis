@@ -14,6 +14,7 @@ import org.junit.jupiter.api.Test;
 import java.time.*;
 import java.util.Collections;
 import java.util.List;
+import java.util.function.BiConsumer;
 import java.util.function.Supplier;
 
 import static io.restassured.RestAssured.given;
@@ -86,7 +87,7 @@ public abstract class AbstractLecturesE2ETest implements BaseE2ETest {
      *     <li>Must create a professor.</li>
      *     <li>The professor must create a lecture that is open for enrollment.</li>
      *     <li>The lecture must have space for 1 student</li>
-     *     <li>Must create a student that can enroll to the lecture.</li>
+     *     <li>Must create a student in semester 1 that can enroll to the lecture.</li>
      * </ul>
      */
     protected abstract LectureSeedData createLectureSeedData();
@@ -120,6 +121,14 @@ public abstract class AbstractLecturesE2ETest implements BaseE2ETest {
                 .delete("/lectures/{lectureId}/enroll", lectureSeedData.lectureId())
                 .then()
                 .statusCode(200);
+
+        given()
+                .when()
+                .queryParam("studentId", lectureSeedData.studentId())
+                .get("/lectures")
+                .then()
+                .statusCode(200)
+                .body("data.enrolled", hasSize(0));
     }
 
     @Test
@@ -606,19 +615,11 @@ public abstract class AbstractLecturesE2ETest implements BaseE2ETest {
                 .statusCode(403);
     }
 
-    public record WaitingListSeedData(Long student2Id) {
-    }
-
-    /**
-     * Must create a second student.
-     */
-    protected abstract WaitingListSeedData createWaitingListSeedData();
-
     @Test
     @DisplayName("Enrolling a student when a lecture is full should add them to the waiting list and getting the waiting list should return 200")
-    void getWaitingListForLecture_shouldReturn200() {
+    void shouldWaitlistStudent_ifLectureIsFull_getWaitingListForLecture_shouldReturn200() {
         var lectureSeedData = createLectureSeedData();
-        var waitingListSeedData = createWaitingListSeedData();
+        long anotherStudentId = createStudent(1);
 
         // enroll the first student
         given()
@@ -632,7 +633,7 @@ public abstract class AbstractLecturesE2ETest implements BaseE2ETest {
         // try to enroll the second student (they should be waitlisted)
         given()
                 .when()
-                .header(getStudentAuthHeader(waitingListSeedData.student2Id()))
+                .header(getStudentAuthHeader(anotherStudentId))
                 .post("/lectures/{lectureId}/enroll", lectureSeedData.lectureId())
                 .then()
                 .statusCode(201)
@@ -647,7 +648,7 @@ public abstract class AbstractLecturesE2ETest implements BaseE2ETest {
 
         given()
                 .when()
-                .queryParam("studentId", waitingListSeedData.student2Id())
+                .queryParam("studentId", anotherStudentId)
                 .get("/lectures")
                 .then()
                 .statusCode(200)
@@ -662,6 +663,66 @@ public abstract class AbstractLecturesE2ETest implements BaseE2ETest {
                 .get("/lectures/{lectureId}/waitingList", 999L)
                 .then()
                 .statusCode(404);
+    }
+
+    /**
+     * Must create a student that is in the specified semester
+     *
+     * @return the created student's ID
+     */
+    protected abstract long createStudent(int semester);
+
+    @Test
+    @DisplayName("When a student disenrolls, the next eligible student from the waitlist should be enrolled to the lecture")
+    void eligibleStudentIsEnrolledToLecture_whenSomeoneDisenrolls() {
+        var lectureSeedData = createLectureSeedData();
+        long lowerSemesterStudentId = createStudent(1);
+        long higherSemesterStudentId = createStudent(5);
+
+        final BiConsumer<Long, String> doEnrollment = (studentId, expectedEnrollmentStatus) -> given()
+                .when()
+                .header(getStudentAuthHeader(studentId))
+                .post("/lectures/{lectureId}/enroll", lectureSeedData.lectureId())
+                .then()
+                .statusCode(201)
+                .body("data.enrollmentStatus", equalToIgnoringCase(expectedEnrollmentStatus));
+
+        // enroll the first student
+        doEnrollment.accept(lectureSeedData.studentId(), "ENROLLED");
+
+        // try to enroll the lower semester student (they should be waitlisted)
+        doEnrollment.accept(lowerSemesterStudentId, "WAITLISTED");
+
+        // try to enroll the higher semester student (they should be waitlisted)
+        doEnrollment.accept(higherSemesterStudentId, "WAITLISTED");
+
+        // student disenrolls
+        given()
+                .when()
+                .header(getStudentAuthHeader(lectureSeedData.studentId()))
+                .delete("/lectures/{lectureId}/enroll", lectureSeedData.lectureId())
+                .then()
+                .statusCode(200);
+
+        // lower semester student is still waitlisted
+        given()
+                .when()
+                .queryParam("studentId", lowerSemesterStudentId)
+                .get("/lectures")
+                .then()
+                .statusCode(200)
+                .body("data.waitlisted", hasSize(1))
+                .body("data.enrolled", hasSize(0));
+
+        // higher semester student was enrolled
+        given()
+                .when()
+                .queryParam("studentId", higherSemesterStudentId)
+                .get("/lectures")
+                .then()
+                .statusCode(200)
+                .body("data.waitlisted", hasSize(0))
+                .body("data.enrolled", hasSize(1));
     }
 
     @Test

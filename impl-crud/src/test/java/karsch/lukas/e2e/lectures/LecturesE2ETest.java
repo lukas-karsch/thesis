@@ -130,6 +130,7 @@ public class LecturesE2ETest extends AbstractLecturesE2ETest {
             var student = new StudentEntity();
             student.setFirstName("Hannah");
             student.setLastName("Holzheu");
+            student.setSemester(1);
 
             entityManager.persist(student);
 
@@ -149,19 +150,6 @@ public class LecturesE2ETest extends AbstractLecturesE2ETest {
             entityManager.persist(assessment);
 
             return new AssignGradeSeedData(assessment.getId());
-        });
-    }
-
-    @Override
-    protected WaitingListSeedData createWaitingListSeedData() {
-        return inTransaction(() -> {
-            var student2 = new StudentEntity();
-            student2.setFirstName("Lukas");
-            student2.setLastName("Karsch");
-
-            entityManager.persist(student2);
-
-            return new WaitingListSeedData(student2.getId());
         });
     }
 
@@ -220,6 +208,23 @@ public class LecturesE2ETest extends AbstractLecturesE2ETest {
         });
     }
 
+    @Override
+    protected long createStudent(int semester) {
+        return inTransaction(() -> {
+            var student = new StudentEntity();
+            student.setFirstName("Semester");
+            student.setLastName("Student");
+            student.setSemester(semester);
+
+            entityManager.persist(student);
+
+            return student.getId();
+        });
+    }
+
+    /**
+     * Run the given piece of code inside a database transaction and return the result
+     */
     private <T> T inTransaction(Supplier<T> supplier) {
         var tx = transactionManager.getTransaction(new DefaultTransactionDefinition());
         try {

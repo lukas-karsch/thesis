@@ -9,9 +9,9 @@ import java.util.List;
 public interface LectureWaitlistEntryRepository extends JpaRepository<LectureWaitlistEntryEntity, Long> {
     List<LectureWaitlistEntryEntity> findAllByStudentId(Long studentId);
 
-    void deleteByStudentIdAndLectureId(Long studentId, Long lectureId);
-
     List<LectureWaitlistEntryEntity> findByLecture(LectureEntity lecture);
 
     List<LectureWaitlistEntryEntity> findByLectureOrderByCreatedDateAsc(LectureEntity lecture);
+
+    void deleteByLecture(LectureEntity lecture);
 }

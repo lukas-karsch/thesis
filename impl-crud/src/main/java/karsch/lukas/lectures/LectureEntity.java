@@ -24,7 +24,7 @@ import java.util.stream.Collectors;
 @Table(name = "lectures")
 @Getter
 @Setter
-@ToString
+@ToString(exclude = {"waitlist", "enrollments", "assessments"})
 @EqualsAndHashCode(onlyExplicitlyIncluded = true, callSuper = false)
 public class LectureEntity extends AuditableEntity {
     @Id

@@ -18,7 +18,7 @@ public interface EnrollmentRepository extends JpaRepository<EnrollmentEntity, Lo
 
     int countByLecture(LectureEntity lecture);
 
-    void deleteByStudentIdAndLectureId(Long studentId, Long lectureId);
-
     boolean existsByStudentIdAndLectureId(Long studentId, Long lectureId);
+
+    List<EnrollmentEntity> findAllByLecture(LectureEntity lecture);
 }

@@ -12,5 +12,8 @@ public interface LecturesRepository extends JpaRepository<LectureEntity, Long> {
     Optional<LectureEntity> findDetailsById(Long lectureId);
 
     @EntityGraph(attributePaths = {"timeSlots", "professor"})
-    Optional<LectureEntity> findWithProfessorAndTimeSlotsById(Long id);
+    Optional<LectureEntity> findWithProfessorAndTimeSlotsById(Long lectureId);
+
+    @EntityGraph(attributePaths = {"enrollments", "waitlist"})
+    Optional<LectureEntity> findWithEnrollmentsAndWaitlistById(Long lectureId);
 }

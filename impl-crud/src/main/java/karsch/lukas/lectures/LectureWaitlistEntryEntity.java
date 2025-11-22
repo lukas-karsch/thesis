@@ -29,4 +29,14 @@ public class LectureWaitlistEntryEntity extends AuditableEntity {
 
     @CreatedDate
     private LocalDateTime createdDate;
+
+    @Override
+    public String toString() {
+        return "LectureWaitlistEntryEntity{" +
+                "id=" + id +
+                ", lecture=" + lecture.getId() +
+                ", student=" + student.getId() +
+                ", createdDate=" + createdDate +
+                '}';
+    }
 }

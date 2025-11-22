@@ -49,6 +49,7 @@ public class LecturesController implements ILecturesController {
         }
 
         lecturesService.disenrollStudent(requestContext.getUserId(), lectureId);
+        lecturesService.enrollNextEligibleStudentFromWaitlist(lectureId);
 
         return new ResponseEntity<>(
                 new ApiResponse<>(HttpStatus.OK, null), HttpStatus.OK

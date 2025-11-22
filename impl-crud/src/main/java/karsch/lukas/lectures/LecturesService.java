@@ -16,6 +16,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Objects;
 import java.util.stream.Collectors;
@@ -31,6 +32,7 @@ class LecturesService {
     private final CoursesRepository courseEntityRepository;
     private final ProfessorRepository professorRepository;
     private final LectureAssessmentRepository lectureAssessmentRepository;
+    private final AssessmentGradeRepository assessmentGradeRepository;
 
     private final LectureDtoMapper lectureDtoMapper;
     private final LectureDetailDtoMapper lectureDetailDtoMapper;
@@ -39,7 +41,6 @@ class LecturesService {
 
     private final EntityManager entityManager;
     private final TimeSlotService timeSlotService;
-    private final AssessmentGradeRepository assessmentGradeRepository;
 
     public GetLecturesForStudentResponse getLecturesForStudent(Long studentId) {
         var enrolledLectures = enrollmentRepository.findAllByStudentId(studentId)
@@ -99,6 +100,8 @@ class LecturesService {
 
         int enrolledStudents = enrollmentRepository.countByLecture(lecture);
         if (enrolledStudents >= lecture.getMaximumStudents()) {
+            var allEnrollments = enrollmentRepository.findAllByLecture(lecture);
+            log.info("all enrollments for lecture {}: {}", lectureId, allEnrollments);
             log.info("Lecture {} is full, student {} will be waitlisted", lectureId, studentId);
             var waitlistEntry = new LectureWaitlistEntryEntity();
             waitlistEntry.setLecture(lecture);
@@ -122,9 +125,7 @@ class LecturesService {
      */
     @Transactional
     public void disenrollStudent(Long studentId, Long lectureId) {
-        // TODO check the waitlist and enroll the next eligible person
-
-        var lecture = lecturesRepository.findById(lectureId);
+        var lecture = lecturesRepository.findWithEnrollmentsAndWaitlistById(lectureId);
         if (lecture.isEmpty()
                 || lecture.get().getLectureStatus() == LectureStatus.FINISHED
                 || lecture.get().getLectureStatus() == LectureStatus.ARCHIVED
@@ -132,8 +133,41 @@ class LecturesService {
             return;
         }
 
-        enrollmentRepository.deleteByStudentIdAndLectureId(studentId, lectureId);
-        lectureWaitlistEntryRepository.deleteByStudentIdAndLectureId(studentId, lectureId);
+        log.info("Disenrolling student {} from lecture {}", studentId, lectureId);
+
+        lecture.get().getEnrollments().removeIf(enrollment -> enrollment.getStudent().getId().equals(studentId));
+        lecture.get().getWaitlist().removeIf(waitlistEntry -> waitlistEntry.getStudent().getId().equals(studentId));
+    }
+
+    /**
+     * Enrolls the next eligible student from the waitlist to the specified lecture
+     */
+    @Transactional
+    public void enrollNextEligibleStudentFromWaitlist(long lectureId) {
+        var lecture = lecturesRepository.findWithEnrollmentsAndWaitlistById(lectureId).orElse(null);
+
+        if (lecture == null) {
+            return;
+        }
+
+        var sortedWaitlist = lecture
+                .getWaitlist()
+                .stream()
+                .sorted(new LectureWaitlistEntryComparator())
+                .collect(Collectors.toCollection(ArrayList::new));
+
+        if (sortedWaitlist.isEmpty()) {
+            log.info("Waitlist for lecture {} is empty, can not enroll another student.", lectureId);
+            return;
+        }
+
+        var eligibleWaitlistEntry = sortedWaitlist.getLast();
+        log.info("Try to enroll student {} to lecture {}", eligibleWaitlistEntry.getStudent().getId(), lectureId);
+
+        enrollStudent(eligibleWaitlistEntry.getStudent().getId(), lectureId);
+
+        lecture.getWaitlist().remove(eligibleWaitlistEntry);
+        lecturesRepository.save(lecture);
     }
 
     @Transactional
@@ -176,6 +210,7 @@ class LecturesService {
         );
     }
 
+    @Transactional
     public void advanceLifecycleOfLecture(Long lectureId, LectureStatus newLectureStatus, Long professorId) {
         var lecture = lecturesRepository.findById(lectureId)
                 .orElseThrow(() -> new LectureNotFoundException(lectureId));
@@ -188,6 +223,12 @@ class LecturesService {
         }
 
         lecture.setLectureStatus(newLectureStatus);
+
+        if (newLectureStatus.ordinal() >= LectureStatus.IN_PROGRESS.ordinal()) {
+            // delete waitlist entries when the lecture is set to IN_PROGRESS
+            // no further enrollments are possible!
+            lectureWaitlistEntryRepository.deleteByLecture(lecture);
+        }
 
         lecturesRepository.save(lecture);
     }
