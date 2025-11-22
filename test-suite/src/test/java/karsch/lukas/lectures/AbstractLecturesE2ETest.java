@@ -167,6 +167,34 @@ public abstract class AbstractLecturesE2ETest implements BaseE2ETest {
                 .statusCode(400);
     }
 
+    public record OverlappingLecturesSeedData(long studentId, long lecture1Id, long lecture2Id) {
+    }
+
+    /**
+     * Must create a student.
+     * Must create two lectures with overlapping timeslots
+     */
+    protected abstract OverlappingLecturesSeedData createOverlappingLecturesSeedData();
+
+    @Test
+    @DisplayName("Enrolling to several lectures with overlapping time slots is not allowed")
+    void enroll_shouldReturn400_ifTimeslotsOverlap() {
+        var seedData = createOverlappingLecturesSeedData();
+
+        given()
+                .when()
+                .header(getStudentAuthHeader(seedData.studentId()))
+                .post("/lectures/{lectureId}/enroll", seedData.lecture1Id())
+                .then()
+                .statusCode(201);
+
+        given()
+                .header(getStudentAuthHeader(seedData.studentId()))
+                .post("/lectures/{lectureId}/enroll", seedData.lecture2Id())
+                .then()
+                .statusCode(409);
+    }
+
     @Test
     @DisplayName("Disenrolling from a finished or archived lecture should have no effect")
     void disenroll_shouldHaveNoEffect_ifLectureIsFinished() {

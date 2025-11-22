@@ -61,9 +61,10 @@ class LecturesService {
      * 1. Get lecture (throw if not exist) <br>
      * 2. Check if lecture is open for enrollment (else throw) <br>
      * 3. Check if student is enrolled (throw if they are)<br>
-     * 4. Check if lecture is full<br>
-     * 4.1 Full      -> waitlist the student <br>
-     * 4.2 Not Full  -> enroll the student
+     * 4. Check if student is enrolled to a lecture with overlapping timeslots (and throw) <br>
+     * 5. Check if lecture is full<br>
+     * 5.1 Full      -> waitlist the student <br>
+     * 5.2 Not Full  -> enroll the student
      */
     @Transactional
     public EnrollmentStatus enrollStudent(Long studentId, Long lectureId) {
@@ -81,6 +82,17 @@ class LecturesService {
         var existingEnrollment = enrollmentRepository.findByStudentIdAndLectureId(studentId, lectureId);
         if (existingEnrollment.isPresent()) {
             throw new AlreadyEnrolledException(lectureId);
+        }
+
+        var studentEnrollments = enrollmentRepository.findAllWithTimeSlotsByStudentId(studentId);
+        var conflict = studentEnrollments.stream()
+                .filter(e -> timeSlotService.areConflictingTimeSlots(
+                        e.getLecture().getTimeSlots(), lecture.getTimeSlots()
+                ))
+                .findFirst();
+
+        if (conflict.isPresent()) {
+            throw new ResponseStatusException(HttpStatus.CONFLICT, "This lecture has conflicting timeslots with another lecture.");
         }
 
         final StudentEntity studentReference = entityManager.getReference(StudentEntity.class, studentId);
@@ -110,6 +122,8 @@ class LecturesService {
      */
     @Transactional
     public void disenrollStudent(Long studentId, Long lectureId) {
+        // TODO check the waitlist and enroll the next eligible person
+
         var lecture = lecturesRepository.findById(lectureId);
         if (lecture.isEmpty()
                 || lecture.get().getLectureStatus() == LectureStatus.FINISHED

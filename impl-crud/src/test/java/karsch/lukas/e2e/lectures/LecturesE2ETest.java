@@ -1,5 +1,6 @@
 package karsch.lukas.e2e.lectures;
 
+import jakarta.annotation.Nullable;
 import jakarta.persistence.EntityManager;
 import karsch.lukas.PostgresTestcontainerConfiguration;
 import karsch.lukas.courses.CourseEntity;
@@ -26,6 +27,8 @@ import java.sql.Connection;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.time.Clock;
+import java.time.LocalDate;
+import java.time.LocalTime;
 import java.util.function.Supplier;
 
 @SpringBootTest(
@@ -77,13 +80,19 @@ public class LecturesE2ETest extends AbstractLecturesE2ETest {
         dateTimeProvider.setClock(clock);
     }
 
+    private CourseEntity createCourse(String name, @Nullable String description) {
+        var course = new CourseEntity();
+        course.setName(name);
+        course.setDescription(description);
+        course.setCredits(4);
+
+        return course;
+    }
+
     @Override
     protected CreateCourseSeedData createCourseSeedData() {
         return inTransaction(() -> {
-            var course = new CourseEntity();
-            course.setName("Mathematics");
-            course.setDescription("Mathematics for beginners");
-            course.setCredits(4);
+            var course = createCourse("Mathematics", "Mathematics for beginners");
 
             var professor = new ProfessorEntity();
             professor.setFirstName("Mr.");
@@ -166,6 +175,48 @@ public class LecturesE2ETest extends AbstractLecturesE2ETest {
             entityManager.persist(professor);
 
             return new SecondProfessorSeedData(professor.getId());
+        });
+    }
+
+    @Override
+    protected OverlappingLecturesSeedData createOverlappingLecturesSeedData() {
+        return inTransaction(() -> {
+            var courseSeedData = createCourseSeedData();
+            var professor = entityManager.getReference(ProfessorEntity.class, courseSeedData.professorId());
+
+            var lecture1 = new LectureEntity();
+            lecture1.setCourse(entityManager.getReference(CourseEntity.class, courseSeedData.courseId()));
+            lecture1.setMaximumStudents(1);
+            lecture1.setProfessor(professor);
+            lecture1.getTimeSlots().add(new TimeSlotValueObject(
+                    LocalDate.of(2025, 11, 1),
+                    LocalTime.of(10, 0),
+                    LocalTime.of(12, 0)
+            ));
+            lecture1.setLectureStatus(LectureStatus.OPEN_FOR_ENROLLMENT);
+
+            var course2 = createCourse("Computer Science", null);
+            var lecture2 = new LectureEntity();
+            lecture2.setCourse(course2);
+            lecture2.setMaximumStudents(1);
+            lecture2.setProfessor(professor);
+            lecture2.getTimeSlots().add(new TimeSlotValueObject(
+                    LocalDate.of(2025, 11, 1),
+                    LocalTime.of(10, 0),
+                    LocalTime.of(12, 0)
+            ));
+            lecture2.setLectureStatus(LectureStatus.OPEN_FOR_ENROLLMENT);
+
+            var student = new StudentEntity();
+            student.setFirstName("Hannah");
+            student.setLastName("Holzheu");
+
+            entityManager.persist(course2);
+            entityManager.persist(lecture1);
+            entityManager.persist(lecture2);
+            entityManager.persist(student);
+
+            return new OverlappingLecturesSeedData(student.getId(), lecture1.getId(), lecture2.getId());
         });
     }
 
