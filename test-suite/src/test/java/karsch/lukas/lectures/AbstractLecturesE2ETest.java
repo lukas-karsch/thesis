@@ -740,6 +740,49 @@ public abstract class AbstractLecturesE2ETest implements BaseE2ETest {
     }
 
     @Test
+    @DisplayName("Advancing the lifecycle of a lecture to IN_PROGRESS or greater should delete all waitlist entries")
+    void advanceLifecycleOfLecture_beyondInProgress_shouldClearWaitlist() {
+        var lectureSeedData = createLectureSeedData();
+        var student2 = createStudent(1);
+
+        // enroll first student
+        given()
+                .when()
+                .header(getStudentAuthHeader(lectureSeedData.studentId()))
+                .post("/lectures/{lectureId}/enroll", lectureSeedData.lectureId())
+                .then()
+                .statusCode(201)
+                .body("data.enrollmentStatus", equalToIgnoringCase("ENROLLED"));
+
+        // second student is waitlisted
+        given()
+                .when()
+                .header(getStudentAuthHeader(student2))
+                .post("/lectures/{lectureId}/enroll", lectureSeedData.lectureId())
+                .then()
+                .statusCode(201)
+                .body("data.enrollmentStatus", equalToIgnoringCase("WAITLISTED"));
+
+        // set lecture to IN_PROGRES
+        given()
+                .when()
+                .header(getProfessorAuthHeader(lectureSeedData.professorId()))
+                .queryParam("newLectureStatus", LectureStatus.IN_PROGRESS)
+                .post("/lectures/{lectureId}/lifecycle", lectureSeedData.lectureId())
+                .then()
+                .statusCode(201);
+
+        // student is no longer on the waitlist
+        given()
+                .when()
+                .queryParam("studentId", student2)
+                .get("/lectures")
+                .then()
+                .statusCode(200)
+                .body("data.waitlisted", hasSize(0));
+    }
+
+    @Test
     @DisplayName("Advancing the lifecycle of a lecture with an invalid status transition should return 400")
     void advanceLifecycleOfLecture_shouldReturn400_ifLifecycleInvalid() {
         var lectureSeedData = createLectureSeedData();

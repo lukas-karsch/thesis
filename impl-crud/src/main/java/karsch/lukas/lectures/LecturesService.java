@@ -227,7 +227,7 @@ class LecturesService {
         if (newLectureStatus.ordinal() >= LectureStatus.IN_PROGRESS.ordinal()) {
             // delete waitlist entries when the lecture is set to IN_PROGRESS
             // no further enrollments are possible!
-            lectureWaitlistEntryRepository.deleteByLecture(lecture);
+            lecture.getWaitlist().clear();
         }
 
         lecturesRepository.save(lecture);
