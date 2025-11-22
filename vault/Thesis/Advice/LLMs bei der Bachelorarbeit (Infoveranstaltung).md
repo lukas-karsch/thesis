@@ -1,10 +1,8 @@
 #llm
 Infoveranstaltung am 14.11.
 MindMap wird nachgeliefert (im Moodle Kurs 119710, "Anleitung zum wissenschaftlichen Arbeiten")
-
 ## KI-Tools im Prozess
 ### Vorbereitung
-
 - Thema
     - LLM als Gesprächspartner
     - Inspiration

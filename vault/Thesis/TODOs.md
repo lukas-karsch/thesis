@@ -19,12 +19,8 @@
 - roter Faden / Gliederung entwickeln (und besprechen)
 - create GEMINI.md file in the project root #llm
 - code
-    - global exception handler / exception interfaces
+    - add auditing context 
 - set up swagger docs
-- explicitly work on my system's requirements
-    - find invariants and business logic!!
-    - then refine the interfaces
-- Anmeldung ausfüllen und schicken (Link in Hinweisen zur Abschlussarbeit von Jordine)
 - Zitationsstil klären
 - [[LLMs bei der Bachelorarbeit (Infoveranstaltung)]] MindMap abholen
 ## Before Finishing

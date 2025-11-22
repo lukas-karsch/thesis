@@ -2,8 +2,6 @@
 ## Links
 - [GitLab Repository](https://gitlab.mi.hdm-stuttgart.de/lk224/thesis)
 - [Gemini](https://gemini.google.com/gem/2aaacb9c5388)
-
 ## Dates
-
 Start on 01.12.2025
-End on (TODO)
+End on 02.03.2026
