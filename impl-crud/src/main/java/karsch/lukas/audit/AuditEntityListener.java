@@ -6,9 +6,9 @@ import jakarta.persistence.PostLoad;
 import jakarta.persistence.PrePersist;
 import jakarta.persistence.PreRemove;
 import jakarta.persistence.PreUpdate;
+import karsch.lukas.config.SpringContext;
 import karsch.lukas.context.RequestContext;
 import lombok.RequiredArgsConstructor;
-import lombok.Setter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.web.context.request.RequestContextHolder;
@@ -23,13 +23,8 @@ public class AuditEntityListener {
     private static final String UPDATE = "UPDATE";
     private static final String DELETE = "DELETE";
 
-    @Setter
-    private static AuditLogRepository auditLogRepository; // TODO try to remove this code smell (static setter)
-
     private static final ObjectMapper objectMapper = new ObjectMapper();
     private static final Logger logger = LoggerFactory.getLogger(AuditEntityListener.class);
-
-    private final RequestContext requestContext;
 
     static {
         // better LocalDateTime serialization
@@ -66,11 +61,18 @@ public class AuditEntityListener {
 
     @PreRemove
     public void preRemove(Object entity) {
-        saveAuditLog(entity, DELETE, null);
+        if (entity instanceof AuditableEntity auditable) {
+            saveAuditLog(entity, DELETE, auditable.getSnapshotJson());
+        } else {
+            saveAuditLog(entity, DELETE, null);
+        }
     }
 
     private void saveAuditLog(Object entity, String operation, String oldJson) {
         try {
+            final AuditLogRepository auditLogRepository = SpringContext.getBean(AuditLogRepository.class);
+            final RequestContext requestContext = SpringContext.getBean(RequestContext.class);
+
             var log = new AuditLogEntry();
             log.setEntityName(entity.getClass().getSimpleName());
             log.setOperation(operation);
