@@ -325,6 +325,13 @@ class LecturesService {
             );
         }
 
+        if (!(lecture.getLectureStatus() == LectureStatus.IN_PROGRESS || lecture.getLectureStatus() == LectureStatus.FINISHED)) {
+            throw new ResponseStatusException(
+                    HttpStatus.BAD_REQUEST,
+                    String.format("Lecture is in invalid state %s, can not assign a grade", lecture.getLectureStatus())
+            );
+        }
+
         if (!timeSlotService.hasEnded(assessment.getTimeSlot())) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Can not assign grades for a assessment that has not ended");
         }
