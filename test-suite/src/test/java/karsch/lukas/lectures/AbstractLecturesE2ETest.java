@@ -405,6 +405,14 @@ public abstract class AbstractLecturesE2ETest implements BaseE2ETest {
                 .then()
                 .statusCode(201);
 
+        // Then, set the lecture to FINISHED so it's allowed to assign grades (IN_PROGRESS is also valid)
+        given()
+                .header(getProfessorAuthHeader(lectureSeedData.professorId()))
+                .queryParam("newLectureStatus", LectureStatus.FINISHED)
+                .post("/lectures/{lectureId}/lifecycle", lectureSeedData.lectureId())
+                .then()
+                .statusCode(201);
+
         // now, lets change the time and check
         // System date is 30.11.2025
         setSystemTime(Clock.fixed(
@@ -437,6 +445,43 @@ public abstract class AbstractLecturesE2ETest implements BaseE2ETest {
                 .patch("/lectures/{lectureId}", lectureSeedData.lectureId())
                 .then()
                 .statusCode(200);
+    }
+
+    @Test
+    @DisplayName("It is not allowed to assign grades when the lecture status is not set to FINISHED")
+    void assignGrade_isNotAllowed_withInvalidLectureStatus() {
+        // System date is 02.12.2025
+        setSystemTime(Clock.fixed(
+                LocalDateTime.of(2025, 12, 2, 10, 0).toInstant(ZoneOffset.UTC),
+                ZoneId.of("UTC")));
+
+        // 01.12.2025 -> it's allowed to assign a grade
+        TimeSlot assessmentTimeSlot = new TimeSlot(
+                LocalDate.of(2025, 12, 1),
+                LocalTime.of(10, 0),
+                LocalTime.of(12, 0)
+        );
+
+        var lectureSeedData = createLectureSeedData();
+        var assignGradeSeedData = createAssignGradeSeedData(lectureSeedData, assessmentTimeSlot);
+
+        var request = new AssignGradeRequest(lectureSeedData.studentId(), assignGradeSeedData.assessmentId(), 90);
+
+        // let's enroll the student
+        given()
+                .header(getStudentAuthHeader(lectureSeedData.studentId()))
+                .post("/lectures/{lectureId}/enroll", lectureSeedData.studentId())
+                .then()
+                .statusCode(201);
+
+        given()
+                .body(request)
+                .contentType(ContentType.JSON)
+                .when()
+                .header(getProfessorAuthHeader(lectureSeedData.professorId()))
+                .post("/lectures/{lectureId}", lectureSeedData.lectureId())
+                .then()
+                .statusCode(400);
     }
 
     @Test
@@ -549,6 +594,14 @@ public abstract class AbstractLecturesE2ETest implements BaseE2ETest {
         given()
                 .header(getStudentAuthHeader(lectureSeedData.studentId()))
                 .post("/lectures/{lectureId}/enroll", lectureSeedData.lectureId())
+                .then()
+                .statusCode(201);
+
+        // Then, set the lecture to FINISHED so it's allowed to assign grades
+        given()
+                .header(getProfessorAuthHeader(lectureSeedData.professorId()))
+                .queryParam("newLectureStatus", LectureStatus.FINISHED)
+                .post("/lectures/{lectureId}/lifecycle", lectureSeedData.lectureId())
                 .then()
                 .statusCode(201);
 
