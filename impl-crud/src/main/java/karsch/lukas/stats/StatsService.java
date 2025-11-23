@@ -10,6 +10,7 @@ import karsch.lukas.users.StudentRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
@@ -17,7 +18,10 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class StatsService {
 
-    private static final int FAIL_THRESHOLD = 50;
+    /**
+     * The threshold below which a lecture will be marked as failed
+     */
+    public static final int FAIL_THRESHOLD = 50;
 
     private final StudentRepository studentRepository;
     private final AssessmentGradeRepository assessmentGradeRepository;
@@ -34,7 +38,7 @@ public class StatsService {
                 .collect(Collectors.groupingBy(a -> a.getLectureAssessment().getLecture()))
                 .entrySet()
                 .stream()
-                .filter(entry -> entry.getKey().getAssessments().size() == entry.getValue().size())
+                .filter(entry -> hasCompletedAllAssessmentsOfCourse(entry.getKey(), entry.getValue()))
                 .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
 
         int totalCredits = finishedLectures.keySet().stream()
@@ -58,5 +62,9 @@ public class StatsService {
      */
     private boolean hasPassed(AssessmentGradeEntity grade) {
         return grade.getGrade() >= FAIL_THRESHOLD;
+    }
+
+    private boolean hasCompletedAllAssessmentsOfCourse(LectureEntity lecture, List<AssessmentGradeEntity> grades) {
+        return lecture.getAssessments().size() == grades.size();
     }
 }

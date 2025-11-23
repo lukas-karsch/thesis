@@ -45,6 +45,6 @@ public abstract class AbstractStatsE2ETest implements BaseE2ETest {
                 .queryParam("studentId", gradingSeedData.studentId())
                 .get("/stats/credits")
                 .then()
-                .body("data.credits", equalTo(5));
+                .body("data.totalCredits", equalTo(5));
     }
 }

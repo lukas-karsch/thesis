@@ -1,6 +1,5 @@
 package karsch.lukas.e2e.lectures;
 
-import jakarta.annotation.Nullable;
 import jakarta.persistence.EntityManager;
 import karsch.lukas.PostgresTestcontainerConfiguration;
 import karsch.lukas.courses.CourseEntity;
@@ -20,7 +19,6 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.web.server.LocalServerPort;
 import org.springframework.context.annotation.Import;
 import org.springframework.transaction.PlatformTransactionManager;
-import org.springframework.transaction.support.DefaultTransactionDefinition;
 
 import javax.sql.DataSource;
 import java.sql.Connection;
@@ -29,7 +27,9 @@ import java.sql.Statement;
 import java.time.Clock;
 import java.time.LocalDate;
 import java.time.LocalTime;
-import java.util.function.Supplier;
+
+import static karsch.lukas.helper.EntityFactory.*;
+import static karsch.lukas.helper.TestTransactionHelper.inTransaction;
 
 @SpringBootTest(
         webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT
@@ -80,23 +80,12 @@ public class LecturesE2ETest extends AbstractLecturesE2ETest {
         dateTimeProvider.setClock(clock);
     }
 
-    private CourseEntity createCourse(String name, @Nullable String description) {
-        var course = new CourseEntity();
-        course.setName(name);
-        course.setDescription(description);
-        course.setCredits(4);
-
-        return course;
-    }
-
     @Override
     protected CreateCourseSeedData createCourseSeedData() {
         return inTransaction(() -> {
-            var course = createCourse("Mathematics", "Mathematics for beginners");
+            var course = createCourseEntity(4, "Mathematics", "Mathematics for beginners");
 
-            var professor = new ProfessorEntity();
-            professor.setFirstName("Mr.");
-            professor.setLastName("Bean");
+            var professor = createProfessorEntity("Mr.", "Bean");
 
             entityManager.persist(course);
             entityManager.persist(professor);
@@ -105,7 +94,7 @@ public class LecturesE2ETest extends AbstractLecturesE2ETest {
                     course.getId(),
                     professor.getId()
             );
-        });
+        }, transactionManager);
     }
 
     @Override
@@ -113,29 +102,19 @@ public class LecturesE2ETest extends AbstractLecturesE2ETest {
         return inTransaction(() -> {
             var courseSeedData = createCourseSeedData();
 
-            var lecture = new LectureEntity();
-            lecture.setCourse(
+            var lecture = createLectureEntity(
+                    entityManager.getReference(ProfessorEntity.class, courseSeedData.professorId()),
                     entityManager.getReference(CourseEntity.class, courseSeedData.courseId())
             );
-
-            lecture.setProfessor(
-                    entityManager.getReference(ProfessorEntity.class, courseSeedData.professorId())
-            );
-            lecture.setMaximumStudents(1);
-            lecture.setMinimumCreditsRequired(0);
             lecture.setLectureStatus(LectureStatus.OPEN_FOR_ENROLLMENT);
 
             entityManager.persist(lecture);
 
-            var student = new StudentEntity();
-            student.setFirstName("Hannah");
-            student.setLastName("Holzheu");
-            student.setSemester(1);
-
+            var student = createStudentEntity("Hannah", "Holzheu", null);
             entityManager.persist(student);
 
             return new LectureSeedData(lecture.getId(), student.getId(), courseSeedData.professorId());
-        });
+        }, transactionManager);
     }
 
     @Override
@@ -150,20 +129,16 @@ public class LecturesE2ETest extends AbstractLecturesE2ETest {
             entityManager.persist(assessment);
 
             return new AssignGradeSeedData(assessment.getId());
-        });
+        }, transactionManager);
     }
 
     @Override
     protected SecondProfessorSeedData createSecondProfessorSeedData() {
         return inTransaction(() -> {
-            var professor = new ProfessorEntity();
-            professor.setFirstName("Funny");
-            professor.setLastName("Fox");
-
+            var professor = createProfessorEntity("Funny", "Fox");
             entityManager.persist(professor);
-
             return new SecondProfessorSeedData(professor.getId());
-        });
+        }, transactionManager);
     }
 
     @Override
@@ -183,7 +158,7 @@ public class LecturesE2ETest extends AbstractLecturesE2ETest {
             ));
             lecture1.setLectureStatus(LectureStatus.OPEN_FOR_ENROLLMENT);
 
-            var course2 = createCourse("Computer Science", null);
+            var course2 = createCourseEntity(4, "Computer Science", null);
             var lecture2 = new LectureEntity();
             lecture2.setCourse(course2);
             lecture2.setMaximumStudents(1);
@@ -195,9 +170,7 @@ public class LecturesE2ETest extends AbstractLecturesE2ETest {
             ));
             lecture2.setLectureStatus(LectureStatus.OPEN_FOR_ENROLLMENT);
 
-            var student = new StudentEntity();
-            student.setFirstName("Hannah");
-            student.setLastName("Holzheu");
+            var student = createStudentEntity("Hannah", "Holzheu", 1);
 
             entityManager.persist(course2);
             entityManager.persist(lecture1);
@@ -205,7 +178,7 @@ public class LecturesE2ETest extends AbstractLecturesE2ETest {
             entityManager.persist(student);
 
             return new OverlappingLecturesSeedData(student.getId(), lecture1.getId(), lecture2.getId());
-        });
+        }, transactionManager);
     }
 
     @Override
@@ -219,22 +192,7 @@ public class LecturesE2ETest extends AbstractLecturesE2ETest {
             entityManager.persist(student);
 
             return student.getId();
-        });
-    }
-
-    /**
-     * Run the given piece of code inside a database transaction and return the result
-     */
-    private <T> T inTransaction(Supplier<T> supplier) {
-        var tx = transactionManager.getTransaction(new DefaultTransactionDefinition());
-        try {
-            var result = supplier.get();
-            transactionManager.commit(tx);
-            return result;
-        } catch (Exception e) {
-            transactionManager.rollback(tx);
-            throw e;
-        }
+        }, transactionManager);
     }
 
 }
