@@ -1,0 +1,48 @@
+@lectureId = 2
+
+### Get lectures for student
+
+GET http://localhost:8080/lectures?studentId=1
+
+### Add assessment
+
+POST http://localhost:8080/lectures/{{lectureId}}/assessments
+Content-Type: application/json
+customAuth: professor_2
+
+{
+  "assessmentType": "EXAM",
+  "timeSlot": {
+    "date": "2025-11-01",
+    "startTime": "10:00",
+    "endTime": "11:00"
+  },
+  "weight": 1
+}
+
+### Enroll
+
+POST http://localhost:8080/lectures/{{lectureId}}/enroll
+customAuth: student_1
+
+### Assign a grade
+POST http://localhost:8080/lectures/{{lectureId}}
+Content-Type: application/json
+customAuth: professor_2
+
+{
+  "studentId": 1,
+  "assessmentId": 2,
+  "grade": 10
+}
+
+###
+
+POST http://localhost:8080/lectures/{{lectureId}}/lifecycle?newLectureStatus=IN_PROGRESS
+Content-Type: application/x-www-form-urlencoded
+customAuth: professor_2
+
+### Get credits
+GET http://localhost:8080/stats/credits?studentId=1
+
+###

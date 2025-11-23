@@ -15,7 +15,6 @@ public class CoursesController implements ICoursesController {
     public ResponseEntity<ApiResponse<Set<CourseDTO>>> getCourses() {
         var response = new ApiResponse<>(
                 HttpStatus.OK,
-                null,
                 Set.of(
                         new CourseDTO(1L, "Maths", "Basic math topics", 5, Collections.emptySet(), Collections.emptySet())
                 )

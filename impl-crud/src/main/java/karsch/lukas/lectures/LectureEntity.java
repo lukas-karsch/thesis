@@ -54,14 +54,14 @@ public class LectureEntity extends AuditableEntity {
     @Column(nullable = false)
     private LectureStatus lectureStatus = LectureStatus.DRAFT;
 
-    @OneToMany(mappedBy = "lecture", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "lecture", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
     @OrderBy("createdDate ASC")
     private List<LectureWaitlistEntryEntity> waitlist = new ArrayList<>();
 
-    @OneToMany(mappedBy = "lecture", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "lecture", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
     private Set<EnrollmentEntity> enrollments = new HashSet<>();
 
-    @OneToMany(mappedBy = "lecture", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "lecture", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
     private Set<LectureAssessmentEntity> assessments = new HashSet<>();
 
     @Version

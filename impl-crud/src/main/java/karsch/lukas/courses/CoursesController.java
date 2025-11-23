@@ -29,7 +29,7 @@ public class CoursesController implements ICoursesController {
         var allCourses = coursesService.getAllCourses();
 
         return new ResponseEntity<>(
-                new ApiResponse<>(HttpStatus.OK, null, allCourses), HttpStatus.OK
+                new ApiResponse<>(HttpStatus.OK, allCourses), HttpStatus.OK
         );
     }
 

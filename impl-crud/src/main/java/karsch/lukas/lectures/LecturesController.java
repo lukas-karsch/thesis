@@ -20,7 +20,7 @@ public class LecturesController implements ILecturesController {
         var lecturesForStudent = lecturesService.getLecturesForStudent(studentId);
 
         return new ResponseEntity<>(
-                new ApiResponse<>(HttpStatus.OK, null, lecturesForStudent), HttpStatus.OK
+                new ApiResponse<>(HttpStatus.OK, lecturesForStudent), HttpStatus.OK
         );
     }
 
@@ -35,7 +35,7 @@ public class LecturesController implements ILecturesController {
         var enrollmentResult = lecturesService.enrollStudent(requestContext.getUserId(), lectureId);
 
         return new ResponseEntity<>(
-                new ApiResponse<>(HttpStatus.CREATED, null, new EnrollStudentResponse(enrollmentResult)),
+                new ApiResponse<>(HttpStatus.CREATED, new EnrollStudentResponse(enrollmentResult)),
                 HttpStatus.CREATED
         );
     }
@@ -74,7 +74,7 @@ public class LecturesController implements ILecturesController {
     @Override
     public ResponseEntity<ApiResponse<LectureDetailDTO>> getLectureDetails(Long lectureId) {
         return new ResponseEntity<>(
-                new ApiResponse<>(HttpStatus.OK, null, lecturesService.getLectureDetails(lectureId)), HttpStatus.OK
+                new ApiResponse<>(HttpStatus.OK, lecturesService.getLectureDetails(lectureId)), HttpStatus.OK
         );
     }
 
@@ -141,7 +141,7 @@ public class LecturesController implements ILecturesController {
     @Override
     public ResponseEntity<ApiResponse<WaitlistDTO>> getWaitingListForLecture(Long lectureId) {
         return new ResponseEntity<>(
-                new ApiResponse<>(HttpStatus.OK, null, lecturesService.getWaitlistForLecture(lectureId)), HttpStatus.OK
+                new ApiResponse<>(HttpStatus.OK, lecturesService.getWaitlistForLecture(lectureId)), HttpStatus.OK
         );
     }
 

@@ -12,8 +12,8 @@ Content-Type: application/json
 {
   "year": 2025,
   "month": 11,
-  "dayOfMonth": 1,
-  "hour": 12,
+  "dayOfMonth": 2,
+  "hour": 6,
   "minutes": 0,
   "seconds": 0
 }

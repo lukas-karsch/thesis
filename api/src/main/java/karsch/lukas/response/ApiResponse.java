@@ -35,4 +35,8 @@ public class ApiResponse<T> {
     public ApiResponse(HttpStatusCode httpStatus, String message) {
         this(httpStatus, message, null);
     }
+
+    public ApiResponse(HttpStatusCode httpStatus, T data) {
+        this(httpStatus, null, data);
+    }
 }

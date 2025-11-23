@@ -111,14 +111,19 @@ public class SeedDataRunner implements CommandLineRunner {
 
     private List<LectureEntity> createLectures(List<CourseEntity> courses, List<ProfessorEntity> professors) {
         var lectures = new ArrayList<LectureEntity>();
+        int hourOffset = 0;
         for (var course : courses) {
             var lecture = new LectureEntity();
             lecture.setCourse(course);
             lecture.setMaximumStudents(10);
+
+            int hour = 10 + hourOffset;
+            hourOffset += 1;
+
             lecture.getTimeSlots().addAll(Set.of(
-                    new TimeSlotValueObject(LocalDate.parse("2025-11-17"), LocalTime.of(10, 0), LocalTime.of(11, 30)),
-                    new TimeSlotValueObject(LocalDate.parse("2025-11-24"), LocalTime.of(10, 0), LocalTime.of(11, 30)),
-                    new TimeSlotValueObject(LocalDate.parse("2025-12-01"), LocalTime.of(10, 0), LocalTime.of(11, 30))
+                    new TimeSlotValueObject(LocalDate.of(2025, 11, 17), LocalTime.of(hour, 0), LocalTime.of(hour, 59)),
+                    new TimeSlotValueObject(LocalDate.of(2025, 11, 24), LocalTime.of(hour, 0), LocalTime.of(hour, 59)),
+                    new TimeSlotValueObject(LocalDate.of(2025, 12, 1), LocalTime.of(hour, 0), LocalTime.of(hour, 59))
             ));
             lecture.setLectureStatus(LectureStatus.OPEN_FOR_ENROLLMENT);
             lecture.setProfessor(
