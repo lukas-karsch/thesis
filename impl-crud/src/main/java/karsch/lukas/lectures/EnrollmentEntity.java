@@ -3,7 +3,8 @@ package karsch.lukas.lectures;
 import jakarta.persistence.*;
 import karsch.lukas.audit.AuditableEntity;
 import karsch.lukas.users.StudentEntity;
-import lombok.*;
+import lombok.Getter;
+import lombok.Setter;
 import org.springframework.data.annotation.CreatedDate;
 
 import java.time.LocalDateTime;
@@ -12,9 +13,6 @@ import java.time.LocalDateTime;
 @Table(name = "enrollments")
 @Getter
 @Setter
-@NoArgsConstructor
-@AllArgsConstructor
-@Builder
 public class EnrollmentEntity extends AuditableEntity {
 
     @Id

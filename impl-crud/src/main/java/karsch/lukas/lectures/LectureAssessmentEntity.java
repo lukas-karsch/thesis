@@ -4,7 +4,10 @@ import jakarta.persistence.*;
 import karsch.lukas.audit.AuditableEntity;
 import karsch.lukas.stats.AssessmentType;
 import karsch.lukas.time.TimeSlotValueObject;
-import lombok.*;
+import lombok.EqualsAndHashCode;
+import lombok.Getter;
+import lombok.Setter;
+import lombok.ToString;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
 
@@ -14,9 +17,6 @@ import java.time.LocalDateTime;
 @Table(name = "lecture_assessments")
 @Getter
 @Setter
-@NoArgsConstructor
-@AllArgsConstructor
-@Builder
 @ToString
 @EqualsAndHashCode(onlyExplicitlyIncluded = true, callSuper = false)
 public class LectureAssessmentEntity extends AuditableEntity {

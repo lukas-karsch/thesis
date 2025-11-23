@@ -2,7 +2,9 @@ package karsch.lukas.courses;
 
 import jakarta.persistence.*;
 import karsch.lukas.audit.AuditableEntity;
-import lombok.*;
+import lombok.EqualsAndHashCode;
+import lombok.Getter;
+import lombok.Setter;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
 
@@ -14,9 +16,6 @@ import java.util.Set;
 @Table(name = "courses")
 @Getter
 @Setter
-@NoArgsConstructor
-@AllArgsConstructor
-@Builder
 @EqualsAndHashCode(onlyExplicitlyIncluded = true, callSuper = false)
 public class CourseEntity extends AuditableEntity {
 

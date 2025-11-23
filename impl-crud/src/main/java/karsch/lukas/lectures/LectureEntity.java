@@ -8,7 +8,10 @@ import karsch.lukas.time.TimeSlotComparator;
 import karsch.lukas.time.TimeSlotValueObject;
 import karsch.lukas.users.ProfessorEntity;
 import karsch.lukas.users.StudentEntity;
-import lombok.*;
+import lombok.EqualsAndHashCode;
+import lombok.Getter;
+import lombok.Setter;
+import lombok.ToString;
 import org.hibernate.annotations.SortComparator;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
@@ -21,10 +24,7 @@ import java.util.stream.Collectors;
 @Table(name = "lectures")
 @Getter
 @Setter
-@NoArgsConstructor
-@AllArgsConstructor
-@Builder
-@ToString
+@ToString(exclude = {"waitlist", "enrollments", "assessments"})
 @EqualsAndHashCode(onlyExplicitlyIncluded = true, callSuper = false)
 public class LectureEntity extends AuditableEntity {
     @Id
@@ -56,15 +56,12 @@ public class LectureEntity extends AuditableEntity {
 
     @OneToMany(mappedBy = "lecture", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
     @OrderBy("createdDate ASC")
-    @ToString.Exclude
     private List<LectureWaitlistEntryEntity> waitlist = new ArrayList<>();
 
     @OneToMany(mappedBy = "lecture", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
-    @ToString.Exclude
     private Set<EnrollmentEntity> enrollments = new HashSet<>();
 
     @OneToMany(mappedBy = "lecture", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
-    @ToString.Exclude
     private Set<LectureAssessmentEntity> assessments = new HashSet<>();
 
     @Version

@@ -3,7 +3,10 @@ package karsch.lukas.users;
 import jakarta.persistence.*;
 import karsch.lukas.audit.AuditableEntity;
 import karsch.lukas.lectures.LectureEntity;
-import lombok.*;
+import lombok.EqualsAndHashCode;
+import lombok.Getter;
+import lombok.Setter;
+import lombok.ToString;
 
 import java.util.Set;
 
@@ -12,9 +15,6 @@ import java.util.Set;
 @Getter
 @Setter
 @ToString
-@NoArgsConstructor
-@AllArgsConstructor
-@Builder
 @EqualsAndHashCode(callSuper = false, onlyExplicitlyIncluded = true)
 public class ProfessorEntity extends AuditableEntity {
     @Id
