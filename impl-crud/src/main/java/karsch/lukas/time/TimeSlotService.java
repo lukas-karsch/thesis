@@ -4,6 +4,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
+import java.util.Collection;
 import java.util.SortedSet;
 
 @Service
@@ -82,6 +83,24 @@ public class TimeSlotService {
                 slotB = iterator2.next();
             }
         }
+    }
+
+    public boolean containsOverlappingTimeslots(Collection<TimeSlotValueObject> timeSlots) {
+        if (timeSlots.isEmpty()) {
+            return false;
+        }
+
+        for (var timeSlotA : timeSlots) {
+            for (var timeSlotB : timeSlots) {
+                if (timeSlotA == timeSlotB) continue;
+                if (!timeSlotA.date().equals(timeSlotB.date())) continue;
+
+                if (areOverlapping(timeSlotA, timeSlotB))
+                    return true;
+            }
+        }
+
+        return false;
     }
 
     private LocalDateTime getCurrentTime() {

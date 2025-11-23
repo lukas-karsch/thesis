@@ -14,6 +14,7 @@ import org.junit.jupiter.api.Test;
 import java.time.*;
 import java.util.Collections;
 import java.util.List;
+import java.util.Set;
 import java.util.function.BiConsumer;
 import java.util.function.Supplier;
 
@@ -48,17 +49,40 @@ public abstract class AbstractLecturesE2ETest implements BaseE2ETest {
     void createLectureFromCourse_shouldReturn201() {
         var seedData = createCourseSeedData();
 
+        var createLectureRequest = new CreateLectureRequest(seedData.courseId(), 5, List.of(
+                new TimeSlot(LocalDate.of(2025, 11, 1), LocalTime.of(10, 0), LocalTime.of(11, 30))
+        ));
+
         given()
                 .when()
                 .header(getProfessorAuthHeader(seedData.professorId()))
                 .queryParam("courseId", seedData.courseId())
-                .body(new CreateLectureRequest(seedData.courseId(), 5, List.of(
-                        new TimeSlot(LocalDate.of(2025, 11, 1), LocalTime.of(10, 0), LocalTime.of(11, 30))
-                )))
+                .body(createLectureRequest)
                 .contentType(ContentType.JSON)
                 .post("/lectures/create")
                 .then()
                 .statusCode(201);
+    }
+
+    @Test
+    @DisplayName("Creating a lecture with overlapping timeslots should return 400")
+    void creatingLectureWithOverlappingTimeslots_shouldReturn400() {
+        var seedData = createCourseSeedData();
+
+        var createLectureReqeust = new CreateLectureRequest(seedData.courseId(), 5, List.of(
+                new TimeSlot(LocalDate.of(2025, 11, 1), LocalTime.of(10, 0), LocalTime.of(11, 30)),
+                new TimeSlot(LocalDate.of(2025, 11, 1), LocalTime.of(10, 0), LocalTime.of(11, 30))
+        ));
+
+        given()
+                .when()
+                .header(getProfessorAuthHeader(seedData.professorId()))
+                .queryParam("courseId", seedData.courseId())
+                .body(createLectureReqeust)
+                .contentType(ContentType.JSON)
+                .post("/lectures/create")
+                .then()
+                .statusCode(400);
     }
 
     @Test
@@ -311,6 +335,27 @@ public abstract class AbstractLecturesE2ETest implements BaseE2ETest {
                 .post("/lectures/{lectureId}/dates", lectureSeedData.lectureId())
                 .then()
                 .statusCode(403);
+    }
+
+    @Test
+    @DisplayName("Adding overlapping dates to a lecture should return 400")
+    void addOverlappingDatesToLecture_shouldReturn404() {
+        var lectureSeedData = createLectureSeedData();
+
+        var request = new AssignDatesToLectureRequest(Set.of(
+                new TimeSlot(LocalDate.of(2025, 1, 1), LocalTime.of(10, 0), LocalTime.of(12, 0)),
+                new TimeSlot(LocalDate.of(2025, 1, 1), LocalTime.of(11, 0), LocalTime.of(12, 0))
+        ));
+
+
+        given()
+                .body(request)
+                .contentType(ContentType.JSON)
+                .when()
+                .header(getProfessorAuthHeader(lectureSeedData.professorId()))
+                .post("/lectures/{lectureId}/dates", lectureSeedData.lectureId())
+                .then()
+                .statusCode(400);
     }
 
     public record AssignGradeSeedData(Long assessmentId) {

@@ -95,11 +95,13 @@ class TimeSlotServiceTest {
         assertThat(underTest.areOverlapping(slot2, slot1)).isTrue();
     }
 
+    // @formatter:off
     /**
      * No overlap
      * +-----+
      * +-----+
      */
+    // @formatter:on
     @Test
     void testOverlap_sameDay_notOverlappingTime() {
         var day = LocalDate.of(2025, 11, 1);
@@ -121,12 +123,13 @@ class TimeSlotServiceTest {
         assertThat(underTest.areOverlapping(slot1, slot2)).isFalse();
         assertThat(underTest.areOverlapping(slot2, slot1)).isFalse();
     }
-
+    // @formatter:off
     /**
      * Overlap
      * +-----+
      * +-----+
      */
+    // @formatter:on
     @Test
     void testOverlap_startTime_beforeOtherEndTime() {
         var day = LocalDate.of(2025, 11, 1);
@@ -149,11 +152,13 @@ class TimeSlotServiceTest {
         assertThat(underTest.areOverlapping(slot2, slot1)).isTrue();
     }
 
+    // @formatter:off
     /**
      * One inside the other
      * +---------+
      * +----+
      */
+    // @formatter:on
     @Test
     void testOverlap_oneInsideTheOther() {
         var day = LocalDate.of(2025, 11, 1);
@@ -167,6 +172,64 @@ class TimeSlotServiceTest {
         var slot2 = new TimeSlotValueObject(
                 day,
                 LocalTime.of(11, 0),
+                LocalTime.of(12, 0)
+        );
+
+        var underTest = new TimeSlotService(dateTimeProvider);
+
+        assertThat(underTest.areOverlapping(slot1, slot2)).isTrue();
+        assertThat(underTest.areOverlapping(slot2, slot1)).isTrue();
+    }
+
+    // @formatter:off
+    /**
+     * Start time overlaps, end time is equal
+     * +---------+
+     * +----+
+     */
+    // @formatter:on
+    @Test
+    void testOverlap_startTimeOverlaps() {
+        var day = LocalDate.of(2025, 11, 1);
+
+        var slot1 = new TimeSlotValueObject(
+                day,
+                LocalTime.of(10, 0),
+                LocalTime.of(13, 0)
+        );
+
+        var slot2 = new TimeSlotValueObject(
+                day,
+                LocalTime.of(11, 0),
+                LocalTime.of(13, 0)
+        );
+
+        var underTest = new TimeSlotService(dateTimeProvider);
+
+        assertThat(underTest.areOverlapping(slot1, slot2)).isTrue();
+        assertThat(underTest.areOverlapping(slot2, slot1)).isTrue();
+    }
+
+    // @formatter:off
+    /**
+     * Start time is equal, end time overlaps
+     * +---------+
+     * +----+
+     */
+    // @formatter:on
+    @Test
+    void testOverlap_endTimeOverlaps() {
+        var day = LocalDate.of(2025, 11, 1);
+
+        var slot1 = new TimeSlotValueObject(
+                day,
+                LocalTime.of(10, 0),
+                LocalTime.of(13, 0)
+        );
+
+        var slot2 = new TimeSlotValueObject(
+                day,
+                LocalTime.of(10, 0),
                 LocalTime.of(12, 0)
         );
 
@@ -256,5 +319,41 @@ class TimeSlotServiceTest {
         var underTest = new TimeSlotService(dateTimeProvider);
 
         assertThat(underTest.areConflictingTimeSlots(slots1, slots2)).isTrue();
+    }
+
+    @Test
+    void containsOverlappingTimeslots_whenOverlap() {
+        var timeSlots = Set.of(
+                new TimeSlotValueObject(LocalDate.of(2025, 11, 1), LocalTime.of(10, 0), LocalTime.of(12, 0)),
+                new TimeSlotValueObject(LocalDate.of(2025, 11, 1), LocalTime.of(11, 0), LocalTime.of(12, 0))
+        );
+
+        var underTest = new TimeSlotService(dateTimeProvider);
+
+        assertThat(underTest.containsOverlappingTimeslots(timeSlots)).isTrue();
+    }
+
+    @Test
+    void containsOverlappingTimeslots_whenNoOverlap_becauseOfDate() {
+        var timeSlots = Set.of(
+                new TimeSlotValueObject(LocalDate.of(2025, 11, 1), LocalTime.of(10, 0), LocalTime.of(12, 0)),
+                new TimeSlotValueObject(LocalDate.of(2025, 11, 2), LocalTime.of(10, 0), LocalTime.of(12, 0))
+        );
+
+        var underTest = new TimeSlotService(dateTimeProvider);
+
+        assertThat(underTest.containsOverlappingTimeslots(timeSlots)).isFalse();
+    }
+
+    @Test
+    void containsOverlappingTimeslots_whenNoOverlap_becauseOfTime() {
+        var timeSlots = Set.of(
+                new TimeSlotValueObject(LocalDate.of(2025, 11, 1), LocalTime.of(10, 0), LocalTime.of(12, 0)),
+                new TimeSlotValueObject(LocalDate.of(2025, 11, 1), LocalTime.of(13, 0), LocalTime.of(15, 0))
+        );
+
+        var underTest = new TimeSlotService(dateTimeProvider);
+
+        assertThat(underTest.containsOverlappingTimeslots(timeSlots)).isFalse();
     }
 }

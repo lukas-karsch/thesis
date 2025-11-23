@@ -18,6 +18,7 @@ import org.springframework.web.server.ResponseStatusException;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
@@ -40,6 +41,7 @@ class LecturesService {
     private final SimpleLectureDtoMapper simpleLectureDtoMapper;
 
     private final EntityManager entityManager;
+
     private final TimeSlotService timeSlotService;
 
     public GetLecturesForStudentResponse getLecturesForStudent(Long studentId) {
@@ -111,6 +113,7 @@ class LecturesService {
             return EnrollmentStatus.WAITLISTED;
         } else {
             // not enrolled yet
+            log.info("Enrolling student {} to lecture {}", studentId, lectureId);
             var enrollment = new EnrollmentEntity();
             enrollment.setLecture(lecture);
             enrollment.setStudent(studentReference);
@@ -162,7 +165,7 @@ class LecturesService {
         }
 
         var eligibleWaitlistEntry = sortedWaitlist.getLast();
-        log.info("Try to enroll student {} to lecture {}", eligibleWaitlistEntry.getStudent().getId(), lectureId);
+        log.info("Try to enroll eligible student {} to lecture {} from waitlist", eligibleWaitlistEntry.getStudent().getId(), lectureId);
 
         enrollStudent(eligibleWaitlistEntry.getStudent().getId(), lectureId);
 
@@ -184,9 +187,18 @@ class LecturesService {
         lecture.setCourse(course);
         lecture.setProfessor(professor);
         lecture.setMaximumStudents(createLectureRequest.maximumStudents());
-        lecture.getTimeSlots().addAll(createLectureRequest.dates().stream()
-                .map(t -> new TimeSlotValueObject(t.date(), t.startTime(), t.endTime())
-                ).collect(Collectors.toSet()));
+
+        final List<TimeSlotValueObject> timeSlots = createLectureRequest.dates().stream()
+                .map(t -> new TimeSlotValueObject(t.date(), t.startTime(), t.endTime()))
+                .toList();
+
+        if (timeSlotService.containsOverlappingTimeslots(timeSlots)) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Overlapping or duplicate time slots are not allowed");
+        }
+
+        lecture.getTimeSlots().addAll(timeSlots);
+
+        log.info("Professor {} is creating a lecture from course {}", professorId, createLectureRequest.courseId());
 
         lecturesRepository.save(lecture);
     }
@@ -230,6 +242,8 @@ class LecturesService {
             lecture.getWaitlist().clear();
         }
 
+        log.info("Lifecycle of lecture {} set to {}", lectureId, newLectureStatus);
+
         lecturesRepository.save(lecture);
     }
 
@@ -239,23 +253,29 @@ class LecturesService {
                 .orElseThrow(() -> new LectureNotFoundException(lectureId));
 
         if (!Objects.equals(lecture.getProfessor().getId(), professorId)) {
-            throw new NotAuthenticatedException();
+            throw new NotAuthenticatedException("Dates can only be assigned to a lecture by the professor who owns the lecture");
         }
 
         var newTimeSlots = assignDatesToLectureRequest.dates().stream()
                 .map(t -> new TimeSlotValueObject(t.date(), t.startTime(), t.endTime()))
-                .collect(Collectors.toSet());
+                .toList();
+
+        if (timeSlotService.containsOverlappingTimeslots(newTimeSlots)) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Overlapping or duplicate time slots are not allowed");
+        }
 
         lecture
                 .getTimeSlots()
                 .addAll(newTimeSlots);
+
+        log.info("Added {} new timeslots to lecture {}", newTimeSlots.size(), lectureId);
 
         lecturesRepository.save(lecture);
     }
 
     @Transactional
     public void addAssessmentForLecture(Long lectureId, CreateLectureAssessmentRequest lectureAssessmentDTO, Long professorId) {
-        // TODO: can assessments always be created? do i check that the weight is not > 1?
+        // TODO: think - can assessments always be created? do i check that the weight is not > 1?
         var lecture = lecturesRepository.findDetailsById(lectureId)
                 .orElseThrow(() -> new LectureNotFoundException(lectureId));
 
@@ -288,7 +308,7 @@ class LecturesService {
                 .orElseThrow(() -> new LectureNotFoundException(lectureId));
 
         if (!Objects.equals(lecture.getProfessor().getId(), professorId)) {
-            throw new NotAuthenticatedException();
+            throw new NotAuthenticatedException("Grades can only be assigned by the professor who owns the lecture");
         }
 
         var assessment = lectureAssessmentRepository.findById(assignGradeRequest.assessmentId())

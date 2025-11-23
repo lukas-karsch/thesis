@@ -20,6 +20,7 @@
 - create GEMINI.md file in the project root #llm
 - code
     - add auditing context 
+    - check if indexes are set up correctly 
 - set up swagger docs
 - Zitationsstil klären
 - [[LLMs bei der Bachelorarbeit (Infoveranstaltung)]] MindMap abholen
