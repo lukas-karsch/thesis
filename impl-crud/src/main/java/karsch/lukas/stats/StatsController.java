@@ -44,7 +44,13 @@ public class StatsController implements IStatsController {
     }
 
     @Override
-    public ResponseEntity<ApiResponse<GradeHistoryResponse>> getGradesHistory(Long studentId, Long lectureId, LocalDateTime startDate, LocalDateTime endDate) {
-        return null;
+    public ResponseEntity<ApiResponse<GradeHistoryResponse>> getGradesHistory(Long studentId, Long lectureAssessmentId, LocalDateTime startDate, LocalDateTime endDate) {
+        GradeHistoryResponse gradeHistory = statsService.getGradeHistoryForAssessment(
+                studentId, lectureAssessmentId, startDate, endDate
+        );
+
+        return new ResponseEntity<>(
+                new ApiResponse<>(HttpStatus.OK, gradeHistory), HttpStatus.OK
+        );
     }
 }

@@ -1,12 +1,12 @@
 package karsch.lukas.e2e.stats;
 
 import jakarta.persistence.EntityManager;
-import karsch.lukas.AbstractStatsE2ETest;
 import karsch.lukas.PostgresTestcontainerConfiguration;
 import karsch.lukas.lecture.LectureStatus;
 import karsch.lukas.lectures.AssessmentGradeEntity;
 import karsch.lukas.lectures.EnrollmentEntity;
 import karsch.lukas.lectures.LectureAssessmentEntity;
+import karsch.lukas.stats.AbstractStatsE2ETest;
 import karsch.lukas.stats.AssessmentType;
 import karsch.lukas.time.DateTimeProvider;
 import lombok.extern.slf4j.Slf4j;
@@ -129,7 +129,7 @@ public class StatsE2ETest extends AbstractStatsE2ETest {
             entityManager.persist(grade1);
             entityManager.persist(grade2);
 
-            return new GradingSeedData(student.getId());
+            return new GradingSeedData(student.getId(), lecture1.getId(), assessment1.getId());
         }, transactionManager);
     }
 }

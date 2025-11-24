@@ -24,7 +24,7 @@ public interface IStatsController {
     @GetMapping("grades/history")
     @ResponseStatus(HttpStatus.OK)
     ResponseEntity<ApiResponse<GradeHistoryResponse>> getGradesHistory(@RequestParam Long studentId,
-                                                                       @RequestParam Long lectureId,
+                                                                       @RequestParam Long lectureAssessmentId,
                                                                        @RequestParam(required = false) LocalDateTime startDate,
                                                                        @RequestParam(required = false) LocalDateTime endDate
     );

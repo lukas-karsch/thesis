@@ -21,6 +21,7 @@
 - code
     - add auditing context 
     - check if indexes are set up correctly 
+    - remove assessments from course entity 
 - Zitationsstil klären
 - [[LLMs bei der Bachelorarbeit (Infoveranstaltung)]] MindMap abholen
 ## Before Finishing

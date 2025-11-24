@@ -1,13 +1,23 @@
 package karsch.lukas.stats;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import jakarta.persistence.EntityManager;
+import karsch.lukas.audit.AuditLogEntry;
+import karsch.lukas.audit.AuditService;
 import karsch.lukas.courses.CourseEntity;
 import karsch.lukas.lecture.LectureStatus;
 import karsch.lukas.lectures.*;
+import karsch.lukas.users.StudentEntity;
 import karsch.lukas.users.StudentNotFoundException;
 import karsch.lukas.users.StudentRepository;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.web.server.ResponseStatusException;
 
+import java.time.LocalDateTime;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
@@ -16,6 +26,7 @@ import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class StatsService {
 
     /**
@@ -23,11 +34,15 @@ public class StatsService {
      */
     public static final int FAIL_THRESHOLD = 50;
 
+    private final AuditService auditService;
+
     private final StudentRepository studentRepository;
     private final AssessmentGradeRepository assessmentGradeRepository;
     private final LectureAssessmentRepository lectureAssessmentRepository;
     private final SimpleLectureDtoMapper simpleLectureDtoMapper;
     private final GradedAssessmentDtoMapper gradedAssessmentDtoMapper;
+
+    private final EntityManager entityManager;
 
     public AccumulatedCreditsResponse getAccumulatedCredits(Long studentId) {
         var student = studentRepository.findById(studentId)
@@ -133,7 +148,8 @@ public class StatsService {
                 .stream()
                 .map(entry -> {
                     int combinedGrade = getCombinedGrade(entry.getValue());
-                    int credits = combinedGrade >= FAIL_THRESHOLD ? entry.getKey().getCourse().getCredits() : 0;
+                    boolean failed = combinedGrade < FAIL_THRESHOLD;
+                    int credits = failed ? 0 : entry.getKey().getCourse().getCredits();
 
                     int totalAssessments = allAssessmentsByLecture.getOrDefault(entry.getKey(), Collections.emptyList()).size();
                     int passedAssessments = entry.getValue().size();
@@ -144,7 +160,8 @@ public class StatsService {
                             credits,
                             simpleLectureDtoMapper.map(entry.getKey()),
                             gradedAssessmentDtoMapper.mapToList(entry.getValue()),
-                            isFinalGrade);
+                            isFinalGrade,
+                            failed);
                 })
                 .collect(Collectors.toList());
 
@@ -165,5 +182,67 @@ public class StatsService {
                 .reduce(0f, Float::sum);
 
         return Math.round(totalGrades / totalWeight);
+    }
+
+    public GradeHistoryResponse getGradeHistory(long studentId, long lectureId, LocalDateTime startDate, LocalDateTime endDate) {
+        var assessments = lectureAssessmentRepository.findAllByLecture(entityManager.getReference(LectureEntity.class, lectureId));
+
+        if (assessments.isEmpty()) {
+            return new GradeHistoryResponse(studentId, lectureId, Collections.emptyList());
+        }
+
+        var grades = assessmentGradeRepository.findAllByStudentAndLectureAssessmentIn(
+                entityManager.getReference(StudentEntity.class, studentId),
+                assessments
+        );
+
+        // var auditLog = auditService.getByEntityId();
+
+        return null;
+    }
+
+    public GradeHistoryResponse getGradeHistoryForAssessment(long studentId, long lectureAssessmentId, LocalDateTime startDate, LocalDateTime endDate) {
+        var assessment = lectureAssessmentRepository.findById(lectureAssessmentId)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
+
+        var grade = assessmentGradeRepository.findByStudentAndLectureAssessment(
+                entityManager.getReference(StudentEntity.class, studentId),
+                assessment
+        ).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
+
+        var auditLogEntries = auditService.getByEntityId(grade.getClass(), grade.getId());
+
+        log.info("Found auditLogEntries for grade {}: {}", grade.getId(), auditLogEntries);
+
+        final ObjectMapper mapper = new ObjectMapper();
+
+        var gradeChanges = auditLogEntries.stream()
+                .map(entry -> new GradeChangeDTO(
+                        assessment.getId(),
+                        getGradeFromAuditEntry(entry, mapper),
+                        entry.getTimestamp())
+                )
+                .toList();
+
+        return new GradeHistoryResponse(
+                studentId,
+                lectureAssessmentId,
+                gradeChanges
+        );
+    }
+
+    private int getGradeFromAuditEntry(AuditLogEntry auditLogEntry, ObjectMapper mapper) {
+        String newJson = auditLogEntry.getNewValueJson();
+        if (newJson == null) {
+            throw new RuntimeException("newJson is null null on audit log entry " + auditLogEntry.getId());
+        }
+        try {
+            return mapper
+                    .readTree(newJson)
+                    .get("grade")
+                    .asInt();
+        } catch (JsonProcessingException e) {
+            throw new RuntimeException(e);
+        }
     }
 }

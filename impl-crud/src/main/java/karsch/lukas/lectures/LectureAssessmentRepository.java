@@ -8,5 +8,7 @@ import java.util.Set;
 
 @Repository
 public interface LectureAssessmentRepository extends JpaRepository<LectureAssessmentEntity, Long> {
+    List<LectureAssessmentEntity> findAllByLecture(LectureEntity lecture);
+
     List<LectureAssessmentEntity> findAllByLectureIn(Set<LectureEntity> lectureEntities);
 }
