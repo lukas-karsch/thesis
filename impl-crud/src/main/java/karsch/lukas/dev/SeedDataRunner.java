@@ -4,9 +4,9 @@ import karsch.lukas.courses.CourseAssessmentValueObject;
 import karsch.lukas.courses.CourseEntity;
 import karsch.lukas.courses.CoursesRepository;
 import karsch.lukas.lecture.LectureStatus;
-import karsch.lukas.lectures.LectureEntity;
-import karsch.lukas.lectures.LecturesRepository;
+import karsch.lukas.lectures.*;
 import karsch.lukas.stats.AssessmentType;
+import karsch.lukas.time.DateTimeProvider;
 import karsch.lukas.time.TimeSlotValueObject;
 import karsch.lukas.users.ProfessorEntity;
 import karsch.lukas.users.ProfessorRepository;
@@ -18,12 +18,17 @@ import org.springframework.boot.CommandLineRunner;
 import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Component;
 
-import java.time.LocalDate;
-import java.time.LocalTime;
+import java.time.*;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
+/**
+ * Set the system time to 2025-11-15.
+ * Create courses, lectures.
+ * Lectures get an assessment which take place from 15th of december onwards.
+ * Student 1 will be enrolled to lecture 1.
+ */
 @Profile("dev")
 @Component
 @RequiredArgsConstructor
@@ -34,9 +39,19 @@ public class SeedDataRunner implements CommandLineRunner {
     private final StudentRepository studentRepository;
     private final CoursesRepository coursesRepository;
     private final LecturesRepository lecturesRepository;
+    private final LectureAssessmentRepository lectureAssessmentRepository;
+    private final EnrollmentRepository enrollmentRepository;
+    private final DateTimeProvider dateTimeProvider;
 
     @Override
     public void run(String... args) {
+        dateTimeProvider.setClock(
+                Clock.fixed(
+                        LocalDateTime.of(2025, 11, 15, 12, 0, 0).toInstant(ZoneOffset.UTC),
+                        ZoneId.of("UTC")
+                )
+        );
+
         log.info("Seeding data...");
 
         var students = createStudents();
@@ -54,6 +69,14 @@ public class SeedDataRunner implements CommandLineRunner {
         var lectures = createLectures(courses, professors);
         lecturesRepository.saveAll(lectures);
         log.info("Saved {} lectures", lectures.size());
+
+        var lectureAssessments = createLectureAssessments(lectures);
+        lectureAssessmentRepository.saveAll(lectureAssessments);
+        log.info("Saved {} lecture assessments", lectureAssessments.size());
+
+        var enrollment = enrollStudentToLecture(students.getFirst(), lectures.getFirst());
+        enrollmentRepository.save(enrollment);
+        log.info("Enrolled student {} to lecture {}", students.getFirst().getId(), lectures.getFirst().getId());
 
         log.info("Data seeding complete.");
     }
@@ -134,5 +157,45 @@ public class SeedDataRunner implements CommandLineRunner {
         }
 
         return lectures;
+    }
+
+    /**
+     * Created lectures take place starting on the 15th of december
+     */
+    private List<LectureAssessmentEntity> createLectureAssessments(List<LectureEntity> lectures) {
+        var lectureAssessments = new ArrayList<LectureAssessmentEntity>();
+
+        int dayOffset = 0;
+        for (var lecture : lectures) {
+            var assessment = new LectureAssessmentEntity();
+
+            assessment.setLecture(lecture);
+            assessment.setAssessmentType(AssessmentType.EXAM);
+            assessment.setWeight(1);
+            assessment.setTimeSlot(
+                    new TimeSlotValueObject(
+                            LocalDate.of(2025, 12, 15 + dayOffset), LocalTime.of(12, 0), LocalTime.of(14, 0)
+                    )
+            );
+
+            lectureAssessments.add(assessment);
+        }
+
+        return lectureAssessments;
+    }
+
+    private EnrollmentEntity enrollStudentToLecture(StudentEntity student, LectureEntity lecture) {
+        if (lecture.getLectureStatus().ordinal() < LectureStatus.OPEN_FOR_ENROLLMENT.ordinal()) {
+            lecture.setLectureStatus(LectureStatus.OPEN_FOR_ENROLLMENT);
+        }
+
+        var enrollment = new EnrollmentEntity();
+        enrollment.setStudent(student);
+        enrollment.setLecture(lecture);
+
+        lecture.getEnrollments().add(enrollment);
+        student.getEnrollments().add(enrollment);
+
+        return enrollment;
     }
 }

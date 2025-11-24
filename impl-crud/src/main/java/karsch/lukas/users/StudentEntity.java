@@ -8,6 +8,7 @@ import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
 
+import java.util.HashSet;
 import java.util.Set;
 
 @Entity
@@ -30,6 +31,6 @@ public class StudentEntity extends AuditableEntity {
 
     @OneToMany(mappedBy = "student", fetch = FetchType.LAZY)
     @ToString.Exclude
-    private Set<EnrollmentEntity> enrollments;
+    private Set<EnrollmentEntity> enrollments = new HashSet<>();
 
 }
