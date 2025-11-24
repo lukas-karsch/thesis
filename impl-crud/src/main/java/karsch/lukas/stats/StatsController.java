@@ -19,7 +19,7 @@ public class StatsController implements IStatsController {
 
     @Override
     public ResponseEntity<ApiResponse<AccumulatedCreditsResponse>> getAccumulatedCredits(Long studentId) {
-        AccumulatedCreditsResponse accumulatedCreditsResponse;
+        final AccumulatedCreditsResponse accumulatedCreditsResponse;
 
         if (featureFlagService.isEnabled(Feature.CUSTOM_QUERY_CREDITS_CALCULATION)) {
             accumulatedCreditsResponse = statsService.getAccumulatedCreditsCustomQuery(studentId);
@@ -36,7 +36,11 @@ public class StatsController implements IStatsController {
 
     @Override
     public ResponseEntity<ApiResponse<GradesResponse>> getGrades(Long studentId) {
-        return null;
+        var grades = statsService.getGradesForStudent(studentId);
+
+        return new ResponseEntity<>(
+                new ApiResponse<>(HttpStatus.OK, grades), HttpStatus.OK
+        );
     }
 
     @Override

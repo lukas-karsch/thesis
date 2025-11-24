@@ -100,10 +100,12 @@ public class StatsE2ETest extends AbstractStatsE2ETest {
             var assessment1 = new LectureAssessmentEntity();
             assessment1.setAssessmentType(AssessmentType.EXAM);
             assessment1.setLecture(lecture1);
+            assessment1.setWeight(1.0f);
 
             var assessment2 = new LectureAssessmentEntity();
             assessment2.setAssessmentType(AssessmentType.EXAM);
             assessment2.setLecture(lecture2);
+            assessment2.setWeight(1.0f);
 
             lecture1.getAssessments().add(assessment1);
             lecture2.getAssessments().add(assessment2);

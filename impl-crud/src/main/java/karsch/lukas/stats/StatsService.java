@@ -26,6 +26,8 @@ public class StatsService {
     private final StudentRepository studentRepository;
     private final AssessmentGradeRepository assessmentGradeRepository;
     private final LectureAssessmentRepository lectureAssessmentRepository;
+    private final SimpleLectureDtoMapper simpleLectureDtoMapper;
+    private final GradedAssessmentDtoMapper gradedAssessmentDtoMapper;
 
     public AccumulatedCreditsResponse getAccumulatedCredits(Long studentId) {
         var student = studentRepository.findById(studentId)
@@ -111,5 +113,57 @@ public class StatsService {
 
     private boolean hasCompletedAllAssessmentsOfCourse(LectureEntity lecture, List<AssessmentGradeEntity> grades) {
         return lecture.getAssessments().size() == grades.size();
+    }
+
+    public GradesResponse getGradesForStudent(long studentId) {
+        var student = studentRepository.findById(studentId)
+                .orElseThrow(() -> new StudentNotFoundException(studentId));
+
+        var allGrades = assessmentGradeRepository.findAllByStudent(student);
+
+        Map<LectureEntity, List<AssessmentGradeEntity>> allGradesByLecture = allGrades.stream()
+                .collect(Collectors.groupingBy(a -> a.getLectureAssessment().getLecture()));
+
+        // 3. Fetch all assessments for those lectures in a second query.
+        Map<LectureEntity, List<LectureAssessmentEntity>> allAssessmentsByLecture =
+                lectureAssessmentRepository.findAllByLectureIn(allGradesByLecture.keySet()).stream()
+                        .collect(Collectors.groupingBy(LectureAssessmentEntity::getLecture));
+
+        var grades = allGradesByLecture.entrySet()
+                .stream()
+                .map(entry -> {
+                    int combinedGrade = getCombinedGrade(entry.getValue());
+                    int credits = combinedGrade >= FAIL_THRESHOLD ? entry.getKey().getCourse().getCredits() : 0;
+
+                    int totalAssessments = allAssessmentsByLecture.getOrDefault(entry.getKey(), Collections.emptyList()).size();
+                    int passedAssessments = entry.getValue().size();
+                    boolean isFinalGrade = totalAssessments > 0 && totalAssessments == passedAssessments;
+
+                    return new GradeDTO(
+                            combinedGrade,
+                            credits,
+                            simpleLectureDtoMapper.map(entry.getKey()),
+                            gradedAssessmentDtoMapper.mapToList(entry.getValue()),
+                            isFinalGrade);
+                })
+                .collect(Collectors.toList());
+
+        return new GradesResponse(studentId, grades);
+    }
+
+    private int getCombinedGrade(List<AssessmentGradeEntity> grades) {
+        if (grades.isEmpty()) {
+            return 0;
+        }
+
+        float totalGrades = grades.stream()
+                .map(g -> g.getGrade() * g.getLectureAssessment().getWeight())
+                .reduce(0f, Float::sum);
+
+        float totalWeight = grades.stream()
+                .map(g -> g.getLectureAssessment().getWeight())
+                .reduce(0f, Float::sum);
+
+        return Math.round(totalGrades / totalWeight);
     }
 }
