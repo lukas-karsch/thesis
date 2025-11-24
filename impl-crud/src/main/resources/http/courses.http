@@ -1,0 +1,16 @@
+POST http://localhost:8080/courses
+customAuth: professor_1
+Content-Type: application/json
+
+{
+  "name": "Test!",
+  "description": " Empty",
+  "assessments": [
+    {
+      "weight": 1,
+      "assessmentType": "PAPER"
+    }
+  ],
+  "credits": 5,
+  "prerequisiteCourseIds": []
+}

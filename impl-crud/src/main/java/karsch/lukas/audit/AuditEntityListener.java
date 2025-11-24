@@ -3,20 +3,22 @@ package karsch.lukas.audit;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import jakarta.persistence.PostLoad;
-import jakarta.persistence.PrePersist;
+import jakarta.persistence.PostPersist;
 import jakarta.persistence.PreRemove;
 import jakarta.persistence.PreUpdate;
 import karsch.lukas.config.SpringContext;
 import karsch.lukas.context.RequestContext;
 import lombok.RequiredArgsConstructor;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.transaction.support.TransactionSynchronization;
+import org.springframework.transaction.support.TransactionSynchronizationManager;
 import org.springframework.web.context.request.RequestContextHolder;
 
 import java.lang.reflect.Field;
 import java.time.LocalDateTime;
 
 @RequiredArgsConstructor
+@Slf4j
 public class AuditEntityListener {
 
     private static final String CREATE = "CREATE";
@@ -24,7 +26,6 @@ public class AuditEntityListener {
     private static final String DELETE = "DELETE";
 
     private static final ObjectMapper objectMapper = new ObjectMapper();
-    private static final Logger logger = LoggerFactory.getLogger(AuditEntityListener.class);
 
     static {
         // better LocalDateTime serialization
@@ -41,13 +42,26 @@ public class AuditEntityListener {
                 auditable.setSnapshotJson(objectMapper.writeValueAsString(entity));
             }
         } catch (Exception e) {
-            logger.error(e.getMessage(), e);
+            log.error(e.getMessage(), e);
         }
     }
 
-    @PrePersist
-    public void prePersist(Object entity) {
-        saveAuditLog(entity, CREATE, null);
+    @PostPersist
+    public void postPersist(Object entity) {
+        // should guarantee that the audit log entry is written within the same transaction
+        TransactionSynchronizationManager.registerSynchronization(new TransactionSynchronization() {
+            @Override
+            public void beforeCommit(boolean readOnly) {
+                saveAuditLog(entity, CREATE, null);
+            }
+
+            @Override
+            public void afterCompletion(int status) {
+                if (status == TransactionSynchronization.STATUS_ROLLED_BACK || status == TransactionSynchronization.STATUS_UNKNOWN) {
+                    log.warn("@PostPersist: Commit status is {}! Audit log should not be written", status);
+                }
+            }
+        });
     }
 
     @PreUpdate
@@ -74,7 +88,7 @@ public class AuditEntityListener {
             final RequestContext requestContext = SpringContext.getBean(RequestContext.class);
 
             var log = new AuditLogEntry();
-            log.setEntityName(entity.getClass().getSimpleName());
+            log.setEntityName(AuditHelper.getNameFromEntityClass(entity.getClass()));
             log.setOperation(operation);
             log.setTimestamp(LocalDateTime.now());
             if (RequestContextHolder.getRequestAttributes() != null) {
@@ -99,7 +113,7 @@ public class AuditEntityListener {
 
             auditLogRepository.save(log);
         } catch (Exception e) {
-            logger.error(e.getMessage(), e);
+            log.error(e.getMessage(), e);
         }
     }
 
