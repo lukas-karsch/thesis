@@ -28,7 +28,7 @@ public class StudentEntity extends AuditableEntity {
 
     private int semester = 1;
 
-    @OneToMany(mappedBy = "student")
+    @OneToMany(mappedBy = "student", fetch = FetchType.LAZY)
     @ToString.Exclude
     private Set<EnrollmentEntity> enrollments;
 

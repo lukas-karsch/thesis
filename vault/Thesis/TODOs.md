@@ -21,7 +21,6 @@
 - code
     - add auditing context 
     - check if indexes are set up correctly 
-- set up swagger docs
 - Zitationsstil klären
 - [[LLMs bei der Bachelorarbeit (Infoveranstaltung)]] MindMap abholen
 ## Before Finishing
