@@ -8,6 +8,7 @@ import jakarta.persistence.PreRemove;
 import jakarta.persistence.PreUpdate;
 import karsch.lukas.config.SpringContext;
 import karsch.lukas.context.RequestContext;
+import karsch.lukas.time.DateTimeProvider;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.transaction.support.TransactionSynchronization;
@@ -15,7 +16,9 @@ import org.springframework.transaction.support.TransactionSynchronizationManager
 import org.springframework.web.context.request.RequestContextHolder;
 
 import java.lang.reflect.Field;
+import java.time.Instant;
 import java.time.LocalDateTime;
+import java.time.ZoneOffset;
 
 @RequiredArgsConstructor
 @Slf4j
@@ -86,11 +89,15 @@ public class AuditEntityListener {
         try {
             final AuditLogRepository auditLogRepository = SpringContext.getBean(AuditLogRepository.class);
             final RequestContext requestContext = SpringContext.getBean(RequestContext.class);
+            final DateTimeProvider dateTimeProvider = SpringContext.getBean(DateTimeProvider.class);
 
             var log = new AuditLogEntry();
             log.setEntityName(AuditHelper.getNameFromEntityClass(entity.getClass()));
             log.setOperation(operation);
-            log.setTimestamp(LocalDateTime.now());
+            LocalDateTime now = LocalDateTime.ofInstant(
+                    Instant.now(dateTimeProvider.getClock()), ZoneOffset.UTC
+            );
+            log.setTimestamp(now);
             if (RequestContextHolder.getRequestAttributes() != null) {
                 log.setModifiedBy(
                         String.format("%s_%d", requestContext.getUserType(), requestContext.getUserId())

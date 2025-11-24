@@ -1,12 +1,9 @@
 package karsch.lukas.audit;
 
-import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.stereotype.Repository;
 
-import java.util.List;
-
 @Repository
-public interface AuditLogRepository extends JpaRepository<AuditLogEntry, Long> {
-    List<AuditLogEntry> findAllByEntityNameAndEntityId(String entityName, Long entityId, Sort sort);
+public interface AuditLogRepository extends JpaRepository<AuditLogEntry, Long>, JpaSpecificationExecutor<AuditLogEntry> {
 }

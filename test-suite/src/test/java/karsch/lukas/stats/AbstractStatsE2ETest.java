@@ -9,6 +9,10 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
+import java.time.Clock;
+import java.time.LocalDateTime;
+import java.time.ZoneOffset;
+
 import static io.restassured.RestAssured.given;
 import static karsch.lukas.helper.AuthHelper.getProfessorAuthHeader;
 import static org.hamcrest.Matchers.equalTo;
@@ -24,6 +28,7 @@ public abstract class AbstractStatsE2ETest implements BaseE2ETest {
     @AfterEach
     void tearDown() {
         resetDatabase();
+        setSystemTime(Clock.systemUTC());
     }
 
     public record GradingSeedData(long studentId, long passedLectureId,
@@ -97,5 +102,54 @@ public abstract class AbstractStatsE2ETest implements BaseE2ETest {
                 .body("data.history", hasSize(2))
                 .body("data.history[0].grade", equalTo(80))
                 .body("data.history[1].grade", equalTo(100));
+    }
+
+    @Test
+    @DisplayName("Should return the correct grade history for a lecture assessment with date filter")
+    void getGradesHistoryWithDateFilter() {
+        // Arrange
+        var T0 = LocalDateTime.of(2025, 11, 24, 12, 0, 0);
+        var T1 = LocalDateTime.of(2025, 11, 24, 13, 0, 0);
+        var T2 = LocalDateTime.of(2025, 11, 24, 14, 0, 0);
+
+        setSystemTime(Clock.fixed(T0.toInstant(ZoneOffset.UTC), ZoneOffset.UTC));
+        var gradingSeedData = createGradingSeedData(); // initial grade 100 at T0
+
+        setSystemTime(Clock.fixed(T1.toInstant(ZoneOffset.UTC), ZoneOffset.UTC));
+        given()
+                .header(getProfessorAuthHeader(1L))
+                .contentType(ContentType.JSON)
+                .body(new AssignGradeRequest(
+                        gradingSeedData.studentId(),
+                        gradingSeedData.passedLectureAssessmentId(),
+                        80
+                ))
+                .patch("/lectures/{lectureId}", gradingSeedData.passedLectureId())
+                .then()
+                .statusCode(200);
+
+        setSystemTime(Clock.fixed(T2.toInstant(ZoneOffset.UTC), ZoneOffset.UTC));
+        given()
+                .header(getProfessorAuthHeader(1L))
+                .contentType(ContentType.JSON)
+                .body(new AssignGradeRequest(
+                        gradingSeedData.studentId(),
+                        gradingSeedData.passedLectureAssessmentId(),
+                        70
+                ))
+                .patch("/lectures/{lectureId}", gradingSeedData.passedLectureId())
+                .then()
+                .statusCode(200);
+
+        given()
+                .queryParam("studentId", gradingSeedData.studentId())
+                .queryParam("lectureAssessmentId", gradingSeedData.passedLectureAssessmentId())
+                .queryParam("startDate", T1.toString())
+                .queryParam("endDate", T2.toString())
+                .get("/stats/grades/history")
+                .then()
+                .statusCode(200)
+                .body("data.history", hasSize(1))
+                .body("data.history[0].grade", equalTo(80));
     }
 }

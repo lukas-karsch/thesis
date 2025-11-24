@@ -12,7 +12,7 @@ https://courses.baeldung.com/courses/2463040/lectures/52134950
 [Spring Boot Testcontainers - Integration Testing made easy!](https://www.youtube.com/watch?v=erp-7MCK5BU)
 
 ## E2E Tests with RestAssured 
-#e2e
+#e2e #restassured
 `io.restassured`
 
 Usage documentation: https://github.com/rest-assured/rest-assured/wiki/Usage

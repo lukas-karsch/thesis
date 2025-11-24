@@ -210,16 +210,14 @@ public class StatsService {
                 assessment
         ).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
 
-        var auditLogEntries = auditService.getByEntityId(grade.getClass(), grade.getId());
-
-        log.info("Found auditLogEntries for grade {}: {}", grade.getId(), auditLogEntries);
+        var auditLogEntries = auditService.getByEntityId(grade.getClass(), grade.getId(), startDate, endDate);
+        log.debug("Found {}, auditLogEntries for grade {}: {}", auditLogEntries.size(), grade.getId(), auditLogEntries);
 
         final ObjectMapper mapper = new ObjectMapper();
-
         var gradeChanges = auditLogEntries.stream()
                 .map(entry -> new GradeChangeDTO(
                         assessment.getId(),
-                        getGradeFromAuditEntry(entry, mapper),
+                        extractGradeFromAuditEntry(entry, mapper),
                         entry.getTimestamp())
                 )
                 .toList();
@@ -231,7 +229,7 @@ public class StatsService {
         );
     }
 
-    private int getGradeFromAuditEntry(AuditLogEntry auditLogEntry, ObjectMapper mapper) {
+    private int extractGradeFromAuditEntry(AuditLogEntry auditLogEntry, ObjectMapper mapper) {
         String newJson = auditLogEntry.getNewValueJson();
         if (newJson == null) {
             throw new RuntimeException("newJson is null null on audit log entry " + auditLogEntry.getId());
