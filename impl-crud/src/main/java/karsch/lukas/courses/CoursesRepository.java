@@ -9,7 +9,7 @@ import java.util.Set;
 
 @Repository
 public interface CoursesRepository extends JpaRepository<CourseEntity, Long> {
-    @EntityGraph(attributePaths = {"prerequisites", "courseAssessments"})
+    @EntityGraph(attributePaths = {"prerequisites"})
     @Query("select c from CourseEntity c")
     Set<CourseEntity> findAllDetailed();
 

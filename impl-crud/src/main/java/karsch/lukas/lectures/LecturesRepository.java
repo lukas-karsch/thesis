@@ -8,7 +8,7 @@ import java.util.Optional;
 
 @Repository
 public interface LecturesRepository extends JpaRepository<LectureEntity, Long> {
-    @EntityGraph(attributePaths = {"course", "timeSlots", "professor", "waitlist", "enrollments", "course.courseAssessments", "course.prerequisites"})
+    @EntityGraph(attributePaths = {"course", "timeSlots", "professor", "waitlist", "enrollments", "course.prerequisites"})
     Optional<LectureEntity> findDetailsById(Long lectureId);
 
     @EntityGraph(attributePaths = {"timeSlots", "professor"})

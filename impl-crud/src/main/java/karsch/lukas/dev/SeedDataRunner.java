@@ -1,6 +1,5 @@
 package karsch.lukas.dev;
 
-import karsch.lukas.courses.CourseAssessmentValueObject;
 import karsch.lukas.courses.CourseEntity;
 import karsch.lukas.courses.CoursesRepository;
 import karsch.lukas.lecture.LectureStatus;
@@ -112,22 +111,11 @@ public class SeedDataRunner implements CommandLineRunner {
         course1.setName("Computer Science 1");
         course1.setDescription("Basics and history of computer science");
         course1.setCredits(4);
-        course1.setCourseAssessments(
-                Set.of(
-                        new CourseAssessmentValueObject(AssessmentType.EXAM, 1)
-                )
-        );
 
         var course2 = new CourseEntity();
         course2.setName("Computer Science 2");
         course2.setDescription("Advanced topics of computer science");
         course2.setCredits(5);
-        course2.setCourseAssessments(
-                Set.of(
-                        new CourseAssessmentValueObject(AssessmentType.PROJECT, 0.5f),
-                        new CourseAssessmentValueObject(AssessmentType.EXAM, 0.5f)
-                )
-        );
 
         return List.of(course1, course2);
     }

@@ -40,13 +40,6 @@ class CoursesService {
         courseEntity.setDescription(createCourseRequest.description());
         courseEntity.setCredits(createCourseRequest.credits());
         courseEntity.setPrerequisites(prerequisites);
-        courseEntity.setCourseAssessments(
-                createCourseRequest.assessments()
-                        .stream()
-                        .map(dto ->
-                                new CourseAssessmentValueObject(dto.assessmentType(), dto.weight()))
-                        .collect(Collectors.toSet())
-        );
 
         coursesRepository.save(courseEntity);
     }

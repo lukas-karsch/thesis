@@ -41,10 +41,6 @@ public class CourseEntity extends AuditableEntity {
     )
     private Set<CourseEntity> prerequisites = new HashSet<>();
 
-    @ElementCollection
-    @CollectionTable(name = "course_assessments", joinColumns = @JoinColumn(name = "course_id"))
-    private Set<CourseAssessmentValueObject> courseAssessments = new HashSet<>();
-
     @CreatedDate
     private LocalDateTime createdAt;
 

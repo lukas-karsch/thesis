@@ -3,9 +3,7 @@ package karsch.lukas.courses;
 import io.restassured.RestAssured;
 import io.restassured.http.ContentType;
 import karsch.lukas.BaseE2ETest;
-import karsch.lukas.course.CourseAssessmentDTO;
 import karsch.lukas.course.CreateCourseRequest;
-import karsch.lukas.stats.AssessmentType;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -49,10 +47,7 @@ public abstract class AbstractCoursesE2ETest implements BaseE2ETest {
                 "Maths",
                 "Simple mathematics",
                 5,
-                Collections.emptySet(),
-                Set.of(
-                        new CourseAssessmentDTO(AssessmentType.EXAM, 1)
-                )
+                Collections.emptySet()
         );
 
         given()
@@ -73,10 +68,7 @@ public abstract class AbstractCoursesE2ETest implements BaseE2ETest {
                 "Maths",
                 "Simple mathematics",
                 5,
-                Collections.emptySet(),
-                Set.of(
-                        new CourseAssessmentDTO(AssessmentType.EXAM, 1)
-                )
+                Collections.emptySet()
         );
 
         given()
@@ -104,10 +96,7 @@ public abstract class AbstractCoursesE2ETest implements BaseE2ETest {
                 "Advanced Maths",
                 "Only for nerds",
                 5,
-                Set.of(1L),
-                Set.of(
-                        new CourseAssessmentDTO(AssessmentType.EXAM, 1)
-                )
+                Set.of(1L)
         );
 
         given()
@@ -129,20 +118,14 @@ public abstract class AbstractCoursesE2ETest implements BaseE2ETest {
                 "Maths",
                 "Basic",
                 5,
-                Collections.emptySet(),
-                Set.of(
-                        new CourseAssessmentDTO(AssessmentType.EXAM, 1)
-                )
+                Collections.emptySet()
         );
 
         var advancedRequest = new CreateCourseRequest(
                 "Advanced Maths",
                 "Only for nerds",
                 5,
-                Set.of(1L),
-                Set.of(
-                        new CourseAssessmentDTO(AssessmentType.EXAM, 1)
-                )
+                Set.of(1L)
         );
 
         given()
