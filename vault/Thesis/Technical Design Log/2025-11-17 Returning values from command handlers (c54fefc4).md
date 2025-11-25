@@ -9,4 +9,4 @@ I think from some "command handler" endpoints it will make sense to return a sim
 > Return aggregate decisions, not model data! 
 ## Links
 https://chatgpt.com/c/691b0436-6bb4-832c-ad59-188445d2d2e1
-
+[[[CQRS (Command Query Responsibility Segregation)]]]

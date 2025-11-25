@@ -11,3 +11,5 @@ I'm currently working on the historic grades query. For this, I need to query th
 - raise an application-level event: `@DomainEventPublisher`
 ## Decision
 Use `@PostPersist` with TransactionSynchronizationManager. Using this, I can make sure the audit log gets access to the entity's ID; and the auditing runs in the same transaction. 
+## Links 
+- [[2025-11-14 Audit Log (c5367a6b)]]

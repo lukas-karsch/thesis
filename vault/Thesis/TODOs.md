@@ -22,6 +22,7 @@
     - add auditing context 
     - check if indexes are set up correctly 
     - remove assessments from course entity 
+    - Controllers: Check for @Valid annotation on endpoints with request body 
 - Zitationsstil klären
 - [[LLMs bei der Bachelorarbeit (Infoveranstaltung)]] MindMap abholen
 ## Before Finishing

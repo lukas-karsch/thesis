@@ -25,3 +25,6 @@ Without putting too much though into it, the algorithm would have to look someth
 ## Decision
 - Think about a business requirement that would make this necessary 
 - Do not implement an algorithm for now 
+## Links 
+- [[2025-11-14 Audit Log (c5367a6b)]]
+- adding the ID to make this possible: [[2025-11-24 Audit Log - include ID (7ccd99be)]]
