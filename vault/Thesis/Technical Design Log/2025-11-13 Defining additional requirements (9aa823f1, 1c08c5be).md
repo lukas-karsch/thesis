@@ -13,7 +13,7 @@ I outlined the basic structure, but I think I need some more business logic. DDD
 	- might need a sort of `LectureAssessment` with a (due) date or exam date 
 - Only professors teaching the lecture may change grades
 - Grades can only be assigned during `InProgress` or `Finished`
-- Credits are added only when a grade is entered (> 50) and the lecture lifecycle is set to `Finished`
+- Credits are calculated automatically and the lecture lifecycle is set to `Finished` and all grades on the lecture assignments are "Passed" (grade >=50)
 ## Resulting changes to the domain objects / entities
 ### Course
 Additions:
