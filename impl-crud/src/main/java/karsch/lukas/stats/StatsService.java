@@ -184,23 +184,6 @@ public class StatsService {
         return Math.round(totalGrades / totalWeight);
     }
 
-    public GradeHistoryResponse getGradeHistory(long studentId, long lectureId, LocalDateTime startDate, LocalDateTime endDate) {
-        var assessments = lectureAssessmentRepository.findAllByLecture(entityManager.getReference(LectureEntity.class, lectureId));
-
-        if (assessments.isEmpty()) {
-            return new GradeHistoryResponse(studentId, lectureId, Collections.emptyList());
-        }
-
-        var grades = assessmentGradeRepository.findAllByStudentAndLectureAssessmentIn(
-                entityManager.getReference(StudentEntity.class, studentId),
-                assessments
-        );
-
-        // var auditLog = auditService.getByEntityId();
-
-        return null;
-    }
-
     public GradeHistoryResponse getGradeHistoryForAssessment(long studentId, long lectureAssessmentId, LocalDateTime startDate, LocalDateTime endDate) {
         var assessment = lectureAssessmentRepository.findById(lectureAssessmentId)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
