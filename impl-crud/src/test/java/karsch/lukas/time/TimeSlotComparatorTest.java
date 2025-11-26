@@ -1,7 +1,5 @@
-package karsch.lukas.lectures;
+package karsch.lukas.time;
 
-import karsch.lukas.time.TimeSlotComparator;
-import karsch.lukas.time.TimeSlotValueObject;
 import org.junit.jupiter.api.Test;
 
 import java.time.LocalDate;
