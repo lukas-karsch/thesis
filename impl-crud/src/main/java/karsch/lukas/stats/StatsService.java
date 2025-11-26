@@ -23,6 +23,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 @Service
 @RequiredArgsConstructor
@@ -59,10 +60,7 @@ public class StatsService {
                 .filter(entry -> hasCompletedAllAssessmentsOfCourse(entry.getKey(), entry.getValue()))
                 .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
 
-        int totalCredits = finishedLectures.keySet().stream()
-                .map(LectureEntity::getCourse)
-                .map(CourseEntity::getCredits)
-                .reduce(0, Integer::sum);
+        int totalCredits = countCreditsFromLectures(finishedLectures.keySet().stream());
 
         return new AccumulatedCreditsResponse(studentId, totalCredits);
     }
@@ -71,6 +69,22 @@ public class StatsService {
         var student = studentRepository.findById(studentId)
                 .orElseThrow(() -> new StudentNotFoundException(studentId));
 
+        int totalCredits = countCreditsFromLectures(getPassedLectures(student));
+
+        return new AccumulatedCreditsResponse(studentId, totalCredits);
+    }
+
+    public int countCreditsFromLectures(Stream<LectureEntity> lectures) {
+        return countCreditsFromCourses(lectures.map(LectureEntity::getCourse));
+    }
+
+    public int countCreditsFromCourses(Stream<CourseEntity> courses) {
+        return courses
+                .map(CourseEntity::getCredits)
+                .reduce(0, Integer::sum);
+    }
+
+    public Stream<LectureEntity> getPassedLectures(StudentEntity student) {
         // 1. Eagerly fetch grades with lectures and courses in one query.
         var allGrades = assessmentGradeRepository.findAllByStudent(student);
 
@@ -90,16 +104,13 @@ public class StatsService {
                 .filter(this::lectureIsFinished)
                 .collect(Collectors.groupingBy(a -> a.getLectureAssessment().getLecture()));
 
-        int totalCredits = finishedLectures.entrySet().stream()
+        return finishedLectures.entrySet().stream()
                 .filter(entry -> {
-                    int totalAssessments = assessmentsByLecture.getOrDefault(entry.getKey(), Collections.emptyList()).size();
+                    int totalLectureAssessments = assessmentsByLecture.getOrDefault(entry.getKey(), Collections.emptyList()).size();
                     int passedAssessments = entry.getValue().size();
-                    return totalAssessments > 0 && totalAssessments == passedAssessments;
+                    return totalLectureAssessments > 0 && totalLectureAssessments == passedAssessments;
                 })
-                .map(entry -> entry.getKey().getCourse().getCredits())
-                .reduce(0, Integer::sum);
-
-        return new AccumulatedCreditsResponse(studentId, totalCredits);
+                .map(Map.Entry::getKey);
     }
 
     public AccumulatedCreditsResponse getAccumulatedCreditsCustomQuery(Long studentId) {
@@ -115,7 +126,9 @@ public class StatsService {
      * @return true if the lecture status is FINISHED or ARCHIVED
      */
     private boolean lectureIsFinished(AssessmentGradeEntity grade) {
-        LectureStatus lectureStatus = grade.getLectureAssessment().getLecture().getLectureStatus();
+        final LectureEntity lecture = grade.getLectureAssessment().getLecture();
+        final LectureStatus lectureStatus = lecture.getLectureStatus();
+        log.debug("Lecture {} status: {}", lecture.getId(), lectureStatus);
         return lectureStatus.ordinal() >= LectureStatus.FINISHED.ordinal();
     }
 

@@ -6,6 +6,7 @@ import karsch.lukas.courses.CourseEntity;
 import karsch.lukas.lecture.LectureStatus;
 import karsch.lukas.lecture.TimeSlot;
 import karsch.lukas.lectures.AbstractLecturesE2ETest;
+import karsch.lukas.lectures.AssessmentGradeEntity;
 import karsch.lukas.lectures.LectureAssessmentEntity;
 import karsch.lukas.lectures.LectureEntity;
 import karsch.lukas.stats.AssessmentType;
@@ -98,7 +99,7 @@ public class LecturesE2ETest extends AbstractLecturesE2ETest {
     }
 
     @Override
-    protected LectureSeedData createLectureSeedData() {
+    protected LectureSeedData createLectureSeedData(int minimumCreditsRequired) {
         return inTransaction(() -> {
             var courseSeedData = createCourseSeedData();
 
@@ -107,6 +108,7 @@ public class LecturesE2ETest extends AbstractLecturesE2ETest {
                     entityManager.getReference(CourseEntity.class, courseSeedData.courseId())
             );
             lecture.setLectureStatus(LectureStatus.OPEN_FOR_ENROLLMENT);
+            lecture.setMinimumCreditsRequired(minimumCreditsRequired);
 
             entityManager.persist(lecture);
 
@@ -114,6 +116,82 @@ public class LecturesE2ETest extends AbstractLecturesE2ETest {
             entityManager.persist(student);
 
             return new LectureSeedData(lecture.getId(), student.getId(), courseSeedData.professorId());
+        }, transactionManager);
+    }
+
+    @Override
+    protected CourseWithPrerequisitesSeedData createCourseAndLectureWithPrerequisites(boolean prerequisitePassed) {
+        return inTransaction(() -> {
+            var prerequisiteCourse = createCourseEntity(5, "Quick maths", null);
+            var course = createCourseEntity(6, "Advanced Maths", null);
+            course.getPrerequisites().add(prerequisiteCourse);
+
+            entityManager.persist(prerequisiteCourse);
+            entityManager.persist(course);
+
+            var professor = createProfessorEntity();
+            var lecture = createLectureEntity(professor, course);
+            lecture.setLectureStatus(LectureStatus.OPEN_FOR_ENROLLMENT);
+
+            entityManager.persist(professor);
+            entityManager.persist(lecture);
+
+            var student = createStudentEntity();
+            entityManager.persist(student);
+
+            var prerequisiteLecture = createLectureEntity(professor, prerequisiteCourse);
+            entityManager.persist(prerequisiteLecture);
+            prerequisiteLecture.setLectureStatus(LectureStatus.FINISHED);
+
+            if (prerequisitePassed) {
+                var assessment = new LectureAssessmentEntity();
+                assessment.setLecture(prerequisiteLecture);
+                assessment.setAssessmentType(AssessmentType.EXAM);
+                assessment.setWeight(1);
+
+                var grade = new AssessmentGradeEntity();
+                grade.setLectureAssessment(assessment);
+                grade.setStudent(student);
+                grade.setGrade(100);
+
+                entityManager.persist(assessment);
+                entityManager.persist(grade);
+            }
+
+            return new CourseWithPrerequisitesSeedData(lecture.getId(), prerequisiteLecture.getId(), student.getId());
+        }, transactionManager);
+    }
+
+    @Override
+    protected LectureWithMinimumCredits createAssessmentAndGrade(long lectureId, long studentId) {
+        return inTransaction(() -> {
+            var lecture = entityManager.getReference(LectureEntity.class, lectureId);
+            var student = entityManager.getReference(StudentEntity.class, studentId);
+
+            var assessment = new LectureAssessmentEntity();
+            assessment.setWeight(1);
+            assessment.setAssessmentType(AssessmentType.EXAM);
+            assessment.setLecture(lecture);
+
+            lecture.setLectureStatus(LectureStatus.FINISHED);
+
+            entityManager.persist(assessment);
+
+            var grade = new AssessmentGradeEntity();
+            grade.setStudent(student);
+            grade.setLectureAssessment(assessment);
+            grade.setGrade(100);
+
+            var newCourse = createCourseEntity(5, "Computer Science", null);
+            var newLecture = createLectureEntity(lecture.getProfessor(), newCourse);
+            newLecture.setLectureStatus(LectureStatus.OPEN_FOR_ENROLLMENT);
+            newLecture.setMinimumCreditsRequired(1);
+
+            entityManager.persist(grade);
+            entityManager.persist(newCourse);
+            entityManager.persist(newLecture);
+
+            return new LectureWithMinimumCredits(newLecture.getId());
         }, transactionManager);
     }
 

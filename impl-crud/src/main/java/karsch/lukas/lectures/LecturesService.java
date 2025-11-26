@@ -6,6 +6,7 @@ import karsch.lukas.auth.NotAuthenticatedException;
 import karsch.lukas.courses.CoursesNotFoundException;
 import karsch.lukas.courses.CoursesRepository;
 import karsch.lukas.lecture.*;
+import karsch.lukas.stats.StatsService;
 import karsch.lukas.time.TimeSlotService;
 import karsch.lukas.time.TimeSlotValueObject;
 import karsch.lukas.users.ProfessorRepository;
@@ -43,6 +44,7 @@ class LecturesService {
     private final EntityManager entityManager;
 
     private final TimeSlotService timeSlotService;
+    private final StatsService statsService;
 
     public GetLecturesForStudentResponse getLecturesForStudent(Long studentId) {
         var enrolledLectures = enrollmentRepository.findAllByStudentId(studentId)
@@ -65,40 +67,61 @@ class LecturesService {
      * 2. Check if lecture is open for enrollment (else throw) <br>
      * 3. Check if student is enrolled (throw if they are)<br>
      * 4. Check if student is enrolled to a lecture with overlapping timeslots (and throw) <br>
-     * 5. Check if lecture is full<br>
-     * 5.1 Full      -> waitlist the student <br>
-     * 5.2 Not Full  -> enroll the student
+     * 5. Check if student completed all prerequisites
+     * 6. Check if lecture is full<br>
+     * 6.1 Full      -> waitlist the student <br>
+     * 6.2 Not Full  -> enroll the student
      */
     @Transactional
     public EnrollmentStatus enrollStudent(Long studentId, Long lectureId) {
-        // TODO check if the student has completed all prerequisites !
-        log.warn("enrollStudent is still missing prerequisite checking!");
+        log.debug("Student {} wants to enroll to lecture {}", studentId, lectureId);
+
         var lecture = lecturesRepository
-                .findById(lectureId)
+                .findWithCourseAndPrerequisitesById(lectureId)
                 .orElseThrow(() -> new LectureNotFoundException(lectureId));
 
         if (lecture.getLectureStatus() != LectureStatus.OPEN_FOR_ENROLLMENT) {
+            log.debug("Lecture {} is not open for enrollment.", lectureId);
             throw new LectureNotOpenForEnrollmentException(lectureId, lecture.getLectureStatus());
         }
 
         // check if the student is already enrolled
         var existingEnrollment = enrollmentRepository.findByStudentIdAndLectureId(studentId, lectureId);
         if (existingEnrollment.isPresent()) {
+            log.debug("Student {} is already enrolled to lecture {}", studentId, lectureId);
             throw new AlreadyEnrolledException(lectureId);
         }
 
-        var studentEnrollments = enrollmentRepository.findAllWithTimeSlotsByStudentId(studentId);
-        var conflict = studentEnrollments.stream()
+        enrollmentRepository.findAllWithTimeSlotsByStudentId(studentId)
+                .stream()
                 .filter(e -> timeSlotService.areConflictingTimeSlots(
                         e.getLecture().getTimeSlots(), lecture.getTimeSlots()
                 ))
-                .findFirst();
-
-        if (conflict.isPresent()) {
-            throw new ResponseStatusException(HttpStatus.CONFLICT, "This lecture has conflicting timeslots with another lecture.");
-        }
+                .findFirst()
+                .ifPresent(_ -> {
+                    log.debug("Can not enroll student {} to lecture {} because of conflicting timeslots with another lecture.", studentId, lectureId);
+                    throw new ResponseStatusException(HttpStatus.CONFLICT, "This lecture has conflicting timeslots with another lecture.");
+                });
 
         final StudentEntity studentReference = entityManager.getReference(StudentEntity.class, studentId);
+
+        var course = lecture.getCourse();
+        var passedLectures = statsService.getPassedLectures(studentReference).toList();
+        long completedPrerequisitesCount = passedLectures.stream()
+                .map(LectureEntity::getCourse)
+                .filter(course.getPrerequisites()::contains)
+                .count();
+
+        if (completedPrerequisitesCount != course.getPrerequisites().size()) {
+            log.debug("Student {} has not completed all prerequisites for lecture {}", studentId, lectureId);
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Student has not completed all prerequisites.");
+        }
+
+        int studentCredits = statsService.countCreditsFromLectures(passedLectures.stream());
+        if (studentCredits < lecture.getMinimumCreditsRequired()) {
+            log.debug("Student {} has not earned enough credits for lecture {} (has {}, needs {})", studentId, lectureId, studentCredits, lecture.getMinimumCreditsRequired());
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Student has not earned enough credits to enroll");
+        }
 
         int enrolledStudents = enrollmentRepository.countByLecture(lecture);
         if (enrolledStudents >= lecture.getMaximumStudents()) {

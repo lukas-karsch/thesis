@@ -21,4 +21,15 @@ public class TestTransactionHelper {
             throw e;
         }
     }
+
+    public static void inTransaction(Runnable r, PlatformTransactionManager transactionManager) {
+        var tx = transactionManager.getTransaction(new DefaultTransactionDefinition());
+        try {
+            r.run();
+            transactionManager.commit(tx);
+        } catch (Exception e) {
+            transactionManager.rollback(tx);
+            throw e;
+        }
+    }
 }

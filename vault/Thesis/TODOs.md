@@ -23,6 +23,9 @@
     - check if indexes are set up correctly 
     - remove assessments from course entity 
     - Controllers: Check for @Valid annotation on endpoints with request body 
+    - clean up StatsService 
+    - get rid of N+1 queries (especially StatsService)
+    - Create a logger that logs the request "trace"
 - Zitationsstil klären
 - [[LLMs bei der Bachelorarbeit (Infoveranstaltung)]] MindMap abholen
 ## Before Finishing

@@ -114,7 +114,11 @@ public abstract class AbstractLecturesE2ETest implements BaseE2ETest {
      *     <li>Must create a student in semester 1 that can enroll to the lecture.</li>
      * </ul>
      */
-    protected abstract LectureSeedData createLectureSeedData();
+    protected abstract LectureSeedData createLectureSeedData(int minimumCreditsRequired);
+
+    protected LectureSeedData createLectureSeedData() {
+        return createLectureSeedData(0);
+    }
 
     @Test
     @DisplayName("Enrolling in a lecture, then getting the enrolled lecture, then disenrolling should return 201, 200, 200 respectively")
@@ -821,6 +825,70 @@ public abstract class AbstractLecturesE2ETest implements BaseE2ETest {
                 .statusCode(200)
                 .body("data.waitlisted", hasSize(0))
                 .body("data.enrolled", hasSize(1));
+    }
+
+    public record CourseWithPrerequisitesSeedData(long lectureId, long prerequisiteLectureId, long studentId) {
+    }
+
+    protected abstract CourseWithPrerequisitesSeedData createCourseAndLectureWithPrerequisites(boolean prerequisitePassed);
+
+    @Test
+    @DisplayName("Student should not be able to enroll to a lecture if they haven't completed the prerequisites")
+    void studentShouldNotBeAbleToEnroll_ifPrerequisitesAreNotCompleted() {
+        var prerequisitesSeedData = createCourseAndLectureWithPrerequisites(false);
+
+        given()
+                .when()
+                .header(getStudentAuthHeader(prerequisitesSeedData.studentId()))
+                .post("/lectures/{lectureId}/enroll", prerequisitesSeedData.lectureId())
+                .then()
+                .statusCode(400);
+    }
+
+    @Test
+    @DisplayName("Student should be able to enroll to a lecture if they completed the prerequisites")
+    void studentShouldBeAbleToEnroll_ifPrerequisitesCompleted() {
+        var prerequisitesSeedData = createCourseAndLectureWithPrerequisites(true);
+
+        given()
+                .when()
+                .header(getStudentAuthHeader(prerequisitesSeedData.studentId()))
+                .post("/lectures/{lectureId}/enroll", prerequisitesSeedData.lectureId())
+                .then()
+                .statusCode(201)
+                .body("data.enrollmentStatus", equalToIgnoringCase("ENROLLED"));
+    }
+
+    @Test
+    @DisplayName("Student should not be able to enroll if minimum credits are not met")
+    void studentShouldNotBeAbleToEnroll_ifMinimumCreditsAreNotMet() {
+        var lectureSeedData = createLectureSeedData(5);
+
+        given()
+                .when()
+                .header(getStudentAuthHeader(lectureSeedData.studentId()))
+                .post("/lectures/{lectureId}/enroll", lectureSeedData.lectureId())
+                .then()
+                .statusCode(400);
+    }
+
+    public record LectureWithMinimumCredits(long lectureId) {
+    }
+
+    protected abstract LectureWithMinimumCredits createAssessmentAndGrade(long lectureId, long studentId);
+
+    @Test
+    @DisplayName("Student should be able to enroll if minimum credits are met.")
+    void studentShouldBeAbleToEnroll_ifMinimumCreditsAreMet() {
+        var passedLectureSeed = createLectureSeedData();
+        var newLecture = createAssessmentAndGrade(passedLectureSeed.lectureId(), passedLectureSeed.studentId());
+
+        given()
+                .when()
+                .header(getStudentAuthHeader(passedLectureSeed.studentId()))
+                .post("/lectures/{lectureId}/enroll", newLecture.lectureId())
+                .then()
+                .statusCode(201);
     }
 
     @Test
