@@ -35,15 +35,15 @@ public interface ILecturesController {
 
     @PatchMapping("{lectureId}")
     @ResponseStatus(HttpStatus.OK)
-    ResponseEntity<ApiResponse<Void>> updateGrade(@PathVariable Long lectureId, @RequestBody AssignGradeRequest assignGradeRequest);
+    ResponseEntity<ApiResponse<Void>> updateGrade(@PathVariable Long lectureId, @RequestBody @Valid AssignGradeRequest assignGradeRequest);
 
     @PostMapping("{lectureId}/dates")
     @ResponseStatus(HttpStatus.CREATED)
-    ResponseEntity<ApiResponse<Void>> addDatesToLecture(@PathVariable Long lectureId, @RequestBody AssignDatesToLectureRequest assignDatesToLectureRequest);
+    ResponseEntity<ApiResponse<Void>> addDatesToLecture(@PathVariable Long lectureId, @RequestBody @Valid AssignDatesToLectureRequest assignDatesToLectureRequest);
 
     @PostMapping("{lectureId}/assessments")
     @ResponseStatus(HttpStatus.CREATED)
-    ResponseEntity<ApiResponse<Void>> addAssessmentForLecture(@PathVariable Long lectureId, @RequestBody CreateLectureAssessmentRequest createLectureAssessmentRequest);
+    ResponseEntity<ApiResponse<Void>> addAssessmentForLecture(@PathVariable Long lectureId, @RequestBody @Valid CreateLectureAssessmentRequest createLectureAssessmentRequest);
 
     @GetMapping("{lectureId}/waitingList")
     @ResponseStatus(HttpStatus.OK)
