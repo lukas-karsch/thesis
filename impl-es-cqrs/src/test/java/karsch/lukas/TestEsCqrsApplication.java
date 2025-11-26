@@ -2,7 +2,7 @@ package karsch.lukas;
 
 import org.springframework.boot.SpringApplication;
 
-public class EsCqrsApplicationRunner {
+public class TestEsCqrsApplication {
 
     static void main(String[] args) {
         SpringApplication.from(EsCqrsApplication::main)
