@@ -33,6 +33,9 @@ public class CourseEntity extends AuditableEntity {
     @Column(nullable = false)
     private int credits;
 
+    @Column(nullable = false)
+    private int minimumCreditsRequired = 0;
+
     @ManyToMany
     @JoinTable(
             name = "course_prerequisites",

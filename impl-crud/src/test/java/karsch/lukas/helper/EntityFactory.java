@@ -12,11 +12,16 @@ import java.util.Collections;
 import java.util.Set;
 
 public class EntityFactory {
-    public static CourseEntity createCourseEntity(int credits, @Nullable String name, @Nullable String description) {
+    public static CourseEntity createCourseEntity(int credits) {
+        return createCourseEntity(credits, null, null, null);
+    }
+
+    public static CourseEntity createCourseEntity(int credits, @Nullable String name, @Nullable String description, @Nullable Integer minimumCreditsRequired) {
         var course = new CourseEntity();
         course.setName(name == null ? "Mathematics" : name);
         course.setDescription(description);
         course.setCredits(credits);
+        course.setMinimumCreditsRequired(minimumCreditsRequired != null ? minimumCreditsRequired : 0);
 
         return course;
     }
@@ -36,20 +41,18 @@ public class EntityFactory {
     /**
      * Applies defaults:
      * <ul>
-     *     <li>minimumCredits: 0</li>
      *     <li>maximumStudents: 1</li>
      *     <li>timeSlots: empty set</li>
      * </ul>
      */
     public static LectureEntity createLectureEntity(ProfessorEntity professor, CourseEntity course) {
-        return createLectureEntity(professor, course, null, null, Collections.emptySet(), null);
+        return createLectureEntity(professor, course, null, Collections.emptySet(), null);
     }
 
-    public static LectureEntity createLectureEntity(ProfessorEntity professor, CourseEntity course, @Nullable Integer minimumCreditsRequired, @Nullable Integer maximumStudents, Set<TimeSlotValueObject> timeSlots, @Nullable LectureStatus lectureStatus) {
+    public static LectureEntity createLectureEntity(ProfessorEntity professor, CourseEntity course, @Nullable Integer maximumStudents, Set<TimeSlotValueObject> timeSlots, @Nullable LectureStatus lectureStatus) {
         var lecture = new LectureEntity();
         lecture.setCourse(course);
         lecture.setProfessor(professor);
-        lecture.setMinimumCreditsRequired(minimumCreditsRequired == null ? 0 : minimumCreditsRequired);
         lecture.setMaximumStudents(maximumStudents == null ? 1 : maximumStudents);
         lecture.getTimeSlots().addAll(timeSlots);
 

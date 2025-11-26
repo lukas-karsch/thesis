@@ -40,6 +40,7 @@ class CoursesService {
         courseEntity.setDescription(createCourseRequest.description());
         courseEntity.setCredits(createCourseRequest.credits());
         courseEntity.setPrerequisites(prerequisites);
+        courseEntity.setMinimumCreditsRequired(createCourseRequest.minimumCreditsRequired());
 
         coursesRepository.save(courseEntity);
     }

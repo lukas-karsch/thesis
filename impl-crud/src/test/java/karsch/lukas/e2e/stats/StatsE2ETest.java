@@ -80,8 +80,8 @@ public class StatsE2ETest extends AbstractStatsE2ETest {
             var student = createStudentEntity();
             var professor = createProfessorEntity();
 
-            var course1 = createCourseEntity(5, "Mathematics", null);
-            var course2 = createCourseEntity(5, "Computer Science", null);
+            var course1 = createCourseEntity(5);
+            var course2 = createCourseEntity(5);
 
             var lecture1 = createLectureEntity(professor, course1);
             var lecture1Enrollment = new EnrollmentEntity();

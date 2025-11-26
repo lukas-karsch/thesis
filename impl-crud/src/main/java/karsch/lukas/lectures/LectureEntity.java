@@ -39,9 +39,6 @@ public class LectureEntity extends AuditableEntity {
     @Column(nullable = false)
     private int maximumStudents;
 
-    @Column(nullable = false)
-    private int minimumCreditsRequired = 0;
-
     @ElementCollection
     @CollectionTable(name = "lecture_timeslots", joinColumns = @JoinColumn(name = "lecture_id"))
     @SortComparator(TimeSlotComparator.class)

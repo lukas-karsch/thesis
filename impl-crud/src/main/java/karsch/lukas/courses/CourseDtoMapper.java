@@ -18,7 +18,8 @@ public class CourseDtoMapper implements Mapper<CourseEntity, CourseDTO> {
                 entity.getName(),
                 entity.getDescription(),
                 entity.getCredits(),
-                simpleCourseDtoMapper.map(entity.getPrerequisites())
+                simpleCourseDtoMapper.map(entity.getPrerequisites()),
+                entity.getMinimumCreditsRequired()
         );
     }
 }

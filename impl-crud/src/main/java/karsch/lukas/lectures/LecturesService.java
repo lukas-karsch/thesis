@@ -118,8 +118,8 @@ class LecturesService {
         }
 
         int studentCredits = statsService.countCreditsFromLectures(passedLectures.stream());
-        if (studentCredits < lecture.getMinimumCreditsRequired()) {
-            log.debug("Student {} has not earned enough credits for lecture {} (has {}, needs {})", studentId, lectureId, studentCredits, lecture.getMinimumCreditsRequired());
+        if (studentCredits < course.getMinimumCreditsRequired()) {
+            log.debug("Student {} has not earned enough credits for lecture {} (has {}, needs {})", studentId, lectureId, studentCredits, course.getMinimumCreditsRequired());
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Student has not earned enough credits to enroll");
         }
 

@@ -47,7 +47,8 @@ public abstract class AbstractCoursesE2ETest implements BaseE2ETest {
                 "Maths",
                 "Simple mathematics",
                 5,
-                Collections.emptySet()
+                Collections.emptySet(),
+                0
         );
 
         given()
@@ -64,11 +65,14 @@ public abstract class AbstractCoursesE2ETest implements BaseE2ETest {
     @Test
     @DisplayName("POST /courses should return status code 201; GET /courses should return a list")
     void createCourses_shouldReturn201() {
+        int minimumCreditsRequired = 1;
+
         var request = new CreateCourseRequest(
                 "Maths",
                 "Simple mathematics",
                 5,
-                Collections.emptySet()
+                Collections.emptySet(),
+                minimumCreditsRequired
         );
 
         given()
@@ -86,7 +90,8 @@ public abstract class AbstractCoursesE2ETest implements BaseE2ETest {
                 .get("/courses")
                 .then()
                 .statusCode(200)
-                .body("data[0].name", equalTo("Maths"));
+                .body("data[0].name", equalTo("Maths"))
+                .body("data[0].minimumCreditsRequired", equalTo(minimumCreditsRequired));
     }
 
     @Test
@@ -96,7 +101,8 @@ public abstract class AbstractCoursesE2ETest implements BaseE2ETest {
                 "Advanced Maths",
                 "Only for nerds",
                 5,
-                Set.of(1L)
+                Set.of(1L),
+                0
         );
 
         given()
@@ -118,14 +124,16 @@ public abstract class AbstractCoursesE2ETest implements BaseE2ETest {
                 "Maths",
                 "Basic",
                 5,
-                Collections.emptySet()
+                Collections.emptySet(),
+                0
         );
 
         var advancedRequest = new CreateCourseRequest(
                 "Advanced Maths",
                 "Only for nerds",
                 5,
-                Set.of(1L)
+                Set.of(1L),
+                0
         );
 
         given()

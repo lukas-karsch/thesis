@@ -24,6 +24,8 @@
     - clean up StatsService 
     - get rid of N+1 queries (especially StatsService)
     - Create a logger that logs the request "trace"
+    - CREATE endpoints must return the created IDs...
+    - minimumCredits should be moved to `CourseEntity`. Also change the DTOs! 
 - Zitationsstil klären
 - [[LLMs bei der Bachelorarbeit (Infoveranstaltung)]] MindMap abholen
 ## Before Finishing

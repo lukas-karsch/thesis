@@ -84,7 +84,7 @@ public class LecturesE2ETest extends AbstractLecturesE2ETest {
     @Override
     protected CreateCourseSeedData createCourseSeedData() {
         return inTransaction(() -> {
-            var course = createCourseEntity(4, "Mathematics", "Mathematics for beginners");
+            var course = createCourseEntity(4);
 
             var professor = createProfessorEntity("Mr.", "Bean");
 
@@ -99,7 +99,7 @@ public class LecturesE2ETest extends AbstractLecturesE2ETest {
     }
 
     @Override
-    protected LectureSeedData createLectureSeedData(int minimumCreditsRequired) {
+    protected LectureSeedData createLectureSeedData(int minimumCreditsRequiredForCourse) {
         return inTransaction(() -> {
             var courseSeedData = createCourseSeedData();
 
@@ -108,8 +108,11 @@ public class LecturesE2ETest extends AbstractLecturesE2ETest {
                     entityManager.getReference(CourseEntity.class, courseSeedData.courseId())
             );
             lecture.setLectureStatus(LectureStatus.OPEN_FOR_ENROLLMENT);
-            lecture.setMinimumCreditsRequired(minimumCreditsRequired);
 
+            var course = entityManager.getReference(CourseEntity.class, courseSeedData.courseId());
+            course.setMinimumCreditsRequired(minimumCreditsRequiredForCourse);
+
+            entityManager.persist(course);
             entityManager.persist(lecture);
 
             var student = createStudentEntity("Hannah", "Holzheu", null);
@@ -122,8 +125,8 @@ public class LecturesE2ETest extends AbstractLecturesE2ETest {
     @Override
     protected CourseWithPrerequisitesSeedData createCourseAndLectureWithPrerequisites(boolean prerequisitePassed) {
         return inTransaction(() -> {
-            var prerequisiteCourse = createCourseEntity(5, "Quick maths", null);
-            var course = createCourseEntity(6, "Advanced Maths", null);
+            var prerequisiteCourse = createCourseEntity(5);
+            var course = createCourseEntity(6);
             course.getPrerequisites().add(prerequisiteCourse);
 
             entityManager.persist(prerequisiteCourse);
@@ -182,10 +185,9 @@ public class LecturesE2ETest extends AbstractLecturesE2ETest {
             grade.setLectureAssessment(assessment);
             grade.setGrade(100);
 
-            var newCourse = createCourseEntity(5, "Computer Science", null);
+            var newCourse = createCourseEntity(5, "Computer Science", null, 1);
             var newLecture = createLectureEntity(lecture.getProfessor(), newCourse);
             newLecture.setLectureStatus(LectureStatus.OPEN_FOR_ENROLLMENT);
-            newLecture.setMinimumCreditsRequired(1);
 
             entityManager.persist(grade);
             entityManager.persist(newCourse);
@@ -236,7 +238,7 @@ public class LecturesE2ETest extends AbstractLecturesE2ETest {
             ));
             lecture1.setLectureStatus(LectureStatus.OPEN_FOR_ENROLLMENT);
 
-            var course2 = createCourseEntity(4, "Computer Science", null);
+            var course2 = createCourseEntity(4);
             var lecture2 = new LectureEntity();
             lecture2.setCourse(course2);
             lecture2.setMaximumStudents(1);
