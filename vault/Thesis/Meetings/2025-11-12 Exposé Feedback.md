@@ -11,9 +11,7 @@ Meeting was held on 2025-11-12, 5.30PM
     - e.g. "how long does it take to implement the same use case in both applications?"
 - YES, always document what I'm doing! especially when i want to rate developer experience or flexibility (afterwards)
 - It wasn't clear how I plan to implement the project structure / how I'll test it - explained it and it was fine
-
-## Hypothesis?
-
+## Hypothesis needed?
 - maybe!
 - depends on the literature
     - if literature has opinions on architecture, try to suggest one

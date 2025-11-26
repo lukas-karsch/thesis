@@ -10,3 +10,5 @@ This means that updating a nested object when it was loaded from an associated e
 - looks like the snapshotJson **IS** indeed set for entities, even if they were loaded via associations. 
 - The problem: my `@PreRemove` function did not actually set `oldJson` - simple bug, but that was of course (once again) not picked up by an LLM 
 - Glad this one only took me 5 minutes to figure out. 
+## Links 
+- [[2025-11-14 Audit Log (c5367a6b)]]
