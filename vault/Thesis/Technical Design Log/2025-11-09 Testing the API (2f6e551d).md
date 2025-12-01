@@ -12,7 +12,6 @@ Test technologies are layed out here: [[Testing in SpringBoot]]
 Those will be contract tests - no performance. Test that the interfaces are implemented correctly and identically by both applications. 
 
 ### Performance tests
-
 #performance
 Repeated (e2e) tests that measure performance.
 Requirements here:

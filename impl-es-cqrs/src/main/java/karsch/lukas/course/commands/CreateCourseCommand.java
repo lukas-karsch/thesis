@@ -1,0 +1,16 @@
+package karsch.lukas.course.commands;
+
+import org.axonframework.modelling.command.TargetAggregateIdentifier;
+
+import java.util.Set;
+import java.util.UUID;
+
+public record CreateCourseCommand(
+        @TargetAggregateIdentifier UUID courseId,
+        String name,
+        String description,
+        int credits,
+        Set<Long> prerequisiteCourseIds,
+        int minimumCreditsRequired
+) {
+}

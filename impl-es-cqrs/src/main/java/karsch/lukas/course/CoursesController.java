@@ -1,29 +1,59 @@
 package karsch.lukas.course;
 
+import karsch.lukas.course.commands.CreateCourseCommand;
+import karsch.lukas.course.queries.FindAllCoursesQuery;
 import karsch.lukas.response.ApiResponse;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.axonframework.commandhandling.gateway.CommandGateway;
+import org.axonframework.messaging.responsetypes.ResponseTypes;
+import org.axonframework.queryhandling.QueryGateway;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.util.Collections;
+import java.util.List;
 import java.util.Set;
+import java.util.UUID;
+import java.util.concurrent.Future;
 
 @RestController
+@RequiredArgsConstructor
+@Slf4j
 public class CoursesController implements ICoursesController {
 
+    private final CommandGateway commandGateway;
+    private final QueryGateway queryGateway;
+
+    // think about returning a Future from those endpoints -> what are the implications for the CRUD impl?
     @Override
     public ResponseEntity<ApiResponse<Set<CourseDTO>>> getCourses() {
-        var response = new ApiResponse<>(
-                HttpStatus.OK,
-                Set.of(
-                        new CourseDTO(1L, "Maths", "Basic math topics", 5, Collections.emptySet(), 0)
-                )
-        );
-        return new ResponseEntity<>(response, response.getHttpStatus());
+        Future<List<CourseDTO>> future = queryGateway.query(new FindAllCoursesQuery(), ResponseTypes.multipleInstancesOf(CourseDTO.class));
+        try {
+            List<CourseDTO> courses = future.get();
+            var response = new ApiResponse<>(HttpStatus.OK, Set.copyOf(courses));
+            return new ResponseEntity<>(response, response.getHttpStatus());
+        } catch (Exception e) {
+            log.error(e.getMessage(), e);
+            // Handle exceptions, e.g., InterruptedException or ExecutionException
+            var response = new ApiResponse<Set<CourseDTO>>(HttpStatus.INTERNAL_SERVER_ERROR, "Error fetching courses");
+            return new ResponseEntity<>(response, response.getHttpStatus());
+        }
     }
 
     @Override
     public ResponseEntity<ApiResponse<Void>> createCourse(CreateCourseRequest createCourseRequest) {
-        return null;
+        UUID courseId = UUID.randomUUID();
+        CreateCourseCommand command = new CreateCourseCommand(
+                courseId,
+                createCourseRequest.name(),
+                createCourseRequest.description(),
+                createCourseRequest.credits(),
+                createCourseRequest.prerequisiteCourseIds(),
+                createCourseRequest.minimumCreditsRequired()
+        );
+        commandGateway.send(command); // axon by default returns the ID of the created aggregate
+        var response = new ApiResponse<Void>(HttpStatus.CREATED, "Course creation initiated");
+        return new ResponseEntity<>(response, response.getHttpStatus());
     }
 }

@@ -1,0 +1,15 @@
+Access the Axon Dashboard: http://localhost:8024/
+
+Serializer configuration: https://docs.axoniq.io/axon-framework-reference/4.11/serialization/
+Message intercepting: https://docs.axoniq.io/axon-framework-reference/4.11/messaging-concepts/message-intercepting/#command-handler-interceptors
+Building an Axon application from scratch: https://docs.axoniq.io/bikerental-demo/main/
+## Links 
+- [[CQRS (Command Query Responsibility Segregation)]]
+- [[AXON Subscription Queries]]
+- https://academy.axoniq.io/
+- Axon docs: https://docs.axoniq.io/reference-guide/
+- Axon quick start guide on YT https://www.youtube.com/playlist?list=PL4O1nDpoa5KQkkApGXjKi3rzUW3II5pjm
+- Axon demo project https://github.com/AxonIQ/hotel-demo
+- https://www.baeldung.com/axon-cqrs-event-sourcing
+- Event Sourcing https://www.axoniq.io/concepts/event-sourcing
+- Replaying events with an event processor: https://docs.axoniq.io/axon-framework-reference/4.12/events/event-processors/

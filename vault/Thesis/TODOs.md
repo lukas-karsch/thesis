@@ -24,7 +24,8 @@
     - clean up StatsService 
     - get rid of N+1 queries (especially StatsService)
     - Create a logger that logs the request "trace"
-    - CREATE endpoints must return the created IDs...
+    - POST endpoints should return the created IDs...
+    - use UUIDs instead of Long for IDs 
 - Zitationsstil klären
 - [[LLMs bei der Bachelorarbeit (Infoveranstaltung)]] MindMap abholen
 ## Before Finishing

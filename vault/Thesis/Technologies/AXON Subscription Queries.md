@@ -1,0 +1,8 @@
+1. Frontend sends Command via REST.
+2. Backend issues Command.
+3. Backend _simultaneously_ subscribes to a query update on the projection.
+4. When the projection updates, the Backend returns `201 CREATED` to the Frontend.
+By doing this, the ES system looks synchronous to the outside world.
+-> do I want this? 
+## Links
+- Axon Docs: https://www.axoniq.io/blog/introducing-subscription-queries
