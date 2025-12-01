@@ -6,3 +6,4 @@ By doing this, the ES system looks synchronous to the outside world.
 -> do I want this? 
 ## Links
 - Axon Docs: https://www.axoniq.io/blog/introducing-subscription-queries
+- Example app https://github.com/fransvanbuul/gc-subscriptions

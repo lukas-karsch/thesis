@@ -46,6 +46,7 @@ Validation:
 - when including JSON, I want to add a column like "referencedIds" that can be indexed
 	- then, listen to e.g. RenameEvents and easily get the affected projections so they can be updated 
 	- this is called **Reverse Lookup** or **Inverted Index** 
+	- add @JsonIgnore 
 ### IDs
 - it might be necessary to migrate everything to UUIDs, so they can be created in the application layer (which is a MUST for CQRS)
 - mention this in the #ddd downsides! 

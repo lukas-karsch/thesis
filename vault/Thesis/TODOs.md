@@ -23,9 +23,9 @@
     - check if indexes are set up correctly 
     - clean up StatsService 
     - get rid of N+1 queries (especially StatsService)
-    - Create a logger that logs the request "trace"
-    - POST endpoints should return the created IDs...
+    - POST endpoints should return the created IDs
     - use UUIDs instead of Long for IDs 
+    - think about removing the SQL migration tooling from CRUD - unnecessary complexity for the thesis 
 - Zitationsstil klären
 - [[LLMs bei der Bachelorarbeit (Infoveranstaltung)]] MindMap abholen
 ## Before Finishing

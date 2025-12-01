@@ -55,4 +55,19 @@ public class AuditService {
 
         return auditLogRepository.findAll(spec, sort);
     }
+
+    /**
+     * When adding audit context from a system thread (e.g. cron job), make sure to call {@link #clearContext()} in a finally block
+     */
+    public void addAuditContext(Object entity, Object context) {
+        AuditContext.setContextForEntity(entity, context);
+    }
+
+    /**
+     * The audit context is stored in a ThreadLocal. It's the caller's responsibility to clear the context
+     * after the operation is complete. Use a finally block to ensure it's always called.
+     */
+    public void clearContext() {
+        AuditContext.clearContext();
+    }
 }
