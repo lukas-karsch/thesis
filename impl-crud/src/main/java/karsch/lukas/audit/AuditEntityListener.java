@@ -91,34 +91,39 @@ public class AuditEntityListener {
             final RequestContext requestContext = SpringContext.getBean(RequestContext.class);
             final DateTimeProvider dateTimeProvider = SpringContext.getBean(DateTimeProvider.class);
 
-            var log = new AuditLogEntry();
-            log.setEntityName(AuditHelper.getNameFromEntityClass(entity.getClass()));
-            log.setOperation(operation);
+            var entry = new AuditLogEntry();
+            entry.setEntityName(AuditHelper.getNameFromEntityClass(entity.getClass()));
+            entry.setOperation(operation);
             LocalDateTime now = LocalDateTime.ofInstant(
                     Instant.now(dateTimeProvider.getClock()), ZoneOffset.UTC
             );
-            log.setTimestamp(now);
+            entry.setTimestamp(now);
             if (RequestContextHolder.getRequestAttributes() != null) {
-                log.setModifiedBy(
+                entry.setModifiedBy(
                         String.format("%s_%d", requestContext.getUserType(), requestContext.getUserId())
                 );
             } else {
-                log.setModifiedBy("SYSTEM");
+                entry.setModifiedBy("SYSTEM");
             }
 
-            log.setOldValueJson(oldJson);
+            Object context = AuditContext.getContextForEntity(entity);
+            if (context != null) {
+                entry.setContextJson(objectMapper.writeValueAsString(context));
+            }
+
+            entry.setOldValueJson(oldJson);
             if (!DELETE.equals(operation)) {
-                log.setNewValueJson(objectMapper.writeValueAsString(entity));
+                entry.setNewValueJson(objectMapper.writeValueAsString(entity));
             }
 
             try {
                 Field idField = entity.getClass().getDeclaredField("id");
                 idField.setAccessible(true);
-                log.setEntityId((Long) idField.get(entity));
+                entry.setEntityId((Long) idField.get(entity));
             } catch (Exception ignored) {
             }
 
-            auditLogRepository.save(log);
+            auditLogRepository.save(entry);
         } catch (Exception e) {
             log.error(e.getMessage(), e);
         }

@@ -37,4 +37,7 @@ public class AuditLogEntry {
 
     @Column(columnDefinition = "TEXT")
     private String newValueJson;
+
+    @Column(columnDefinition = "TEXT")
+    private String contextJson;
 }
