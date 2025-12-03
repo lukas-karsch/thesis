@@ -3,6 +3,7 @@ package karsch.lukas.users;
 import jakarta.persistence.*;
 import karsch.lukas.audit.AuditableEntity;
 import karsch.lukas.lectures.EnrollmentEntity;
+import karsch.lukas.uuid.GeneratedUuidV7;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
@@ -10,6 +11,7 @@ import lombok.ToString;
 
 import java.util.HashSet;
 import java.util.Set;
+import java.util.UUID;
 
 @Entity
 @Table(name = "students", indexes = @Index(columnList = "semester", name = "idx_student_semester"))
@@ -19,9 +21,9 @@ import java.util.Set;
 @EqualsAndHashCode(callSuper = false, onlyExplicitlyIncluded = true)
 public class StudentEntity extends AuditableEntity {
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GeneratedUuidV7
     @EqualsAndHashCode.Include
-    private Long id;
+    private UUID id;
 
     private String firstName;
 

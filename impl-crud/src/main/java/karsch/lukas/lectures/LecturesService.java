@@ -17,10 +17,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.Objects;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
@@ -46,7 +43,7 @@ class LecturesService {
     private final TimeSlotService timeSlotService;
     private final StatsService statsService;
 
-    public GetLecturesForStudentResponse getLecturesForStudent(Long studentId) {
+    public GetLecturesForStudentResponse getLecturesForStudent(UUID studentId) {
         var enrolledLectures = enrollmentRepository.findAllByStudentId(studentId)
                 .stream()
                 .map(EnrollmentEntity::getLecture)
@@ -73,7 +70,7 @@ class LecturesService {
      * 6.2 Not Full  -> enroll the student
      */
     @Transactional
-    public EnrollmentStatus enrollStudent(Long studentId, Long lectureId) {
+    public EnrollmentStatus enrollStudent(UUID studentId, Long lectureId) {
         log.debug("Student {} wants to enroll to lecture {}", studentId, lectureId);
 
         var lecture = lecturesRepository
@@ -150,7 +147,7 @@ class LecturesService {
      * Find the lecture. If exists and not archived or finished, delete enrollment and waitlist entries
      */
     @Transactional
-    public void disenrollStudent(Long studentId, Long lectureId) {
+    public void disenrollStudent(UUID studentId, Long lectureId) {
         var lecture = lecturesRepository.findWithEnrollmentsAndWaitlistById(lectureId);
         if (lecture.isEmpty()
                 || lecture.get().getLectureStatus() == LectureStatus.FINISHED
@@ -197,7 +194,7 @@ class LecturesService {
     }
 
     @Transactional
-    public void createLectureFromCourse(Long professorId, CreateLectureRequest createLectureRequest) {
+    public void createLectureFromCourse(UUID professorId, CreateLectureRequest createLectureRequest) {
         var course = courseEntityRepository.findById(createLectureRequest.courseId())
                 .orElseThrow(() -> new CoursesNotFoundException(
                         Collections.singleton(createLectureRequest.courseId())
@@ -246,7 +243,7 @@ class LecturesService {
     }
 
     @Transactional
-    public void advanceLifecycleOfLecture(Long lectureId, LectureStatus newLectureStatus, Long professorId) {
+    public void advanceLifecycleOfLecture(Long lectureId, LectureStatus newLectureStatus, UUID professorId) {
         var lecture = lecturesRepository.findById(lectureId)
                 .orElseThrow(() -> new LectureNotFoundException(lectureId));
 
@@ -271,7 +268,7 @@ class LecturesService {
     }
 
     @Transactional
-    public void addDatesToLecture(AssignDatesToLectureRequest assignDatesToLectureRequest, Long lectureId, Long professorId) {
+    public void addDatesToLecture(AssignDatesToLectureRequest assignDatesToLectureRequest, Long lectureId, UUID professorId) {
         var lecture = lecturesRepository.findWithProfessorAndTimeSlotsById(lectureId)
                 .orElseThrow(() -> new LectureNotFoundException(lectureId));
 
@@ -297,7 +294,7 @@ class LecturesService {
     }
 
     @Transactional
-    public void addAssessmentForLecture(Long lectureId, CreateLectureAssessmentRequest lectureAssessmentDTO, Long professorId) {
+    public void addAssessmentForLecture(Long lectureId, CreateLectureAssessmentRequest lectureAssessmentDTO, UUID professorId) {
         // TODO: think - can assessments always be created? do i check that the weight is not > 1?
         var lecture = lecturesRepository.findDetailsById(lectureId)
                 .orElseThrow(() -> new LectureNotFoundException(lectureId));
@@ -326,7 +323,7 @@ class LecturesService {
     }
 
     @Transactional
-    public void assignGrade(Long lectureId, AssignGradeRequest assignGradeRequest, Long professorId) {
+    public void assignGrade(Long lectureId, AssignGradeRequest assignGradeRequest, UUID professorId) {
         var lecture = lecturesRepository.findWithProfessorAndTimeSlotsById(lectureId)
                 .orElseThrow(() -> new LectureNotFoundException(lectureId));
 
@@ -344,7 +341,7 @@ class LecturesService {
         if (!studentIsEnrolledToLecture) {
             throw new ResponseStatusException(
                     HttpStatus.BAD_REQUEST,
-                    String.format("Student %d is not enrolled to lecture %d", assignGradeRequest.studentId(), lectureId)
+                    String.format("Student %s is not enrolled to lecture %d", assignGradeRequest.studentId(), lectureId)
             );
         }
 
@@ -370,7 +367,7 @@ class LecturesService {
     }
 
     @Transactional
-    public void updateGrade(Long lectureId, AssignGradeRequest assignGradeRequest, Long professorId) {
+    public void updateGrade(Long lectureId, AssignGradeRequest assignGradeRequest, UUID professorId) {
         var lecture = lecturesRepository.findWithProfessorAndTimeSlotsById(lectureId)
                 .orElseThrow(() -> new LectureNotFoundException(lectureId));
 

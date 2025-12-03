@@ -2,5 +2,7 @@ package karsch.lukas.lecture;
 
 import org.hibernate.validator.constraints.Range;
 
-public record AssignGradeRequest(Long studentId, Long assessmentId, @Range(min = 0, max = 100) int grade) {
+import java.util.UUID;
+
+public record AssignGradeRequest(UUID studentId, Long assessmentId, @Range(min = 0, max = 100) int grade) {
 }

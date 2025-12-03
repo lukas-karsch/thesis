@@ -18,10 +18,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.time.LocalDateTime;
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -45,7 +42,7 @@ public class StatsService {
 
     private final EntityManager entityManager;
 
-    public AccumulatedCreditsResponse getAccumulatedCredits(Long studentId) {
+    public AccumulatedCreditsResponse getAccumulatedCredits(UUID studentId) {
         var student = studentRepository.findById(studentId)
                 .orElseThrow(() -> new StudentNotFoundException(studentId));
 
@@ -65,7 +62,7 @@ public class StatsService {
         return new AccumulatedCreditsResponse(studentId, totalCredits);
     }
 
-    public AccumulatedCreditsResponse getAccumulatedCreditsImproved(Long studentId) {
+    public AccumulatedCreditsResponse getAccumulatedCreditsImproved(UUID studentId) {
         var student = studentRepository.findById(studentId)
                 .orElseThrow(() -> new StudentNotFoundException(studentId));
 
@@ -113,7 +110,7 @@ public class StatsService {
                 .map(Map.Entry::getKey);
     }
 
-    public AccumulatedCreditsResponse getAccumulatedCreditsCustomQuery(Long studentId) {
+    public AccumulatedCreditsResponse getAccumulatedCreditsCustomQuery(UUID studentId) {
         var student = studentRepository.findById(studentId)
                 .orElseThrow(() -> new StudentNotFoundException(studentId));
 
@@ -143,7 +140,7 @@ public class StatsService {
         return lecture.getAssessments().size() == grades.size();
     }
 
-    public GradesResponse getGradesForStudent(long studentId) {
+    public GradesResponse getGradesForStudent(UUID studentId) {
         var student = studentRepository.findById(studentId)
                 .orElseThrow(() -> new StudentNotFoundException(studentId));
 
@@ -197,7 +194,7 @@ public class StatsService {
         return Math.round(totalGrades / totalWeight);
     }
 
-    public GradeHistoryResponse getGradeHistoryForAssessment(long studentId, long lectureAssessmentId, LocalDateTime startDate, LocalDateTime endDate) {
+    public GradeHistoryResponse getGradeHistoryForAssessment(UUID studentId, long lectureAssessmentId, LocalDateTime startDate, LocalDateTime endDate) {
         var assessment = lectureAssessmentRepository.findById(lectureAssessmentId)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
 

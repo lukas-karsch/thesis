@@ -9,6 +9,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.time.LocalDateTime;
+import java.util.UUID;
 
 @RestController
 @RequiredArgsConstructor
@@ -18,7 +19,7 @@ public class StatsController implements IStatsController {
     private final FeatureFlagService featureFlagService;
 
     @Override
-    public ResponseEntity<ApiResponse<AccumulatedCreditsResponse>> getAccumulatedCredits(Long studentId) {
+    public ResponseEntity<ApiResponse<AccumulatedCreditsResponse>> getAccumulatedCredits(UUID studentId) {
         final AccumulatedCreditsResponse accumulatedCreditsResponse;
 
         if (featureFlagService.isEnabled(Feature.CUSTOM_QUERY_CREDITS_CALCULATION)) {
@@ -35,7 +36,7 @@ public class StatsController implements IStatsController {
     }
 
     @Override
-    public ResponseEntity<ApiResponse<GradesResponse>> getGrades(Long studentId) {
+    public ResponseEntity<ApiResponse<GradesResponse>> getGrades(UUID studentId) {
         var grades = statsService.getGradesForStudent(studentId);
 
         return new ResponseEntity<>(
@@ -45,7 +46,7 @@ public class StatsController implements IStatsController {
 
     @Override
     public ResponseEntity<ApiResponse<GradeHistoryResponse>> getGradesHistory(
-            Long studentId,
+            UUID studentId,
             Long lectureAssessmentId,
             LocalDateTime startDate,
             LocalDateTime endDate

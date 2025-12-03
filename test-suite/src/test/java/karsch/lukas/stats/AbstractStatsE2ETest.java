@@ -12,6 +12,7 @@ import org.junit.jupiter.api.Test;
 import java.time.Clock;
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
+import java.util.UUID;
 
 import static io.restassured.RestAssured.given;
 import static karsch.lukas.helper.AuthHelper.getProfessorAuthHeader;
@@ -31,8 +32,8 @@ public abstract class AbstractStatsE2ETest implements BaseE2ETest {
         setSystemTime(Clock.systemUTC());
     }
 
-    public record GradingSeedData(long studentId, long passedLectureId,
-                                  long passedLectureAssessmentId) {
+    public record GradingSeedData(UUID studentId, long passedLectureId,
+                                  long passedLectureAssessmentId, UUID professorId) {
     }
 
     /**
@@ -82,7 +83,7 @@ public abstract class AbstractStatsE2ETest implements BaseE2ETest {
         var gradingSeedData = createGradingSeedData();
 
         given()
-                .header(getProfessorAuthHeader(1L))
+                .header(getProfessorAuthHeader(gradingSeedData.professorId()))
                 .contentType(ContentType.JSON)
                 .body(new AssignGradeRequest(
                         gradingSeedData.studentId(),
@@ -117,7 +118,7 @@ public abstract class AbstractStatsE2ETest implements BaseE2ETest {
 
         setSystemTime(Clock.fixed(T1.toInstant(ZoneOffset.UTC), ZoneOffset.UTC));
         given()
-                .header(getProfessorAuthHeader(1L))
+                .header(getProfessorAuthHeader(gradingSeedData.professorId()))
                 .contentType(ContentType.JSON)
                 .body(new AssignGradeRequest(
                         gradingSeedData.studentId(),
@@ -130,7 +131,7 @@ public abstract class AbstractStatsE2ETest implements BaseE2ETest {
 
         setSystemTime(Clock.fixed(T2.toInstant(ZoneOffset.UTC), ZoneOffset.UTC));
         given()
-                .header(getProfessorAuthHeader(1L))
+                .header(getProfessorAuthHeader(gradingSeedData.professorId()))
                 .contentType(ContentType.JSON)
                 .body(new AssignGradeRequest(
                         gradingSeedData.studentId(),

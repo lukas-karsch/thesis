@@ -8,6 +8,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.UUID;
+
 @RestController
 @RequiredArgsConstructor
 public class LecturesController implements ILecturesController {
@@ -16,7 +18,7 @@ public class LecturesController implements ILecturesController {
     private final RequestContext requestContext;
 
     @Override
-    public ResponseEntity<ApiResponse<GetLecturesForStudentResponse>> getLecturesForStudent(Long studentId) {
+    public ResponseEntity<ApiResponse<GetLecturesForStudentResponse>> getLecturesForStudent(UUID studentId) {
         var lecturesForStudent = lecturesService.getLecturesForStudent(studentId);
 
         return new ResponseEntity<>(

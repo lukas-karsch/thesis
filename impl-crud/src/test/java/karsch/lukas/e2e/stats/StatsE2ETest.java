@@ -129,7 +129,7 @@ public class StatsE2ETest extends AbstractStatsE2ETest {
             entityManager.persist(grade1);
             entityManager.persist(grade2);
 
-            return new GradingSeedData(student.getId(), lecture1.getId(), assessment1.getId());
+            return new GradingSeedData(student.getId(), lecture1.getId(), assessment1.getId(), professor.getId());
         }, transactionManager);
     }
 }

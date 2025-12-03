@@ -1,14 +1,19 @@
 package karsch.lukas.users;
 
-import jakarta.persistence.*;
+import jakarta.persistence.Entity;
+import jakarta.persistence.Id;
+import jakarta.persistence.OneToMany;
+import jakarta.persistence.Table;
 import karsch.lukas.audit.AuditableEntity;
 import karsch.lukas.lectures.LectureEntity;
+import karsch.lukas.uuid.GeneratedUuidV7;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
 
 import java.util.Set;
+import java.util.UUID;
 
 @Entity
 @Table(name = "professors")
@@ -18,9 +23,9 @@ import java.util.Set;
 @EqualsAndHashCode(callSuper = false, onlyExplicitlyIncluded = true)
 public class ProfessorEntity extends AuditableEntity {
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GeneratedUuidV7
     @EqualsAndHashCode.Include
-    private Long id;
+    private UUID id;
 
     private String firstName;
 

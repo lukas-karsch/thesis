@@ -11,6 +11,7 @@ import org.junit.jupiter.api.Test;
 
 import java.util.Collections;
 import java.util.Set;
+import java.util.UUID;
 
 import static io.restassured.RestAssured.given;
 import static karsch.lukas.helper.AuthHelper.getProfessorAuthHeader;
@@ -53,7 +54,7 @@ public abstract class AbstractCoursesE2ETest implements BaseE2ETest {
 
         given()
                 .body(request)
-                .header(getStudentAuthHeader(1L))
+                .header(getStudentAuthHeader(UUID.randomUUID()))
                 .contentType(ContentType.JSON)
                 .when()
                 .post("/courses")
@@ -77,7 +78,7 @@ public abstract class AbstractCoursesE2ETest implements BaseE2ETest {
 
         given()
                 .body(request)
-                .header(getProfessorAuthHeader(1L))
+                .header(getProfessorAuthHeader(UUID.randomUUID()))
                 .contentType(ContentType.JSON)
                 .when()
                 .post("/courses")
@@ -107,7 +108,7 @@ public abstract class AbstractCoursesE2ETest implements BaseE2ETest {
 
         given()
                 .body(request)
-                .header(getProfessorAuthHeader(1L))
+                .header(getProfessorAuthHeader(UUID.randomUUID()))
                 .contentType(ContentType.JSON)
                 .when()
                 .post("/courses")
@@ -138,7 +139,7 @@ public abstract class AbstractCoursesE2ETest implements BaseE2ETest {
 
         given()
                 .body(baseRequest)
-                .header(getProfessorAuthHeader(1L))
+                .header(getProfessorAuthHeader(UUID.randomUUID()))
                 .contentType(ContentType.JSON)
                 .when()
                 .post("/courses")
@@ -148,7 +149,7 @@ public abstract class AbstractCoursesE2ETest implements BaseE2ETest {
 
         given()
                 .body(advancedRequest)
-                .header(getProfessorAuthHeader(1L))
+                .header(getProfessorAuthHeader(UUID.randomUUID()))
                 .contentType(ContentType.JSON)
                 .when()
                 .post("/courses")

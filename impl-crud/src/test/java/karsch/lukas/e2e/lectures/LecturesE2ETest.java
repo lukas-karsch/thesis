@@ -28,6 +28,7 @@ import java.sql.Statement;
 import java.time.Clock;
 import java.time.LocalDate;
 import java.time.LocalTime;
+import java.util.UUID;
 
 import static karsch.lukas.helper.EntityFactory.*;
 import static karsch.lukas.helper.TestTransactionHelper.inTransaction;
@@ -166,7 +167,7 @@ public class LecturesE2ETest extends AbstractLecturesE2ETest {
     }
 
     @Override
-    protected LectureWithMinimumCredits createAssessmentAndGrade(long lectureId, long studentId) {
+    protected LectureWithMinimumCredits createAssessmentAndGrade(long lectureId, UUID studentId) {
         return inTransaction(() -> {
             var lecture = entityManager.getReference(LectureEntity.class, lectureId);
             var student = entityManager.getReference(StudentEntity.class, studentId);
@@ -262,7 +263,7 @@ public class LecturesE2ETest extends AbstractLecturesE2ETest {
     }
 
     @Override
-    protected long createStudent(int semester) {
+    protected UUID createStudent(int semester) {
         return inTransaction(() -> {
             var student = new StudentEntity();
             student.setFirstName("Semester");

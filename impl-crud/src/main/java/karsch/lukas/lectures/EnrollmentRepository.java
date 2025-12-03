@@ -6,19 +6,20 @@ import org.springframework.stereotype.Repository;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 
 @Repository
 public interface EnrollmentRepository extends JpaRepository<EnrollmentEntity, Long> {
-    List<EnrollmentEntity> findAllByStudentId(Long studentId);
+    List<EnrollmentEntity> findAllByStudentId(UUID studentId);
 
     @EntityGraph(attributePaths = "lecture.timeSlots")
-    List<EnrollmentEntity> findAllWithTimeSlotsByStudentId(Long studentId);
+    List<EnrollmentEntity> findAllWithTimeSlotsByStudentId(UUID studentId);
 
-    Optional<EnrollmentEntity> findByStudentIdAndLectureId(Long studentId, Long lectureId);
+    Optional<EnrollmentEntity> findByStudentIdAndLectureId(UUID studentId, Long lectureId);
 
     int countByLecture(LectureEntity lecture);
 
-    boolean existsByStudentIdAndLectureId(Long studentId, Long lectureId);
+    boolean existsByStudentIdAndLectureId(UUID studentId, Long lectureId);
 
     List<EnrollmentEntity> findAllByLecture(LectureEntity lecture);
 }

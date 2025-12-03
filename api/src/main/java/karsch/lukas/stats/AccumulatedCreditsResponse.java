@@ -1,4 +1,6 @@
 package karsch.lukas.stats;
 
-public record AccumulatedCreditsResponse(Long studentId, int totalCredits) {
+import java.util.UUID;
+
+public record AccumulatedCreditsResponse(UUID studentId, int totalCredits) {
 }

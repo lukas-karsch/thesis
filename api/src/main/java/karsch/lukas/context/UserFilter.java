@@ -8,6 +8,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.util.Assert;
 
 import java.io.IOException;
+import java.util.UUID;
 
 /**
  * Custom request filter that adds user ID and user type ("professor" or "student") to the request.
@@ -43,7 +44,7 @@ public class UserFilter implements Filter {
             return;
         }
 
-        // expected format: "prof_123"
+        // expected format: "prof_<uuid>"
         var parts = headerValue.split("_");
         if (parts.length != 2) {
             return;
@@ -55,12 +56,12 @@ public class UserFilter implements Filter {
                     "professor".equals(type) || "student".equals(type),
                     "Authorization type must be either 'professor' or 'student'"
             );
-            var id = Long.parseLong(parts[1]);
+            var id = UUID.fromString(parts[1]);
 
             requestContext.setUserType(type);
             requestContext.setUserId(id);
-        } catch (NumberFormatException e) {
-            log.error("Invalid number parsed from custom authorization header", e);
+        } catch (IllegalArgumentException e) {
+            log.error("Invalid UUID parsed from custom authorization header", e);
         }
     }
 }

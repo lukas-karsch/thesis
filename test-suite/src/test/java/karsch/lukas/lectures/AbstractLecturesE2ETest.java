@@ -15,6 +15,7 @@ import java.time.*;
 import java.util.Collections;
 import java.util.List;
 import java.util.Set;
+import java.util.UUID;
 import java.util.function.BiConsumer;
 import java.util.function.Supplier;
 
@@ -36,7 +37,7 @@ public abstract class AbstractLecturesE2ETest implements BaseE2ETest {
         resetDatabase();
     }
 
-    public record CreateCourseSeedData(Long courseId, Long professorId) {
+    public record CreateCourseSeedData(Long courseId, UUID professorId) {
     }
 
     /**
@@ -103,7 +104,7 @@ public abstract class AbstractLecturesE2ETest implements BaseE2ETest {
                 .statusCode(404);
     }
 
-    public record LectureSeedData(Long lectureId, Long studentId, Long professorId) {
+    public record LectureSeedData(Long lectureId, UUID studentId, UUID professorId) {
     }
 
     /**
@@ -204,7 +205,7 @@ public abstract class AbstractLecturesE2ETest implements BaseE2ETest {
                 .statusCode(400);
     }
 
-    public record OverlappingLecturesSeedData(long studentId, long lecture1Id, long lecture2Id) {
+    public record OverlappingLecturesSeedData(UUID studentId, long lecture1Id, long lecture2Id) {
     }
 
     /**
@@ -316,7 +317,7 @@ public abstract class AbstractLecturesE2ETest implements BaseE2ETest {
                 .statusCode(201);
     }
 
-    public record SecondProfessorSeedData(Long professorId) {
+    public record SecondProfessorSeedData(UUID professorId) {
     }
 
     protected abstract SecondProfessorSeedData createSecondProfessorSeedData();
@@ -405,7 +406,7 @@ public abstract class AbstractLecturesE2ETest implements BaseE2ETest {
         // let's enroll the student
         given()
                 .header(getStudentAuthHeader(lectureSeedData.studentId()))
-                .post("/lectures/{lectureId}/enroll", lectureSeedData.studentId())
+                .post("/lectures/{lectureId}/enroll", lectureSeedData.lectureId())
                 .then()
                 .statusCode(201);
 
@@ -440,7 +441,7 @@ public abstract class AbstractLecturesE2ETest implements BaseE2ETest {
                 .statusCode(201);
 
         // now lets update
-        var updateRequest = new AssignGradeRequest(lectureSeedData.studentId(), lectureSeedData.studentId(), 100);
+        var updateRequest = new AssignGradeRequest(lectureSeedData.studentId(), assignGradeSeedData.assessmentId(), 100);
         given()
                 .body(updateRequest)
                 .contentType(ContentType.JSON)
@@ -474,7 +475,7 @@ public abstract class AbstractLecturesE2ETest implements BaseE2ETest {
         // let's enroll the student
         given()
                 .header(getStudentAuthHeader(lectureSeedData.studentId()))
-                .post("/lectures/{lectureId}/enroll", lectureSeedData.studentId())
+                .post("/lectures/{lectureId}/enroll", lectureSeedData.lectureId())
                 .then()
                 .statusCode(201);
 
@@ -493,7 +494,7 @@ public abstract class AbstractLecturesE2ETest implements BaseE2ETest {
     void updateGrade_shouldReturn404_ifNoGradeExists() {
         var lectureSeedData = createLectureSeedData();
 
-        var request = new AssignGradeRequest(1L, 1L, 95);
+        var request = new AssignGradeRequest(lectureSeedData.studentId(), 1L, 95);
 
         // should error if no grade exists
         given()
@@ -721,7 +722,7 @@ public abstract class AbstractLecturesE2ETest implements BaseE2ETest {
     @DisplayName("Enrolling a student when a lecture is full should add them to the waiting list and getting the waiting list should return 200")
     void shouldWaitlistStudent_ifLectureIsFull_getWaitingListForLecture_shouldReturn200() {
         var lectureSeedData = createLectureSeedData();
-        long anotherStudentId = createStudent(1);
+        UUID anotherStudentId = createStudent(1);
 
         // enroll the first student
         given()
@@ -772,16 +773,16 @@ public abstract class AbstractLecturesE2ETest implements BaseE2ETest {
      *
      * @return the created student's ID
      */
-    protected abstract long createStudent(int semester);
+    protected abstract UUID createStudent(int semester);
 
     @Test
     @DisplayName("When a student disenrolls, the next eligible student from the waitlist should be enrolled to the lecture")
     void eligibleStudentIsEnrolledToLecture_whenSomeoneDisenrolls() {
         var lectureSeedData = createLectureSeedData();
-        long lowerSemesterStudentId = createStudent(1);
-        long higherSemesterStudentId = createStudent(5);
+        UUID lowerSemesterStudentId = createStudent(1);
+        UUID higherSemesterStudentId = createStudent(5);
 
-        final BiConsumer<Long, String> doEnrollment = (studentId, expectedEnrollmentStatus) -> given()
+        final BiConsumer<UUID, String> doEnrollment = (studentId, expectedEnrollmentStatus) -> given()
                 .when()
                 .header(getStudentAuthHeader(studentId))
                 .post("/lectures/{lectureId}/enroll", lectureSeedData.lectureId())
@@ -827,7 +828,7 @@ public abstract class AbstractLecturesE2ETest implements BaseE2ETest {
                 .body("data.enrolled", hasSize(1));
     }
 
-    public record CourseWithPrerequisitesSeedData(long lectureId, long prerequisiteLectureId, long studentId) {
+    public record CourseWithPrerequisitesSeedData(long lectureId, long prerequisiteLectureId, UUID studentId) {
     }
 
     protected abstract CourseWithPrerequisitesSeedData createCourseAndLectureWithPrerequisites(boolean prerequisitePassed);
@@ -875,7 +876,7 @@ public abstract class AbstractLecturesE2ETest implements BaseE2ETest {
     public record LectureWithMinimumCredits(long lectureId) {
     }
 
-    protected abstract LectureWithMinimumCredits createAssessmentAndGrade(long lectureId, long studentId);
+    protected abstract LectureWithMinimumCredits createAssessmentAndGrade(long lectureId, UUID studentId);
 
     @Test
     @DisplayName("Student should be able to enroll if minimum credits are met.")

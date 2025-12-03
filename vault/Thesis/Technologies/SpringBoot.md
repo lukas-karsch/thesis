@@ -3,3 +3,8 @@ Spring Boot is the foundation for both the **CRUD** and **Event Sourcing (ES)** 
 
 ## Relevant Links 
 - https://docs.spring.io/spring-boot/index.html
+### Internal:
+- [[Spring Retry]]
+- [[Spring Devtools]]
+- [[Springboot Validation]]
+- [[Testing in SpringBoot]]

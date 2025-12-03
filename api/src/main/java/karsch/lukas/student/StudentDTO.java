@@ -1,4 +1,6 @@
 package karsch.lukas.student;
 
-public record StudentDTO(Long id, String firstName, String lastName) {
+import java.util.UUID;
+
+public record StudentDTO(UUID id, String firstName, String lastName) {
 }

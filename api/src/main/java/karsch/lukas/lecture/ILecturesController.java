@@ -6,12 +6,14 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.UUID;
+
 @RequestMapping("lectures")
 public interface ILecturesController {
 
     @GetMapping
     @ResponseStatus(HttpStatus.OK)
-    ResponseEntity<ApiResponse<GetLecturesForStudentResponse>> getLecturesForStudent(@RequestParam Long studentId);
+    ResponseEntity<ApiResponse<GetLecturesForStudentResponse>> getLecturesForStudent(@RequestParam UUID studentId);
 
     @PostMapping("{lectureId}/enroll")
     @ResponseStatus(HttpStatus.CREATED)
