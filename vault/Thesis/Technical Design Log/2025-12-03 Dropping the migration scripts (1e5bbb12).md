@@ -1,0 +1,1 @@
+Because schema evolution is a non-goal, I will drop the flyway migration scripts and the dependency. It adds unnecessary complexity; and I don't keep a persistent database anyways - with testcontainers, my setup is re-created every time. 

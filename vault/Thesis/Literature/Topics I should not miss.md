@@ -6,7 +6,6 @@ According to Gemini (https://gemini.google.com/gem/2aaacb9c5388/0c11a84a524eb28d
 
 Here are essential questions and topics, grouped by theme, that you absolutely must include in your research to deliver a deep, critical comparison of Event Sourcing (ES) and typical CRUD architectures.
 ## 🛠️ Implementation and Technical Complexity
-
 A critical comparison requires looking at the actual effort and tools involved.
 - **Learning Curve and Team Experience:**
     - **Question:** What is the quantifiable (or at least qualitatively documented) impact of the **steep learning curve** of Event Sourcing and associated patterns (like **CQRS** and **Domain-Driven Design - DDD**) on development speed, initial project cost, and time-to-market compared to CRUD, which generally uses more established patterns and tooling (e.g., ORMs)?
@@ -27,7 +26,6 @@ A critical comparison requires looking at the actual effort and tools involved.
 ---
 
 ## ⚖️ Architectural Trade-offs and Consistency
-
 This section focuses on the fundamental nature of data storage and consistency models.
 - **Data Consistency Models:**
     - **Question:** Event Sourcing naturally leads to **eventual consistency** between the write (event store) and read (projections/read models) sides. What are the specific business domains or use cases where eventual consistency is an acceptable or even desirable trade-off, and where is the strong consistency of a traditional CRUD/ACID system an absolute requirement?
@@ -46,7 +44,6 @@ This section focuses on the fundamental nature of data storage and consistency m
 
 ---
 ## 📈 Business Value and Auditability
-
 These topics address the core reason _why_ one would choose Event Sourcing: the business benefits.
 
 - **Intrinsic Auditability and Traceability:**

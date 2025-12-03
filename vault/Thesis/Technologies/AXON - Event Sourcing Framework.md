@@ -3,6 +3,8 @@ Access the Axon Dashboard: http://localhost:8024/
 Serializer configuration: https://docs.axoniq.io/axon-framework-reference/4.11/serialization/
 Message intercepting: https://docs.axoniq.io/axon-framework-reference/4.11/messaging-concepts/message-intercepting/#command-handler-interceptors
 Building an Axon application from scratch: https://docs.axoniq.io/bikerental-demo/main/
+## Accessing Aggregates 
+Can inject an `EventSourcingRepository<T>` to access aggregates. This will replay events and give access to version-controlled aggregates (that can throw `ConcurrencyException`)
 ## Links 
 - [[CQRS (Command Query Responsibility Segregation)]]
 - [[AXON Subscription Queries]]
@@ -13,3 +15,5 @@ Building an Axon application from scratch: https://docs.axoniq.io/bikerental-dem
 - https://www.baeldung.com/axon-cqrs-event-sourcing
 - Event Sourcing https://www.axoniq.io/concepts/event-sourcing
 - Replaying events with an event processor: https://docs.axoniq.io/axon-framework-reference/4.12/events/event-processors/
+- https://www.youtube.com/watch?v=v4Jt2-Vx2E4
+

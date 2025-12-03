@@ -1,0 +1,1 @@
+(no axon, no cqrs) Slides on Event Sourcing with Spring (2024) https://docs.google.com/presentation/d/1Suna1vSiQVhH4tc-wwoAKu2iX5OuXBqXc3ZMm0DGp78/edit?slide=id.g1f819b7dec6_0_30#slide=id.g1f819b7dec6_0_30

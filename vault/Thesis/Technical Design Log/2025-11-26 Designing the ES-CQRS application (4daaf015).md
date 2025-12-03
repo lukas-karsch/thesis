@@ -37,8 +37,8 @@ While there are some open TODOs in the `impl-crud` application, it's about time 
 Validation:
 > An aggregate may enforce invariants only over data it owns.  If validation requires other aggregates → do it in a process manager or the application layer.
 - validation happens
-	- in the application layer 
-	- process manager / sagas for cross-aggregate workflows 
+	- in the application layer (by injecting the read side)
+	- process manager / sagas for later correction (eventual consistency)
 ### Projections 
 - save denormalized projections
 - one view = one table
@@ -77,6 +77,7 @@ Validation:
 		- coupling of writes and reads 
 		- several sources of truth again! 
 	- can be called from command handler which can immediately return a status code
+	- if I use this, i still compare DB locks to DB locks... 
 - 6: correction SAGA. Asynchronously react to events and if they're invalid, revert them
 	- e.g. check for overlapping timeslots -> raise ForceUnenrollEvent(studentId: 1, lectureId: B, reason="Time conflict")
 	- demonstrates eventual consistency 
@@ -87,6 +88,15 @@ Validation:
 		- but failed enrollments get more auditable (the log exposes the problem: ForceUnenroll because of time conflicts)
 		- could lead to bad UI (can it be combined with subscription query?)
 https://gemini.google.com/gem/2aaacb9c5388/39c8ffa826048b97
+#### Decision on validation
+Inject the read side (projections) into a service layer that can be called from the orchestration layer. Enforce cross-aggregate business rules here. Use Sagas for later correction (eventual consistency).
+Try to make use of optimistic concurrency - access the aggregate via repository:
+```java
+lectureRepo.load(lectureId).execute( // can throw ConcurrencyException
+    agg -> agg.handle(new EnrollStudentCommand(lectureId, studentId))
+);
+```
+Can wrap methods like this in spring @Retry 
 ### Handle http responses 
 - not possible to do proper validation and return a status code 
 - send a `202 Accepted` and a status ID that can be polled via endpoint 
@@ -101,14 +111,15 @@ The tests which check invariants and rely on status codes will break, because mo
 	- e.g try to enroll when it's forbidden, then send a `GET` request to check that the student is actually not enrolled 
 - do not check status codes in `POST` and `PATCH`
 - maybe include `wait()` in the tests to handle the eventual consistency 
-	- if I ever have to await something, I should use `Awaitility`
+	- -> if I ever have to await something, I should use `Awaitility`
 - create a wrapper:
 	- `assertStatus(Supplier<Integer> s, int status)`
-	- wrap the API calls 
+	- wrap the API calls in the supplier 
 	- the CQRS test implementation can poll the status endpoint while the CRUD test implementation can directly supply the status code 
 	- Downside: the tests will _not_ actually be identical and the APIs will not either - will my interfaces break? 
 		- `ICourseController.java` etc. 
 		- maybe remove the status code annotations on the interface 
 	- However, it would be the most "semantic" thing to do because the CRUD API (which typically shouldn't rely on polling, especially when the endpoints should be synchronous) can then function the same way 
 ## Further Links 
-- [[AXON - Event Sourcing Framework]]y
+- [[AXON - Event Sourcing Framework]]
+- [[CQRS (Command Query Responsibility Segregation)]]

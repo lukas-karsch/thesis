@@ -19,7 +19,6 @@
 - roter Faden / Gliederung entwickeln (und besprechen)
 - create GEMINI.md file in the project root #llm
 - code
-    - add auditing context 
     - check if indexes are set up correctly 
     - clean up StatsService 
     - get rid of N+1 queries (especially StatsService)
