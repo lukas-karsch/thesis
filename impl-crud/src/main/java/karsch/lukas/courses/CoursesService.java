@@ -26,7 +26,7 @@ class CoursesService {
     }
 
     @Transactional
-    void createCourse(CreateCourseRequest createCourseRequest) {
+    CourseEntity createCourse(CreateCourseRequest createCourseRequest) {
         var prerequisites = new HashSet<>(
                 coursesRepository.findAllById(createCourseRequest.prerequisiteCourseIds())
         );
@@ -47,5 +47,7 @@ class CoursesService {
         auditService.addAuditContext(courseEntity, "Test context!");
 
         coursesRepository.save(courseEntity);
+
+        return courseEntity;
     }
 }

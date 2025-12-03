@@ -37,7 +37,7 @@ public abstract class AbstractLecturesE2ETest implements BaseE2ETest {
         resetDatabase();
     }
 
-    public record CreateCourseSeedData(Long courseId, UUID professorId) {
+    public record CreateCourseSeedData(UUID courseId, UUID professorId) {
     }
 
     /**
@@ -91,11 +91,13 @@ public abstract class AbstractLecturesE2ETest implements BaseE2ETest {
     void createLectureFromCourse_shouldReturn404_ifCourseDoesNotExist() {
         var seedData = createCourseSeedData();
 
+        var uuid = UUID.randomUUID();
+
         given()
                 .when()
                 .header(getProfessorAuthHeader(seedData.professorId()))
-                .queryParam("courseId", 999L)
-                .body(new CreateLectureRequest(999L, 5, List.of(
+                .queryParam("courseId", uuid)
+                .body(new CreateLectureRequest(uuid, 5, List.of(
                         new TimeSlot(LocalDate.of(2025, 11, 1), LocalTime.of(10, 0), LocalTime.of(11, 30))
                 )))
                 .contentType(ContentType.JSON)

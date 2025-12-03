@@ -100,7 +100,7 @@ public class AuditEntityListener {
             entry.setTimestamp(now);
             if (RequestContextHolder.getRequestAttributes() != null) {
                 entry.setModifiedBy(
-                        String.format("%s_%d", requestContext.getUserType(), requestContext.getUserId())
+                        String.format("%s_%s", requestContext.getUserType(), requestContext.getUserId())
                 );
             } else {
                 entry.setModifiedBy("SYSTEM");

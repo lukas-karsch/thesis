@@ -5,7 +5,8 @@ import jakarta.validation.constraints.Positive;
 import jakarta.validation.constraints.PositiveOrZero;
 
 import java.util.Set;
+import java.util.UUID;
 
 public record CreateCourseRequest(@NotBlank String name, String description, @Positive int credits,
-                                  Set<Long> prerequisiteCourseIds, @PositiveOrZero int minimumCreditsRequired) {
+                                  Set<UUID> prerequisiteCourseIds, @PositiveOrZero int minimumCreditsRequired) {
 }

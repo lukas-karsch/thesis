@@ -1,4 +1,6 @@
 package karsch.lukas.lecture;
 
-public record SimpleLectureDTO(Long id, Long courseId, String courseName) {
+import java.util.UUID;
+
+public record SimpleLectureDTO(Long id, UUID courseId, String courseName) {
 }

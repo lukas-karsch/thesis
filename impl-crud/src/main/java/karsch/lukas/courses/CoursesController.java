@@ -13,6 +13,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.Set;
+import java.util.UUID;
 
 @RestController
 @RequiredArgsConstructor
@@ -34,7 +35,7 @@ public class CoursesController implements ICoursesController {
     }
 
     @Override
-    public ResponseEntity<ApiResponse<Void>> createCourse(CreateCourseRequest createCourseRequest) {
+    public ResponseEntity<ApiResponse<UUID>> createCourse(CreateCourseRequest createCourseRequest) {
         if (!"professor".equals(requestContext.getUserType())) {
             log.error("Invalid user type {} for CoursesController.createCourse", requestContext.getUserType());
             return new ResponseEntity<>(
@@ -42,10 +43,10 @@ public class CoursesController implements ICoursesController {
             );
         }
 
-        coursesService.createCourse(createCourseRequest);
+        var created = coursesService.createCourse(createCourseRequest);
 
         return new ResponseEntity<>(
-                new ApiResponse<>(HttpStatus.CREATED, "Created"), HttpStatus.CREATED
+                new ApiResponse<>(HttpStatus.CREATED, "Created", created.getId()), HttpStatus.CREATED
         );
     }
 }

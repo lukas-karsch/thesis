@@ -16,8 +16,7 @@ import java.util.UUID;
 import static io.restassured.RestAssured.given;
 import static karsch.lukas.helper.AuthHelper.getProfessorAuthHeader;
 import static karsch.lukas.helper.AuthHelper.getStudentAuthHeader;
-import static org.hamcrest.Matchers.containsString;
-import static org.hamcrest.Matchers.equalTo;
+import static org.hamcrest.Matchers.*;
 
 public abstract class AbstractCoursesE2ETest implements BaseE2ETest {
 
@@ -98,11 +97,13 @@ public abstract class AbstractCoursesE2ETest implements BaseE2ETest {
     @Test
     @DisplayName("POST /courses should 404 when prerequisite course does not exist")
     void createCourses_should404_whenPrerequisiteCourseDoesNotExist() {
+        var prerequisiteId = UUID.randomUUID();
+
         var request = new CreateCourseRequest(
                 "Advanced Maths",
                 "Only for nerds",
                 5,
-                Set.of(1L),
+                Set.of(prerequisiteId),
                 0
         );
 
@@ -115,7 +116,7 @@ public abstract class AbstractCoursesE2ETest implements BaseE2ETest {
                 .then()
                 .statusCode(404)
                 .body("status", equalTo("error"))
-                .body("message", containsString("[1]"));
+                .body("message", containsString(prerequisiteId.toString()));
     }
 
     @Test
@@ -129,15 +130,7 @@ public abstract class AbstractCoursesE2ETest implements BaseE2ETest {
                 0
         );
 
-        var advancedRequest = new CreateCourseRequest(
-                "Advanced Maths",
-                "Only for nerds",
-                5,
-                Set.of(1L),
-                0
-        );
-
-        given()
+        var createdUuid = given()
                 .body(baseRequest)
                 .header(getProfessorAuthHeader(UUID.randomUUID()))
                 .contentType(ContentType.JSON)
@@ -145,7 +138,18 @@ public abstract class AbstractCoursesE2ETest implements BaseE2ETest {
                 .post("/courses")
                 .then()
                 .statusCode(201)
-                .body("status", equalTo("success"));
+                .body("status", equalTo("success"))
+                .extract()
+                .body()
+                .jsonPath().getString("data");
+
+        var advancedRequest = new CreateCourseRequest(
+                "Advanced Maths",
+                "Only for nerds",
+                5,
+                Set.of(UUID.fromString(createdUuid)),
+                0
+        );
 
         given()
                 .body(advancedRequest)
@@ -162,8 +166,7 @@ public abstract class AbstractCoursesE2ETest implements BaseE2ETest {
                 .get("/courses")
                 .then()
                 .statusCode(200)
-                .body("data[0].name", equalTo("Maths"))
-                .body("data[1].name", equalTo("Advanced Maths"))
-                .body("data[1].prerequisites[0].name", equalTo("Maths"));
+                .body("data.name", hasItem("Maths"))
+                .body("data.find { it.name == 'Advanced Maths' }.prerequisites.name", hasItem("Maths"));
     }
 }

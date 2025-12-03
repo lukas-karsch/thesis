@@ -380,7 +380,7 @@ class LecturesService {
                 entityManager.getReference(LectureAssessmentEntity.class, assignGradeRequest.assessmentId())
         ).orElseThrow(() -> new ResponseStatusException(
                 HttpStatus.NOT_FOUND,
-                String.format("No existing grade for student %d on assessment %d", assignGradeRequest.studentId(), assignGradeRequest.assessmentId())
+                String.format("No existing grade for student %s on assessment %d", assignGradeRequest.studentId(), assignGradeRequest.assessmentId())
         ));
 
         existingGrade.setGrade(assignGradeRequest.grade());

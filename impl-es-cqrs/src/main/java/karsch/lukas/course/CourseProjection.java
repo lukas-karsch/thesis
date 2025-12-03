@@ -23,7 +23,7 @@ public class CourseProjection {
     @EventHandler
     public void on(CourseCreatedEvent event) {
         CourseEntity courseEntity = new CourseEntity();
-        courseEntity.setCourseId(event.courseId());
+        courseEntity.setId(event.courseId());
         courseEntity.setName(event.name());
         courseEntity.setDescription(event.description());
         courseEntity.setCredits(event.credits());

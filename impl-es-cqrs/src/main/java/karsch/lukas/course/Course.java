@@ -22,7 +22,7 @@ public class Course {
     private String name;
     private String description;
     private int credits;
-    private Set<Long> prerequisiteCourseIds;
+    private Set<UUID> prerequisiteCourseIds;
     private int minimumCreditsRequired;
 
     @CommandHandler

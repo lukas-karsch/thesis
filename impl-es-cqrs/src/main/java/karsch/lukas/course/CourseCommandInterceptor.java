@@ -14,6 +14,7 @@ import org.springframework.stereotype.Component;
 import javax.annotation.Nonnull;
 import java.util.List;
 import java.util.Set;
+import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
 import java.util.stream.Collectors;
 
@@ -26,7 +27,7 @@ public class CourseCommandInterceptor implements MessageHandlerInterceptor<Comma
     @Override
     public Object handle(@Nonnull UnitOfWork<? extends CommandMessage<CreateCourseCommand>> unitOfWork, @Nonnull InterceptorChain interceptorChain) throws Exception {
         CreateCourseCommand payload = unitOfWork.getMessage().getPayload();
-        Set<Long> prerequisiteCourseIds = payload.prerequisiteCourseIds();
+        Set<UUID> prerequisiteCourseIds = payload.prerequisiteCourseIds();
 
         if (prerequisiteCourseIds != null && !prerequisiteCourseIds.isEmpty()) {
             CompletableFuture<List<CourseDTO>> queryResult = queryGateway.query(
@@ -38,7 +39,7 @@ public class CourseCommandInterceptor implements MessageHandlerInterceptor<Comma
             List<CourseDTO> existingCourses = queryResult.join();
 
             if (existingCourses.size() != prerequisiteCourseIds.size()) {
-                Set<Long> foundIds = existingCourses.stream().map(CourseDTO::id).collect(Collectors.toSet());
+                Set<UUID> foundIds = existingCourses.stream().map(CourseDTO::id).collect(Collectors.toSet());
                 prerequisiteCourseIds.removeAll(foundIds);
                 throw new IllegalArgumentException("Invalid prerequisite course IDs: " + prerequisiteCourseIds);
             }

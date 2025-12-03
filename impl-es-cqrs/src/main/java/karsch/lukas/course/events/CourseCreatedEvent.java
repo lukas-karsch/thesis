@@ -8,7 +8,7 @@ public record CourseCreatedEvent(
         String name,
         String description,
         int credits,
-        Set<Long> prerequisiteCourseIds,
+        Set<UUID> prerequisiteCourseIds,
         int minimumCreditsRequired
 ) {
 }

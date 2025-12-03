@@ -7,6 +7,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Set;
+import java.util.UUID;
 
 @RequestMapping("courses")
 public interface ICoursesController {
@@ -17,5 +18,5 @@ public interface ICoursesController {
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    ResponseEntity<ApiResponse<Void>> createCourse(@RequestBody @Valid CreateCourseRequest createCourseRequest);
+    ResponseEntity<ApiResponse<UUID>> createCourse(@RequestBody @Valid CreateCourseRequest createCourseRequest);
 }

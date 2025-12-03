@@ -42,7 +42,7 @@ public class CoursesController implements ICoursesController {
     }
 
     @Override
-    public ResponseEntity<ApiResponse<Void>> createCourse(CreateCourseRequest createCourseRequest) {
+    public ResponseEntity<ApiResponse<UUID>> createCourse(CreateCourseRequest createCourseRequest) {
         UUID courseId = UUID.randomUUID();
         CreateCourseCommand command = new CreateCourseCommand(
                 courseId,
@@ -52,8 +52,10 @@ public class CoursesController implements ICoursesController {
                 createCourseRequest.prerequisiteCourseIds(),
                 createCourseRequest.minimumCreditsRequired()
         );
-        commandGateway.send(command); // axon by default returns the ID of the created aggregate
-        var response = new ApiResponse<Void>(HttpStatus.CREATED, "Course creation initiated");
+
+        UUID created = commandGateway.sendAndWait(command); // axon by default returns the ID of the created aggregate
+
+        var response = new ApiResponse<UUID>(HttpStatus.CREATED, "Course creation initiated", created);
         return new ResponseEntity<>(response, response.getHttpStatus());
     }
 }

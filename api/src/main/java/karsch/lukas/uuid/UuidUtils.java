@@ -4,6 +4,8 @@ import java.nio.ByteBuffer;
 import java.security.SecureRandom;
 import java.util.UUID;
 
+// taken from https://manbunder.medium.com/streamline-uuid-v7-generation-in-spring-boot-entities-with-custom-annotations-hibernate-6-5-4ddc018895cf
+
 public class UuidUtils {
     private static final SecureRandom random = new SecureRandom();
 

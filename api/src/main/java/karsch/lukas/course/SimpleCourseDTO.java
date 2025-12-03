@@ -1,4 +1,6 @@
 package karsch.lukas.course;
 
-public record SimpleCourseDTO(Long id, String name, String description, int credits) {
+import java.util.UUID;
+
+public record SimpleCourseDTO(UUID id, String name, String description, int credits) {
 }

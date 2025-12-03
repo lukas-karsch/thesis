@@ -2,5 +2,7 @@ package karsch.lukas.course;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 
-public interface CourseRepository extends JpaRepository<CourseEntity, Long> {
+import java.util.UUID;
+
+public interface CourseRepository extends JpaRepository<CourseEntity, UUID> {
 }
