@@ -1,8 +1,10 @@
-package karsch.lukas.course;
+package karsch.lukas.features.course.queries;
 
-import karsch.lukas.course.events.CourseCreatedEvent;
-import karsch.lukas.course.queries.FindAllCoursesQuery;
-import karsch.lukas.course.queries.FindCoursesByIdsQuery;
+import karsch.lukas.course.CourseDTO;
+import karsch.lukas.course.SimpleCourseDTO;
+import karsch.lukas.features.course.api.CourseCreatedEvent;
+import karsch.lukas.features.course.api.FindAllCoursesQuery;
+import karsch.lukas.features.course.api.FindCoursesByIdsQuery;
 import lombok.RequiredArgsConstructor;
 import org.axonframework.config.ProcessingGroup;
 import org.axonframework.eventhandling.EventHandler;
@@ -23,12 +25,13 @@ public class CourseProjection {
     @EventHandler
     public void on(CourseCreatedEvent event) {
         CourseEntity courseEntity = new CourseEntity();
-        courseEntity.setId(event.courseId());
-        courseEntity.setName(event.name());
-        courseEntity.setDescription(event.description());
-        courseEntity.setCredits(event.credits());
-        courseEntity.setPrerequisiteCourseIds(event.prerequisiteCourseIds());
-        courseEntity.setMinimumCreditsRequired(event.minimumCreditsRequired());
+        courseEntity.setId(event.getCourseId());
+        courseEntity.setName(event.getName());
+        courseEntity.setDescription(event.getDescription());
+        courseEntity.setCredits(event.getCredits());
+        courseEntity.setPrerequisiteCourseIds(event.getPrerequisiteCourseIds());
+        courseEntity.setMinimumCreditsRequired(event.getMinimumCreditsRequired());
+
         courseRepository.save(courseEntity);
     }
 
@@ -41,7 +44,7 @@ public class CourseProjection {
 
     @QueryHandler
     public Set<CourseDTO> handle(FindCoursesByIdsQuery query) {
-        return courseRepository.findAllById(query.courseIds()).stream()
+        return courseRepository.findAllById(query.getCourseIds()).stream()
                 .map(this::toDto)
                 .collect(Collectors.toSet());
     }

@@ -1,7 +1,8 @@
-package karsch.lukas.course;
+package karsch.lukas.features.course.commands;
 
-import karsch.lukas.course.commands.CreateCourseCommand;
-import karsch.lukas.course.queries.FindCoursesByIdsQuery;
+import karsch.lukas.course.CourseDTO;
+import karsch.lukas.features.course.api.CreateCourseCommand;
+import karsch.lukas.features.course.api.FindCoursesByIdsQuery;
 import lombok.RequiredArgsConstructor;
 import org.axonframework.commandhandling.CommandMessage;
 import org.axonframework.messaging.InterceptorChain;
@@ -27,9 +28,9 @@ public class CourseCommandInterceptor implements MessageHandlerInterceptor<Comma
     @Override
     public Object handle(@Nonnull UnitOfWork<? extends CommandMessage<CreateCourseCommand>> unitOfWork, @Nonnull InterceptorChain interceptorChain) throws Exception {
         CreateCourseCommand payload = unitOfWork.getMessage().getPayload();
-        Set<UUID> prerequisiteCourseIds = payload.prerequisiteCourseIds();
+        Set<UUID> prerequisiteCourseIds = payload.getPrerequisiteCourseIds();
 
-        if (prerequisiteCourseIds != null && !prerequisiteCourseIds.isEmpty()) {
+        if (!prerequisiteCourseIds.isEmpty()) {
             CompletableFuture<List<CourseDTO>> queryResult = queryGateway.query(
                     new FindCoursesByIdsQuery(prerequisiteCourseIds),
                     ResponseTypes.multipleInstancesOf(CourseDTO.class)

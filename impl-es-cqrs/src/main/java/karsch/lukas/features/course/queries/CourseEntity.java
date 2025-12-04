@@ -1,4 +1,4 @@
-package karsch.lukas.course;
+package karsch.lukas.features.course.queries;
 
 import jakarta.persistence.*;
 import lombok.Getter;

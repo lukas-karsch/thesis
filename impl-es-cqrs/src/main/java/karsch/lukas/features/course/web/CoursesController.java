@@ -1,7 +1,10 @@
-package karsch.lukas.course;
+package karsch.lukas.features.course.web;
 
-import karsch.lukas.course.commands.CreateCourseCommand;
-import karsch.lukas.course.queries.FindAllCoursesQuery;
+import karsch.lukas.course.CourseDTO;
+import karsch.lukas.course.CreateCourseRequest;
+import karsch.lukas.course.ICoursesController;
+import karsch.lukas.features.course.api.CreateCourseCommand;
+import karsch.lukas.features.course.api.FindAllCoursesQuery;
 import karsch.lukas.response.ApiResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -25,7 +28,6 @@ public class CoursesController implements ICoursesController {
     private final CommandGateway commandGateway;
     private final QueryGateway queryGateway;
 
-    // think about returning a Future from those endpoints -> what are the implications for the CRUD impl?
     @Override
     public ResponseEntity<ApiResponse<Set<CourseDTO>>> getCourses() {
         Future<List<CourseDTO>> future = queryGateway.query(new FindAllCoursesQuery(), ResponseTypes.multipleInstancesOf(CourseDTO.class));
@@ -55,7 +57,7 @@ public class CoursesController implements ICoursesController {
 
         UUID created = commandGateway.sendAndWait(command); // axon by default returns the ID of the created aggregate
 
-        var response = new ApiResponse<UUID>(HttpStatus.CREATED, "Course creation initiated", created);
+        var response = new ApiResponse<>(HttpStatus.CREATED, "Course creation initiated", created);
         return new ResponseEntity<>(response, response.getHttpStatus());
     }
 }
