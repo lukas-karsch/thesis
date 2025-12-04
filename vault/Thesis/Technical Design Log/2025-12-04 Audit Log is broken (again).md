@@ -1,0 +1,3 @@
+When migrating from `Long` to `UUID` for entity IDs, my audit log broke again. The reason was, that `preCommit` inside the `TransactionSynchronisation` of `@PostPersist` was not called. It took me a while, but the reason is quite simple - the commit now happens _too late_, because the IDs are generated in-memory and no DB-roundtrip is necessary.
+
+This actually allowed me to simplify the code again. I am now using `@PrePersist` with a simple call to `saveAuditLog();` no more transaction synchronization necessary. 

@@ -3,7 +3,7 @@ package karsch.lukas.audit;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import jakarta.persistence.PostLoad;
-import jakarta.persistence.PostPersist;
+import jakarta.persistence.PrePersist;
 import jakarta.persistence.PreRemove;
 import jakarta.persistence.PreUpdate;
 import karsch.lukas.config.SpringContext;
@@ -11,8 +11,6 @@ import karsch.lukas.context.RequestContext;
 import karsch.lukas.time.DateTimeProvider;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.transaction.support.TransactionSynchronization;
-import org.springframework.transaction.support.TransactionSynchronizationManager;
 import org.springframework.web.context.request.RequestContextHolder;
 
 import java.lang.reflect.Field;
@@ -50,22 +48,9 @@ public class AuditEntityListener {
         }
     }
 
-    @PostPersist
-    public void postPersist(Object entity) {
-        // should guarantee that the audit log entry is written within the same transaction
-        TransactionSynchronizationManager.registerSynchronization(new TransactionSynchronization() {
-            @Override
-            public void beforeCommit(boolean readOnly) {
-                saveAuditLog(entity, CREATE, null);
-            }
-
-            @Override
-            public void afterCompletion(int status) {
-                if (status == TransactionSynchronization.STATUS_ROLLED_BACK || status == TransactionSynchronization.STATUS_UNKNOWN) {
-                    log.warn("@PostPersist: Commit status is {}! Audit log should not be written", status);
-                }
-            }
-        });
+    @PrePersist
+    public void prePersist(Object entity) {
+        saveAuditLog(entity, CREATE, null);
     }
 
     @PreUpdate

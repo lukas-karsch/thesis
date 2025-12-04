@@ -36,7 +36,6 @@ public class CoursesE2ETest extends AbstractCoursesE2ETest {
         return port;
     }
 
-
     @Override
     public void setSystemTime(Clock clock) {
         dateTimeProvider.setClock(clock);
