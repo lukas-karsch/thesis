@@ -81,17 +81,17 @@ public class LecturesController implements ILecturesController {
     }
 
     @Override
-    public ResponseEntity<ApiResponse<Void>> assignGrade(UUID lectureId, AssignGradeRequest assignGradeRequest) {
+    public ResponseEntity<ApiResponse<UUID>> assignGrade(UUID lectureId, AssignGradeRequest assignGradeRequest) {
         if (!"professor".equals(requestContext.getUserType())) {
             return new ResponseEntity<>(
                     new ApiResponse<>(HttpStatus.FORBIDDEN, "Only professors can assign grades"), HttpStatus.FORBIDDEN
             );
         }
 
-        lecturesService.assignGrade(lectureId, assignGradeRequest, requestContext.getUserId());
+        var grade = lecturesService.assignGrade(lectureId, assignGradeRequest, requestContext.getUserId());
 
         return new ResponseEntity<>(
-                new ApiResponse<>(HttpStatus.CREATED, null), HttpStatus.CREATED
+                new ApiResponse<>(HttpStatus.CREATED, grade.getId()), HttpStatus.CREATED
         );
     }
 

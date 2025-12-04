@@ -33,7 +33,7 @@ public interface ILecturesController {
 
     @PostMapping("{lectureId}")
     @ResponseStatus(HttpStatus.CREATED)
-    ResponseEntity<ApiResponse<Void>> assignGrade(@PathVariable UUID lectureId, @RequestBody @Valid AssignGradeRequest assignGradeRequest);
+    ResponseEntity<ApiResponse<UUID>> assignGrade(@PathVariable UUID lectureId, @RequestBody @Valid AssignGradeRequest assignGradeRequest);
 
     @PatchMapping("{lectureId}")
     @ResponseStatus(HttpStatus.OK)
