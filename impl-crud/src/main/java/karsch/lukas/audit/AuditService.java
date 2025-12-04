@@ -8,6 +8,7 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor
@@ -20,7 +21,7 @@ public class AuditService {
                 criteriaBuilder.equal(root.get("entityName"), entityName);
     }
 
-    private static Specification<AuditLogEntry> hasEntityId(Long entityId) {
+    private static Specification<AuditLogEntry> hasEntityId(UUID entityId) {
         return (root, query, criteriaBuilder) ->
                 criteriaBuilder.equal(root.get("entityId"), entityId);
     }
@@ -35,11 +36,11 @@ public class AuditService {
                 criteriaBuilder.lessThan(root.get("timestamp"), endDate);
     }
 
-    public List<AuditLogEntry> getByEntityId(Class<?> entityClass, Long entityId) {
+    public List<AuditLogEntry> getByEntityId(Class<?> entityClass, UUID entityId) {
         return getByEntityId(entityClass, entityId, null, null);
     }
 
-    public List<AuditLogEntry> getByEntityId(Class<?> entityClass, Long entityId, @Nullable LocalDateTime startDate, @Nullable LocalDateTime endDate) {
+    public List<AuditLogEntry> getByEntityId(Class<?> entityClass, UUID entityId, @Nullable LocalDateTime startDate, @Nullable LocalDateTime endDate) {
         var entityName = AuditHelper.getNameFromEntityClass(entityClass);
         var sort = Sort.by(Sort.Order.desc("timestamp"));
 

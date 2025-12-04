@@ -4,10 +4,12 @@ import karsch.lukas.lecture.LectureStatus;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.server.ResponseStatusException;
 
+import java.util.UUID;
+
 class LectureNotOpenForEnrollmentException extends ResponseStatusException {
-    public LectureNotOpenForEnrollmentException(Long lectureId, LectureStatus lectureStatus) {
+    public LectureNotOpenForEnrollmentException(UUID lectureId, LectureStatus lectureStatus) {
         super(HttpStatus.BAD_REQUEST, String.format(
-                "Lecture %d with status %s is not open for enrollment",
+                "Lecture %s with status %s is not open for enrollment",
                 lectureId,
                 lectureStatus
         ));

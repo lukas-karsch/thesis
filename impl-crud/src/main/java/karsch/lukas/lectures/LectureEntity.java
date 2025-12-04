@@ -8,6 +8,7 @@ import karsch.lukas.time.TimeSlotComparator;
 import karsch.lukas.time.TimeSlotValueObject;
 import karsch.lukas.users.ProfessorEntity;
 import karsch.lukas.users.StudentEntity;
+import karsch.lukas.uuid.GeneratedUuidV7;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
@@ -28,9 +29,9 @@ import java.util.stream.Collectors;
 @EqualsAndHashCode(onlyExplicitlyIncluded = true, callSuper = false)
 public class LectureEntity extends AuditableEntity {
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GeneratedUuidV7
     @EqualsAndHashCode.Include
-    private Long id;
+    private UUID id;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "course_id", nullable = false)

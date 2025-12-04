@@ -106,7 +106,7 @@ public abstract class AbstractLecturesE2ETest implements BaseE2ETest {
                 .statusCode(404);
     }
 
-    public record LectureSeedData(Long lectureId, UUID studentId, UUID professorId) {
+    public record LectureSeedData(UUID lectureId, UUID studentId, UUID professorId) {
     }
 
     /**
@@ -207,7 +207,7 @@ public abstract class AbstractLecturesE2ETest implements BaseE2ETest {
                 .statusCode(400);
     }
 
-    public record OverlappingLecturesSeedData(UUID studentId, long lecture1Id, long lecture2Id) {
+    public record OverlappingLecturesSeedData(UUID studentId, UUID lecture1Id, UUID lecture2Id) {
     }
 
     /**
@@ -295,7 +295,7 @@ public abstract class AbstractLecturesE2ETest implements BaseE2ETest {
     void getLectureDetails_shouldReturn404_ifLectureDoesNotExist() {
         given()
                 .when()
-                .get("/lectures/{lectureId}", 1L)
+                .get("/lectures/{lectureId}", UUID.randomUUID())
                 .then()
                 .statusCode(404);
     }
@@ -365,7 +365,7 @@ public abstract class AbstractLecturesE2ETest implements BaseE2ETest {
                 .statusCode(400);
     }
 
-    public record AssignGradeSeedData(Long assessmentId) {
+    public record AssignGradeSeedData(UUID assessmentId) {
     }
 
     /**
@@ -496,7 +496,7 @@ public abstract class AbstractLecturesE2ETest implements BaseE2ETest {
     void updateGrade_shouldReturn404_ifNoGradeExists() {
         var lectureSeedData = createLectureSeedData();
 
-        var request = new AssignGradeRequest(lectureSeedData.studentId(), 1L, 95);
+        var request = new AssignGradeRequest(lectureSeedData.studentId(), UUID.randomUUID(), 95);
 
         // should error if no grade exists
         given()
@@ -557,7 +557,7 @@ public abstract class AbstractLecturesE2ETest implements BaseE2ETest {
 
         var lectureSeedData = createLectureSeedData();
 
-        var request = new AssignGradeRequest(lectureSeedData.studentId(), 999L, 90);
+        var request = new AssignGradeRequest(lectureSeedData.studentId(), UUID.randomUUID(), 90);
 
         // enroll the student
         given()
@@ -765,7 +765,7 @@ public abstract class AbstractLecturesE2ETest implements BaseE2ETest {
     void getWaitlistForLecture_shouldReturn404_ifLectureDoesNotExist() {
         given()
                 .when()
-                .get("/lectures/{lectureId}/waitingList", 999L)
+                .get("/lectures/{lectureId}/waitingList", UUID.randomUUID())
                 .then()
                 .statusCode(404);
     }
@@ -830,7 +830,7 @@ public abstract class AbstractLecturesE2ETest implements BaseE2ETest {
                 .body("data.enrolled", hasSize(1));
     }
 
-    public record CourseWithPrerequisitesSeedData(long lectureId, long prerequisiteLectureId, UUID studentId) {
+    public record CourseWithPrerequisitesSeedData(UUID lectureId, UUID prerequisiteLectureId, UUID studentId) {
     }
 
     protected abstract CourseWithPrerequisitesSeedData createCourseAndLectureWithPrerequisites(boolean prerequisitePassed);
@@ -875,10 +875,10 @@ public abstract class AbstractLecturesE2ETest implements BaseE2ETest {
                 .statusCode(400);
     }
 
-    public record LectureWithMinimumCredits(long lectureId) {
+    public record LectureWithMinimumCredits(UUID lectureId) {
     }
 
-    protected abstract LectureWithMinimumCredits createAssessmentAndGrade(long lectureId, UUID studentId);
+    protected abstract LectureWithMinimumCredits createAssessmentAndGrade(UUID lectureId, UUID studentId);
 
     @Test
     @DisplayName("Student should be able to enroll if minimum credits are met.")

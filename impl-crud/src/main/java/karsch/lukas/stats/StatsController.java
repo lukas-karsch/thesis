@@ -47,7 +47,7 @@ public class StatsController implements IStatsController {
     @Override
     public ResponseEntity<ApiResponse<GradeHistoryResponse>> getGradesHistory(
             UUID studentId,
-            Long lectureAssessmentId,
+            UUID lectureAssessmentId,
             LocalDateTime startDate,
             LocalDateTime endDate
     ) {

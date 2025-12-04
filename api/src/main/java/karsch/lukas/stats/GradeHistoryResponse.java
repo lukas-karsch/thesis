@@ -6,5 +6,5 @@ import java.util.UUID;
 /**
  * Contains the grade history for a lecture.
  */
-public record GradeHistoryResponse(UUID studentId, Long lectureId, List<GradeChangeDTO> history) {
+public record GradeHistoryResponse(UUID studentId, UUID lectureId, List<GradeChangeDTO> history) {
 }

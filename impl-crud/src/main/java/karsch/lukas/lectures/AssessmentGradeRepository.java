@@ -10,9 +10,10 @@ import org.springframework.stereotype.Repository;
 import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 
 @Repository
-public interface AssessmentGradeRepository extends JpaRepository<AssessmentGradeEntity, Long> {
+public interface AssessmentGradeRepository extends JpaRepository<AssessmentGradeEntity, UUID> {
     Optional<AssessmentGradeEntity> findByStudentAndLectureAssessment(StudentEntity student, LectureAssessmentEntity lectureAssessment);
 
     List<AssessmentGradeEntity> findAllByStudentAndLectureAssessmentIn(StudentEntity student, Collection<LectureAssessmentEntity> lectureAssessments);

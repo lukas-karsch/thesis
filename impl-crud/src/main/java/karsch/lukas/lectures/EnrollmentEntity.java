@@ -3,11 +3,13 @@ package karsch.lukas.lectures;
 import jakarta.persistence.*;
 import karsch.lukas.audit.AuditableEntity;
 import karsch.lukas.users.StudentEntity;
+import karsch.lukas.uuid.GeneratedUuidV7;
 import lombok.Getter;
 import lombok.Setter;
 import org.springframework.data.annotation.CreatedDate;
 
 import java.time.LocalDateTime;
+import java.util.UUID;
 
 @Entity
 @Table(name = "enrollments")
@@ -16,8 +18,8 @@ import java.time.LocalDateTime;
 public class EnrollmentEntity extends AuditableEntity {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    @GeneratedUuidV7
+    private UUID id;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "student_id")

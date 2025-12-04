@@ -9,17 +9,17 @@ import java.util.Optional;
 import java.util.UUID;
 
 @Repository
-public interface EnrollmentRepository extends JpaRepository<EnrollmentEntity, Long> {
+public interface EnrollmentRepository extends JpaRepository<EnrollmentEntity, UUID> {
     List<EnrollmentEntity> findAllByStudentId(UUID studentId);
 
     @EntityGraph(attributePaths = "lecture.timeSlots")
     List<EnrollmentEntity> findAllWithTimeSlotsByStudentId(UUID studentId);
 
-    Optional<EnrollmentEntity> findByStudentIdAndLectureId(UUID studentId, Long lectureId);
+    Optional<EnrollmentEntity> findByStudentIdAndLectureId(UUID studentId, UUID lectureId);
 
     int countByLecture(LectureEntity lecture);
 
-    boolean existsByStudentIdAndLectureId(UUID studentId, Long lectureId);
+    boolean existsByStudentIdAndLectureId(UUID studentId, UUID lectureId);
 
     List<EnrollmentEntity> findAllByLecture(LectureEntity lecture);
 }

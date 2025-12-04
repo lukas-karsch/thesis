@@ -92,6 +92,8 @@ public class LecturesE2ETest extends AbstractLecturesE2ETest {
             entityManager.persist(course);
             entityManager.persist(professor);
 
+            entityManager.flush();
+
             return new CreateCourseSeedData(
                     course.getId(),
                     professor.getId()
@@ -118,6 +120,8 @@ public class LecturesE2ETest extends AbstractLecturesE2ETest {
 
             var student = createStudentEntity("Hannah", "Holzheu", null);
             entityManager.persist(student);
+
+            entityManager.flush();
 
             return new LectureSeedData(lecture.getId(), student.getId(), courseSeedData.professorId());
         }, transactionManager);
@@ -162,12 +166,14 @@ public class LecturesE2ETest extends AbstractLecturesE2ETest {
                 entityManager.persist(grade);
             }
 
+            entityManager.flush();
+
             return new CourseWithPrerequisitesSeedData(lecture.getId(), prerequisiteLecture.getId(), student.getId());
         }, transactionManager);
     }
 
     @Override
-    protected LectureWithMinimumCredits createAssessmentAndGrade(long lectureId, UUID studentId) {
+    protected LectureWithMinimumCredits createAssessmentAndGrade(UUID lectureId, UUID studentId) {
         return inTransaction(() -> {
             var lecture = entityManager.getReference(LectureEntity.class, lectureId);
             var student = entityManager.getReference(StudentEntity.class, studentId);
@@ -194,6 +200,8 @@ public class LecturesE2ETest extends AbstractLecturesE2ETest {
             entityManager.persist(newCourse);
             entityManager.persist(newLecture);
 
+            entityManager.flush();
+
             return new LectureWithMinimumCredits(newLecture.getId());
         }, transactionManager);
     }
@@ -209,6 +217,8 @@ public class LecturesE2ETest extends AbstractLecturesE2ETest {
 
             entityManager.persist(assessment);
 
+            entityManager.flush();
+
             return new AssignGradeSeedData(assessment.getId());
         }, transactionManager);
     }
@@ -218,6 +228,9 @@ public class LecturesE2ETest extends AbstractLecturesE2ETest {
         return inTransaction(() -> {
             var professor = createProfessorEntity("Funny", "Fox");
             entityManager.persist(professor);
+
+            entityManager.flush();
+
             return new SecondProfessorSeedData(professor.getId());
         }, transactionManager);
     }
@@ -258,6 +271,8 @@ public class LecturesE2ETest extends AbstractLecturesE2ETest {
             entityManager.persist(lecture2);
             entityManager.persist(student);
 
+            entityManager.flush();
+
             return new OverlappingLecturesSeedData(student.getId(), lecture1.getId(), lecture2.getId());
         }, transactionManager);
     }
@@ -271,6 +286,8 @@ public class LecturesE2ETest extends AbstractLecturesE2ETest {
             student.setSemester(semester);
 
             entityManager.persist(student);
+
+            entityManager.flush();
 
             return student.getId();
         }, transactionManager);

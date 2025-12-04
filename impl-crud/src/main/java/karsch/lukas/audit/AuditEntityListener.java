@@ -19,6 +19,7 @@ import java.lang.reflect.Field;
 import java.time.Instant;
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
+import java.util.UUID;
 
 @RequiredArgsConstructor
 @Slf4j
@@ -119,7 +120,15 @@ public class AuditEntityListener {
             try {
                 Field idField = entity.getClass().getDeclaredField("id");
                 idField.setAccessible(true);
-                entry.setEntityId((Long) idField.get(entity));
+                Object idValue = idField.get(entity);
+                if (idValue == null) {
+                    log.error("Entity of type {} does not have an ID when persisting.", entity.getClass().getSimpleName());
+                }
+                if (idValue instanceof UUID uuid) {
+                    entry.setEntityId(uuid);
+                } else {
+                    log.error("Entity {} does not have id field of type UUID", entity.getClass().getSimpleName());
+                }
             } catch (Exception ignored) {
             }
 

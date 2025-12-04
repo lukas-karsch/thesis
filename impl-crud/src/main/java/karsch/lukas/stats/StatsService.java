@@ -194,7 +194,7 @@ public class StatsService {
         return Math.round(totalGrades / totalWeight);
     }
 
-    public GradeHistoryResponse getGradeHistoryForAssessment(UUID studentId, long lectureAssessmentId, LocalDateTime startDate, LocalDateTime endDate) {
+    public GradeHistoryResponse getGradeHistoryForAssessment(UUID studentId, UUID lectureAssessmentId, LocalDateTime startDate, LocalDateTime endDate) {
         var assessment = lectureAssessmentRepository.findById(lectureAssessmentId)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
 
@@ -203,8 +203,10 @@ public class StatsService {
                 assessment
         ).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
 
+        // TODO broken 
+
         var auditLogEntries = auditService.getByEntityId(grade.getClass(), grade.getId(), startDate, endDate);
-        log.debug("Found {}, auditLogEntries for grade {}: {}", auditLogEntries.size(), grade.getId(), auditLogEntries);
+        log.debug("Found {} auditLogEntries for grade {}: {}", auditLogEntries.size(), grade.getId(), auditLogEntries);
 
         final ObjectMapper mapper = new ObjectMapper();
         var gradeChanges = auditLogEntries.stream()

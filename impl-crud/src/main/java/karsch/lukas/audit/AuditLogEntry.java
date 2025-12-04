@@ -8,6 +8,7 @@ import lombok.Setter;
 import lombok.ToString;
 
 import java.time.LocalDateTime;
+import java.util.UUID;
 
 @Entity
 @Table(name = "audit_log")
@@ -22,7 +23,7 @@ public class AuditLogEntry {
     @NotBlank
     private String entityName;
 
-    private Long entityId;
+    private UUID entityId;
 
     private String modifiedBy;
 

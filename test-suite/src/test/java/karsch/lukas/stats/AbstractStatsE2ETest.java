@@ -32,8 +32,8 @@ public abstract class AbstractStatsE2ETest implements BaseE2ETest {
         setSystemTime(Clock.systemUTC());
     }
 
-    public record GradingSeedData(UUID studentId, long passedLectureId,
-                                  long passedLectureAssessmentId, UUID professorId) {
+    public record GradingSeedData(UUID studentId, UUID passedLectureId,
+                                  UUID passedLectureAssessmentId, UUID professorId) {
     }
 
     /**

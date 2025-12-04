@@ -17,41 +17,41 @@ public interface ILecturesController {
 
     @PostMapping("{lectureId}/enroll")
     @ResponseStatus(HttpStatus.CREATED)
-    ResponseEntity<ApiResponse<EnrollStudentResponse>> enrollToLecture(@PathVariable Long lectureId);
+    ResponseEntity<ApiResponse<EnrollStudentResponse>> enrollToLecture(@PathVariable UUID lectureId);
 
     @DeleteMapping("{lectureId}/enroll")
     @ResponseStatus(HttpStatus.OK)
-    ResponseEntity<ApiResponse<Void>> disenrollFromLecture(@PathVariable Long lectureId);
+    ResponseEntity<ApiResponse<Void>> disenrollFromLecture(@PathVariable UUID lectureId);
 
     @PostMapping("create")
     @ResponseStatus(HttpStatus.CREATED)
-    ResponseEntity<ApiResponse<Void>> createLectureFromCourse(@RequestBody @Valid CreateLectureRequest createLectureRequest);
+    ResponseEntity<ApiResponse<UUID>> createLectureFromCourse(@RequestBody @Valid CreateLectureRequest createLectureRequest);
 
     @GetMapping("{lectureId}")
     @ResponseStatus(HttpStatus.OK)
-    ResponseEntity<ApiResponse<LectureDetailDTO>> getLectureDetails(@PathVariable Long lectureId);
+    ResponseEntity<ApiResponse<LectureDetailDTO>> getLectureDetails(@PathVariable UUID lectureId);
 
     @PostMapping("{lectureId}")
     @ResponseStatus(HttpStatus.CREATED)
-    ResponseEntity<ApiResponse<Void>> assignGrade(@PathVariable Long lectureId, @RequestBody @Valid AssignGradeRequest assignGradeRequest);
+    ResponseEntity<ApiResponse<Void>> assignGrade(@PathVariable UUID lectureId, @RequestBody @Valid AssignGradeRequest assignGradeRequest);
 
     @PatchMapping("{lectureId}")
     @ResponseStatus(HttpStatus.OK)
-    ResponseEntity<ApiResponse<Void>> updateGrade(@PathVariable Long lectureId, @RequestBody @Valid AssignGradeRequest assignGradeRequest);
+    ResponseEntity<ApiResponse<Void>> updateGrade(@PathVariable UUID lectureId, @RequestBody @Valid AssignGradeRequest assignGradeRequest);
 
     @PostMapping("{lectureId}/dates")
     @ResponseStatus(HttpStatus.CREATED)
-    ResponseEntity<ApiResponse<Void>> addDatesToLecture(@PathVariable Long lectureId, @RequestBody @Valid AssignDatesToLectureRequest assignDatesToLectureRequest);
+    ResponseEntity<ApiResponse<Void>> addDatesToLecture(@PathVariable UUID lectureId, @RequestBody @Valid AssignDatesToLectureRequest assignDatesToLectureRequest);
 
     @PostMapping("{lectureId}/assessments")
     @ResponseStatus(HttpStatus.CREATED)
-    ResponseEntity<ApiResponse<Void>> addAssessmentForLecture(@PathVariable Long lectureId, @RequestBody @Valid CreateLectureAssessmentRequest createLectureAssessmentRequest);
+    ResponseEntity<ApiResponse<UUID>> addAssessmentForLecture(@PathVariable UUID lectureId, @RequestBody @Valid CreateLectureAssessmentRequest createLectureAssessmentRequest);
 
     @GetMapping("{lectureId}/waitingList")
     @ResponseStatus(HttpStatus.OK)
-    ResponseEntity<ApiResponse<WaitlistDTO>> getWaitingListForLecture(@PathVariable Long lectureId);
+    ResponseEntity<ApiResponse<WaitlistDTO>> getWaitingListForLecture(@PathVariable UUID lectureId);
 
     @PostMapping("{lectureId}/lifecycle")
     @ResponseStatus(HttpStatus.CREATED)
-    ResponseEntity<ApiResponse<Void>> advanceLifecycleOfLecture(@PathVariable Long lectureId, @RequestParam LectureStatus newLectureStatus);
+    ResponseEntity<ApiResponse<Void>> advanceLifecycleOfLecture(@PathVariable UUID lectureId, @RequestParam LectureStatus newLectureStatus);
 }

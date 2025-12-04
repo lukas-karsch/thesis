@@ -7,3 +7,4 @@ By doing this, the ES system looks synchronous to the outside world.
 ## Links
 - Axon Docs: https://www.axoniq.io/blog/introducing-subscription-queries
 - Example app https://github.com/fransvanbuul/gc-subscriptions
+- Creating a synchronous REST frontend with Axon: https://github.com/fransvanbuul/axon-sync-rest-frontend/tree/master

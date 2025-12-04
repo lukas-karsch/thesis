@@ -13,12 +13,12 @@
             "state": {
               "type": "markdown",
               "state": {
-                "file": "Technical Design Log/2025-12-01 Using UUIDs instead of Long for IDs.md",
+                "file": "Technologies/AXON Subscription Queries.md",
                 "mode": "source",
                 "source": false
               },
               "icon": "lucide-file",
-              "title": "2025-12-01 Using UUIDs instead of Long for IDs"
+              "title": "AXON Subscription Queries"
             }
           }
         ]
@@ -171,14 +171,14 @@
   },
   "active": "8b95d7f72ee4d65c",
   "lastOpenFiles": [
-    "Technical Design Log/2025-12-03 Dropping the migration scripts (1e5bbb12).md",
+    "Technical Design Log/2025-11-26 Designing the ES-CQRS application (4daaf015).md",
+    "Technical Design Log/2025-11-25 Grade History (98d39a8f).md",
     "Technical Design Log/2025-12-01 Using UUIDs instead of Long for IDs.md",
+    "Technical Design Log/2025-12-03 Dropping the migration scripts (1e5bbb12).md",
     "TODOs.md",
     "Technologies/AXON - Event Sourcing Framework.md",
     "Technologies/DDD - Domain Driven Design.md",
     "Technologies/CQRS (Command Query Responsibility Segregation).md",
-    "Technical Design Log/2025-11-26 Designing the ES-CQRS application (4daaf015).md",
-    "Technical Design Log/2025-11-25 Grade History (98d39a8f).md",
     "Technologies/Swagger; Open API Documentation.md",
     "System Design/API Design.md",
     "Technologies/Spring Retry.md",
