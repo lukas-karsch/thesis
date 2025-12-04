@@ -2,6 +2,7 @@
     - i want to use postgres
     - but maybe its not good to use the same db instance as the instance that logs the event stream?
 - find and read papers relevant to the topics
+	- tactical design 
     - DDD #DDD
         - [[Domain-Driven Design Quickly, A Summary of Eric Evans' Domain-Driven Design]]
     - ES #es
@@ -22,9 +23,6 @@
     - check if indexes are set up correctly 
     - clean up StatsService 
     - get rid of N+1 queries (especially StatsService)
-    - POST endpoints should return the created IDs
-    - use UUIDs instead of Long for IDs 
-    - think about removing the SQL migration tooling from CRUD - unnecessary complexity for the thesis 
 - Zitationsstil klären
 - [[LLMs bei der Bachelorarbeit (Infoveranstaltung)]] MindMap abholen
 ## Before Finishing

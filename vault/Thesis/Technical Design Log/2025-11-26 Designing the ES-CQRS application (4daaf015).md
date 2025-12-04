@@ -102,7 +102,7 @@ Can wrap methods like this in spring @Retry
 - send a `202 Accepted` and a status ID that can be polled via endpoint 
 - Problem: writes will be very fast (obviously) but that makes for an unfair comparison to the CRUD system
 	- if I choose the polling: must specify that performance metrics measure throughput, not latency 
-- better solution might be subscription queries: [[AXON Subscription Queries]]
+- I can build a synchronous REST frontend using subscription queries: [[AXON Subscription Queries]]
 ## What happens to my E2E tests? 
 [[Testing in SpringBoot]]
 The tests which check invariants and rely on status codes will break, because most of them are impossible to implement using DDD and CQRS. 

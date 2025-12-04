@@ -1,4 +1,4 @@
-package karsch.lukas;
+package karsch.lukas.config;
 
 import com.fasterxml.jackson.databind.SerializationFeature;
 import org.axonframework.serialization.Serializer;
@@ -13,14 +13,15 @@ public class JacksonConfiguration {
     @Bean
     @Primary
     public Serializer serializer() {
-        var j = JacksonSerializer.builder()
+        var serializer = JacksonSerializer.builder()
                 .defaultTyping()
                 .lenientDeserialization()
                 .build();
 
-        j.getObjectMapper()
+        serializer
+                .getObjectMapper()
                 .disable(SerializationFeature.FAIL_ON_EMPTY_BEANS);
 
-        return j;
+        return serializer;
     }
 }

@@ -203,8 +203,6 @@ public class StatsService {
                 assessment
         ).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
 
-        // TODO broken 
-
         var auditLogEntries = auditService.getByEntityId(grade.getClass(), grade.getId(), startDate, endDate);
         log.debug("Found {} auditLogEntries for grade {}: {}", auditLogEntries.size(), grade.getId(), auditLogEntries);
 
