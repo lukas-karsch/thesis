@@ -30,3 +30,4 @@ CQRS works great with [[SpringBoot]] and [[AXON - Event Sourcing Framework]].
 ## Links
 - Inter aggregate communication: https://danielwhittaker.me/2014/11/22/4-secrets-inter-aggregate-communication-event-sourced-system/
 - Cross aggregate validations, several options with tradeoffs https://medium.com/@arsalan.valoojerdi/cross-aggregate-validations-exploring-set-based-validation-techniques-in-event-sourcing-e28d9e0ffce6
+- Message intercepting https://docs.axoniq.io/axon-framework-reference/4.11/messaging-concepts/message-intercepting/

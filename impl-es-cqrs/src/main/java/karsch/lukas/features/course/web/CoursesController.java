@@ -6,6 +6,7 @@ import karsch.lukas.course.ICoursesController;
 import karsch.lukas.features.course.api.CreateCourseCommand;
 import karsch.lukas.features.course.api.FindAllCoursesQuery;
 import karsch.lukas.response.ApiResponse;
+import karsch.lukas.uuid.UuidUtils;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.axonframework.commandhandling.gateway.CommandGateway;
@@ -13,6 +14,7 @@ import org.axonframework.messaging.responsetypes.ResponseTypes;
 import org.axonframework.queryhandling.QueryGateway;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.util.Assert;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
@@ -25,11 +27,12 @@ import java.util.concurrent.Future;
 @Slf4j
 public class CoursesController implements ICoursesController {
 
-    private final CommandGateway commandGateway;
     private final QueryGateway queryGateway;
+    private final CommandGateway commandGateway;
 
     @Override
     public ResponseEntity<ApiResponse<Set<CourseDTO>>> getCourses() {
+        log.debug("getCourses");
         Future<List<CourseDTO>> future = queryGateway.query(new FindAllCoursesQuery(), ResponseTypes.multipleInstancesOf(CourseDTO.class));
         try {
             List<CourseDTO> courses = future.get();
@@ -45,17 +48,19 @@ public class CoursesController implements ICoursesController {
 
     @Override
     public ResponseEntity<ApiResponse<UUID>> createCourse(CreateCourseRequest createCourseRequest) {
-        UUID courseId = UUID.randomUUID();
-        CreateCourseCommand command = new CreateCourseCommand(
-                courseId,
+        log.debug("Creating course {}", createCourseRequest);
+
+        var uuid = UuidUtils.randomV7();
+        UUID created = commandGateway.sendAndWait(new CreateCourseCommand(
+                uuid,
                 createCourseRequest.name(),
                 createCourseRequest.description(),
                 createCourseRequest.credits(),
                 createCourseRequest.prerequisiteCourseIds(),
                 createCourseRequest.minimumCreditsRequired()
-        );
+        ));
 
-        UUID created = commandGateway.sendAndWait(command); // axon by default returns the ID of the created aggregate
+        Assert.isTrue(uuid.equals(created), "Returned UUID is not equal. uuid=" + uuid + ", created=" + created);
 
         var response = new ApiResponse<>(HttpStatus.CREATED, "Course creation initiated", created);
         return new ResponseEntity<>(response, response.getHttpStatus());

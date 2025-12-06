@@ -1,6 +1,7 @@
 package karsch.lukas.config;
 
 import com.fasterxml.jackson.databind.SerializationFeature;
+import com.fasterxml.jackson.datatype.jdk8.Jdk8Module;
 import org.axonframework.serialization.Serializer;
 import org.axonframework.serialization.json.JacksonSerializer;
 import org.springframework.context.annotation.Bean;
@@ -20,6 +21,7 @@ public class JacksonConfiguration {
 
         serializer
                 .getObjectMapper()
+                .registerModule(new Jdk8Module())
                 .disable(SerializationFeature.FAIL_ON_EMPTY_BEANS);
 
         return serializer;

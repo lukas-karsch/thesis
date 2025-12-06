@@ -4,5 +4,5 @@ import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.UUID;
 
-public interface CourseRepository extends JpaRepository<CourseEntity, UUID> {
+interface CourseRepository extends JpaRepository<CourseProjectionEntity, UUID> {
 }

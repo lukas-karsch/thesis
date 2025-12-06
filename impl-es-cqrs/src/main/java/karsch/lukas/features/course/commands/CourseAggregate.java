@@ -2,7 +2,7 @@ package karsch.lukas.features.course.commands;
 
 import karsch.lukas.features.course.api.CourseCreatedEvent;
 import karsch.lukas.features.course.api.CreateCourseCommand;
-import lombok.NoArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.axonframework.commandhandling.CommandHandler;
 import org.axonframework.eventsourcing.EventSourcingHandler;
 import org.axonframework.modelling.command.AggregateIdentifier;
@@ -13,9 +13,11 @@ import java.util.UUID;
 
 import static org.axonframework.modelling.command.AggregateLifecycle.apply;
 
+@Slf4j
 @Aggregate
-@NoArgsConstructor
-public class CourseAggregate {
+class CourseAggregate {
+
+    static final String PROCESSING_GROUP = "courses";
 
     @AggregateIdentifier
     private UUID courseId;
@@ -26,24 +28,33 @@ public class CourseAggregate {
     private int minimumCreditsRequired;
 
     @CommandHandler
-    public CourseAggregate(CreateCourseCommand cmd) {
+    public CourseAggregate(CreateCourseCommand cmd, ICourseValidator courseValidator) {
+        log.debug("Handling {}", cmd);
+        if (!courseValidator.allCoursesExist(cmd.prerequisiteCourseIds())) {
+            throw new IllegalStateException("Some prerequisites don't exist.");
+        }
+
+        log.debug("Applying CourseCreatedEvent");
         apply(new CourseCreatedEvent(
-                cmd.getCourseId(),
-                cmd.getName(),
-                cmd.getDescription(),
-                cmd.getCredits(),
-                cmd.getPrerequisiteCourseIds(),
-                cmd.getMinimumCreditsRequired()
+                cmd.courseId(),
+                cmd.name(),
+                cmd.description(),
+                cmd.credits(),
+                cmd.prerequisiteCourseIds(),
+                cmd.minimumCreditsRequired()
         ));
+    }
+
+    protected CourseAggregate() {
     }
 
     @EventSourcingHandler
     public void on(CourseCreatedEvent event) {
-        this.courseId = event.getCourseId();
-        this.name = event.getName();
-        this.description = event.getDescription();
-        this.credits = event.getCredits();
-        this.prerequisiteCourseIds = event.getPrerequisiteCourseIds();
-        this.minimumCreditsRequired = event.getMinimumCreditsRequired();
+        this.courseId = event.courseId();
+        this.name = event.name();
+        this.description = event.description();
+        this.credits = event.credits();
+        this.prerequisiteCourseIds = event.prerequisiteCourseIds();
+        this.minimumCreditsRequired = event.minimumCreditsRequired();
     }
 }

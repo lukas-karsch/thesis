@@ -16,4 +16,7 @@ Can inject an `EventSourcingRepository<T>` to access aggregates. This will repla
 - Event Sourcing https://www.axoniq.io/concepts/event-sourcing
 - Replaying events with an event processor: https://docs.axoniq.io/axon-framework-reference/4.12/events/event-processors/
 - https://www.youtube.com/watch?v=v4Jt2-Vx2E4
+- Creating aggregates from another aggregate: https://docs.axoniq.io/axon-framework-reference/4.11/axon-framework-commands/modeling/aggregate-creation-from-another-aggregate/
+  i could use this to create lectures from courses etc 
+- 
 
