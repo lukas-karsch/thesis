@@ -38,7 +38,7 @@ import static karsch.lukas.helper.TestTransactionHelper.inTransaction;
 )
 @Import(PostgresTestcontainerConfiguration.class)
 @Slf4j
-public class LecturesE2ETest extends AbstractLecturesE2ETest {
+public class CrudLecturesE2ETest extends AbstractLecturesE2ETest {
 
     @LocalServerPort
     private Integer port;

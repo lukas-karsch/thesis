@@ -1,4 +1,4 @@
-package karsch.lukas.time;
+package karsch.lukas.core.time;
 
 import lombok.Getter;
 import lombok.Setter;

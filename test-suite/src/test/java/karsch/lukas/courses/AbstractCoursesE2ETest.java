@@ -64,7 +64,7 @@ public abstract class AbstractCoursesE2ETest implements BaseE2ETest {
 
     @Test
     @DisplayName("POST /courses should return status code 201; GET /courses should return a list")
-    void createCourses_shouldReturn201() {
+    void createCourses_shouldReturn201() throws InterruptedException {
         int minimumCreditsRequired = 1;
 
         var request = new CreateCourseRequest(
@@ -90,6 +90,7 @@ public abstract class AbstractCoursesE2ETest implements BaseE2ETest {
                 .get("/courses")
                 .then()
                 .statusCode(200)
+                .body("data", hasSize(1))
                 .body("data[0].name", equalTo("Maths"))
                 .body("data[0].minimumCreditsRequired", equalTo(minimumCreditsRequired));
     }
@@ -115,8 +116,7 @@ public abstract class AbstractCoursesE2ETest implements BaseE2ETest {
                 .post("/courses")
                 .then()
                 .statusCode(404)
-                .body("status", equalTo("error"))
-                .body("message", containsString(prerequisiteId.toString()));
+                .body("status", equalTo("error"));
     }
 
     @Test

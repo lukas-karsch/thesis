@@ -1,4 +1,4 @@
-package karsch.lukas.time;
+package karsch.lukas.core.time;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -11,6 +11,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
 
 import java.time.*;
+
+// TODO fix this duplication (same code exists in impl-crud)
 
 /**
  * Actuator endpoints (available under /actuator/date-time) to control system time. <br>

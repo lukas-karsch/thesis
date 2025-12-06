@@ -11,10 +11,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.axonframework.config.ProcessingGroup;
 import org.axonframework.eventhandling.EventHandler;
 import org.axonframework.queryhandling.QueryHandler;
-import org.axonframework.queryhandling.QueryUpdateEmitter;
 import org.springframework.stereotype.Component;
 
-import java.util.Optional;
 import java.util.Set;
 import java.util.UUID;
 import java.util.stream.Collectors;
@@ -26,7 +24,6 @@ import java.util.stream.Collectors;
 class CourseProjector {
 
     private final CourseRepository courseRepository;
-    private final QueryUpdateEmitter queryUpdateEmitter;
 
     @EventHandler
     public void on(CourseCreatedEvent event) {
@@ -41,12 +38,6 @@ class CourseProjector {
         courseEntity.setMinimumCreditsRequired(event.minimumCreditsRequired());
 
         courseRepository.save(courseEntity);
-
-        queryUpdateEmitter.emit(
-                FindCourseByIdQuery.class,
-                q -> q.courseId().equals(event.courseId()),
-                Optional.of(toDto(courseEntity))
-        );
     }
 
     private Set<CourseDTO> findAll() {

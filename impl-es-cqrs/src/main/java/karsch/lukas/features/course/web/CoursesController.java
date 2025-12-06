@@ -1,5 +1,6 @@
 package karsch.lukas.features.course.web;
 
+import karsch.lukas.context.RequestContext;
 import karsch.lukas.course.CourseDTO;
 import karsch.lukas.course.CreateCourseRequest;
 import karsch.lukas.course.ICoursesController;
@@ -29,10 +30,10 @@ public class CoursesController implements ICoursesController {
 
     private final QueryGateway queryGateway;
     private final CommandGateway commandGateway;
+    private final RequestContext requestContext;
 
     @Override
     public ResponseEntity<ApiResponse<Set<CourseDTO>>> getCourses() {
-        log.debug("getCourses");
         Future<List<CourseDTO>> future = queryGateway.query(new FindAllCoursesQuery(), ResponseTypes.multipleInstancesOf(CourseDTO.class));
         try {
             List<CourseDTO> courses = future.get();
@@ -48,7 +49,12 @@ public class CoursesController implements ICoursesController {
 
     @Override
     public ResponseEntity<ApiResponse<UUID>> createCourse(CreateCourseRequest createCourseRequest) {
-        log.debug("Creating course {}", createCourseRequest);
+        if (!"professor".equals(requestContext.getUserType())) {
+            log.error("Invalid user type {} for CoursesController.createCourse", requestContext.getUserType());
+            return new ResponseEntity<>(
+                    new ApiResponse<>(HttpStatus.FORBIDDEN, "Must be authenticated as professor to create courses"), HttpStatus.FORBIDDEN
+            );
+        }
 
         var uuid = UuidUtils.randomV7();
         UUID created = commandGateway.sendAndWait(new CreateCourseCommand(
@@ -60,6 +66,7 @@ public class CoursesController implements ICoursesController {
                 createCourseRequest.minimumCreditsRequired()
         ));
 
+        // sanity check
         Assert.isTrue(uuid.equals(created), "Returned UUID is not equal. uuid=" + uuid + ", created=" + created);
 
         var response = new ApiResponse<>(HttpStatus.CREATED, "Course creation initiated", created);

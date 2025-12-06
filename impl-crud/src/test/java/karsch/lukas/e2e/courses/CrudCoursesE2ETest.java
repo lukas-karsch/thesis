@@ -20,7 +20,7 @@ import java.time.Clock;
 )
 @Import(PostgresTestcontainerConfiguration.class)
 @Slf4j
-public class CoursesE2ETest extends AbstractCoursesE2ETest {
+public class CrudCoursesE2ETest extends AbstractCoursesE2ETest {
 
     @LocalServerPort
     private Integer port;

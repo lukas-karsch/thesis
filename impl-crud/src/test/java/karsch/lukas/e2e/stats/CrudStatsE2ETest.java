@@ -30,7 +30,7 @@ import static karsch.lukas.helper.TestTransactionHelper.inTransaction;
 )
 @Import(PostgresTestcontainerConfiguration.class)
 @Slf4j
-public class StatsE2ETest extends AbstractStatsE2ETest {
+public class CrudStatsE2ETest extends AbstractStatsE2ETest {
 
     @LocalServerPort
     private Integer port;

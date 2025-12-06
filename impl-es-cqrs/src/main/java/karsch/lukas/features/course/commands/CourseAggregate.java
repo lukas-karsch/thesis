@@ -31,7 +31,7 @@ class CourseAggregate {
     public CourseAggregate(CreateCourseCommand cmd, ICourseValidator courseValidator) {
         log.debug("Handling {}", cmd);
         if (!courseValidator.allCoursesExist(cmd.prerequisiteCourseIds())) {
-            throw new IllegalStateException("Some prerequisites don't exist.");
+            throw new MissingCoursesException("Some prerequisites don't exist.");
         }
 
         log.debug("Applying CourseCreatedEvent");

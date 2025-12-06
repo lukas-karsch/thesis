@@ -23,7 +23,8 @@
     - check if indexes are set up correctly 
     - clean up StatsService 
     - get rid of N+1 queries (especially StatsService)
-- look at axon transaction manager 
+    - CQRS app: add global exception handler 
+- look at axon transaction manager? 
 - Zitationsstil klären
 - [[LLMs bei der Bachelorarbeit (Infoveranstaltung)]] MindMap abholen
 ## Before Finishing
