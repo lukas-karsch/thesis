@@ -7,7 +7,7 @@ import java.util.List;
 import java.util.UUID;
 
 public record LectureCreatedEvent(
-        UUID id,
+        UUID lectureId,
         UUID courseId,
         int maximumStudents,
         List<TimeSlot> dates,

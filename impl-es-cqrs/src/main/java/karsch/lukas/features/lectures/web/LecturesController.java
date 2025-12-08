@@ -2,6 +2,7 @@ package karsch.lukas.features.lectures.web;
 
 import karsch.lukas.context.RequestContext;
 import karsch.lukas.core.exceptions.QueryException;
+import karsch.lukas.features.lectures.api.AddAssessmentCommand;
 import karsch.lukas.features.lectures.api.AdvanceLectureLifecycleCommand;
 import karsch.lukas.features.lectures.api.CreateLectureCommand;
 import karsch.lukas.features.lectures.api.FindLectureByIdQuery;
@@ -33,17 +34,17 @@ public class LecturesController implements ILecturesController {
 
     @Override
     public ResponseEntity<ApiResponse<GetLecturesForStudentResponse>> getLecturesForStudent(UUID studentId) {
-        return null;
+        throw new RuntimeException();
     }
 
     @Override
     public ResponseEntity<ApiResponse<EnrollStudentResponse>> enrollToLecture(UUID lectureId) {
-        return null;
+        throw new RuntimeException();
     }
 
     @Override
     public ResponseEntity<ApiResponse<Void>> disenrollFromLecture(UUID lectureId) {
-        return null;
+        throw new RuntimeException();
     }
 
     @Override
@@ -95,27 +96,46 @@ public class LecturesController implements ILecturesController {
 
     @Override
     public ResponseEntity<ApiResponse<UUID>> assignGrade(UUID lectureId, AssignGradeRequest assignGradeRequest) {
-        return null;
+        throw new RuntimeException();
     }
 
     @Override
     public ResponseEntity<ApiResponse<Void>> updateGrade(UUID lectureId, AssignGradeRequest assignGradeRequest) {
-        return null;
+        throw new RuntimeException();
     }
 
     @Override
     public ResponseEntity<ApiResponse<Void>> addDatesToLecture(UUID lectureId, AssignDatesToLectureRequest assignDatesToLectureRequest) {
-        return null;
+        throw new RuntimeException();
     }
 
     @Override
     public ResponseEntity<ApiResponse<UUID>> addAssessmentForLecture(UUID lectureId, CreateLectureAssessmentRequest createLectureAssessmentRequest) {
-        return null;
+        if (!"professor".equals(requestContext.getUserType())) {
+            log.error("Invalid user type {} for LecturesController.addAssessmentForLecture", requestContext.getUserType());
+            return new ResponseEntity<>(
+                    new ApiResponse<>(HttpStatus.FORBIDDEN, "Must be authenticated as professor to create lectures"), HttpStatus.FORBIDDEN
+            );
+        }
+
+        UUID assessmentId = UuidUtils.randomV7();
+        commandGateway.sendAndWait(new AddAssessmentCommand(
+                lectureId,
+                assessmentId,
+                createLectureAssessmentRequest.timeSlot(),
+                createLectureAssessmentRequest.assessmentType(),
+                createLectureAssessmentRequest.weight(),
+                requestContext.getUserId()
+        ));
+
+        return new ResponseEntity<>(
+                new ApiResponse<>(HttpStatus.CREATED, assessmentId), HttpStatus.CREATED
+        );
     }
 
     @Override
     public ResponseEntity<ApiResponse<WaitlistDTO>> getWaitingListForLecture(UUID lectureId) {
-        return null;
+        throw new RuntimeException();
     }
 
     @Override

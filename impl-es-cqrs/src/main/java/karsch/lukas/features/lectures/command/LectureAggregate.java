@@ -4,10 +4,7 @@ import karsch.lukas.core.exceptions.DomainException;
 import karsch.lukas.core.exceptions.NotAllowedException;
 import karsch.lukas.features.course.commands.ICourseValidator;
 import karsch.lukas.features.course.exceptions.MissingCoursesException;
-import karsch.lukas.features.lectures.api.AdvanceLectureLifecycleCommand;
-import karsch.lukas.features.lectures.api.CreateLectureCommand;
-import karsch.lukas.features.lectures.api.LectureCreatedEvent;
-import karsch.lukas.features.lectures.api.LectureLifecycleAdvancedEvent;
+import karsch.lukas.features.lectures.api.*;
 import karsch.lukas.features.professor.command.IProfessorValidator;
 import karsch.lukas.lecture.LectureStatus;
 import karsch.lukas.lecture.TimeSlot;
@@ -16,12 +13,10 @@ import lombok.extern.slf4j.Slf4j;
 import org.axonframework.commandhandling.CommandHandler;
 import org.axonframework.eventsourcing.EventSourcingHandler;
 import org.axonframework.modelling.command.AggregateIdentifier;
+import org.axonframework.modelling.command.AggregateMember;
 import org.axonframework.spring.stereotype.Aggregate;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.UUID;
+import java.util.*;
 
 import static org.axonframework.modelling.command.AggregateLifecycle.apply;
 
@@ -39,7 +34,8 @@ class LectureAggregate {
 
     private List<UUID> enrolledStudents;
 
-    private List<Object> assessments; // TODO
+    @AggregateMember
+    private Map<UUID, AssessmentValueObject> assessments;
 
     private LectureStatus lectureStatus;
 
@@ -85,15 +81,34 @@ class LectureAggregate {
         apply(new LectureLifecycleAdvancedEvent(this.id, command.lectureStatus()));
     }
 
+    @CommandHandler
+    public void handle(AddAssessmentCommand command) {
+        if (!command.professorId().equals(this.professorId)) {
+            throw new NotAllowedException("Not allowed to add assessments.");
+        }
+
+        if (this.assessments.containsKey(command.assessmentId())) {
+            throw new DomainException("Assessment already exists.");
+        }
+
+        apply(new AssessmentAddedEvent(
+                command.lectureId(),
+                command.assessmentId(),
+                command.timeSlot(),
+                command.assessmentType(),
+                command.weight()
+        ));
+    }
+
     @EventSourcingHandler
     public void on(LectureCreatedEvent lectureCreatedEvent) {
         log.debug("handling {}", lectureCreatedEvent);
-        this.id = lectureCreatedEvent.id();
+        this.id = lectureCreatedEvent.lectureId();
         this.courseId = lectureCreatedEvent.courseId();
         this.maximumStudents = lectureCreatedEvent.maximumStudents();
         this.dates = lectureCreatedEvent.dates(); // TODO needs to be sorted
         this.enrolledStudents = new ArrayList<>();
-        this.assessments = new ArrayList<>();
+        this.assessments = new HashMap<>();
         this.lectureStatus = lectureCreatedEvent.lectureStatus();
         this.professorId = lectureCreatedEvent.professorId();
     }
@@ -102,6 +117,17 @@ class LectureAggregate {
     public void on(LectureLifecycleAdvancedEvent event) {
         log.debug("handling {}", event);
         this.lectureStatus = event.lectureStatus();
+    }
+
+    @EventSourcingHandler
+    public void on(AssessmentAddedEvent event) {
+        log.debug("handling {}", event);
+        this.assessments.put(event.assessmentId(), new AssessmentValueObject(
+                event.assessmentId(),
+                event.timeSlot(),
+                event.weight(),
+                event.assessmentType()
+        ));
     }
 
 }
