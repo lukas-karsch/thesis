@@ -3,6 +3,8 @@ package karsch.lukas.features.course.commands;
 import java.util.Collection;
 import java.util.UUID;
 
-interface ICourseValidator {
+public interface ICourseValidator {
     boolean allCoursesExist(Collection<UUID> ids);
+
+    boolean courseExists(UUID id);
 }

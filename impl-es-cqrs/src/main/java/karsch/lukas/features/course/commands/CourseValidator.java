@@ -1,12 +1,12 @@
 package karsch.lukas.features.course.commands;
 
 import lombok.RequiredArgsConstructor;
-import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Service;
 
 import java.util.Collection;
 import java.util.UUID;
 
-@Component
+@Service
 @RequiredArgsConstructor
 class CourseValidator implements ICourseValidator {
 
@@ -17,5 +17,10 @@ class CourseValidator implements ICourseValidator {
         final long count = courseLookupRepository.countAllByIdIn(ids);
 
         return count == ids.size();
+    }
+
+    @Override
+    public boolean courseExists(UUID id) {
+        return courseLookupRepository.existsById(id);
     }
 }

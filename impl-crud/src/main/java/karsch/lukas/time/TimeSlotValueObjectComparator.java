@@ -2,7 +2,8 @@ package karsch.lukas.time;
 
 import java.util.Comparator;
 
-public class TimeSlotComparator implements Comparator<TimeSlotValueObject> {
+public class TimeSlotValueObjectComparator implements Comparator<TimeSlotValueObject> {
+
     @Override
     public int compare(TimeSlotValueObject a, TimeSlotValueObject b) {
         int cmp = a.date().compareTo(b.date());

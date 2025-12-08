@@ -1,9 +1,6 @@
 package karsch.lukas.mappers;
 
-import java.util.Collection;
-import java.util.List;
-import java.util.Set;
-import java.util.SortedSet;
+import java.util.*;
 import java.util.stream.Collectors;
 
 public interface Mapper<From, To> {
@@ -13,7 +10,11 @@ public interface Mapper<From, To> {
         return from.stream().map(this::map).collect(Collectors.toSet());
     }
 
-    default List<To> mapToList(List<From> from) {
+    default SortedSet<To> mapToSortedSet(SortedSet<From> from, Comparator<? super To> comparator) {
+        return from.stream().map(this::map).collect(Collectors.toCollection(() -> new TreeSet<>(comparator)));
+    }
+
+    default List<To> mapToList(Collection<From> from) {
         return from.stream().map(this::map).toList();
     }
 

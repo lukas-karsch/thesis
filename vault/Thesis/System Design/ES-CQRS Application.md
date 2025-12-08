@@ -92,8 +92,12 @@ public class PrerequisiteInterceptor implements MessageDispatchInterceptor<Comma
 	}
 }
 ```
+### 4. Set Based Validation
+Create a lookup table that belongs to the command side and is immediately consistent. 
+[[2025-12-06 I discovered set based validation]]
+This lookup table can be injected into command handlers. 
 ### Recommendation for your Thesis
-**Use Option 1 (Parameter Injection / Read-Model Check in Controller).**
+**Use Option 4 (Parameter Injection / Lookup table Check).**
 
 -> Why?
 1. **Scope:** Your thesis focuses on _Performance, Scalability, and Traceability_. Implementing Sagas adds massive complexity that doesn't necessarily help you answer those specific questions.

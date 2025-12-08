@@ -2,6 +2,7 @@ package karsch.lukas.features.course.commands;
 
 import karsch.lukas.features.course.api.CourseCreatedEvent;
 import karsch.lukas.features.course.api.CreateCourseCommand;
+import karsch.lukas.features.course.exceptions.MissingCoursesException;
 import lombok.extern.slf4j.Slf4j;
 import org.axonframework.commandhandling.CommandHandler;
 import org.axonframework.eventsourcing.EventSourcingHandler;
@@ -17,7 +18,7 @@ import static org.axonframework.modelling.command.AggregateLifecycle.apply;
 @Aggregate
 class CourseAggregate {
 
-    static final String PROCESSING_GROUP = "courses";
+    static final String PROCESSING_GROUP = "course_commands";
 
     @AggregateIdentifier
     private UUID courseId;

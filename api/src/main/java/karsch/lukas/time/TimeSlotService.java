@@ -1,5 +1,7 @@
 package karsch.lukas.time;
 
+import karsch.lukas.lecture.TimeSlot;
+import karsch.lukas.mappers.Mapper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -13,7 +15,7 @@ public class TimeSlotService {
 
     private final DateTimeProvider dateTimeProvider;
 
-    public boolean isLive(TimeSlotValueObject slot) {
+    public boolean isLive(TimeSlot slot) {
         LocalDateTime now = getCurrentTime();
         LocalDateTime start = LocalDateTime.of(slot.date(), slot.startTime());
         LocalDateTime end = LocalDateTime.of(slot.date(), slot.endTime());
@@ -21,14 +23,22 @@ public class TimeSlotService {
         return !now.isBefore(start) && now.isBefore(end);
     }
 
-    public boolean hasEnded(TimeSlotValueObject slot) {
+    public <T> boolean isLive(T slot, Mapper<T, TimeSlot> mapper) {
+        return isLive(mapper.map(slot));
+    }
+
+    public boolean hasEnded(TimeSlot slot) {
         LocalDateTime now = getCurrentTime();
         LocalDateTime end = LocalDateTime.of(slot.date(), slot.endTime());
 
         return !now.isBefore(end);
     }
 
-    public boolean areOverlapping(TimeSlotValueObject slot1, TimeSlotValueObject slot2) {
+    public <T> boolean hasEnded(T slot, Mapper<T, TimeSlot> mapper) {
+        return hasEnded(mapper.map(slot));
+    }
+
+    public boolean areOverlapping(TimeSlot slot1, TimeSlot slot2) {
         if (!slot1.date().equals(slot2.date())) {
             return false;
         }
@@ -51,7 +61,7 @@ public class TimeSlotService {
      *
      * @return True if any time slots overlap
      */
-    public boolean areConflictingTimeSlots(SortedSet<TimeSlotValueObject> slots1, SortedSet<TimeSlotValueObject> slots2) {
+    public boolean areConflictingTimeSlots(SortedSet<TimeSlot> slots1, SortedSet<TimeSlot> slots2) {
         var iterator1 = slots1.iterator();
         var iterator2 = slots2.iterator();
 
@@ -85,7 +95,12 @@ public class TimeSlotService {
         }
     }
 
-    public boolean containsOverlappingTimeslots(Collection<TimeSlotValueObject> timeSlots) {
+    public <T> boolean areConflictingTimeSlots(SortedSet<T> slots1, SortedSet<T> slots2, Mapper<T, TimeSlot> mapper) {
+        var comparator = new TimeSlotComparator();
+        return areConflictingTimeSlots(mapper.mapToSortedSet(slots1, comparator), mapper.mapToSortedSet(slots2, comparator));
+    }
+
+    public boolean containsOverlappingTimeslots(Collection<TimeSlot> timeSlots) {
         if (timeSlots.isEmpty()) {
             return false;
         }
@@ -101,6 +116,10 @@ public class TimeSlotService {
         }
 
         return false;
+    }
+
+    public <T> boolean containsOverlappingTimeslots(Collection<T> timeSlots, Mapper<T, TimeSlot> mapper) {
+        return containsOverlappingTimeslots(mapper.mapToList(timeSlots));
     }
 
     private LocalDateTime getCurrentTime() {

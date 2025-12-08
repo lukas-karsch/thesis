@@ -4,8 +4,8 @@ import jakarta.persistence.*;
 import karsch.lukas.audit.AuditableEntity;
 import karsch.lukas.courses.CourseEntity;
 import karsch.lukas.lecture.LectureStatus;
-import karsch.lukas.time.TimeSlotComparator;
 import karsch.lukas.time.TimeSlotValueObject;
+import karsch.lukas.time.TimeSlotValueObjectComparator;
 import karsch.lukas.users.ProfessorEntity;
 import karsch.lukas.users.StudentEntity;
 import karsch.lukas.uuid.GeneratedUuidV7;
@@ -42,8 +42,8 @@ public class LectureEntity extends AuditableEntity {
 
     @ElementCollection
     @CollectionTable(name = "lecture_timeslots", joinColumns = @JoinColumn(name = "lecture_id"))
-    @SortComparator(TimeSlotComparator.class)
-    private SortedSet<TimeSlotValueObject> timeSlots = new TreeSet<>(new TimeSlotComparator());
+    @SortComparator(TimeSlotValueObjectComparator.class)
+    private SortedSet<TimeSlotValueObject> timeSlots = new TreeSet<>(new TimeSlotValueObjectComparator());
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "professor_id", nullable = false)

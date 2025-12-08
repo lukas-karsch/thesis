@@ -1,4 +1,4 @@
-package karsch.lukas.features.course.commands;
+package karsch.lukas.features.course.exceptions;
 
 import karsch.lukas.core.exceptions.MissingResourceException;
 

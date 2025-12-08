@@ -69,7 +69,7 @@ public abstract class AbstractLecturesE2ETest implements BaseE2ETest {
     void creatingLectureWithOverlappingTimeslots_shouldReturn400() {
         var seedData = createCourseSeedData();
 
-        var createLectureReqeust = new CreateLectureRequest(seedData.courseId(), 5, List.of(
+        var createLectureRequest = new CreateLectureRequest(seedData.courseId(), 5, List.of(
                 new TimeSlot(LocalDate.of(2025, 11, 1), LocalTime.of(10, 0), LocalTime.of(11, 30)),
                 new TimeSlot(LocalDate.of(2025, 11, 1), LocalTime.of(10, 0), LocalTime.of(11, 30))
         ));
@@ -78,7 +78,7 @@ public abstract class AbstractLecturesE2ETest implements BaseE2ETest {
                 .when()
                 .header(getProfessorAuthHeader(seedData.professorId()))
                 .queryParam("courseId", seedData.courseId())
-                .body(createLectureReqeust)
+                .body(createLectureRequest)
                 .contentType(ContentType.JSON)
                 .post("/lectures/create")
                 .then()

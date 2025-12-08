@@ -8,9 +8,9 @@ import java.time.LocalTime;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-class TimeSlotComparatorTest {
+class TimeSlotValueObjectComparatorTest {
 
-    private final TimeSlotComparator comparator = new TimeSlotComparator();
+    private final TimeSlotValueObjectComparator comparator = new TimeSlotValueObjectComparator();
 
     private final LocalDate DATE = LocalDate.of(2024, 1, 1);
     private final LocalTime START = LocalTime.of(10, 0);

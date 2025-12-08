@@ -47,7 +47,7 @@ public class UserFilter implements Filter {
         // expected format: "prof_<uuid>"
         var parts = headerValue.split("_");
         if (parts.length != 2) {
-            return;
+            throw new IllegalArgumentException("Header value of " + headerValue + " can not be parsed.");
         }
 
         try {

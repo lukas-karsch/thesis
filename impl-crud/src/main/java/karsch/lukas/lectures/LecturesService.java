@@ -7,6 +7,7 @@ import karsch.lukas.courses.CoursesNotFoundException;
 import karsch.lukas.courses.CoursesRepository;
 import karsch.lukas.lecture.*;
 import karsch.lukas.stats.StatsService;
+import karsch.lukas.time.TimeSlotMapper;
 import karsch.lukas.time.TimeSlotService;
 import karsch.lukas.time.TimeSlotValueObject;
 import karsch.lukas.users.ProfessorRepository;
@@ -37,6 +38,7 @@ class LecturesService {
     private final LectureDetailDtoMapper lectureDetailDtoMapper;
     private final WaitlistedStudentMapper waitlistedStudentMapper;
     private final SimpleLectureDtoMapper simpleLectureDtoMapper;
+    private final TimeSlotMapper timeSlotMapper;
 
     private final EntityManager entityManager;
 
@@ -92,7 +94,7 @@ class LecturesService {
         enrollmentRepository.findAllWithTimeSlotsByStudentId(studentId)
                 .stream()
                 .filter(e -> timeSlotService.areConflictingTimeSlots(
-                        e.getLecture().getTimeSlots(), lecture.getTimeSlots()
+                        e.getLecture().getTimeSlots(), lecture.getTimeSlots(), timeSlotMapper
                 ))
                 .findFirst()
                 .ifPresent(_ -> {
@@ -212,7 +214,7 @@ class LecturesService {
                 .map(t -> new TimeSlotValueObject(t.date(), t.startTime(), t.endTime()))
                 .toList();
 
-        if (timeSlotService.containsOverlappingTimeslots(timeSlots)) {
+        if (timeSlotService.containsOverlappingTimeslots(timeSlots, timeSlotMapper)) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Overlapping or duplicate time slots are not allowed");
         }
 
@@ -282,7 +284,7 @@ class LecturesService {
                 .map(t -> new TimeSlotValueObject(t.date(), t.startTime(), t.endTime()))
                 .toList();
 
-        if (timeSlotService.containsOverlappingTimeslots(newTimeSlots)) {
+        if (timeSlotService.containsOverlappingTimeslots(newTimeSlots, timeSlotMapper)) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Overlapping or duplicate time slots are not allowed");
         }
 
@@ -315,7 +317,7 @@ class LecturesService {
                 timeSlot.startTime(),
                 timeSlot.endTime()
         );
-        if (timeSlotService.hasEnded(timeSlotValueObject)) {
+        if (timeSlotService.hasEnded(timeSlotValueObject, timeSlotMapper)) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Date for this assessment is in the past.");
         }
         assessment.setTimeSlot(timeSlotValueObject);
@@ -356,7 +358,7 @@ class LecturesService {
             );
         }
 
-        if (!timeSlotService.hasEnded(assessment.getTimeSlot())) {
+        if (!timeSlotService.hasEnded(assessment.getTimeSlot(), timeSlotMapper)) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Can not assign grades for a assessment that has not ended");
         }
 

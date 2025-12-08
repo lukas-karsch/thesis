@@ -2,8 +2,8 @@ package karsch.lukas.e2e.courses;
 
 import karsch.lukas.AxonTestcontainerConfiguration;
 import karsch.lukas.PostgresTestcontainerConfiguration;
-import karsch.lukas.core.time.DateTimeProvider;
 import karsch.lukas.courses.AbstractCoursesE2ETest;
+import karsch.lukas.time.DateTimeProvider;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;

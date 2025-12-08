@@ -1,5 +1,6 @@
 package karsch.lukas.time;
 
+import karsch.lukas.lecture.TimeSlot;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -28,7 +29,7 @@ class TimeSlotServiceTest {
 
     @Test
     void testEarlier() {
-        var earlierTimeSlot = new TimeSlotValueObject(
+        var earlierTimeSlot = new TimeSlot(
                 LocalDate.of(2024, 1, 1),
                 LocalTime.of(0, 0),
                 LocalTime.of(1, 0)
@@ -42,7 +43,7 @@ class TimeSlotServiceTest {
 
     @Test
     void testLive() {
-        var liveTimeSlot = new TimeSlotValueObject(
+        var liveTimeSlot = new TimeSlot(
                 LocalDate.of(2025, 1, 1),
                 LocalTime.of(0, 0),
                 LocalTime.of(2, 0)
@@ -56,7 +57,7 @@ class TimeSlotServiceTest {
 
     @Test
     void testLater() {
-        var liveTimeSlot = new TimeSlotValueObject(
+        var liveTimeSlot = new TimeSlot(
                 LocalDate.of(2025, 2, 1),
                 LocalTime.of(0, 0),
                 LocalTime.of(1, 0)
@@ -77,13 +78,13 @@ class TimeSlotServiceTest {
     void testOverlap_identicalTimeslots() {
         var day = LocalDate.of(2025, 11, 1);
 
-        var slot1 = new TimeSlotValueObject(
+        var slot1 = new TimeSlot(
                 day,
                 LocalTime.of(11, 0),
                 LocalTime.of(12, 0)
         );
 
-        var slot2 = new TimeSlotValueObject(
+        var slot2 = new TimeSlot(
                 day,
                 LocalTime.of(11, 0),
                 LocalTime.of(12, 0)
@@ -106,13 +107,13 @@ class TimeSlotServiceTest {
     void testOverlap_sameDay_notOverlappingTime() {
         var day = LocalDate.of(2025, 11, 1);
 
-        var slot1 = new TimeSlotValueObject(
+        var slot1 = new TimeSlot(
                 day,
                 LocalTime.of(11, 0),
                 LocalTime.of(12, 0)
         );
 
-        var slot2 = new TimeSlotValueObject(
+        var slot2 = new TimeSlot(
                 day,
                 LocalTime.of(12, 15),
                 LocalTime.of(13, 15)
@@ -134,13 +135,13 @@ class TimeSlotServiceTest {
     void testOverlap_startTime_beforeOtherEndTime() {
         var day = LocalDate.of(2025, 11, 1);
 
-        var slot1 = new TimeSlotValueObject(
+        var slot1 = new TimeSlot(
                 day,
                 LocalTime.of(11, 0),
                 LocalTime.of(12, 0)
         );
 
-        var slot2 = new TimeSlotValueObject(
+        var slot2 = new TimeSlot(
                 day,
                 LocalTime.of(11, 30),
                 LocalTime.of(13, 0)
@@ -163,13 +164,13 @@ class TimeSlotServiceTest {
     void testOverlap_oneInsideTheOther() {
         var day = LocalDate.of(2025, 11, 1);
 
-        var slot1 = new TimeSlotValueObject(
+        var slot1 = new TimeSlot(
                 day,
                 LocalTime.of(10, 0),
                 LocalTime.of(13, 0)
         );
 
-        var slot2 = new TimeSlotValueObject(
+        var slot2 = new TimeSlot(
                 day,
                 LocalTime.of(11, 0),
                 LocalTime.of(12, 0)
@@ -192,13 +193,13 @@ class TimeSlotServiceTest {
     void testOverlap_startTimeOverlaps() {
         var day = LocalDate.of(2025, 11, 1);
 
-        var slot1 = new TimeSlotValueObject(
+        var slot1 = new TimeSlot(
                 day,
                 LocalTime.of(10, 0),
                 LocalTime.of(13, 0)
         );
 
-        var slot2 = new TimeSlotValueObject(
+        var slot2 = new TimeSlot(
                 day,
                 LocalTime.of(11, 0),
                 LocalTime.of(13, 0)
@@ -221,13 +222,13 @@ class TimeSlotServiceTest {
     void testOverlap_endTimeOverlaps() {
         var day = LocalDate.of(2025, 11, 1);
 
-        var slot1 = new TimeSlotValueObject(
+        var slot1 = new TimeSlot(
                 day,
                 LocalTime.of(10, 0),
                 LocalTime.of(13, 0)
         );
 
-        var slot2 = new TimeSlotValueObject(
+        var slot2 = new TimeSlot(
                 day,
                 LocalTime.of(10, 0),
                 LocalTime.of(12, 0)
@@ -243,15 +244,15 @@ class TimeSlotServiceTest {
     void testAreConflictingTimeSlots_withNoConflict() {
         var slots1 = new TreeSet<>(new TimeSlotComparator());
         slots1.addAll(Set.of(
-                new TimeSlotValueObject(
+                new TimeSlot(
                         LocalDate.of(2025, 11, 1),
                         LocalTime.of(10, 0),
                         LocalTime.of(12, 0)
-                ), new TimeSlotValueObject(
+                ), new TimeSlot(
                         LocalDate.of(2025, 11, 8),
                         LocalTime.of(10, 0),
                         LocalTime.of(12, 0)
-                ), new TimeSlotValueObject(
+                ), new TimeSlot(
                         LocalDate.of(2025, 11, 15),
                         LocalTime.of(10, 0),
                         LocalTime.of(12, 0)
@@ -260,15 +261,15 @@ class TimeSlotServiceTest {
 
         var slots2 = new TreeSet<>(new TimeSlotComparator());
         slots2.addAll(Set.of(
-                new TimeSlotValueObject(
+                new TimeSlot(
                         LocalDate.of(2025, 11, 1),
                         LocalTime.of(12, 15),
                         LocalTime.of(14, 0)
-                ), new TimeSlotValueObject(
+                ), new TimeSlot(
                         LocalDate.of(2025, 11, 8),
                         LocalTime.of(12, 15),
                         LocalTime.of(14, 0)
-                ), new TimeSlotValueObject(
+                ), new TimeSlot(
                         LocalDate.of(2025, 11, 15),
                         LocalTime.of(12, 15),
                         LocalTime.of(14, 0)
@@ -284,15 +285,15 @@ class TimeSlotServiceTest {
     void testAreConflictingTimeSlots_withConflict() {
         var slots1 = new TreeSet<>(new TimeSlotComparator());
         slots1.addAll(Set.of(
-                new TimeSlotValueObject(
+                new TimeSlot(
                         LocalDate.of(2025, 11, 1),
                         LocalTime.of(10, 0),
                         LocalTime.of(12, 0)
-                ), new TimeSlotValueObject(
+                ), new TimeSlot(
                         LocalDate.of(2025, 11, 8),
                         LocalTime.of(10, 0),
                         LocalTime.of(12, 0)
-                ), new TimeSlotValueObject(
+                ), new TimeSlot(
                         LocalDate.of(2025, 11, 15),
                         LocalTime.of(10, 0),
                         LocalTime.of(12, 0)
@@ -301,15 +302,15 @@ class TimeSlotServiceTest {
 
         var slots2 = new TreeSet<>(new TimeSlotComparator());
         slots2.addAll(Set.of(
-                new TimeSlotValueObject(
+                new TimeSlot(
                         LocalDate.of(2025, 11, 1),
                         LocalTime.of(12, 15),
                         LocalTime.of(14, 0)
-                ), new TimeSlotValueObject(
+                ), new TimeSlot(
                         LocalDate.of(2025, 11, 8),
                         LocalTime.of(12, 15),
                         LocalTime.of(14, 0)
-                ), new TimeSlotValueObject(
+                ), new TimeSlot(
                         LocalDate.of(2025, 11, 15),
                         LocalTime.of(10, 0), // overlap here!
                         LocalTime.of(14, 0)
@@ -324,8 +325,8 @@ class TimeSlotServiceTest {
     @Test
     void containsOverlappingTimeslots_whenOverlap() {
         var timeSlots = Set.of(
-                new TimeSlotValueObject(LocalDate.of(2025, 11, 1), LocalTime.of(10, 0), LocalTime.of(12, 0)),
-                new TimeSlotValueObject(LocalDate.of(2025, 11, 1), LocalTime.of(11, 0), LocalTime.of(12, 0))
+                new TimeSlot(LocalDate.of(2025, 11, 1), LocalTime.of(10, 0), LocalTime.of(12, 0)),
+                new TimeSlot(LocalDate.of(2025, 11, 1), LocalTime.of(11, 0), LocalTime.of(12, 0))
         );
 
         var underTest = new TimeSlotService(dateTimeProvider);
@@ -336,8 +337,8 @@ class TimeSlotServiceTest {
     @Test
     void containsOverlappingTimeslots_whenNoOverlap_becauseOfDate() {
         var timeSlots = Set.of(
-                new TimeSlotValueObject(LocalDate.of(2025, 11, 1), LocalTime.of(10, 0), LocalTime.of(12, 0)),
-                new TimeSlotValueObject(LocalDate.of(2025, 11, 2), LocalTime.of(10, 0), LocalTime.of(12, 0))
+                new TimeSlot(LocalDate.of(2025, 11, 1), LocalTime.of(10, 0), LocalTime.of(12, 0)),
+                new TimeSlot(LocalDate.of(2025, 11, 2), LocalTime.of(10, 0), LocalTime.of(12, 0))
         );
 
         var underTest = new TimeSlotService(dateTimeProvider);
@@ -348,8 +349,8 @@ class TimeSlotServiceTest {
     @Test
     void containsOverlappingTimeslots_whenNoOverlap_becauseOfTime() {
         var timeSlots = Set.of(
-                new TimeSlotValueObject(LocalDate.of(2025, 11, 1), LocalTime.of(10, 0), LocalTime.of(12, 0)),
-                new TimeSlotValueObject(LocalDate.of(2025, 11, 1), LocalTime.of(13, 0), LocalTime.of(15, 0))
+                new TimeSlot(LocalDate.of(2025, 11, 1), LocalTime.of(10, 0), LocalTime.of(12, 0)),
+                new TimeSlot(LocalDate.of(2025, 11, 1), LocalTime.of(13, 0), LocalTime.of(15, 0))
         );
 
         var underTest = new TimeSlotService(dateTimeProvider);

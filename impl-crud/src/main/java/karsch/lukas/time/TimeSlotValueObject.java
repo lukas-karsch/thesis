@@ -6,7 +6,8 @@ import java.time.LocalDate;
 import java.time.LocalTime;
 
 @Embeddable
-public record TimeSlotValueObject(LocalDate date,
-                                  LocalTime startTime,
-                                  LocalTime endTime) {
+public record TimeSlotValueObject(
+        LocalDate date,
+        LocalTime startTime,
+        LocalTime endTime) {
 }
