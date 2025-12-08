@@ -7,7 +7,7 @@ import karsch.lukas.features.course.api.FindAllCoursesQuery;
 import karsch.lukas.features.course.api.FindCourseByIdQuery;
 import karsch.lukas.features.course.api.FindCoursesByIdsQuery;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
+import lombok.extern.slf4j.XSlf4j;
 import org.axonframework.config.ProcessingGroup;
 import org.axonframework.eventhandling.EventHandler;
 import org.axonframework.queryhandling.QueryHandler;
@@ -20,14 +20,14 @@ import java.util.stream.Collectors;
 @Component
 @RequiredArgsConstructor
 @ProcessingGroup("courses")
-@Slf4j
+@XSlf4j
 class CourseProjector {
 
     private final CourseRepository courseRepository;
 
     @EventHandler
     public void on(CourseCreatedEvent event) {
-        log.debug("handling event {}", event);
+        log.entry(event);
 
         CourseProjectionEntity courseEntity = new CourseProjectionEntity();
         courseEntity.setId(event.courseId());
@@ -38,6 +38,7 @@ class CourseProjector {
         courseEntity.setMinimumCreditsRequired(event.minimumCreditsRequired());
 
         courseRepository.save(courseEntity);
+        log.exit();
     }
 
     private Set<CourseDTO> findAll() {
@@ -48,23 +49,26 @@ class CourseProjector {
 
     @QueryHandler
     public Set<CourseDTO> handle(FindAllCoursesQuery query) {
-        return findAll();
+        log.entry(query);
+        return log.exit(findAll());
     }
 
     private Set<CourseDTO> findByIds(Set<UUID> ids) {
-        return courseRepository.findAllById(ids).stream()
+        return log.exit(courseRepository.findAllById(ids).stream()
                 .map(this::toDto)
-                .collect(Collectors.toSet());
+                .collect(Collectors.toSet()));
     }
 
     @QueryHandler
     public CourseDTO findById(FindCourseByIdQuery query) {
-        return courseRepository.findById(query.courseId()).map(this::toDto).orElse(null);
+        log.entry(query);
+        return log.exit(courseRepository.findById(query.courseId()).map(this::toDto).orElse(null));
     }
 
     @QueryHandler
     public Set<CourseDTO> handle(FindCoursesByIdsQuery query) {
-        return findByIds(query.courseIds());
+        log.entry(query);
+        return log.exit(findByIds(query.courseIds()));
     }
 
     private CourseDTO toDto(CourseProjectionEntity entity) {

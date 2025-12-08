@@ -31,11 +31,11 @@ class CourseAggregate {
     @CommandHandler
     public CourseAggregate(CreateCourseCommand cmd, ICourseValidator courseValidator) {
         log.debug("Handling {}", cmd);
+
         if (!courseValidator.allCoursesExist(cmd.prerequisiteCourseIds())) {
             throw new MissingCoursesException("Some prerequisites don't exist.");
         }
 
-        log.debug("Applying CourseCreatedEvent");
         apply(new CourseCreatedEvent(
                 cmd.courseId(),
                 cmd.name(),

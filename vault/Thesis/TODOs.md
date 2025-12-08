@@ -20,11 +20,16 @@
 - roter Faden / Gliederung entwickeln (und besprechen)
 - create GEMINI.md file in the project root #llm
 - code
-    - check if indexes are set up correctly 
-    - clean up StatsService 
-    - get rid of N+1 queries (especially StatsService)
-    - CQRS app: add global exception handler 
+    - CRUD
+	    - check if indexes are set up correctly 
+	    - clean up StatsService 
+	    - get rid of N+1 queries (especially StatsService)
+    - CQRS
+	    - try to use TEPs in my E2E tests
 - look at axon transaction manager? 
+	- what is it  
+	- for what can it be used?
+	- compare to [[Axon Unit Of Work]]
 - Zitationsstil klären
 - [[LLMs bei der Bachelorarbeit (Infoveranstaltung)]] MindMap abholen
 ## Before Finishing

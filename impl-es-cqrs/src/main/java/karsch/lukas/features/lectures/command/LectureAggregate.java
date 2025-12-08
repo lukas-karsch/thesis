@@ -1,15 +1,17 @@
 package karsch.lukas.features.lectures.command;
 
 import karsch.lukas.core.exceptions.DomainException;
+import karsch.lukas.core.exceptions.NotAllowedException;
 import karsch.lukas.features.course.commands.ICourseValidator;
 import karsch.lukas.features.course.exceptions.MissingCoursesException;
+import karsch.lukas.features.lectures.api.AdvanceLectureLifecycleCommand;
 import karsch.lukas.features.lectures.api.CreateLectureCommand;
 import karsch.lukas.features.lectures.api.LectureCreatedEvent;
+import karsch.lukas.features.lectures.api.LectureLifecycleAdvancedEvent;
 import karsch.lukas.features.professor.command.IProfessorValidator;
 import karsch.lukas.lecture.LectureStatus;
 import karsch.lukas.lecture.TimeSlot;
 import karsch.lukas.time.TimeSlotService;
-import lombok.NoArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.axonframework.commandhandling.CommandHandler;
 import org.axonframework.eventsourcing.EventSourcingHandler;
@@ -25,8 +27,7 @@ import static org.axonframework.modelling.command.AggregateLifecycle.apply;
 
 @Aggregate
 @Slf4j
-@NoArgsConstructor
-public class LectureAggregate {
+class LectureAggregate {
     @AggregateIdentifier
     private UUID id;
 
@@ -41,6 +42,8 @@ public class LectureAggregate {
     private List<Object> assessments; // TODO
 
     private LectureStatus lectureStatus;
+
+    private UUID professorId;
 
     @CommandHandler
     public LectureAggregate(CreateLectureCommand command, ICourseValidator courseValidator, TimeSlotService timeSlotService, IProfessorValidator professorValidator) {
@@ -68,8 +71,23 @@ public class LectureAggregate {
         );
     }
 
+    protected LectureAggregate() {
+    }
+
+    @CommandHandler
+    public void handle(AdvanceLectureLifecycleCommand command) {
+        if (command.lectureStatus().ordinal() < this.lectureStatus.ordinal()) {
+            throw new DomainException("Can not move lecture lifecycle backwards. Was " + this.lectureStatus + ", tried to set " + command.lectureStatus());
+        }
+        if (!command.professorId().equals(this.professorId)) {
+            throw new NotAllowedException("Not allowed to advance lifecycle.");
+        }
+        apply(new LectureLifecycleAdvancedEvent(this.id, command.lectureStatus()));
+    }
+
     @EventSourcingHandler
     public void on(LectureCreatedEvent lectureCreatedEvent) {
+        log.debug("handling {}", lectureCreatedEvent);
         this.id = lectureCreatedEvent.id();
         this.courseId = lectureCreatedEvent.courseId();
         this.maximumStudents = lectureCreatedEvent.maximumStudents();
@@ -77,6 +95,13 @@ public class LectureAggregate {
         this.enrolledStudents = new ArrayList<>();
         this.assessments = new ArrayList<>();
         this.lectureStatus = lectureCreatedEvent.lectureStatus();
+        this.professorId = lectureCreatedEvent.professorId();
+    }
+
+    @EventSourcingHandler
+    public void on(LectureLifecycleAdvancedEvent event) {
+        log.debug("handling {}", event);
+        this.lectureStatus = event.lectureStatus();
     }
 
 }

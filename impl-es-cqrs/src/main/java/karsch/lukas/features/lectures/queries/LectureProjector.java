@@ -6,12 +6,13 @@ import karsch.lukas.course.CourseDTO;
 import karsch.lukas.features.course.api.FindCourseByIdQuery;
 import karsch.lukas.features.lectures.api.FindLectureByIdQuery;
 import karsch.lukas.features.lectures.api.LectureCreatedEvent;
+import karsch.lukas.features.lectures.api.LectureLifecycleAdvancedEvent;
 import karsch.lukas.features.professor.api.FindProfessorByIdQuery;
 import karsch.lukas.lecture.LectureDetailDTO;
 import karsch.lukas.lecture.TimeSlot;
 import karsch.lukas.professor.ProfessorDTO;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
+import lombok.extern.slf4j.XSlf4j;
 import org.axonframework.config.ProcessingGroup;
 import org.axonframework.eventhandling.EventHandler;
 import org.axonframework.messaging.responsetypes.ResponseTypes;
@@ -24,7 +25,7 @@ import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
 
 @Component
-@Slf4j
+@XSlf4j
 @ProcessingGroup("lectures")
 @RequiredArgsConstructor
 public class LectureProjector {
@@ -35,6 +36,7 @@ public class LectureProjector {
 
     @EventHandler
     public void on(LectureCreatedEvent event) throws ExecutionException, InterruptedException, JsonProcessingException {
+        log.entry(event);
         // TODO add retries
 
         CompletableFuture<CourseDTO> courseDTO = queryGateway.query(new FindCourseByIdQuery(event.courseId()), ResponseTypes.instanceOf(CourseDTO.class));
@@ -61,14 +63,28 @@ public class LectureProjector {
         lectureRepository.save(lectureEntity);
     }
 
+    @EventHandler
+    public void on(LectureLifecycleAdvancedEvent event) {
+        log.entry(event);
+        lectureRepository.findById(event.lectureId())
+                .ifPresentOrElse(
+                        e -> {
+                            e.setLectureStatus(event.lectureStatus());
+                            lectureRepository.save(e);
+                        },
+                        () -> log.error("LectureProjectionEntity with id={} not found", event.lectureId())
+                );
+    }
+
     @QueryHandler
     public LectureDetailDTO findById(FindLectureByIdQuery query) throws JsonProcessingException {
+        log.entry(query);
         var found = lectureRepository.findById(query.lectureId()).orElse(null);
 
         if (found == null)
             return null;
 
-        return new LectureDetailDTO(
+        return log.exit(new LectureDetailDTO(
                 found.getId(),
                 objectMapper.readValue(found.getCourseDtoJson(), CourseDTO.class),
                 found.getMaximumStudents(),
@@ -78,7 +94,7 @@ public class LectureProjector {
                 Collections.emptyList(),
                 found.getLectureStatus(),
                 Collections.emptySet()
-        );
+        ));
     }
 
 }

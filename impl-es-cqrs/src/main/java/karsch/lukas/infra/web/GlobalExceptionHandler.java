@@ -29,7 +29,7 @@ public class GlobalExceptionHandler {
     public ResponseEntity<ApiResponse<Void>> handleAxonException(CommandExecutionException ex) {
         Optional<Object> details = ex.getDetails();
 
-        if (details.isEmpty()) {
+        if (details.isEmpty() || !(details.get() instanceof ErrorDetails errorDetails)) {
             log.error(ex.getMessage(), ex);
 
             return new ResponseEntity<>(
@@ -38,17 +38,16 @@ public class GlobalExceptionHandler {
             );
         }
 
-        if (ErrorDetails.RESOURCE_NOT_FOUND.equals(details.get())) {
-            return new ResponseEntity<>(
-                    new ApiResponse<>(HttpStatus.NOT_FOUND, ex.getMessage()),
-                    HttpStatus.NOT_FOUND
-            );
-        } else if (ErrorDetails.ILLEGAL_DOMAIN_STATE.equals(details.get())) {
-            return new ResponseEntity<>(
-                    new ApiResponse<>(HttpStatus.BAD_REQUEST, ex.getMessage()),
-                    HttpStatus.BAD_REQUEST
-            );
-        } else throw new RuntimeException("Unhandled branch in handleAxonException", ex);
+        final HttpStatus status = switch (errorDetails) {
+            case ErrorDetails.RESOURCE_NOT_FOUND -> HttpStatus.NOT_FOUND;
+            case ErrorDetails.ILLEGAL_DOMAIN_STATE -> HttpStatus.BAD_REQUEST;
+            case ErrorDetails.NOT_ALLOWED -> HttpStatus.FORBIDDEN;
+        };
+
+        return new ResponseEntity<>(
+                new ApiResponse<>(status, ex.getMessage()),
+                status
+        );
     }
 
     @ExceptionHandler(QueryException.class)

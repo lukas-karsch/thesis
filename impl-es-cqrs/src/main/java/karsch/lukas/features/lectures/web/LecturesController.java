@@ -2,6 +2,7 @@ package karsch.lukas.features.lectures.web;
 
 import karsch.lukas.context.RequestContext;
 import karsch.lukas.core.exceptions.QueryException;
+import karsch.lukas.features.lectures.api.AdvanceLectureLifecycleCommand;
 import karsch.lukas.features.lectures.api.CreateLectureCommand;
 import karsch.lukas.features.lectures.api.FindLectureByIdQuery;
 import karsch.lukas.lecture.*;
@@ -76,6 +77,12 @@ public class LecturesController implements ILecturesController {
     public ResponseEntity<ApiResponse<LectureDetailDTO>> getLectureDetails(UUID lectureId) {
         try {
             var queryResult = queryGateway.query(new FindLectureByIdQuery(lectureId), ResponseTypes.instanceOf(LectureDetailDTO.class)).get();
+            if (queryResult == null) {
+                return new ResponseEntity<>(
+                        new ApiResponse<>(HttpStatus.NOT_FOUND, "Lecture " + lectureId + " not found"),
+                        HttpStatus.NOT_FOUND
+                );
+            }
             return new ResponseEntity<>(
                     new ApiResponse<>(HttpStatus.OK, queryResult),
                     HttpStatus.OK
@@ -113,6 +120,17 @@ public class LecturesController implements ILecturesController {
 
     @Override
     public ResponseEntity<ApiResponse<Void>> advanceLifecycleOfLecture(UUID lectureId, LectureStatus newLectureStatus) {
-        return null;
+        if (!"professor".equals(requestContext.getUserType())) {
+            log.error("Invalid user type {} for LecturesController.advanceLifecycleOfLecture", requestContext.getUserType());
+            return new ResponseEntity<>(
+                    new ApiResponse<>(HttpStatus.FORBIDDEN, "Must be authenticated as professor to create lectures"), HttpStatus.FORBIDDEN
+            );
+        }
+
+        commandGateway.sendAndWait(new AdvanceLectureLifecycleCommand(lectureId, newLectureStatus, requestContext.getUserId()));
+
+        return new ResponseEntity<>(
+                new ApiResponse<>(HttpStatus.CREATED, "Advanced lifecycle"), HttpStatus.CREATED
+        );
     }
 }

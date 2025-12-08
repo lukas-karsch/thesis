@@ -8,7 +8,7 @@ Actually, this version field makes sense to use in my project anyways, as it is 
 ## N+1 for snapshot JSON 
 #todo
 @PostLoad creates a JSON snapshot of the entities. While this uses my custom object mapper that only serializes IDs of relationships, value objects like the time slots of lectures will be fetched... 
-This might be a big performance bottleneck - have to check! 
+This might be a performance bottleneck - have to check! 
 ## When creating a new entity, I cant see its ID 
 - @PrePersist = not yet on the database
 -  but ID is generated on the database 

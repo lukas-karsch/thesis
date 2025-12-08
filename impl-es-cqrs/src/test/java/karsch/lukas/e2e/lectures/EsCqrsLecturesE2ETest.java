@@ -2,14 +2,21 @@ package karsch.lukas.e2e.lectures;
 
 import karsch.lukas.AxonTestcontainerConfiguration;
 import karsch.lukas.PostgresTestcontainerConfiguration;
+import karsch.lukas.e2e.config.AxonTestConfiguration;
 import karsch.lukas.features.course.api.CreateCourseCommand;
+import karsch.lukas.features.lectures.api.AdvanceLectureLifecycleCommand;
+import karsch.lukas.features.lectures.api.CreateLectureCommand;
 import karsch.lukas.features.professor.api.CreateProfessorCommand;
+import karsch.lukas.features.student.api.CreateStudentCommand;
+import karsch.lukas.lecture.LectureStatus;
 import karsch.lukas.lecture.TimeSlot;
 import karsch.lukas.lectures.AbstractLecturesE2ETest;
 import karsch.lukas.time.DateTimeProvider;
 import karsch.lukas.uuid.UuidUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.axonframework.commandhandling.gateway.CommandGateway;
+import org.axonframework.config.EventProcessingConfiguration;
+import org.axonframework.test.server.AxonServerContainer;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.web.server.LocalServerPort;
@@ -20,13 +27,18 @@ import java.sql.Connection;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.time.Clock;
+import java.time.LocalDate;
+import java.time.LocalTime;
 import java.util.Collections;
+import java.util.List;
 import java.util.UUID;
+
+import static io.restassured.RestAssured.given;
 
 @SpringBootTest(
         webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT
 )
-@Import({PostgresTestcontainerConfiguration.class, AxonTestcontainerConfiguration.class})
+@Import({PostgresTestcontainerConfiguration.class, AxonTestcontainerConfiguration.class, AxonTestConfiguration.class})
 @Slf4j
 public class EsCqrsLecturesE2ETest extends AbstractLecturesE2ETest {
 
@@ -41,6 +53,12 @@ public class EsCqrsLecturesE2ETest extends AbstractLecturesE2ETest {
 
     @Autowired
     private CommandGateway commandGateway;
+
+    @Autowired
+    private EventProcessingConfiguration eventProcessingConfiguration;
+
+    @Autowired
+    private AxonServerContainer axonServerContainer;
 
     @Override
     public int getPort() {
@@ -62,6 +80,25 @@ public class EsCqrsLecturesE2ETest extends AbstractLecturesE2ETest {
         } catch (SQLException e) {
             log.error("Could not reset database", e);
         }
+
+        given()
+                .with()
+                .baseUri("http://localhost:" + axonServerContainer.getHttpPort())
+                .delete("/v1/devmode/purge-events")
+                .then()
+                .statusCode(200);
+
+//        eventProcessingConfiguration.eventProcessors().values().stream()
+//                .filter(TrackingEventProcessor.class::isInstance)
+//                .map(TrackingEventProcessor.class::cast)
+//                .forEach(it -> {
+//                    it.shutDown();
+//                    it.resetTokens();
+//                    it.start();
+//                    await().atMost(5, TimeUnit.SECONDS)
+//                            .until(() -> it.processingStatus().values().stream()
+//                                    .allMatch(EventTrackerStatus::isCaughtUp));
+//                });
     }
 
     @Override
@@ -82,7 +119,29 @@ public class EsCqrsLecturesE2ETest extends AbstractLecturesE2ETest {
 
     @Override
     protected LectureSeedData createLectureSeedData(int minimumCreditsRequired) {
-        return null;
+        var courseSeedData = createCourseSeedData();
+
+        var lectureId = UuidUtils.randomV7();
+        commandGateway.sendAndWait(new CreateLectureCommand(
+                lectureId,
+                courseSeedData.courseId(),
+                1,
+                List.of(
+                        new TimeSlot(LocalDate.of(2025, 12, 1), LocalTime.of(10, 0), LocalTime.of(12, 0)),
+                        new TimeSlot(LocalDate.of(2025, 12, 2), LocalTime.of(10, 0), LocalTime.of(12, 0))
+                ),
+                courseSeedData.professorId()
+        ));
+
+        commandGateway.sendAndWait(new AdvanceLectureLifecycleCommand(lectureId, LectureStatus.OPEN_FOR_ENROLLMENT, courseSeedData.professorId()));
+
+        var studentId = createStudent(0);
+
+        return new LectureSeedData(
+                lectureId,
+                studentId,
+                courseSeedData.professorId()
+        );
     }
 
     @Override
@@ -102,7 +161,10 @@ public class EsCqrsLecturesE2ETest extends AbstractLecturesE2ETest {
 
     @Override
     protected UUID createStudent(int semester) {
-        return null;
+        UUID studentId = UuidUtils.randomV7();
+        commandGateway.sendAndWait(new CreateStudentCommand(studentId, "Hannah", "Holzheu"));
+
+        return studentId;
     }
 
     @Override

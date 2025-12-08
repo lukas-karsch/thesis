@@ -8,6 +8,8 @@ import org.springframework.boot.testcontainers.service.connection.ServiceConnect
 import org.springframework.context.annotation.Bean;
 import org.testcontainers.utility.DockerImageName;
 
+import java.util.Map;
+
 @TestConfiguration(proxyBeanMethods = false)
 public class AxonTestcontainerConfiguration {
 
@@ -19,6 +21,7 @@ public class AxonTestcontainerConfiguration {
         logger.info("axonServerContainer bean was called");
         return new AxonServerContainer(
                 DockerImageName.parse("axoniq/axonserver:latest")
-        );
+        )
+                .withEnv(Map.of("axoniq.axonserver.devmode.enabled", "true"));
     }
 }
