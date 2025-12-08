@@ -111,6 +111,16 @@ public class CrudLecturesE2ETest extends AbstractLecturesE2ETest {
                     entityManager.getReference(CourseEntity.class, courseSeedData.courseId())
             );
             lecture.setLectureStatus(LectureStatus.OPEN_FOR_ENROLLMENT);
+            lecture.getTimeSlots().add(new TimeSlotValueObject(
+                    LocalDate.of(2025, 12, 2),
+                    LocalTime.of(10, 0),
+                    LocalTime.of(12, 0)
+            ));
+            lecture.getTimeSlots().add(new TimeSlotValueObject(
+                    LocalDate.of(2025, 12, 1),
+                    LocalTime.of(10, 0),
+                    LocalTime.of(12, 0)
+            ));
 
             var course = entityManager.getReference(CourseEntity.class, courseSeedData.courseId());
             course.setMinimumCreditsRequired(minimumCreditsRequiredForCourse);

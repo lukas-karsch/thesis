@@ -22,8 +22,7 @@ import java.util.function.Supplier;
 import static io.restassured.RestAssured.given;
 import static karsch.lukas.helper.AuthHelper.getProfessorAuthHeader;
 import static karsch.lukas.helper.AuthHelper.getStudentAuthHeader;
-import static org.hamcrest.Matchers.equalToIgnoringCase;
-import static org.hamcrest.Matchers.hasSize;
+import static org.hamcrest.Matchers.*;
 
 public abstract class AbstractLecturesE2ETest implements BaseE2ETest {
 
@@ -113,12 +112,16 @@ public abstract class AbstractLecturesE2ETest implements BaseE2ETest {
      * <ul>
      *     <li>Must create a professor.</li>
      *     <li>The professor must create a lecture that is open for enrollment.</li>
+     *     <li>The lecture must have a timeslots on december 1st and 2nd each</li>
      *     <li>The lecture must have space for 1 student</li>
      *     <li>Must create a student in semester 1 that can enroll to the lecture.</li>
      * </ul>
      */
     protected abstract LectureSeedData createLectureSeedData(int minimumCreditsRequired);
 
+    /**
+     * @see #createLectureSeedData(int)
+     */
     protected LectureSeedData createLectureSeedData() {
         return createLectureSeedData(0);
     }
@@ -287,7 +290,10 @@ public abstract class AbstractLecturesE2ETest implements BaseE2ETest {
                 .when()
                 .get("/lectures/{lectureId}", lectureSeedData.lectureId())
                 .then()
-                .statusCode(200);
+                .statusCode(200)
+                .body("data.dates", hasSize(2))
+                .body("data.dates[0].date", containsString("2025-12-01"))
+                .body("data.dates[1].date", containsString("2025-12-02"));
     }
 
     @Test
