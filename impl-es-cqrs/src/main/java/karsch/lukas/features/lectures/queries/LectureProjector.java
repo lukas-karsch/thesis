@@ -12,6 +12,7 @@ import karsch.lukas.lecture.LectureDetailDTO;
 import karsch.lukas.lecture.SimpleLectureDTO;
 import karsch.lukas.lecture.TimeSlot;
 import karsch.lukas.professor.ProfessorDTO;
+import karsch.lukas.time.TimeSlotComparator;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.axonframework.config.ProcessingGroup;
@@ -118,6 +119,7 @@ public class LectureProjector {
         var lecture = lectureRepository.findById(event.lectureId()).orElseThrow();
         List<TimeSlot> timeSlots = objectMapper.readerForListOf(TimeSlot.class).readValue(lecture.getDatesJson());
         timeSlots.addAll(event.newTimeSlots());
+        timeSlots.sort(new TimeSlotComparator());
         lecture.setDatesJson(objectMapper.writeValueAsString(timeSlots));
         lectureRepository.save(lecture);
     }

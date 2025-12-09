@@ -123,7 +123,7 @@ class LectureAggregate {
             throw new DomainException("New time slots are conflicting with existing ones");
         }
 
-        apply(new TimeSlotsAssignedEvent(this.id, newSlots, this.professorId));
+        apply(new TimeSlotsAssignedEvent(this.id, newSlots.stream().toList(), this.professorId));
     }
 
     @EventSourcingHandler
