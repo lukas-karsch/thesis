@@ -645,6 +645,31 @@ public abstract class AbstractLecturesE2ETest implements BaseE2ETest {
     }
 
     @Test
+    @DisplayName("Adding an assessment for a non-existing lecture should return 404.")
+    void addAssessmentForLecture_should404_ifLectureNotExists() {
+        setSystemTime(Clock.fixed(
+                LocalDateTime.of(2025, 11, 1, 12, 0).toInstant(ZoneOffset.UTC),
+                ZoneId.of("UTC")
+        ));
+
+        var request = new CreateLectureAssessmentRequest(
+                AssessmentType.EXAM,
+                new TimeSlot(LocalDate.of(2025, 12, 2), LocalTime.of(12, 0), LocalTime.of(14, 0)),
+                1
+        );
+
+        var uuid = UUID.randomUUID();
+        given()
+                .contentType(ContentType.JSON)
+                .body(request)
+                .when()
+                .header(getProfessorAuthHeader(UUID.randomUUID()))
+                .post("/lectures/{lectureId}/assessments", uuid)
+                .then()
+                .statusCode(404);
+    }
+
+    @Test
     @DisplayName("Adding an assessment for a lecture should return 201 and the assessment should be visible in the lecture details")
     void addAssessmentForLecture_shouldReturn201() {
         // set time to 1.11.2025, 12:00
