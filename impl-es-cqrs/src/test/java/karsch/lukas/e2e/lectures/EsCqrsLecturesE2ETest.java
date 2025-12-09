@@ -151,7 +151,11 @@ public class EsCqrsLecturesE2ETest extends AbstractLecturesE2ETest {
 
     @Override
     protected SecondProfessorSeedData createSecondProfessorSeedData() {
-        return null;
+        UUID professorId = UuidUtils.randomV7();
+        commandGateway.sendAndWait(
+                new CreateProfessorCommand(professorId, "Bugs", "Bunny")
+        );
+        return new SecondProfessorSeedData(professorId);
     }
 
     @Override

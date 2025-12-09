@@ -284,7 +284,7 @@ class LecturesService {
                 .map(t -> new TimeSlotValueObject(t.date(), t.startTime(), t.endTime()))
                 .toList();
 
-        if (timeSlotService.containsOverlappingTimeslots(newTimeSlots, timeSlotMapper)) {
+        if (timeSlotService.containsOverlappingTimeslots(assignDatesToLectureRequest.dates())) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Overlapping or duplicate time slots are not allowed");
         }
 

@@ -8,6 +8,7 @@ import karsch.lukas.features.lectures.api.*;
 import karsch.lukas.features.professor.command.IProfessorValidator;
 import karsch.lukas.lecture.LectureStatus;
 import karsch.lukas.lecture.TimeSlot;
+import karsch.lukas.time.TimeSlotComparator;
 import karsch.lukas.time.TimeSlotService;
 import lombok.extern.slf4j.Slf4j;
 import org.axonframework.commandhandling.CommandHandler;
@@ -30,7 +31,7 @@ class LectureAggregate {
 
     private int maximumStudents;
 
-    private List<TimeSlot> dates;
+    private SortedSet<TimeSlot> timeSlots;
 
     private List<UUID> enrolledStudents;
 
@@ -78,17 +79,19 @@ class LectureAggregate {
         if (!command.professorId().equals(this.professorId)) {
             throw new NotAllowedException("Not allowed to advance lifecycle.");
         }
-        apply(new LectureLifecycleAdvancedEvent(this.id, command.lectureStatus()));
+        apply(new LectureLifecycleAdvancedEvent(this.id, command.lectureStatus(), this.professorId));
     }
 
     @CommandHandler
-    public void handle(AddAssessmentCommand command) {
-        if (!command.professorId().equals(this.professorId)) {
-            throw new NotAllowedException("Not allowed to add assessments.");
-        }
+    public void handle(AddAssessmentCommand command, TimeSlotService timeSlotService) {
+        assertProfessorIsAllowedToMakeChanges(command.professorId());
 
         if (this.assessments.containsKey(command.assessmentId())) {
             throw new DomainException("Assessment already exists.");
+        }
+
+        if (timeSlotService.isLive(command.timeSlot()) || timeSlotService.hasEnded(command.timeSlot())) {
+            throw new DomainException("TimeSlot " + command.timeSlot() + " is in the past.");
         }
 
         apply(new AssessmentAddedEvent(
@@ -96,8 +99,31 @@ class LectureAggregate {
                 command.assessmentId(),
                 command.timeSlot(),
                 command.assessmentType(),
-                command.weight()
+                command.weight(),
+                this.professorId
         ));
+    }
+
+    @CommandHandler
+    public void handle(AssignTimeSlotsToLectureCommand command, TimeSlotService timeSlotService) {
+        assertProfessorIsAllowedToMakeChanges(command.professorId());
+
+        if (timeSlotService.containsOverlappingTimeslots(command.dates())) {
+            throw new DomainException("New dates contain overlapping timeslots.");
+        }
+
+        var newSlots = new TreeSet<>(new TimeSlotComparator());
+        newSlots.addAll(command.dates());
+
+        if (newSlots.size() != command.dates().size()) {
+            throw new DomainException("New timeSlots contained duplicates");
+        }
+
+        if (timeSlotService.areConflictingTimeSlots(this.timeSlots, newSlots)) {
+            throw new DomainException("New time slots are conflicting with existing ones");
+        }
+
+        apply(new TimeSlotsAssignedEvent(this.id, newSlots, this.professorId));
     }
 
     @EventSourcingHandler
@@ -106,7 +132,8 @@ class LectureAggregate {
         this.id = lectureCreatedEvent.lectureId();
         this.courseId = lectureCreatedEvent.courseId();
         this.maximumStudents = lectureCreatedEvent.maximumStudents();
-        this.dates = lectureCreatedEvent.dates(); // TODO needs to be sorted
+        this.timeSlots = new TreeSet<>(new TimeSlotComparator());
+        timeSlots.addAll(lectureCreatedEvent.dates());
         this.enrolledStudents = new ArrayList<>();
         this.assessments = new HashMap<>();
         this.lectureStatus = lectureCreatedEvent.lectureStatus();
@@ -128,6 +155,18 @@ class LectureAggregate {
                 event.weight(),
                 event.assessmentType()
         ));
+    }
+
+    @EventSourcingHandler
+    public void handle(TimeSlotsAssignedEvent event) {
+        log.debug("handling {}", event);
+        this.timeSlots.addAll(event.newTimeSlots());
+    }
+
+    private void assertProfessorIsAllowedToMakeChanges(UUID requestingProfessorId) {
+        if (!this.professorId.equals(requestingProfessorId)) {
+            throw new NotAllowedException("Not allowed to add assessments.");
+        }
     }
 
 }

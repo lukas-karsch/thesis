@@ -10,5 +10,5 @@ public record AssessmentAddedEvent(
         UUID assessmentId,
         TimeSlot timeSlot,
         AssessmentType assessmentType,
-        float weight) {
+        float weight, UUID professorId) {
 }

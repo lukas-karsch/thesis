@@ -1,6 +1,6 @@
 package karsch.lukas.lecture;
 
-import java.util.Set;
+import java.util.Collection;
 
-public record AssignDatesToLectureRequest(Set<TimeSlot> dates) {
+public record AssignDatesToLectureRequest(Collection<TimeSlot> dates) {
 }

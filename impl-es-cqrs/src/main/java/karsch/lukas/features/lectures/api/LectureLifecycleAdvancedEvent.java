@@ -6,6 +6,6 @@ import java.util.UUID;
 
 public record LectureLifecycleAdvancedEvent(
         UUID lectureId,
-        LectureStatus lectureStatus
-) {
+        LectureStatus lectureStatus,
+        UUID professorId) {
 }

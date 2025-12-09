@@ -5,10 +5,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.transaction.Transactional;
 import karsch.lukas.course.CourseDTO;
 import karsch.lukas.features.course.api.FindCourseByIdQuery;
-import karsch.lukas.features.lectures.api.AssessmentAddedEvent;
-import karsch.lukas.features.lectures.api.FindLectureByIdQuery;
-import karsch.lukas.features.lectures.api.LectureCreatedEvent;
-import karsch.lukas.features.lectures.api.LectureLifecycleAdvancedEvent;
+import karsch.lukas.features.lectures.api.*;
 import karsch.lukas.features.professor.api.FindProfessorByIdQuery;
 import karsch.lukas.lecture.LectureAssessmentDTO;
 import karsch.lukas.lecture.LectureDetailDTO;
@@ -88,17 +85,17 @@ public class LectureProjector {
     @Transactional
     @Retryable(retryFor = {NoSuchElementException.class})
     public void on(LectureLifecycleAdvancedEvent event) {
+        logRetries();
         var lecture = lectureRepository.findById(event.lectureId()).orElseThrow();
         lecture.setLectureStatus(event.lectureStatus());
         lectureRepository.save(lecture);
     }
 
     @EventHandler
+    @Transactional
     @Retryable(retryFor = {NoSuchElementException.class})
     public void on(AssessmentAddedEvent event) throws JsonProcessingException {
-        if (RetrySynchronizationManager.getContext().getRetryCount() > 0) {
-            log.debug("Retry #{}", RetrySynchronizationManager.getContext().getRetryCount());
-        }
+        logRetries();
         var lecture = lectureRepository.findById(event.lectureId()).orElseThrow();
         List<LectureAssessmentDTO> assessments = objectMapper.readerForListOf(LectureAssessmentDTO.class).readValue(lecture.getAssessmentsJson());
         assessments.add(
@@ -110,6 +107,18 @@ public class LectureProjector {
                 )
         );
         lecture.setAssessmentsJson(objectMapper.writeValueAsString(assessments));
+        lectureRepository.save(lecture);
+    }
+
+    @EventHandler
+    @Transactional
+    @Retryable(retryFor = {NoSuchElementException.class})
+    public void on(TimeSlotsAssignedEvent event) throws JsonProcessingException {
+        logRetries();
+        var lecture = lectureRepository.findById(event.lectureId()).orElseThrow();
+        List<TimeSlot> timeSlots = objectMapper.readerForListOf(TimeSlot.class).readValue(lecture.getDatesJson());
+        timeSlots.addAll(event.newTimeSlots());
+        lecture.setDatesJson(objectMapper.writeValueAsString(timeSlots));
         lectureRepository.save(lecture);
     }
 
@@ -132,6 +141,13 @@ public class LectureProjector {
                 lecture.getLectureStatus(),
                 new HashSet<>(objectMapper.readerForListOf(LectureAssessmentDTO.class).readValue(lecture.getAssessmentsJson()))
         );
+    }
+
+    private static void logRetries() {
+        // TODO create an aspect that does this for every method annotated with @Retryable
+        if (RetrySynchronizationManager.getContext().getRetryCount() > 0) {
+            log.debug("Retry #{}", RetrySynchronizationManager.getContext().getRetryCount());
+        }
     }
 
 }

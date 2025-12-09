@@ -2,10 +2,7 @@ package karsch.lukas.features.lectures.web;
 
 import karsch.lukas.context.RequestContext;
 import karsch.lukas.core.exceptions.QueryException;
-import karsch.lukas.features.lectures.api.AddAssessmentCommand;
-import karsch.lukas.features.lectures.api.AdvanceLectureLifecycleCommand;
-import karsch.lukas.features.lectures.api.CreateLectureCommand;
-import karsch.lukas.features.lectures.api.FindLectureByIdQuery;
+import karsch.lukas.features.lectures.api.*;
 import karsch.lukas.lecture.*;
 import karsch.lukas.response.ApiResponse;
 import karsch.lukas.uuid.UuidUtils;
@@ -106,7 +103,22 @@ public class LecturesController implements ILecturesController {
 
     @Override
     public ResponseEntity<ApiResponse<Void>> addDatesToLecture(UUID lectureId, AssignDatesToLectureRequest assignDatesToLectureRequest) {
-        throw new RuntimeException();
+        if (!"professor".equals(requestContext.getUserType())) {
+            log.error("Invalid user type {} for LecturesController.addDatesToLecture", requestContext.getUserType());
+            return new ResponseEntity<>(
+                    new ApiResponse<>(HttpStatus.FORBIDDEN, "Must be authenticated as professor to add dates to a lecture"), HttpStatus.FORBIDDEN
+            );
+        }
+
+        commandGateway.sendAndWait(new AssignTimeSlotsToLectureCommand(
+                lectureId,
+                assignDatesToLectureRequest.dates(),
+                requestContext.getUserId()
+        ));
+
+        return new ResponseEntity<>(
+                new ApiResponse<>(HttpStatus.CREATED, null), HttpStatus.CREATED
+        );
     }
 
     @Override
@@ -114,7 +126,7 @@ public class LecturesController implements ILecturesController {
         if (!"professor".equals(requestContext.getUserType())) {
             log.error("Invalid user type {} for LecturesController.addAssessmentForLecture", requestContext.getUserType());
             return new ResponseEntity<>(
-                    new ApiResponse<>(HttpStatus.FORBIDDEN, "Must be authenticated as professor to create lectures"), HttpStatus.FORBIDDEN
+                    new ApiResponse<>(HttpStatus.FORBIDDEN, "Must be authenticated as professor to add assessments"), HttpStatus.FORBIDDEN
             );
         }
 
