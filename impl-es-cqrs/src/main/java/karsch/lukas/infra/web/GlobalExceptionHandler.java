@@ -5,7 +5,6 @@ import karsch.lukas.core.exceptions.QueryException;
 import karsch.lukas.response.ApiResponse;
 import lombok.extern.slf4j.Slf4j;
 import org.axonframework.commandhandling.CommandExecutionException;
-import org.axonframework.modelling.command.AggregateNotFoundException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.HttpMessageNotReadableException;
@@ -49,14 +48,6 @@ public class GlobalExceptionHandler {
         return new ResponseEntity<>(
                 new ApiResponse<>(status, ex.getMessage()),
                 status
-        );
-    }
-
-    @ExceptionHandler(AggregateNotFoundException.class)
-    public ResponseEntity<ApiResponse<Void>> handleException(AggregateNotFoundException ex) {
-        return new ResponseEntity<>(
-                new ApiResponse<>(HttpStatus.NOT_FOUND, ex.getMessage()),
-                HttpStatus.NOT_FOUND
         );
     }
 
