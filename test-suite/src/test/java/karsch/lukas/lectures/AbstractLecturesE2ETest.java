@@ -141,7 +141,8 @@ public abstract class AbstractLecturesE2ETest implements BaseE2ETest {
                 .header(getStudentAuthHeader(lectureSeedData.studentId()))
                 .post("/lectures/{lectureId}/enroll", lectureSeedData.lectureId())
                 .then()
-                .statusCode(201);
+                .statusCode(201)
+                .body("data.enrollmentStatus", equalToIgnoringCase("ENROLLED"));
 
         // check enrollments
         given()

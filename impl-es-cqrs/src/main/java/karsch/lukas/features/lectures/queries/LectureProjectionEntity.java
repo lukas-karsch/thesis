@@ -32,17 +32,29 @@ public class LectureProjectionEntity {
 
     private UUID professorId;
 
+    /**
+     * @see karsch.lukas.professor.ProfessorDTO
+     */
     @Column(columnDefinition = "TEXT")
     private String professorDtoJson;
 
+    /**
+     * @see karsch.lukas.student.StudentDTO
+     */
     @Column(columnDefinition = "TEXT")
     private String enrolledStudentsDtoJson;
 
+    /**
+     * @see karsch.lukas.lecture.WaitlistEntryDTO
+     */
     @Column(columnDefinition = "TEXT")
     private String waitingListDtoJson;
 
     private LectureStatus lectureStatus;
 
+    /**
+     * @see karsch.lukas.lecture.LectureAssessmentDTO
+     */
     @Column(columnDefinition = "TEXT")
     private String assessmentsJson;
 }

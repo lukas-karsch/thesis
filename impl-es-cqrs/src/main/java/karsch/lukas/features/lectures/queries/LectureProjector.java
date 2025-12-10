@@ -7,11 +7,10 @@ import karsch.lukas.course.CourseDTO;
 import karsch.lukas.features.course.api.FindCourseByIdQuery;
 import karsch.lukas.features.lectures.api.*;
 import karsch.lukas.features.professor.api.FindProfessorByIdQuery;
-import karsch.lukas.lecture.LectureAssessmentDTO;
-import karsch.lukas.lecture.LectureDetailDTO;
-import karsch.lukas.lecture.SimpleLectureDTO;
-import karsch.lukas.lecture.TimeSlot;
+import karsch.lukas.features.student.api.FindStudentByIdQuery;
+import karsch.lukas.lecture.*;
 import karsch.lukas.professor.ProfessorDTO;
+import karsch.lukas.student.StudentDTO;
 import karsch.lukas.time.TimeSlotComparator;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -24,12 +23,14 @@ import org.springframework.retry.annotation.Retryable;
 import org.springframework.retry.support.RetrySynchronizationManager;
 import org.springframework.stereotype.Component;
 
-import java.util.Collections;
+import java.time.ZoneId;
 import java.util.HashSet;
 import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.CompletionException;
+
+import static karsch.lukas.core.json.Defaults.EMPTY_LIST;
 
 @Component
 @Slf4j
@@ -76,7 +77,9 @@ public class LectureProjector {
         lectureEntity.setCourseDtoJson(objectMapper.writeValueAsString(course));
         lectureEntity.setProfessorDtoJson(objectMapper.writeValueAsString(professor));
         lectureEntity.setDatesJson(objectMapper.writeValueAsString(event.dates()));
-        lectureEntity.setAssessmentsJson("[]");
+        lectureEntity.setAssessmentsJson(EMPTY_LIST);
+        lectureEntity.setEnrolledStudentsDtoJson(EMPTY_LIST);
+        lectureEntity.setWaitingListDtoJson(EMPTY_LIST);
 
         log.debug("Projected lecture {}", event.lectureId());
         lectureRepository.save(lectureEntity);
@@ -101,7 +104,7 @@ public class LectureProjector {
         List<LectureAssessmentDTO> assessments = objectMapper.readerForListOf(LectureAssessmentDTO.class).readValue(lecture.getAssessmentsJson());
         assessments.add(
                 new LectureAssessmentDTO(
-                        new SimpleLectureDTO(lecture.getId(), lecture.getCourseId(), objectMapper.readValue(lecture.getCourseDtoJson(), CourseDTO.class).name()),
+                        toSimpleDto(lecture),
                         event.assessmentType(),
                         event.timeSlot(),
                         event.weight()
@@ -124,6 +127,74 @@ public class LectureProjector {
         lectureRepository.save(lecture);
     }
 
+    @EventHandler
+    @Transactional
+    @Retryable(retryFor = {NoSuchElementException.class, IllegalStateException.class})
+    public void on(StudentEnrolledEvent event) throws JsonProcessingException {
+        logRetries();
+
+        var studentFuture = queryGateway.query(new FindStudentByIdQuery(event.studentId()), ResponseTypes.instanceOf(StudentDTO.class));
+
+        var lecture = lectureRepository.findById(event.lectureId()).orElseThrow();
+
+        List<StudentDTO> enrolledStudents = objectMapper.readerForListOf(StudentDTO.class).readValue(lecture.getEnrolledStudentsDtoJson());
+
+        var student = studentFuture.join();
+        if (student == null) {
+            throw new IllegalStateException("Student not found for ID: " + event.studentId());
+        }
+
+        enrolledStudents.add(student);
+
+        List<WaitlistEntryDTO> waitlist = objectMapper.readerForListOf(WaitlistEntryDTO.class).readValue(lecture.getWaitingListDtoJson());
+        waitlist.removeIf(w -> w.student().id().equals(event.studentId()));
+        lecture.setWaitingListDtoJson(objectMapper.writeValueAsString(waitlist));
+
+        lecture.setEnrolledStudentsDtoJson(objectMapper.writeValueAsString(enrolledStudents));
+        lectureRepository.save(lecture);
+    }
+
+    @EventHandler
+    @Transactional
+    @Retryable(retryFor = {NoSuchElementException.class, IllegalStateException.class})
+    public void on(StudentWaitlistedEvent event) throws JsonProcessingException {
+        logRetries();
+
+        var studentFuture = queryGateway.query(new FindStudentByIdQuery(event.studentId()), ResponseTypes.instanceOf(StudentDTO.class));
+
+        var lecture = lectureRepository.findById(event.lectureId()).orElseThrow();
+
+        List<WaitlistEntryDTO> waitlist = objectMapper.readerForListOf(WaitlistEntryDTO.class).readValue(lecture.getWaitingListDtoJson());
+
+        var student = studentFuture.join();
+        if (student == null) {
+            throw new IllegalStateException("Student not found for ID: " + event.studentId());
+        }
+
+        waitlist.add(
+                new WaitlistEntryDTO(
+                        toSimpleDto(lecture),
+                        student,
+                        event.timestamp().atZone(ZoneId.of("UTC")).toLocalDateTime()
+                )
+        );
+
+        lecture.setWaitingListDtoJson(objectMapper.writeValueAsString(waitlist));
+        lectureRepository.save(lecture);
+    }
+
+    @Transactional
+    @EventHandler
+    @Retryable(retryFor = {NoSuchElementException.class})
+    public void on(WaitlistClearedEvent event) {
+        logRetries();
+
+        var lecture = lectureRepository.findById(event.lectureId()).orElseThrow();
+
+        lecture.setWaitingListDtoJson(EMPTY_LIST);
+        lectureRepository.save(lecture);
+    }
+
     @QueryHandler
     public LectureDetailDTO findById(FindLectureByIdQuery query) throws JsonProcessingException {
         var lecture = lectureRepository.findById(query.lectureId()).orElse(null);
@@ -138,10 +209,18 @@ public class LectureProjector {
                 lecture.getMaximumStudents(),
                 objectMapper.readerForListOf(TimeSlot.class).readValue(lecture.getDatesJson()),
                 objectMapper.readValue(lecture.getProfessorDtoJson(), ProfessorDTO.class),
-                Collections.emptySet(), // TODO
-                Collections.emptyList(), // TODO
+                new HashSet<>(objectMapper.readerForListOf(StudentDTO.class).readValue(lecture.getEnrolledStudentsDtoJson())),
+                objectMapper.readerForListOf(WaitlistEntryDTO.class).readValue(lecture.getWaitingListDtoJson()),
                 lecture.getLectureStatus(),
                 new HashSet<>(objectMapper.readerForListOf(LectureAssessmentDTO.class).readValue(lecture.getAssessmentsJson()))
+        );
+    }
+
+    private SimpleLectureDTO toSimpleDto(LectureProjectionEntity entity) throws JsonProcessingException {
+        return new SimpleLectureDTO(
+                entity.getId(),
+                entity.getCourseId(),
+                objectMapper.readValue(entity.getCourseDtoJson(), CourseDTO.class).name()
         );
     }
 

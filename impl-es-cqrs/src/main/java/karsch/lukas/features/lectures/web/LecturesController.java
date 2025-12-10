@@ -36,7 +36,18 @@ public class LecturesController implements ILecturesController {
 
     @Override
     public ResponseEntity<ApiResponse<EnrollStudentResponse>> enrollToLecture(UUID lectureId) {
-        throw new RuntimeException();
+        if (!"student".equals(requestContext.getUserType())) {
+            log.error("Invalid user type {} for LecturesController.enrollToLecture", requestContext.getUserType());
+            return new ResponseEntity<>(
+                    new ApiResponse<>(HttpStatus.FORBIDDEN, "Must be authenticated as student to enroll"), HttpStatus.FORBIDDEN
+            );
+        }
+
+        commandGateway.sendAndWait(new EnrollStudentCommand(lectureId, requestContext.getUserId()));
+
+        return new ResponseEntity<>(
+                new ApiResponse<>(HttpStatus.CREATED, null), HttpStatus.CREATED // TODO use subscription query to wait for waitlist or enrolled
+        );
     }
 
     @Override

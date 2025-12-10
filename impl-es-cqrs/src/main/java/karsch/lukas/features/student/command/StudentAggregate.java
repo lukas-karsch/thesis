@@ -26,12 +26,11 @@ public class StudentAggregate {
     }
 
     protected StudentAggregate() {
-
     }
 
     @EventSourcingHandler
     public void on(StudentCreatedEvent event) {
-        this.id = event.id();
+        this.id = event.studentId();
     }
 
 }

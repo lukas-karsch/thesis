@@ -8,6 +8,7 @@ import karsch.lukas.features.lectures.api.*;
 import karsch.lukas.features.professor.command.IProfessorValidator;
 import karsch.lukas.lecture.LectureStatus;
 import karsch.lukas.lecture.TimeSlot;
+import karsch.lukas.time.DateTimeProvider;
 import karsch.lukas.time.TimeSlotComparator;
 import karsch.lukas.time.TimeSlotService;
 import lombok.extern.slf4j.Slf4j;
@@ -17,6 +18,7 @@ import org.axonframework.modelling.command.AggregateIdentifier;
 import org.axonframework.modelling.command.AggregateMember;
 import org.axonframework.spring.stereotype.Aggregate;
 
+import java.time.Instant;
 import java.util.*;
 
 import static org.axonframework.modelling.command.AggregateLifecycle.apply;
@@ -34,6 +36,8 @@ class LectureAggregate {
     private SortedSet<TimeSlot> timeSlots;
 
     private List<UUID> enrolledStudents;
+
+    private List<UUID> waitlistedStudents;
 
     @AggregateMember
     private Map<UUID, AssessmentValueObject> assessments;
@@ -73,6 +77,9 @@ class LectureAggregate {
 
     @CommandHandler
     public void handle(AdvanceLectureLifecycleCommand command) {
+        if (command.lectureStatus() == this.lectureStatus) {
+            return;
+        }
         if (command.lectureStatus().ordinal() < this.lectureStatus.ordinal()) {
             throw new DomainException("Can not move lecture lifecycle backwards. Was " + this.lectureStatus + ", tried to set " + command.lectureStatus());
         }
@@ -80,6 +87,9 @@ class LectureAggregate {
             throw new NotAllowedException("Not allowed to advance lifecycle.");
         }
         apply(new LectureLifecycleAdvancedEvent(this.id, command.lectureStatus(), this.professorId));
+        if (command.lectureStatus() == LectureStatus.IN_PROGRESS) {
+            apply(new WaitlistClearedEvent(this.id, this.professorId));
+        }
     }
 
     @CommandHandler
@@ -126,6 +136,23 @@ class LectureAggregate {
         apply(new TimeSlotsAssignedEvent(this.id, newSlots.stream().toList(), this.professorId));
     }
 
+    @CommandHandler
+    public void handle(EnrollStudentCommand command, DateTimeProvider dateTimeProvider) {
+        if (this.lectureStatus != LectureStatus.OPEN_FOR_ENROLLMENT) {
+            throw new DomainException("Lecture " + this.id + " is not open for enrollment (" + this.lectureStatus + ")");
+        }
+
+        if (this.enrolledStudents.contains(command.studentId())) {
+            throw new DomainException("Student " + command.studentId() + " is already enrolled to " + this.id);
+        }
+
+        if (this.enrolledStudents.size() >= this.maximumStudents) {
+            apply(new StudentWaitlistedEvent(this.id, command.studentId(), Instant.now(dateTimeProvider.getClock())));
+        } else {
+            apply(new StudentEnrolledEvent(this.id, command.studentId()));
+        }
+    }
+
     @EventSourcingHandler
     public void on(LectureCreatedEvent lectureCreatedEvent) {
         log.debug("handling {}", lectureCreatedEvent);
@@ -135,6 +162,7 @@ class LectureAggregate {
         this.timeSlots = new TreeSet<>(new TimeSlotComparator());
         timeSlots.addAll(lectureCreatedEvent.dates());
         this.enrolledStudents = new ArrayList<>();
+        this.waitlistedStudents = new ArrayList<>();
         this.assessments = new HashMap<>();
         this.lectureStatus = lectureCreatedEvent.lectureStatus();
         this.professorId = lectureCreatedEvent.professorId();
@@ -161,6 +189,31 @@ class LectureAggregate {
     public void handle(TimeSlotsAssignedEvent event) {
         log.debug("handling {}", event);
         this.timeSlots.addAll(event.newTimeSlots());
+    }
+
+    @EventSourcingHandler
+    public void handle(StudentEnrolledEvent event) {
+        log.debug("handling {}", event);
+        if (this.enrolledStudents.contains(event.studentId())) {
+            return;
+        }
+        this.enrolledStudents.add(event.studentId());
+    }
+
+    @EventSourcingHandler
+    public void handle(StudentWaitlistedEvent event) {
+        log.debug("handling {}", event);
+        if (this.waitlistedStudents.contains(event.studentId())) {
+            return;
+        }
+        this.waitlistedStudents.add(event.studentId());
+    }
+
+    @EventSourcingHandler
+    public void handle(WaitlistClearedEvent event) {
+        log.debug("handling {}", event);
+
+        this.waitlistedStudents.clear();
     }
 
     private void assertProfessorIsAllowedToMakeChanges(UUID requestingProfessorId) {
