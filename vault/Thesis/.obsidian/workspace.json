@@ -27,12 +27,12 @@
             "state": {
               "type": "markdown",
               "state": {
-                "file": "TODOs.md",
+                "file": "Technical Design Log/2025-11-26 Designing the ES-CQRS application (4daaf015).md",
                 "mode": "source",
                 "source": false
               },
               "icon": "lucide-file",
-              "title": "TODOs"
+              "title": "2025-11-26 Designing the ES-CQRS application (4daaf015)"
             }
           }
         ],
@@ -68,7 +68,7 @@
             "state": {
               "type": "search",
               "state": {
-                "query": "tag:#todo",
+                "query": "lookup",
                 "matchingCase": false,
                 "explainSearch": false,
                 "collapseAll": false,
@@ -89,7 +89,8 @@
               "title": "Bookmarks"
             }
           }
-        ]
+        ],
+        "currentTab": 1
       }
     ],
     "direction": "horizontal",
@@ -186,12 +187,14 @@
   },
   "active": "c8e8323cf4cc4a2c",
   "lastOpenFiles": [
+    "TODOs.md",
+    "Advice/Axon Error Codes.md",
+    "Technologies/AXON Subscription Queries.md",
+    "System Design/ES-CQRS Application.md",
+    "System Design/API Design.md",
     "Advice/DDD AXON Digital Restaurant Demo.md",
     "Technologies/AXON - Event Sourcing Framework.md",
-    "System Design/ES-CQRS Application.md",
     "Technical Design Log/2025-12-08 Resetting the Axon server.md",
-    "TODOs.md",
-    "System Design/API Design.md",
     "Advice/(How To Fake) Authentication.md",
     "Advice/Axon Validation.md",
     "Advice/Implementing CQRS in SpringBoot.md",
@@ -199,7 +202,6 @@
     "Technical Design Log/2025-12-06 I discovered set based validation.md",
     "Technologies/Axon Unit Of Work.md",
     "Technical Design Log/2025-12-04 Audit Log is broken (again).md",
-    "Technologies/AXON Subscription Queries.md",
     "Technologies/CQRS (Command Query Responsibility Segregation).md",
     "Thesis - Landing Page.md",
     "Advice/Designing Aggregates.md",
@@ -211,7 +213,6 @@
     "Technical Design Log/2025-12-01 Using UUIDs instead of Long for IDs.md",
     "Technologies/Spring Retry.md",
     "Technologies/Event Sourcing.md",
-    "Technical Design Log/2025-12-03 Dropping the migration scripts (1e5bbb12).md",
     "Meetings",
     "Untitled.canvas",
     "Documents/Expose Lukas Karsch Bachelorarbeit_02.pdf",

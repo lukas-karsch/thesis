@@ -5,6 +5,7 @@ import karsch.lukas.core.exceptions.QueryException;
 import karsch.lukas.response.ApiResponse;
 import lombok.extern.slf4j.Slf4j;
 import org.axonframework.commandhandling.CommandExecutionException;
+import org.axonframework.queryhandling.QueryExecutionException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.HttpMessageNotReadableException;
@@ -21,7 +22,7 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(ResponseStatusException.class)
     public ResponseEntity<ApiResponse<Void>> handleResponseStatusException(ResponseStatusException ex) {
         return new ResponseEntity<>(
-                new ApiResponse<>(ex.getStatusCode(), ex.getMessage()),
+                ApiResponse.error(ex.getStatusCode(), ex.getMessage()),
                 ex.getStatusCode()
         );
     }
@@ -31,22 +32,32 @@ public class GlobalExceptionHandler {
         Optional<Object> details = ex.getDetails();
 
         if (details.isEmpty() || !(details.get() instanceof ErrorDetails errorDetails)) {
-            log.error(ex.getMessage(), ex);
-
-            return new ResponseEntity<>(
-                    new ApiResponse<>(HttpStatus.INTERNAL_SERVER_ERROR, "Something went wrong."),
-                    HttpStatus.INTERNAL_SERVER_ERROR
-            );
+            return handleException(ex);
         }
 
-        final HttpStatus status = switch (errorDetails) {
+        return handleExceptionWithDetails(errorDetails, ex);
+    }
+
+    @ExceptionHandler(QueryExecutionException.class)
+    public ResponseEntity<ApiResponse<Void>> handleQueryExecutionException(QueryExecutionException ex) {
+        Optional<Object> details = ex.getDetails();
+
+        if (details.isEmpty() || !(details.get() instanceof ErrorDetails errorDetails)) {
+            return handleException(ex);
+        }
+
+        return handleExceptionWithDetails(errorDetails, ex);
+    }
+
+    private ResponseEntity<ApiResponse<Void>> handleExceptionWithDetails(ErrorDetails details, Throwable t) {
+        final HttpStatus status = switch (details) {
             case ErrorDetails.RESOURCE_NOT_FOUND -> HttpStatus.NOT_FOUND;
             case ErrorDetails.ILLEGAL_DOMAIN_STATE -> HttpStatus.BAD_REQUEST;
             case ErrorDetails.NOT_ALLOWED -> HttpStatus.FORBIDDEN;
         };
 
         return new ResponseEntity<>(
-                new ApiResponse<>(status, ex.getMessage()),
+                ApiResponse.error(status, t.getMessage()),
                 status
         );
     }
@@ -55,7 +66,7 @@ public class GlobalExceptionHandler {
     public ResponseEntity<ApiResponse<Void>> handleException(QueryException ex) {
         log.error(ex.getMessage(), ex);
         return new ResponseEntity<>(
-                new ApiResponse<>(HttpStatus.INTERNAL_SERVER_ERROR, ex.getMessage()),
+                ApiResponse.error(HttpStatus.INTERNAL_SERVER_ERROR, ex.getMessage()),
                 HttpStatus.INTERNAL_SERVER_ERROR
         );
     }
@@ -64,7 +75,7 @@ public class GlobalExceptionHandler {
     public ResponseEntity<ApiResponse<Void>> handleException(Exception ex) {
         log.error(ex.getMessage(), ex);
         return new ResponseEntity<>(
-                new ApiResponse<>(HttpStatus.INTERNAL_SERVER_ERROR, "Something went wrong."),
+                ApiResponse.error(HttpStatus.INTERNAL_SERVER_ERROR, "Something went wrong."),
                 HttpStatus.INTERNAL_SERVER_ERROR
         );
     }
@@ -73,7 +84,7 @@ public class GlobalExceptionHandler {
     public ResponseEntity<ApiResponse<Void>> handleRuntimeException(RuntimeException ex) {
         log.error(ex.getMessage(), ex);
         return new ResponseEntity<>(
-                new ApiResponse<>(HttpStatus.INTERNAL_SERVER_ERROR, "Something went wrong."),
+                ApiResponse.error(HttpStatus.INTERNAL_SERVER_ERROR, "Something went wrong."),
                 HttpStatus.INTERNAL_SERVER_ERROR
         );
     }
@@ -81,7 +92,7 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(HttpMessageNotReadableException.class)
     public ResponseEntity<ApiResponse<Void>> handleHttpMessageNotReadableException(HttpMessageNotReadableException ex) {
         return new ResponseEntity<>(
-                new ApiResponse<>(HttpStatus.BAD_REQUEST, ex.getMessage()),
+                ApiResponse.error(HttpStatus.BAD_REQUEST, ex.getMessage()),
                 HttpStatus.BAD_REQUEST
         );
     }

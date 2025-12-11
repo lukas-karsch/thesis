@@ -1,5 +1,6 @@
 package karsch.lukas.lectures;
 
+import karsch.lukas.auth.NotAuthenticatedException;
 import karsch.lukas.context.RequestContext;
 import karsch.lukas.lecture.*;
 import karsch.lukas.response.ApiResponse;
@@ -29,9 +30,7 @@ public class LecturesController implements ILecturesController {
     @Override
     public ResponseEntity<ApiResponse<EnrollStudentResponse>> enrollToLecture(UUID lectureId) {
         if (!"student".equals(requestContext.getUserType())) {
-            return new ResponseEntity<>(
-                    new ApiResponse<>(HttpStatus.FORBIDDEN, "Only users can enroll to courses"), HttpStatus.FORBIDDEN
-            );
+            throw new NotAuthenticatedException("Only users can enroll to courses");
         }
 
         var enrollmentResult = lecturesService.enrollStudent(requestContext.getUserId(), lectureId);
@@ -45,9 +44,7 @@ public class LecturesController implements ILecturesController {
     @Override
     public ResponseEntity<ApiResponse<Void>> disenrollFromLecture(UUID lectureId) {
         if (!"student".equals(requestContext.getUserType())) {
-            return new ResponseEntity<>(
-                    new ApiResponse<>(HttpStatus.FORBIDDEN, "Only users can disenroll from courses"), HttpStatus.FORBIDDEN
-            );
+            throw new NotAuthenticatedException("Only users can disenroll from courses");
         }
 
         lecturesService.disenrollStudent(requestContext.getUserId(), lectureId);
@@ -61,9 +58,7 @@ public class LecturesController implements ILecturesController {
     @Override
     public ResponseEntity<ApiResponse<UUID>> createLectureFromCourse(CreateLectureRequest createLectureRequest) {
         if (!"professor".equals(requestContext.getUserType())) {
-            return new ResponseEntity<>(
-                    new ApiResponse<>(HttpStatus.FORBIDDEN, "Only professors can create lectures"), HttpStatus.FORBIDDEN
-            );
+            throw new NotAuthenticatedException("Only professors can create lectures");
         }
 
         var created = lecturesService.createLectureFromCourse(requestContext.getUserId(), createLectureRequest);
@@ -83,9 +78,7 @@ public class LecturesController implements ILecturesController {
     @Override
     public ResponseEntity<ApiResponse<UUID>> assignGrade(UUID lectureId, AssignGradeRequest assignGradeRequest) {
         if (!"professor".equals(requestContext.getUserType())) {
-            return new ResponseEntity<>(
-                    new ApiResponse<>(HttpStatus.FORBIDDEN, "Only professors can assign grades"), HttpStatus.FORBIDDEN
-            );
+            throw new NotAuthenticatedException("Only professors can assign grades");
         }
 
         var grade = lecturesService.assignGrade(lectureId, assignGradeRequest, requestContext.getUserId());
@@ -98,9 +91,7 @@ public class LecturesController implements ILecturesController {
     @Override
     public ResponseEntity<ApiResponse<Void>> updateGrade(UUID lectureId, AssignGradeRequest assignGradeRequest) {
         if (!"professor".equals(requestContext.getUserType())) {
-            return new ResponseEntity<>(
-                    new ApiResponse<>(HttpStatus.FORBIDDEN, "Only professors can update grades"), HttpStatus.FORBIDDEN
-            );
+            throw new NotAuthenticatedException("Only professors can update grades");
         }
 
         lecturesService.updateGrade(lectureId, assignGradeRequest, requestContext.getUserId());
@@ -113,9 +104,7 @@ public class LecturesController implements ILecturesController {
     @Override
     public ResponseEntity<ApiResponse<Void>> addDatesToLecture(UUID lectureId, AssignDatesToLectureRequest assignDatesToLectureRequest) {
         if (!"professor".equals(requestContext.getUserType())) {
-            return new ResponseEntity<>(
-                    new ApiResponse<>(HttpStatus.FORBIDDEN, "Only professors can add dates to a lecture"), HttpStatus.FORBIDDEN
-            );
+            throw new NotAuthenticatedException("Only professors can add dates to a lecture");
         }
 
         lecturesService.addDatesToLecture(assignDatesToLectureRequest, lectureId, requestContext.getUserId());
@@ -128,9 +117,7 @@ public class LecturesController implements ILecturesController {
     @Override
     public ResponseEntity<ApiResponse<UUID>> addAssessmentForLecture(UUID lectureId, CreateLectureAssessmentRequest createLectureAssessmentRequest) {
         if (!"professor".equals(requestContext.getUserType())) {
-            return new ResponseEntity<>(
-                    new ApiResponse<>(HttpStatus.FORBIDDEN, "Only professors can add dates to a lecture"), HttpStatus.FORBIDDEN
-            );
+            throw new NotAuthenticatedException("Only professors can add dates to a lecture");
         }
 
         var created = lecturesService.addAssessmentForLecture(lectureId, createLectureAssessmentRequest, requestContext.getUserId());
@@ -150,15 +137,13 @@ public class LecturesController implements ILecturesController {
     @Override
     public ResponseEntity<ApiResponse<Void>> advanceLifecycleOfLecture(UUID lectureId, LectureStatus newLectureStatus) {
         if (!"professor".equals(requestContext.getUserType())) {
-            return new ResponseEntity<>(
-                    new ApiResponse<>(HttpStatus.FORBIDDEN, "Only professors can advance a lecture's lifecycle"), HttpStatus.FORBIDDEN
-            );
+            throw new NotAuthenticatedException("Only professors can advance a lecture's lifecycle");
         }
 
         lecturesService.advanceLifecycleOfLecture(lectureId, newLectureStatus, requestContext.getUserId());
 
         return new ResponseEntity<>(
-                new ApiResponse<>(HttpStatus.CREATED, String.format("Lifecycle advanced to %s", newLectureStatus)), HttpStatus.CREATED
+                new ApiResponse<>(HttpStatus.CREATED, String.format("Lifecycle advanced to %s", newLectureStatus), null), HttpStatus.CREATED
         );
     }
 }

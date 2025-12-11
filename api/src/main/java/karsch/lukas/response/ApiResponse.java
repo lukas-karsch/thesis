@@ -32,11 +32,11 @@ public class ApiResponse<T> {
         this.timestamp = LocalDateTime.now();
     }
 
-    public ApiResponse(HttpStatusCode httpStatus, String message) {
-        this(httpStatus, message, null);
-    }
-
     public ApiResponse(HttpStatusCode httpStatus, T data) {
         this(httpStatus, null, data);
+    }
+
+    public static ApiResponse<Void> error(HttpStatusCode httpStatus, String message) {
+        return new ApiResponse<>(httpStatus, message, null);
     }
 }

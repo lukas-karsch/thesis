@@ -1,6 +1,8 @@
 package karsch.lukas.features.course.web;
 
 import karsch.lukas.context.RequestContext;
+import karsch.lukas.core.auth.NotAuthenticatedException;
+import karsch.lukas.core.exceptions.QueryException;
 import karsch.lukas.course.CourseDTO;
 import karsch.lukas.course.CreateCourseRequest;
 import karsch.lukas.course.ICoursesController;
@@ -41,9 +43,7 @@ public class CoursesController implements ICoursesController {
             return new ResponseEntity<>(response, response.getHttpStatus());
         } catch (Exception e) {
             log.error(e.getMessage(), e);
-            // Handle exceptions, e.g., InterruptedException or ExecutionException
-            var response = new ApiResponse<Set<CourseDTO>>(HttpStatus.INTERNAL_SERVER_ERROR, "Error fetching courses");
-            return new ResponseEntity<>(response, response.getHttpStatus());
+            throw new QueryException("Something went wrong while fetching courses");
         }
     }
 
@@ -51,9 +51,7 @@ public class CoursesController implements ICoursesController {
     public ResponseEntity<ApiResponse<UUID>> createCourse(CreateCourseRequest createCourseRequest) {
         if (!"professor".equals(requestContext.getUserType())) {
             log.error("Invalid user type {} for CoursesController.createCourse", requestContext.getUserType());
-            return new ResponseEntity<>(
-                    new ApiResponse<>(HttpStatus.FORBIDDEN, "Must be authenticated as professor to create courses"), HttpStatus.FORBIDDEN
-            );
+            throw new NotAuthenticatedException("Must be authenticated as professor to create courses");
         }
 
         var uuid = UuidUtils.randomV7();

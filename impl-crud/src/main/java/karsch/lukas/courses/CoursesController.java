@@ -1,5 +1,6 @@
 package karsch.lukas.courses;
 
+import karsch.lukas.auth.NotAuthenticatedException;
 import karsch.lukas.context.RequestContext;
 import karsch.lukas.course.CourseDTO;
 import karsch.lukas.course.CreateCourseRequest;
@@ -38,9 +39,7 @@ public class CoursesController implements ICoursesController {
     public ResponseEntity<ApiResponse<UUID>> createCourse(CreateCourseRequest createCourseRequest) {
         if (!"professor".equals(requestContext.getUserType())) {
             log.error("Invalid user type {} for CoursesController.createCourse", requestContext.getUserType());
-            return new ResponseEntity<>(
-                    new ApiResponse<>(HttpStatus.FORBIDDEN, "Must be authenticated as professor to create courses"), HttpStatus.FORBIDDEN
-            );
+            throw new NotAuthenticatedException("Must be authenticated as professor to create courses");
         }
 
         var created = coursesService.createCourse(createCourseRequest);

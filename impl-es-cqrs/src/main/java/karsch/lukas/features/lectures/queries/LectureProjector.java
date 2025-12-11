@@ -19,6 +19,7 @@ import org.axonframework.eventhandling.EventHandler;
 import org.axonframework.messaging.responsetypes.ResponseTypes;
 import org.axonframework.queryhandling.QueryGateway;
 import org.axonframework.queryhandling.QueryHandler;
+import org.axonframework.queryhandling.QueryUpdateEmitter;
 import org.springframework.retry.annotation.Retryable;
 import org.springframework.retry.support.RetrySynchronizationManager;
 import org.springframework.stereotype.Component;
@@ -38,9 +39,10 @@ import static karsch.lukas.core.json.Defaults.EMPTY_LIST;
 @RequiredArgsConstructor
 public class LectureProjector {
 
-    private final LectureRepository lectureRepository;
+    private final LectureDetailRepository lectureDetailRepository;
     private final QueryGateway queryGateway;
     private final ObjectMapper objectMapper;
+    private final QueryUpdateEmitter updateEmitter;
 
     @EventHandler
     @Retryable(retryFor = {IllegalStateException.class, CompletionException.class})
@@ -67,7 +69,7 @@ public class LectureProjector {
             throw new IllegalStateException("Professor not found for ID: " + event.professorId());
         }
 
-        var lectureEntity = new LectureProjectionEntity();
+        var lectureEntity = new LectureDetailProjectionEntity();
         lectureEntity.setId(event.lectureId());
         lectureEntity.setCourseId(event.courseId());
         lectureEntity.setLectureStatus(event.lectureStatus());
@@ -82,7 +84,7 @@ public class LectureProjector {
         lectureEntity.setWaitingListDtoJson(EMPTY_LIST);
 
         log.debug("Projected lecture {}", event.lectureId());
-        lectureRepository.save(lectureEntity);
+        lectureDetailRepository.save(lectureEntity);
     }
 
     @EventHandler
@@ -90,9 +92,9 @@ public class LectureProjector {
     @Retryable(retryFor = {NoSuchElementException.class})
     public void on(LectureLifecycleAdvancedEvent event) {
         logRetries();
-        var lecture = lectureRepository.findById(event.lectureId()).orElseThrow();
+        var lecture = lectureDetailRepository.findById(event.lectureId()).orElseThrow();
         lecture.setLectureStatus(event.lectureStatus());
-        lectureRepository.save(lecture);
+        lectureDetailRepository.save(lecture);
     }
 
     @EventHandler
@@ -100,7 +102,7 @@ public class LectureProjector {
     @Retryable(retryFor = {NoSuchElementException.class})
     public void on(AssessmentAddedEvent event) throws JsonProcessingException {
         logRetries();
-        var lecture = lectureRepository.findById(event.lectureId()).orElseThrow();
+        var lecture = lectureDetailRepository.findById(event.lectureId()).orElseThrow();
         List<LectureAssessmentDTO> assessments = objectMapper.readerForListOf(LectureAssessmentDTO.class).readValue(lecture.getAssessmentsJson());
         assessments.add(
                 new LectureAssessmentDTO(
@@ -111,7 +113,7 @@ public class LectureProjector {
                 )
         );
         lecture.setAssessmentsJson(objectMapper.writeValueAsString(assessments));
-        lectureRepository.save(lecture);
+        lectureDetailRepository.save(lecture);
     }
 
     @EventHandler
@@ -119,12 +121,12 @@ public class LectureProjector {
     @Retryable(retryFor = {NoSuchElementException.class})
     public void on(TimeSlotsAssignedEvent event) throws JsonProcessingException {
         logRetries();
-        var lecture = lectureRepository.findById(event.lectureId()).orElseThrow();
+        var lecture = lectureDetailRepository.findById(event.lectureId()).orElseThrow();
         List<TimeSlot> timeSlots = objectMapper.readerForListOf(TimeSlot.class).readValue(lecture.getDatesJson());
         timeSlots.addAll(event.newTimeSlots());
         timeSlots.sort(new TimeSlotComparator());
         lecture.setDatesJson(objectMapper.writeValueAsString(timeSlots));
-        lectureRepository.save(lecture);
+        lectureDetailRepository.save(lecture);
     }
 
     @EventHandler
@@ -135,7 +137,7 @@ public class LectureProjector {
 
         var studentFuture = queryGateway.query(new FindStudentByIdQuery(event.studentId()), ResponseTypes.instanceOf(StudentDTO.class));
 
-        var lecture = lectureRepository.findById(event.lectureId()).orElseThrow();
+        var lecture = lectureDetailRepository.findById(event.lectureId()).orElseThrow();
 
         List<StudentDTO> enrolledStudents = objectMapper.readerForListOf(StudentDTO.class).readValue(lecture.getEnrolledStudentsDtoJson());
 
@@ -151,7 +153,12 @@ public class LectureProjector {
         lecture.setWaitingListDtoJson(objectMapper.writeValueAsString(waitlist));
 
         lecture.setEnrolledStudentsDtoJson(objectMapper.writeValueAsString(enrolledStudents));
-        lectureRepository.save(lecture);
+        lectureDetailRepository.save(lecture);
+
+        updateEmitter.emit(EnrollmentStatusQuery.class,
+                q -> q.lectureId().equals(event.lectureId()) && q.studentId().equals(event.studentId()),
+                new EnrollmentStatusUpdate(event.lectureId(), event.studentId(), EnrollmentStatus.ENROLLED)
+        );
     }
 
     @EventHandler
@@ -162,7 +169,7 @@ public class LectureProjector {
 
         var studentFuture = queryGateway.query(new FindStudentByIdQuery(event.studentId()), ResponseTypes.instanceOf(StudentDTO.class));
 
-        var lecture = lectureRepository.findById(event.lectureId()).orElseThrow();
+        var lecture = lectureDetailRepository.findById(event.lectureId()).orElseThrow();
 
         List<WaitlistEntryDTO> waitlist = objectMapper.readerForListOf(WaitlistEntryDTO.class).readValue(lecture.getWaitingListDtoJson());
 
@@ -180,7 +187,12 @@ public class LectureProjector {
         );
 
         lecture.setWaitingListDtoJson(objectMapper.writeValueAsString(waitlist));
-        lectureRepository.save(lecture);
+        lectureDetailRepository.save(lecture);
+
+        updateEmitter.emit(EnrollmentStatusQuery.class,
+                q -> q.lectureId().equals(event.lectureId()) && q.studentId().equals(event.studentId()),
+                new EnrollmentStatusUpdate(event.lectureId(), event.studentId(), EnrollmentStatus.WAITLISTED)
+        );
     }
 
     @Transactional
@@ -189,15 +201,15 @@ public class LectureProjector {
     public void on(WaitlistClearedEvent event) {
         logRetries();
 
-        var lecture = lectureRepository.findById(event.lectureId()).orElseThrow();
+        var lecture = lectureDetailRepository.findById(event.lectureId()).orElseThrow();
 
         lecture.setWaitingListDtoJson(EMPTY_LIST);
-        lectureRepository.save(lecture);
+        lectureDetailRepository.save(lecture);
     }
 
     @QueryHandler
     public LectureDetailDTO findById(FindLectureByIdQuery query) throws JsonProcessingException {
-        var lecture = lectureRepository.findById(query.lectureId()).orElse(null);
+        var lecture = lectureDetailRepository.findById(query.lectureId()).orElse(null);
 
         if (lecture == null) {
             return null;
@@ -216,7 +228,40 @@ public class LectureProjector {
         );
     }
 
-    private SimpleLectureDTO toSimpleDto(LectureProjectionEntity entity) throws JsonProcessingException {
+    @QueryHandler
+    public EnrollmentStatusUpdate findEnrollmentStatus(EnrollmentStatusQuery query) throws JsonProcessingException {
+        var lecture = lectureDetailRepository.findById(query.lectureId()).orElseThrow();
+
+        List<StudentDTO> enrolledStudents = objectMapper.readerForListOf(StudentDTO.class).readValue(lecture.getEnrolledStudentsDtoJson());
+        List<WaitlistEntryDTO> waitlistedStudents = objectMapper.readerForListOf(WaitlistEntryDTO.class).readValue(lecture.getWaitingListDtoJson());
+
+        EnrollmentStatus status = null;
+        if (enrolledStudents.stream().anyMatch(student -> student.id().equals(query.studentId()))) {
+            status = EnrollmentStatus.ENROLLED;
+        } else if (waitlistedStudents.stream().anyMatch(w -> w.student().id().equals(query.studentId()))) {
+            status = EnrollmentStatus.WAITLISTED;
+        }
+
+        return new EnrollmentStatusUpdate(
+                lecture.getId(),
+                query.studentId(),
+                status
+        );
+
+    }
+
+    @QueryHandler
+    public WaitlistDTO getWaitlistForLecture(GetLectureWaitlistQuery query) throws JsonProcessingException {
+        var lecture = lectureDetailRepository.findById(query.lectureId()).orElseThrow();
+        List<WaitlistEntryDTO> waitlist = objectMapper.readerForListOf(WaitlistEntryDTO.class).readValue(lecture.getWaitingListDtoJson());
+
+        return new WaitlistDTO(
+                waitlist.stream().map(w -> new WaitlistedStudentDTO(w.student(), w.createdAt())).toList(),
+                toSimpleDto(lecture)
+        );
+    }
+
+    private SimpleLectureDTO toSimpleDto(LectureDetailProjectionEntity entity) throws JsonProcessingException {
         return new SimpleLectureDTO(
                 entity.getId(),
                 entity.getCourseId(),

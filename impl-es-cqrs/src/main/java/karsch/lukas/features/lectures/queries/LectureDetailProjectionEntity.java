@@ -16,7 +16,7 @@ import java.util.UUID;
 @Getter
 @Setter
 @EqualsAndHashCode(onlyExplicitlyIncluded = true)
-public class LectureProjectionEntity {
+public class LectureDetailProjectionEntity {
 
     @Id
     @EqualsAndHashCode.Include

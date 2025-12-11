@@ -17,7 +17,7 @@ public class GlobalExceptionHandler {
     public ResponseEntity<ApiResponse<Void>> handleResponseStatusException(ResponseStatusException ex) {
         log.error(ex.getMessage());
         return new ResponseEntity<>(
-                new ApiResponse<>(ex.getStatusCode(), ex.getMessage()), ex.getStatusCode()
+                ApiResponse.error(ex.getStatusCode(), ex.getMessage()), ex.getStatusCode()
         );
     }
 
@@ -25,7 +25,7 @@ public class GlobalExceptionHandler {
     public ResponseEntity<ApiResponse<Void>> handleException(Exception ex) {
         logException(ex);
         return new ResponseEntity<>(
-                new ApiResponse<>(HttpStatus.INTERNAL_SERVER_ERROR, ex.getMessage()), HttpStatus.INTERNAL_SERVER_ERROR
+                ApiResponse.error(HttpStatus.INTERNAL_SERVER_ERROR, ex.getMessage()), HttpStatus.INTERNAL_SERVER_ERROR
         );
     }
 
@@ -33,7 +33,7 @@ public class GlobalExceptionHandler {
     public ResponseEntity<ApiResponse<Void>> handleRuntimeException(RuntimeException ex) {
         logException(ex);
         return new ResponseEntity<>(
-                new ApiResponse<>(HttpStatus.INTERNAL_SERVER_ERROR, ex.getMessage()), HttpStatus.INTERNAL_SERVER_ERROR
+                ApiResponse.error(HttpStatus.INTERNAL_SERVER_ERROR, ex.getMessage()), HttpStatus.INTERNAL_SERVER_ERROR
         );
     }
 
@@ -41,7 +41,7 @@ public class GlobalExceptionHandler {
     public ResponseEntity<ApiResponse<Void>> handleHttpMessageNotReadableException(HttpMessageNotReadableException ex) {
         logException(ex);
         return new ResponseEntity<>(
-                new ApiResponse<>(HttpStatus.BAD_REQUEST, ex.getMessage()), HttpStatus.BAD_REQUEST
+                ApiResponse.error(HttpStatus.BAD_REQUEST, ex.getMessage()), HttpStatus.BAD_REQUEST
         );
     }
 

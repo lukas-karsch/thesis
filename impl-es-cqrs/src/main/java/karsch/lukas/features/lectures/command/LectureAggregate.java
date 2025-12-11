@@ -146,6 +146,8 @@ class LectureAggregate {
             throw new DomainException("Student " + command.studentId() + " is already enrolled to " + this.id);
         }
 
+        // TODO validate the student exists
+
         if (this.enrolledStudents.size() >= this.maximumStudents) {
             apply(new StudentWaitlistedEvent(this.id, command.studentId(), Instant.now(dateTimeProvider.getClock())));
         } else {
