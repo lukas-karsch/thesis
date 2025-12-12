@@ -347,7 +347,7 @@ class LecturesService {
         var studentIsEnrolledToLecture = enrollmentRepository.existsByStudentIdAndLectureId(assignGradeRequest.studentId(), lectureId);
         if (!studentIsEnrolledToLecture) {
             throw new ResponseStatusException(
-                    HttpStatus.BAD_REQUEST,
+                    HttpStatus.NOT_FOUND,
                     String.format("Student %s is not enrolled to lecture %s", assignGradeRequest.studentId(), lectureId)
             );
         }

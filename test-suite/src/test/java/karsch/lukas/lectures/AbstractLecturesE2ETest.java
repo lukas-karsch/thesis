@@ -421,7 +421,7 @@ public abstract class AbstractLecturesE2ETest implements BaseE2ETest {
         // should error because the student is not enrolled to the lecture
         assignGradeRequest.get()
                 .then()
-                .statusCode(400);
+                .statusCode(404);
 
         // let's enroll the student
         given()
