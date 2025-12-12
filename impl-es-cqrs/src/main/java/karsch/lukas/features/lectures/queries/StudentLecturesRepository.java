@@ -9,7 +9,7 @@ import java.util.List;
 import java.util.UUID;
 
 @Repository
-public interface StudentLecturesRepository extends JpaRepository<StudentLecturesProjectionEntity, UUID> {
+interface StudentLecturesRepository extends JpaRepository<StudentLecturesProjectionEntity, UUID> {
 
     @Query(
             value = "SELECT * FROM student_lectures_projection WHERE :lectureId = ANY(waitlisted_ids)",

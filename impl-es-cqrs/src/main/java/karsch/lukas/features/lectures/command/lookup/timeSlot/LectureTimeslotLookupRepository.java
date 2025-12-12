@@ -6,5 +6,5 @@ import org.springframework.stereotype.Repository;
 import java.util.UUID;
 
 @Repository
-public interface LectureTimeslotLookupRepository extends JpaRepository<LectureTimeslotLookupEntity, UUID> {
+interface LectureTimeslotLookupRepository extends JpaRepository<LectureTimeslotLookupEntity, UUID> {
 }

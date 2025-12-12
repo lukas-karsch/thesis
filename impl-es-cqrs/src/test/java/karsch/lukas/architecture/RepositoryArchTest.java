@@ -11,7 +11,7 @@ import static com.tngtech.archunit.lang.syntax.ArchRuleDefinition.classes;
 class RepositoryArchTest {
 
     @ArchTest
-    public static final ArchRule repositoriesShouldBeCorrectlyAnnotated = classes()
+    public static final ArchRule repositoriesShouldBeCorrectlyAnnotatedAndPackagePrivate = classes()
             .that().haveSimpleNameEndingWith("Repository")
-            .should().beAnnotatedWith(Repository.class);
+            .should().beAnnotatedWith(Repository.class).andShould().bePackagePrivate();
 }
