@@ -240,7 +240,7 @@ public abstract class AbstractLecturesE2ETest implements BaseE2ETest {
                 .header(getStudentAuthHeader(seedData.studentId()))
                 .post("/lectures/{lectureId}/enroll", seedData.lecture2Id())
                 .then()
-                .statusCode(409);
+                .statusCode(400);
     }
 
     @Test

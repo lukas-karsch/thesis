@@ -6,6 +6,7 @@ import karsch.lukas.features.course.commands.ICourseValidator;
 import karsch.lukas.features.course.exceptions.MissingCoursesException;
 import karsch.lukas.features.enrollment.command.EnrollmentAggregate;
 import karsch.lukas.features.lectures.api.*;
+import karsch.lukas.features.lectures.command.lookup.timeSlot.ITimeSlotValidator;
 import karsch.lukas.features.professor.command.IProfessorValidator;
 import karsch.lukas.features.student.command.lookup.IStudentValidator;
 import karsch.lukas.features.student.command.lookup.StudentLookupEntity;
@@ -145,7 +146,7 @@ public class LectureAggregate {
     }
 
     @CommandHandler
-    public void handle(EnrollStudentCommand command, DateTimeProvider dateTimeProvider, IStudentValidator studentValidator) throws Exception {
+    public void handle(EnrollStudentCommand command, DateTimeProvider dateTimeProvider, IStudentValidator studentValidator, ITimeSlotValidator timeSlotValidator) throws Exception {
         if (this.lectureStatus != LectureStatus.OPEN_FOR_ENROLLMENT) {
             throw new DomainException("Lecture " + this.id + " is not open for enrollment (" + this.lectureStatus + ")");
         }
@@ -156,6 +157,10 @@ public class LectureAggregate {
 
         if (!studentValidator.existsById(command.studentId())) {
             throw new DomainException("Student " + command.studentId() + " doesn't exist.");
+        }
+
+        if (timeSlotValidator.overlapsWithOtherLectures(this.timeSlots, command.studentId())) {
+            throw new DomainException("Can not enroll in lectures with overlapping timeslots.");
         }
 
         if (this.enrolledStudents.size() >= this.maximumStudents) {

@@ -33,6 +33,7 @@
 	    - contain JSON parsing and logic inside the projected entities 
 	    - set subscribing processors in bean, not application.properties 
 	    - unit test event handlers and aggregates 
+	    - add @Repository annotations 
 - look at axon transaction manager? 
 	- what is it  
 	- for what can it be used?

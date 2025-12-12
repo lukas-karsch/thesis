@@ -12,7 +12,9 @@ import java.util.UUID;
 @Table(
         name = "enrollment_lookup",
         indexes = {
-                @Index(name = "lectureId_studentId_idx", columnList = "lecture_id,student_id")
+                @Index(name = "lectureId_studentId_idx", columnList = "lecture_id,student_id"),
+                @Index(name = "lectureId_idx", columnList = "lecture_id"),
+                @Index(name = "studentId_idx", columnList = "student_id")
         }
 )
 @AllArgsConstructor

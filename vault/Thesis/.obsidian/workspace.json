@@ -13,12 +13,12 @@
             "state": {
               "type": "markdown",
               "state": {
-                "file": "System Design/ES-CQRS Application.md",
+                "file": "TODOs.md",
                 "mode": "source",
                 "source": false
               },
               "icon": "lucide-file",
-              "title": "ES-CQRS Application"
+              "title": "TODOs"
             }
           },
           {
@@ -185,17 +185,17 @@
   },
   "active": "c44da624bc1d47f5",
   "lastOpenFiles": [
+    "Thesis - Landing Page.md",
+    "System Design/ES-CQRS Application.md",
     "TODOs.md",
     "Technical Design Log/2025-12-12 The dangers of directly adding entities to the database.md",
     "Advice/JPA.md",
     "Advice/Axon Validation.md",
-    "System Design/ES-CQRS Application.md",
     "Technical Design Log/2025-12-06 I discovered set based validation.md",
     "Technologies/AXON - Event Sourcing Framework.md",
     "Technologies/CQRS (Command Query Responsibility Segregation).md",
     "Technologies/Axon Unit Of Work.md",
     "Technologies/AXON Subscription Queries.md",
-    "Thesis - Landing Page.md",
     "Technical Design Log/2025-11-26 Designing the ES-CQRS application (4daaf015).md",
     "Advice/Axon Error Codes.md",
     "System Design/API Design.md",

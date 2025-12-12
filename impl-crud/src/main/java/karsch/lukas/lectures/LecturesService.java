@@ -99,7 +99,7 @@ class LecturesService {
                 .findFirst()
                 .ifPresent(_ -> {
                     log.debug("Can not enroll student {} to lecture {} because of conflicting timeslots with another lecture.", studentId, lectureId);
-                    throw new ResponseStatusException(HttpStatus.CONFLICT, "This lecture has conflicting timeslots with another lecture.");
+                    throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "This lecture has conflicting timeslots with another lecture.");
                 });
 
         final StudentEntity studentReference = entityManager.getReference(StudentEntity.class, studentId);
