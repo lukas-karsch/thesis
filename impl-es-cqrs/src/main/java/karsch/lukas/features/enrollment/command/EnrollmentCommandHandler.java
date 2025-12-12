@@ -6,7 +6,7 @@ import karsch.lukas.features.enrollment.api.AssignGradeCommand;
 import karsch.lukas.features.enrollment.command.lookup.IEnrollmentValidator;
 import karsch.lukas.features.enrollment.exception.AssessmentNotFoundException;
 import karsch.lukas.features.enrollment.exception.StudentNotEnrolledException;
-import karsch.lukas.features.lectures.command.lookup.ILectureValidator;
+import karsch.lukas.features.lectures.command.lookup.lecture.ILectureValidator;
 import karsch.lukas.features.lectures.exceptions.LectureNotFoundException;
 import karsch.lukas.lecture.LectureStatus;
 import lombok.RequiredArgsConstructor;

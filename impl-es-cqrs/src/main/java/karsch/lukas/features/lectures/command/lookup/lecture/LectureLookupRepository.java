@@ -1,4 +1,4 @@
-package karsch.lukas.features.lectures.command.lookup;
+package karsch.lukas.features.lectures.command.lookup.lecture;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 

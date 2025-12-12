@@ -1,4 +1,4 @@
-package karsch.lukas.features.lectures.command.lookup;
+package karsch.lukas.features.lectures.command.lookup.lecture;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;

@@ -1,4 +1,4 @@
-package karsch.lukas.features.lectures.command.lookup;
+package karsch.lukas.features.lectures.command.lookup.lecture;
 
 import karsch.lukas.features.lectures.api.AssessmentAddedEvent;
 import karsch.lukas.features.lectures.api.LectureCreatedEvent;

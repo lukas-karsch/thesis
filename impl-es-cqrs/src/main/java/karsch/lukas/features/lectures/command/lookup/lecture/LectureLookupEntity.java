@@ -1,4 +1,4 @@
-package karsch.lukas.features.lectures.command.lookup;
+package karsch.lukas.features.lectures.command.lookup.lecture;
 
 import io.hypersistence.utils.hibernate.type.array.ListArrayType;
 import jakarta.persistence.Column;
