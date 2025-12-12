@@ -132,7 +132,12 @@ public class EsCqrsLecturesE2ETest extends AbstractLecturesE2ETest {
 
     @Override
     protected OverlappingLecturesSeedData createOverlappingLecturesSeedData() {
-        return null;
+        var timeSlot = new TimeSlot(LocalDate.of(2025, 12, 1), LocalTime.of(10, 0), LocalTime.of(12, 0));
+
+        var lecture1 = createLectureSeedData(0);
+        var lecture2 = createLectureSeedData(0);
+
+        return new OverlappingLecturesSeedData(lecture1.studentId(), lecture1.lectureId(), lecture2.lectureId());
     }
 
     @Override

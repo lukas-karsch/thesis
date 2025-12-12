@@ -116,7 +116,7 @@ public abstract class AbstractLecturesE2ETest implements BaseE2ETest {
      * <ul>
      *     <li>Must create a professor.</li>
      *     <li>The professor must create a lecture that is open for enrollment.</li>
-     *     <li>The lecture must have a timeslots on december 1st and 2nd each</li>
+     *     <li>The lecture must have timeslots on december 1st and 2nd each</li>
      *     <li>The lecture must have space for 1 student</li>
      *     <li>Must create a student in semester 1 that can enroll to the lecture.</li>
      * </ul>
