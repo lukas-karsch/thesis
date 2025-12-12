@@ -166,7 +166,7 @@ public class EsCqrsLecturesE2ETest extends AbstractLecturesE2ETest {
     @Override
     protected UUID createStudent(int semester) {
         UUID studentId = UuidUtils.randomV7();
-        commandGateway.sendAndWait(new CreateStudentCommand(studentId, "Hannah", "Holzheu"));
+        commandGateway.sendAndWait(new CreateStudentCommand(studentId, "Hannah", "Holzheu", semester));
 
         return studentId;
     }

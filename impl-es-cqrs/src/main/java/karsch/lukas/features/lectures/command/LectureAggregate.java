@@ -6,6 +6,8 @@ import karsch.lukas.features.course.commands.ICourseValidator;
 import karsch.lukas.features.course.exceptions.MissingCoursesException;
 import karsch.lukas.features.lectures.api.*;
 import karsch.lukas.features.professor.command.IProfessorValidator;
+import karsch.lukas.features.student.command.lookup.IStudentValidator;
+import karsch.lukas.features.student.command.lookup.StudentLookupEntity;
 import karsch.lukas.lecture.LectureStatus;
 import karsch.lukas.lecture.TimeSlot;
 import karsch.lukas.time.DateTimeProvider;
@@ -137,7 +139,7 @@ class LectureAggregate {
     }
 
     @CommandHandler
-    public void handle(EnrollStudentCommand command, DateTimeProvider dateTimeProvider) {
+    public void handle(EnrollStudentCommand command, DateTimeProvider dateTimeProvider, IStudentValidator studentValidator) {
         if (this.lectureStatus != LectureStatus.OPEN_FOR_ENROLLMENT) {
             throw new DomainException("Lecture " + this.id + " is not open for enrollment (" + this.lectureStatus + ")");
         }
@@ -146,7 +148,9 @@ class LectureAggregate {
             throw new DomainException("Student " + command.studentId() + " is already enrolled to " + this.id);
         }
 
-        // TODO validate the student exists
+        if (!studentValidator.existsById(command.studentId())) {
+            throw new DomainException("Student " + command.studentId() + " doesn't exist.");
+        }
 
         if (this.enrolledStudents.size() >= this.maximumStudents) {
             apply(new StudentWaitlistedEvent(this.id, command.studentId(), Instant.now(dateTimeProvider.getClock())));
@@ -156,7 +160,7 @@ class LectureAggregate {
     }
 
     @CommandHandler
-    public void handle(DisenrollStudentCommand command) {
+    public void handle(DisenrollStudentCommand command, IStudentValidator studentValidator) {
         if (this.lectureStatus == LectureStatus.ARCHIVED || this.lectureStatus == LectureStatus.FINISHED) {
             log.debug("Disenrolling student {} from lecture {} has no effect because lectureStatus={}", command.studentId(), this.id, this.lectureStatus);
             return;
@@ -169,12 +173,28 @@ class LectureAggregate {
 
         if (enrolledStudents.contains(command.studentId())) {
             apply(new StudentDisenrolledEvent(this.id, command.studentId()));
-            if (!waitlistedStudents.isEmpty()) {
-                UUID nextStudentOnWaitlist = waitlistedStudents.getFirst();
-                apply(new StudentRemovedFromWaitlistEvent(this.id, nextStudentOnWaitlist));
-                apply(new StudentEnrolledEvent(this.id, nextStudentOnWaitlist));
-            }
+            findNextEligibleStudent(studentValidator)
+                    .ifPresent(nextEligibleStudent -> {
+                        log.debug("Next eligible student for lecture {} is {}", this.id, nextEligibleStudent);
+                        apply(new StudentRemovedFromWaitlistEvent(this.id, nextEligibleStudent));
+                        apply(new StudentEnrolledEvent(this.id, nextEligibleStudent));
+                    });
         }
+    }
+
+    private Optional<UUID> findNextEligibleStudent(IStudentValidator studentValidator) {
+        if (this.waitlistedStudents.isEmpty()) {
+            return Optional.empty();
+        }
+
+        List<StudentLookupEntity> waitlist = studentValidator.findByIds(this.waitlistedStudents);
+        return waitlist
+                .stream()
+                .max(Comparator
+                        .comparingInt(StudentLookupEntity::getSemester)
+                        .thenComparing(s -> this.waitlistedStudents.indexOf(s.getId()) * -1)
+                )
+                .map(StudentLookupEntity::getId);
     }
 
     @EventSourcingHandler

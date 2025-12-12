@@ -7,5 +7,6 @@ import java.util.UUID;
 public record CreateStudentCommand(
         @TargetAggregateIdentifier UUID id,
         String firstName,
-        String lastName) {
+        String lastName,
+        int semester) {
 }

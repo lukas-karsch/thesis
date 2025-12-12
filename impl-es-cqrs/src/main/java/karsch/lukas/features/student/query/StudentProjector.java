@@ -23,7 +23,12 @@ public class StudentProjector {
     @EventHandler
     @Transactional
     public void on(StudentCreatedEvent event) {
-        var entity = new StudentProjectionEntity(event.studentId(), event.firstName(), event.lastName());
+        var entity = new StudentProjectionEntity(
+                event.studentId(),
+                event.firstName(),
+                event.lastName(),
+                event.semester()
+        );
         log.debug("projected student: {}", entity);
         studentRepository.save(entity);
     }

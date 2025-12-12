@@ -13,15 +13,20 @@ import static org.axonframework.modelling.command.AggregateLifecycle.apply;
 
 @Aggregate
 public class StudentAggregate {
+
+    public static final String PROCESSING_GROUP = "student_commands";
+
     @AggregateIdentifier
     private UUID id;
+    private int semester;
 
     @CommandHandler
     public StudentAggregate(CreateStudentCommand command) {
         apply(new StudentCreatedEvent(
                 command.id(),
                 command.firstName(),
-                command.lastName()
+                command.lastName(),
+                command.semester()
         ));
     }
 
@@ -31,6 +36,7 @@ public class StudentAggregate {
     @EventSourcingHandler
     public void on(StudentCreatedEvent event) {
         this.id = event.studentId();
+        this.semester = event.semester();
     }
 
 }
