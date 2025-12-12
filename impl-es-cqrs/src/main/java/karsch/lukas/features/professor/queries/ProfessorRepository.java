@@ -1,8 +1,10 @@
 package karsch.lukas.features.professor.queries;
 
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.stereotype.Repository;
 
 import java.util.UUID;
 
+@Repository
 interface ProfessorRepository extends JpaRepository<ProfessorProjectionEntity, UUID> {
 }
