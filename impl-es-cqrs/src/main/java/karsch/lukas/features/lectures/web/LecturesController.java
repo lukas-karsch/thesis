@@ -8,7 +8,6 @@ import karsch.lukas.core.exceptions.QueryException;
 import karsch.lukas.features.enrollment.api.AssignGradeCommand;
 import karsch.lukas.features.enrollment.api.UpdateGradeCommand;
 import karsch.lukas.features.lectures.api.*;
-import karsch.lukas.features.lectures.queries.EnrollmentStatusUpdate;
 import karsch.lukas.lecture.*;
 import karsch.lukas.response.ApiResponse;
 import karsch.lukas.uuid.UuidUtils;
@@ -94,8 +93,8 @@ public class LecturesController implements ILecturesController {
     @Override
     public ResponseEntity<ApiResponse<Void>> disenrollFromLecture(UUID lectureId) {
         if (!"student".equals(requestContext.getUserType())) {
-            log.error("Invalid user type {} for LecturesController.enrollToLecture", requestContext.getUserType());
-            throw new NotAllowedException("Must be authenticated as student to enroll");
+            log.error("Invalid user type {} for LecturesController.disenrollFromLecture", requestContext.getUserType());
+            throw new NotAllowedException("Must be authenticated as student to disenroll");
         }
 
         commandGateway.sendAndWait(new DisenrollStudentCommand(lectureId, requestContext.getUserId()));

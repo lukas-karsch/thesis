@@ -1,4 +1,4 @@
-package karsch.lukas.features.lectures.queries;
+package karsch.lukas.features.lectures.api;
 
 import karsch.lukas.lecture.EnrollmentStatus;
 
