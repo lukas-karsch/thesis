@@ -475,12 +475,12 @@ public abstract class AbstractLecturesE2ETest implements BaseE2ETest {
     @Test
     @DisplayName("It is not allowed to assign grades when the lecture status is not set to FINISHED")
     void assignGrade_isNotAllowed_withInvalidLectureStatus() {
-        // System date is 02.12.2025
+        // System date is 30.11.2025
         setSystemTime(Clock.fixed(
-                LocalDateTime.of(2025, 12, 2, 10, 0).toInstant(ZoneOffset.UTC),
+                LocalDateTime.of(2025, 11, 30, 10, 0).toInstant(ZoneOffset.UTC),
                 ZoneId.of("UTC")));
 
-        // 01.12.2025 -> it's allowed to assign a grade
+        // assessment happens on 1.12.2025
         TimeSlot assessmentTimeSlot = new TimeSlot(
                 LocalDate.of(2025, 12, 1),
                 LocalTime.of(10, 0),
@@ -489,6 +489,11 @@ public abstract class AbstractLecturesE2ETest implements BaseE2ETest {
 
         var lectureSeedData = createLectureSeedData();
         var assignGradeSeedData = createAssignGradeSeedData(lectureSeedData, assessmentTimeSlot);
+
+        // System date is 02.12.2025
+        setSystemTime(Clock.fixed(
+                LocalDateTime.of(2025, 12, 2, 10, 0).toInstant(ZoneOffset.UTC),
+                ZoneId.of("UTC")));
 
         var request = new AssignGradeRequest(lectureSeedData.studentId(), assignGradeSeedData.assessmentId(), 90);
 
@@ -602,12 +607,12 @@ public abstract class AbstractLecturesE2ETest implements BaseE2ETest {
     @Test
     @DisplayName("Updating a grade by a professor that does not own the lecture should return 403")
     void updateGrade_shouldReturn403_ifNotOwnedByProfessor() {
-        // System date is 02.12.2025
+        // System date is 30.11.2025
         setSystemTime(Clock.fixed(
-                LocalDateTime.of(2025, 12, 2, 10, 0).toInstant(ZoneOffset.UTC),
+                LocalDateTime.of(2025, 11, 30, 10, 0).toInstant(ZoneOffset.UTC),
                 ZoneId.of("UTC")));
 
-        // 01.12.2025 -> it's allowed to assign a grade
+        // assessment on 01.12.2025
         TimeSlot assessmentTimeSlot = new TimeSlot(
                 LocalDate.of(2025, 12, 1),
                 LocalTime.of(10, 0),
@@ -617,6 +622,11 @@ public abstract class AbstractLecturesE2ETest implements BaseE2ETest {
         var lectureSeedData = createLectureSeedData();
         var assignGradeSeedData = createAssignGradeSeedData(lectureSeedData, assessmentTimeSlot);
         var professor2Id = createCourseSeedData().professorId();
+
+        // System date is 02.12.2025
+        setSystemTime(Clock.fixed(
+                LocalDateTime.of(2025, 12, 2, 10, 0).toInstant(ZoneOffset.UTC),
+                ZoneId.of("UTC")));
 
         var request = new AssignGradeRequest(lectureSeedData.studentId(), assignGradeSeedData.assessmentId(), 90);
 

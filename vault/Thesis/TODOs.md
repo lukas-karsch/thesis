@@ -37,6 +37,7 @@
 	- what is it  
 	- for what can it be used?
 	- compare to [[Axon Unit Of Work]]
+- Lecture E2E Test: "It is not allowed to assign grades when the lecture status is not set to FINISHED" -> why? maybe drop this requirement 
 - Zitationsstil klären
 - [[LLMs bei der Bachelorarbeit (Infoveranstaltung)]] MindMap abholen
 ## Before Finishing

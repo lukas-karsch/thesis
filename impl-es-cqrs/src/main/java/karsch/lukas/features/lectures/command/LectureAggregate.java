@@ -30,7 +30,9 @@ import static org.axonframework.modelling.command.AggregateLifecycle.createNew;
 
 @Aggregate
 @Slf4j
-class LectureAggregate {
+public class LectureAggregate {
+    public static final String PROCESSING_GROUP = "lecture_commands";
+
     @AggregateIdentifier
     private UUID id;
 
