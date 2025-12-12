@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.util.Optional;
+import java.util.concurrent.CompletionException;
 
 @ControllerAdvice
 @Slf4j
@@ -47,6 +48,18 @@ public class GlobalExceptionHandler {
         }
 
         return handleExceptionWithDetails(errorDetails, ex);
+    }
+
+    @ExceptionHandler(CompletionException.class)
+    public ResponseEntity<ApiResponse<Void>> handleCompletionException(CompletionException ex) {
+        if (ex.getCause() instanceof CommandExecutionException commandExecutionException) {
+            return handleException(commandExecutionException);
+        }
+        if (ex.getCause() instanceof QueryExecutionException queryExecutionException) {
+            return handleQueryExecutionException(queryExecutionException);
+        }
+
+        return handleException(ex);
     }
 
     private ResponseEntity<ApiResponse<Void>> handleExceptionWithDetails(ErrorDetails details, Throwable t) {

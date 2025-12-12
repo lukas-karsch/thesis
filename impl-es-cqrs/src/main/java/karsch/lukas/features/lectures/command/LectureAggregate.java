@@ -155,6 +155,28 @@ class LectureAggregate {
         }
     }
 
+    @CommandHandler
+    public void handle(DisenrollStudentCommand command) {
+        if (this.lectureStatus == LectureStatus.ARCHIVED || this.lectureStatus == LectureStatus.FINISHED) {
+            log.debug("Disenrolling student {} from lecture {} has no effect because lectureStatus={}", command.studentId(), this.id, this.lectureStatus);
+            return;
+        }
+
+        if (waitlistedStudents.contains(command.studentId())) {
+            apply(new StudentRemovedFromWaitlistEvent(this.id, command.studentId()));
+            return;
+        }
+
+        if (enrolledStudents.contains(command.studentId())) {
+            apply(new StudentDisenrolledEvent(this.id, command.studentId()));
+            if (!waitlistedStudents.isEmpty()) {
+                UUID nextStudentOnWaitlist = waitlistedStudents.getFirst();
+                apply(new StudentRemovedFromWaitlistEvent(this.id, nextStudentOnWaitlist));
+                apply(new StudentEnrolledEvent(this.id, nextStudentOnWaitlist));
+            }
+        }
+    }
+
     @EventSourcingHandler
     public void on(LectureCreatedEvent lectureCreatedEvent) {
         log.debug("handling {}", lectureCreatedEvent);
@@ -209,6 +231,18 @@ class LectureAggregate {
             return;
         }
         this.waitlistedStudents.add(event.studentId());
+    }
+
+    @EventSourcingHandler
+    public void on(StudentDisenrolledEvent event) {
+        log.debug("handling {}", event);
+        enrolledStudents.remove(event.studentId());
+    }
+
+    @EventSourcingHandler
+    public void on(StudentRemovedFromWaitlistEvent event) {
+        log.debug("handling {}", event);
+        waitlistedStudents.remove(event.studentId());
     }
 
     @EventSourcingHandler

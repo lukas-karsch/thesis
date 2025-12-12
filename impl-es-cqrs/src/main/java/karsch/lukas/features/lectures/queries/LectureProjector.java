@@ -6,6 +6,7 @@ import jakarta.transaction.Transactional;
 import karsch.lukas.course.CourseDTO;
 import karsch.lukas.features.course.api.FindCourseByIdQuery;
 import karsch.lukas.features.lectures.api.*;
+import karsch.lukas.features.lectures.exceptions.LectureNotFoundException;
 import karsch.lukas.features.professor.api.FindProfessorByIdQuery;
 import karsch.lukas.features.student.api.FindStudentByIdQuery;
 import karsch.lukas.lecture.*;
@@ -207,6 +208,36 @@ public class LectureProjector {
         lectureDetailRepository.save(lecture);
     }
 
+    @Transactional
+    @EventHandler
+    @Retryable(retryFor = {NoSuchElementException.class})
+    public void on(StudentRemovedFromWaitlistEvent event) throws JsonProcessingException {
+        logRetries();
+
+        var lecture = lectureDetailRepository.findById(event.lectureId()).orElseThrow();
+
+        List<WaitlistEntryDTO> waitlist = objectMapper.readerForListOf(WaitlistEntryDTO.class).readValue(lecture.getWaitingListDtoJson());
+        waitlist.removeIf(w -> w.student().id().equals(event.studentId()));
+        lecture.setWaitingListDtoJson(objectMapper.writeValueAsString(waitlist));
+
+        lectureDetailRepository.save(lecture);
+    }
+
+    @Transactional
+    @EventHandler
+    @Retryable(retryFor = {NoSuchElementException.class})
+    public void on(StudentDisenrolledEvent event) throws JsonProcessingException {
+        logRetries();
+
+        var lecture = lectureDetailRepository.findById(event.lectureId()).orElseThrow();
+
+        List<StudentDTO> enrolled = objectMapper.readerForListOf(StudentDTO.class).readValue(lecture.getEnrolledStudentsDtoJson());
+        enrolled.removeIf(s -> s.id().equals(event.studentId()));
+        lecture.setEnrolledStudentsDtoJson(objectMapper.writeValueAsString(enrolled));
+
+        lectureDetailRepository.save(lecture);
+    }
+
     @QueryHandler
     public LectureDetailDTO findById(FindLectureByIdQuery query) throws JsonProcessingException {
         var lecture = lectureDetailRepository.findById(query.lectureId()).orElse(null);
@@ -252,7 +283,9 @@ public class LectureProjector {
 
     @QueryHandler
     public WaitlistDTO getWaitlistForLecture(GetLectureWaitlistQuery query) throws JsonProcessingException {
-        var lecture = lectureDetailRepository.findById(query.lectureId()).orElseThrow();
+        var lecture = lectureDetailRepository.findById(query.lectureId()).orElseThrow(
+                () -> new LectureNotFoundException(query.lectureId())
+        );
         List<WaitlistEntryDTO> waitlist = objectMapper.readerForListOf(WaitlistEntryDTO.class).readValue(lecture.getWaitingListDtoJson());
 
         return new WaitlistDTO(

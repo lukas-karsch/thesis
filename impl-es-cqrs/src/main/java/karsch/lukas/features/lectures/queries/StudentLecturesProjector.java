@@ -21,6 +21,7 @@ import org.springframework.retry.support.RetrySynchronizationManager;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
+import java.util.NoSuchElementException;
 
 @Component
 @Slf4j
@@ -34,7 +35,7 @@ public class StudentLecturesProjector {
 
     @EventHandler
     @Transactional
-    @Retryable
+    @Retryable(retryFor = {IllegalStateException.class})
     public void on(StudentEnrolledEvent e) throws JsonProcessingException {
         logRetries();
 
@@ -72,7 +73,7 @@ public class StudentLecturesProjector {
 
     @EventHandler
     @Transactional
-    @Retryable
+    @Retryable(retryFor = {IllegalStateException.class})
     public void on(StudentWaitlistedEvent e) throws JsonProcessingException {
         logRetries();
 
@@ -122,6 +123,36 @@ public class StudentLecturesProjector {
                     }
                 });
         studentLecturesRepository.saveAll(affectedStudents);
+    }
+
+    @EventHandler
+    @Transactional
+    @Retryable(retryFor = {NoSuchElementException.class})
+    public void on(StudentRemovedFromWaitlistEvent event) throws JsonProcessingException {
+        logRetries();
+
+        var student = studentLecturesRepository.findById(event.studentId()).orElseThrow();
+
+        List<LectureDTO> waitlistedLectures = objectMapper.readerForListOf(LectureDTO.class).readValue(student.getWaitlistedJson());
+        waitlistedLectures.removeIf(l -> l.id().equals(event.lectureId()));
+        student.getWaitlistedIds().remove(event.lectureId());
+
+        studentLecturesRepository.save(student);
+    }
+
+    @EventHandler
+    @Transactional
+    @Retryable(retryFor = {NoSuchElementException.class})
+    public void on(StudentDisenrolledEvent event) throws JsonProcessingException {
+        logRetries();
+
+        var student = studentLecturesRepository.findById(event.studentId()).orElseThrow();
+
+        List<LectureDTO> enrolledLectures = objectMapper.readerForListOf(LectureDTO.class).readValue(student.getEnrolledJson());
+        enrolledLectures.removeIf(l -> l.id().equals(event.lectureId()));
+        student.getEnrolledIds().remove(event.lectureId());
+
+        studentLecturesRepository.save(student);
     }
 
     @QueryHandler
