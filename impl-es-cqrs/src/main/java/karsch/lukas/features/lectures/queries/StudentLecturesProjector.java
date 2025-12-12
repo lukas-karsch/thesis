@@ -135,6 +135,7 @@ public class StudentLecturesProjector {
 
         List<LectureDTO> waitlistedLectures = objectMapper.readerForListOf(LectureDTO.class).readValue(student.getWaitlistedJson());
         waitlistedLectures.removeIf(l -> l.id().equals(event.lectureId()));
+        student.setWaitlistedJson(objectMapper.writeValueAsString(waitlistedLectures));
         student.getWaitlistedIds().remove(event.lectureId());
 
         studentLecturesRepository.save(student);
@@ -150,6 +151,7 @@ public class StudentLecturesProjector {
 
         List<LectureDTO> enrolledLectures = objectMapper.readerForListOf(LectureDTO.class).readValue(student.getEnrolledJson());
         enrolledLectures.removeIf(l -> l.id().equals(event.lectureId()));
+        student.setEnrolledJson(objectMapper.writeValueAsString(enrolledLectures));
         student.getEnrolledIds().remove(event.lectureId());
 
         studentLecturesRepository.save(student);

@@ -32,6 +32,7 @@
 	    - improve thrown exceptions by adding more context, e.g. require aggregate ID 
 	    - contain JSON parsing and logic inside the projected entities 
 	    - set subscribing processors in bean, not application.properties 
+	    - unit test event handlers and aggregates 
 - look at axon transaction manager? 
 	- what is it  
 	- for what can it be used?
