@@ -35,7 +35,6 @@
 	    - unit test event handlers and aggregates 
 	    - add @Repository annotations 
 	    - architecture tests:
-		    - repositories annotated
 		    - Projectors annotated 
 		    - validation services annotated 
 - look at axon transaction manager? 

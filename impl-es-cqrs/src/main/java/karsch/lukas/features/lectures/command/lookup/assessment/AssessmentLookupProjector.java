@@ -5,9 +5,9 @@ import karsch.lukas.features.lectures.command.LectureAggregate;
 import lombok.RequiredArgsConstructor;
 import org.axonframework.config.ProcessingGroup;
 import org.axonframework.eventhandling.EventHandler;
-import org.springframework.stereotype.Service;
+import org.springframework.stereotype.Component;
 
-@Service
+@Component
 @RequiredArgsConstructor
 @ProcessingGroup(LectureAggregate.PROCESSING_GROUP)
 public class AssessmentLookupProjector {
