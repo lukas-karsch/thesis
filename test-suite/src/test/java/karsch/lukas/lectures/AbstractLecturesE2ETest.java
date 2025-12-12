@@ -594,6 +594,14 @@ public abstract class AbstractLecturesE2ETest implements BaseE2ETest {
                 .then()
                 .statusCode(201);
 
+        // set lecture to FINISHED
+        given()
+                .header(getProfessorAuthHeader(lectureSeedData.professorId()))
+                .queryParam("newLectureStatus", LectureStatus.FINISHED)
+                .post("/lectures/{lectureId}/lifecycle", lectureSeedData.lectureId())
+                .then()
+                .statusCode(201);
+
         given()
                 .body(request)
                 .contentType(ContentType.JSON)
@@ -990,7 +998,7 @@ public abstract class AbstractLecturesE2ETest implements BaseE2ETest {
                 .statusCode(201)
                 .body("data.enrollmentStatus", equalToIgnoringCase("WAITLISTED"));
 
-        // set lecture to IN_PROGRES
+        // set lecture to IN_PROGRESS
         given()
                 .when()
                 .header(getProfessorAuthHeader(lectureSeedData.professorId()))

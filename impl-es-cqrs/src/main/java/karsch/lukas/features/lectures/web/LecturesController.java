@@ -6,6 +6,7 @@ import karsch.lukas.core.exceptions.ErrorDetails;
 import karsch.lukas.core.exceptions.NotAllowedException;
 import karsch.lukas.core.exceptions.QueryException;
 import karsch.lukas.features.enrollment.api.AssignGradeCommand;
+import karsch.lukas.features.enrollment.api.UpdateGradeCommand;
 import karsch.lukas.features.lectures.api.*;
 import karsch.lukas.features.lectures.queries.EnrollmentStatusUpdate;
 import karsch.lukas.lecture.*;
@@ -147,10 +148,10 @@ public class LecturesController implements ILecturesController {
     }
 
     @Override
-    public ResponseEntity<ApiResponse<UUID>> assignGrade(UUID lectureId, AssignGradeRequest assignGradeRequest) {
+    public ResponseEntity<ApiResponse<Void>> assignGrade(UUID lectureId, AssignGradeRequest assignGradeRequest) {
         if (!"professor".equals(requestContext.getUserType())) {
-            log.error("Invalid user type {} for LecturesController.createLectureFromCourse", requestContext.getUserType());
-            throw new NotAuthenticatedException("Must be authenticated as professor to create lectures");
+            log.error("Invalid user type {} for LecturesController.assignGrade", requestContext.getUserType());
+            throw new NotAuthenticatedException("Must be authenticated as professor to assign grades");
         }
 
         commandGateway.sendAndWait(new AssignGradeCommand(
@@ -161,12 +162,29 @@ public class LecturesController implements ILecturesController {
                 requestContext.getUserId())
         );
 
-        throw new RuntimeException();
+        return new ResponseEntity<>(
+                new ApiResponse<>(HttpStatus.CREATED, null), HttpStatus.CREATED
+        );
     }
 
     @Override
     public ResponseEntity<ApiResponse<Void>> updateGrade(UUID lectureId, AssignGradeRequest assignGradeRequest) {
-        throw new RuntimeException();
+        if (!"professor".equals(requestContext.getUserType())) {
+            log.error("Invalid user type {} for LecturesController.updateGrade", requestContext.getUserType());
+            throw new NotAuthenticatedException("Must be authenticated as professor to update grades");
+        }
+
+        commandGateway.sendAndWait(new UpdateGradeCommand(
+                assignGradeRequest.assessmentId(),
+                lectureId,
+                assignGradeRequest.studentId(),
+                assignGradeRequest.grade(),
+                requestContext.getUserId())
+        );
+
+        return new ResponseEntity<>(
+                new ApiResponse<>(HttpStatus.OK, null), HttpStatus.OK
+        );
     }
 
     @Override

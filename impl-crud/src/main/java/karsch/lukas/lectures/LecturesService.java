@@ -330,7 +330,7 @@ class LecturesService {
     }
 
     @Transactional
-    public AssessmentGradeEntity assignGrade(UUID lectureId, AssignGradeRequest assignGradeRequest, UUID professorId) {
+    public void assignGrade(UUID lectureId, AssignGradeRequest assignGradeRequest, UUID professorId) {
         var lecture = lecturesRepository.findWithProfessorAndTimeSlotsById(lectureId)
                 .orElseThrow(() -> new LectureNotFoundException(lectureId));
 
@@ -371,8 +371,6 @@ class LecturesService {
         grade.setGrade(assignGradeRequest.grade());
 
         assessmentGradeRepository.save(grade);
-
-        return grade;
     }
 
     @Transactional

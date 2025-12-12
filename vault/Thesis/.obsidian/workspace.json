@@ -13,12 +13,12 @@
             "state": {
               "type": "markdown",
               "state": {
-                "file": "TODOs.md",
+                "file": "System Design/ES-CQRS Application.md",
                 "mode": "source",
                 "source": false
               },
               "icon": "lucide-file",
-              "title": "TODOs"
+              "title": "ES-CQRS Application"
             }
           },
           {
@@ -185,6 +185,7 @@
   },
   "active": "c44da624bc1d47f5",
   "lastOpenFiles": [
+    "TODOs.md",
     "Technical Design Log/2025-12-12 The dangers of directly adding entities to the database.md",
     "Advice/JPA.md",
     "Advice/Axon Validation.md",
@@ -194,7 +195,6 @@
     "Technologies/CQRS (Command Query Responsibility Segregation).md",
     "Technologies/Axon Unit Of Work.md",
     "Technologies/AXON Subscription Queries.md",
-    "TODOs.md",
     "Thesis - Landing Page.md",
     "Technical Design Log/2025-11-26 Designing the ES-CQRS application (4daaf015).md",
     "Advice/Axon Error Codes.md",

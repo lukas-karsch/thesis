@@ -63,6 +63,7 @@ public class GlobalExceptionHandler {
     }
 
     private ResponseEntity<ApiResponse<Void>> handleExceptionWithDetails(ErrorDetails details, Throwable t) {
+        log.debug("Exception caught: {}", t.getMessage());
         final HttpStatus status = switch (details) {
             case ErrorDetails.RESOURCE_NOT_FOUND -> HttpStatus.NOT_FOUND;
             case ErrorDetails.ILLEGAL_DOMAIN_STATE -> HttpStatus.BAD_REQUEST;
