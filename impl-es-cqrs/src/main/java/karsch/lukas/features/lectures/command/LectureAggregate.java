@@ -4,6 +4,7 @@ import karsch.lukas.core.exceptions.DomainException;
 import karsch.lukas.core.exceptions.NotAllowedException;
 import karsch.lukas.features.course.commands.ICourseValidator;
 import karsch.lukas.features.course.exceptions.MissingCoursesException;
+import karsch.lukas.features.enrollment.command.EnrollmentAggregate;
 import karsch.lukas.features.lectures.api.*;
 import karsch.lukas.features.professor.command.IProfessorValidator;
 import karsch.lukas.features.student.command.lookup.IStudentValidator;
@@ -13,6 +14,7 @@ import karsch.lukas.lecture.TimeSlot;
 import karsch.lukas.time.DateTimeProvider;
 import karsch.lukas.time.TimeSlotComparator;
 import karsch.lukas.time.TimeSlotService;
+import karsch.lukas.uuid.UuidUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.axonframework.commandhandling.CommandHandler;
 import org.axonframework.eventsourcing.EventSourcingHandler;
@@ -24,6 +26,7 @@ import java.time.Instant;
 import java.util.*;
 
 import static org.axonframework.modelling.command.AggregateLifecycle.apply;
+import static org.axonframework.modelling.command.AggregateLifecycle.createNew;
 
 @Aggregate
 @Slf4j
@@ -103,6 +106,7 @@ class LectureAggregate {
         }
 
         if (timeSlotService.isLive(command.timeSlot()) || timeSlotService.hasEnded(command.timeSlot())) {
+            log.debug("Current system time is {}", timeSlotService.getCurrentTime());
             throw new DomainException("TimeSlot " + command.timeSlot() + " is in the past.");
         }
 
@@ -139,7 +143,7 @@ class LectureAggregate {
     }
 
     @CommandHandler
-    public void handle(EnrollStudentCommand command, DateTimeProvider dateTimeProvider, IStudentValidator studentValidator) {
+    public void handle(EnrollStudentCommand command, DateTimeProvider dateTimeProvider, IStudentValidator studentValidator) throws Exception {
         if (this.lectureStatus != LectureStatus.OPEN_FOR_ENROLLMENT) {
             throw new DomainException("Lecture " + this.id + " is not open for enrollment (" + this.lectureStatus + ")");
         }
@@ -155,6 +159,11 @@ class LectureAggregate {
         if (this.enrolledStudents.size() >= this.maximumStudents) {
             apply(new StudentWaitlistedEvent(this.id, command.studentId(), Instant.now(dateTimeProvider.getClock())));
         } else {
+            var newEnrollmentId = UuidUtils.randomV7();
+            createNew(
+                    EnrollmentAggregate.class,
+                    () -> new EnrollmentAggregate(newEnrollmentId, command.studentId(), this.id)
+            );
             apply(new StudentEnrolledEvent(this.id, command.studentId()));
         }
     }

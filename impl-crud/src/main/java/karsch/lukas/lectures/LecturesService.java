@@ -317,7 +317,8 @@ class LecturesService {
                 timeSlot.startTime(),
                 timeSlot.endTime()
         );
-        if (timeSlotService.hasEnded(timeSlotValueObject, timeSlotMapper)) {
+        log.debug("Current time is {}", timeSlotService.getCurrentTime());
+        if (timeSlotService.hasEnded(timeSlot)) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Date for this assessment is in the past.");
         }
         assessment.setTimeSlot(timeSlotValueObject);

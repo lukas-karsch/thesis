@@ -122,7 +122,7 @@ public class TimeSlotService {
         return containsOverlappingTimeslots(mapper.mapToList(timeSlots));
     }
 
-    private LocalDateTime getCurrentTime() {
+    public LocalDateTime getCurrentTime() {
         return LocalDateTime.now(dateTimeProvider.getClock());
     }
 

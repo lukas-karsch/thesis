@@ -5,6 +5,7 @@ import karsch.lukas.core.auth.NotAuthenticatedException;
 import karsch.lukas.core.exceptions.ErrorDetails;
 import karsch.lukas.core.exceptions.NotAllowedException;
 import karsch.lukas.core.exceptions.QueryException;
+import karsch.lukas.features.enrollment.api.AssignGradeCommand;
 import karsch.lukas.features.lectures.api.*;
 import karsch.lukas.features.lectures.queries.EnrollmentStatusUpdate;
 import karsch.lukas.lecture.*;
@@ -147,6 +148,19 @@ public class LecturesController implements ILecturesController {
 
     @Override
     public ResponseEntity<ApiResponse<UUID>> assignGrade(UUID lectureId, AssignGradeRequest assignGradeRequest) {
+        if (!"professor".equals(requestContext.getUserType())) {
+            log.error("Invalid user type {} for LecturesController.createLectureFromCourse", requestContext.getUserType());
+            throw new NotAuthenticatedException("Must be authenticated as professor to create lectures");
+        }
+
+        commandGateway.sendAndWait(new AssignGradeCommand(
+                assignGradeRequest.assessmentId(),
+                lectureId,
+                assignGradeRequest.studentId(),
+                assignGradeRequest.grade(),
+                requestContext.getUserId())
+        );
+
         throw new RuntimeException();
     }
 

@@ -247,7 +247,7 @@ public void placeOrder(Long itemId, int quantity) {
 ```yaml
 spring:
   jpa:
-    show-sql: false     # NEVER use this—it shows only SQL, not bindings
+    show-sql: false     # shows only SQL, not bindings
     properties:
       hibernate:
         format_sql: true

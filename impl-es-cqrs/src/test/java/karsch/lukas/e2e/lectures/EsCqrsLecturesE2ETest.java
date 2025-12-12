@@ -4,6 +4,7 @@ import karsch.lukas.AxonTestcontainerConfiguration;
 import karsch.lukas.PostgresTestcontainerConfiguration;
 import karsch.lukas.e2e.config.AxonTestConfiguration;
 import karsch.lukas.features.course.api.CreateCourseCommand;
+import karsch.lukas.features.lectures.api.AddAssessmentCommand;
 import karsch.lukas.features.lectures.api.AdvanceLectureLifecycleCommand;
 import karsch.lukas.features.lectures.api.CreateLectureCommand;
 import karsch.lukas.features.professor.api.CreateProfessorCommand;
@@ -11,11 +12,11 @@ import karsch.lukas.features.student.api.CreateStudentCommand;
 import karsch.lukas.lecture.LectureStatus;
 import karsch.lukas.lecture.TimeSlot;
 import karsch.lukas.lectures.AbstractLecturesE2ETest;
+import karsch.lukas.stats.AssessmentType;
 import karsch.lukas.time.DateTimeProvider;
 import karsch.lukas.uuid.UuidUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.axonframework.commandhandling.gateway.CommandGateway;
-import org.axonframework.config.EventProcessingConfiguration;
 import org.axonframework.test.server.AxonServerContainer;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -55,9 +56,6 @@ public class EsCqrsLecturesE2ETest extends AbstractLecturesE2ETest {
     private CommandGateway commandGateway;
 
     @Autowired
-    private EventProcessingConfiguration eventProcessingConfiguration;
-
-    @Autowired
     private AxonServerContainer axonServerContainer;
 
     @Override
@@ -87,18 +85,6 @@ public class EsCqrsLecturesE2ETest extends AbstractLecturesE2ETest {
                 .delete("/v1/devmode/purge-events")
                 .then()
                 .statusCode(200);
-
-//        eventProcessingConfiguration.eventProcessors().values().stream()
-//                .filter(TrackingEventProcessor.class::isInstance)
-//                .map(TrackingEventProcessor.class::cast)
-//                .forEach(it -> {
-//                    it.shutDown();
-//                    it.resetTokens();
-//                    it.start();
-//                    await().atMost(5, TimeUnit.SECONDS)
-//                            .until(() -> it.processingStatus().values().stream()
-//                                    .allMatch(EventTrackerStatus::isCaughtUp));
-//                });
     }
 
     @Override
@@ -160,7 +146,12 @@ public class EsCqrsLecturesE2ETest extends AbstractLecturesE2ETest {
 
     @Override
     protected AssignGradeSeedData createAssignGradeSeedData(LectureSeedData lectureSeedData, TimeSlot assessmentTimeSlot) {
-        return null;
+        UUID assessmentId = UuidUtils.randomV7();
+        commandGateway.sendAndWait(
+                new AddAssessmentCommand(lectureSeedData.lectureId(), assessmentId, assessmentTimeSlot, AssessmentType.EXAM, 1, lectureSeedData.professorId())
+        );
+
+        return new AssignGradeSeedData(assessmentId);
     }
 
     @Override
