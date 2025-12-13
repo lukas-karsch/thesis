@@ -2,7 +2,9 @@ package karsch.lukas.features.enrollment.command;
 
 import karsch.lukas.features.enrollment.api.*;
 import karsch.lukas.features.enrollment.exception.MissingGradeException;
+import karsch.lukas.features.lectures.api.CreateEnrollmentCommand;
 import lombok.extern.slf4j.Slf4j;
+import org.axonframework.commandhandling.CommandHandler;
 import org.axonframework.eventhandling.EventHandler;
 import org.axonframework.modelling.command.AggregateIdentifier;
 import org.axonframework.spring.stereotype.Aggregate;
@@ -33,8 +35,9 @@ public class EnrollmentAggregate {
 
     private boolean areCreditsAwarded = false;
 
-    public EnrollmentAggregate(UUID id, UUID studentId, UUID lectureId) {
-        apply(new EnrollmentCreatedEvent(id, studentId, lectureId));
+    @CommandHandler
+    public EnrollmentAggregate(CreateEnrollmentCommand command) {
+        apply(new EnrollmentCreatedEvent(command.enrollmentId(), command.studentId(), command.lectureId()));
     }
 
     protected EnrollmentAggregate() {

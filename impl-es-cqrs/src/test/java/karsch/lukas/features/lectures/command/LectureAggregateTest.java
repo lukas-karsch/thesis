@@ -353,7 +353,7 @@ class LectureAggregateTest {
         }
 
         @Test
-        void testEnrollStudent_shouldEnrollStudent_ifLectureIsNotFull() {
+        void testEnrollStudent_shouldApproveEnrollment_ifLectureIsNotFull() {
             var studentId = UUID.randomUUID();
 
             fixture.given(
@@ -363,9 +363,23 @@ class LectureAggregateTest {
                     .when(new EnrollStudentCommand(lectureId, studentId))
                     .expectSuccessfulHandlerExecution()
                     .expectEvents(
-                            // TODO
-                            new StudentEnrolledEvent(lectureId, studentId)
+                            new StudentEnrollmentApprovedEvent(lectureId, studentId)
                     );
+        }
+
+        @Test
+        void testEnrollStudent_shouldEnrollStudent_onConfirmation() {
+            // when the saga confirms the enrollment
+            var studentId = UUID.randomUUID();
+
+            fixture.given(
+                            lectureCreatedEvent(lectureId, professorId),
+                            new AdvanceLectureLifecycleCommand(lectureId, LectureStatus.OPEN_FOR_ENROLLMENT, professorId),
+                            new StudentEnrollmentApprovedEvent(lectureId, studentId)
+                    )
+                    .when(new ConfirmStudentEnrollmentCommand(lectureId, studentId))
+                    .expectSuccessfulHandlerExecution()
+                    .expectEvents(new StudentEnrolledEvent(lectureId, studentId));
         }
     }
 
