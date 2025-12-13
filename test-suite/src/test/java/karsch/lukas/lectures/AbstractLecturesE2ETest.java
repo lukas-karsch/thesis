@@ -10,8 +10,6 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.time.*;
 import java.util.Collections;
@@ -27,8 +25,6 @@ import static karsch.lukas.helper.AuthHelper.getStudentAuthHeader;
 import static org.hamcrest.Matchers.*;
 
 public abstract class AbstractLecturesE2ETest implements BaseE2ETest {
-
-    private static final Logger log = LoggerFactory.getLogger(AbstractLecturesE2ETest.class);
 
     @BeforeEach
     void setUp() {

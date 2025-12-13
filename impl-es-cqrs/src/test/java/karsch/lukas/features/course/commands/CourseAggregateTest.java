@@ -19,7 +19,7 @@ class CourseAggregateTest {
 
     private FixtureConfiguration<CourseAggregate> fixture;
 
-    private ICourseValidator courseValidator = mock(ICourseValidator.class);
+    private final ICourseValidator courseValidator = mock(ICourseValidator.class);
 
     @BeforeEach
     void setUp() {

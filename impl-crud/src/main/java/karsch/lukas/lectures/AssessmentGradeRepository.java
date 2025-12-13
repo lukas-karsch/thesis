@@ -7,7 +7,6 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
-import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -15,8 +14,6 @@ import java.util.UUID;
 @Repository
 public interface AssessmentGradeRepository extends JpaRepository<AssessmentGradeEntity, UUID> {
     Optional<AssessmentGradeEntity> findByStudentAndLectureAssessment(StudentEntity student, LectureAssessmentEntity lectureAssessment);
-
-    List<AssessmentGradeEntity> findAllByStudentAndLectureAssessmentIn(StudentEntity student, Collection<LectureAssessmentEntity> lectureAssessments);
 
     @EntityGraph(attributePaths = {"lectureAssessment", "lectureAssessment.lecture", "lectureAssessment.lecture.course"})
     List<AssessmentGradeEntity> findAllByStudent(StudentEntity student);

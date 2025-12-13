@@ -10,13 +10,11 @@ import org.springframework.stereotype.Component;
 @RequiredArgsConstructor
 public class LectureAssessmentMapper implements Mapper<LectureAssessmentEntity, LectureAssessmentDTO> {
 
-    private final SimpleLectureDtoMapper simpleLectureDtoMapper;
     private final TimeSlotMapper timeSlotMapper;
 
     @Override
     public LectureAssessmentDTO map(LectureAssessmentEntity lectureAssessmentEntity) {
         return new LectureAssessmentDTO(
-                simpleLectureDtoMapper.map(lectureAssessmentEntity.getLecture()),
                 lectureAssessmentEntity.getAssessmentType(),
                 timeSlotMapper.map(lectureAssessmentEntity.getTimeSlot()),
                 lectureAssessmentEntity.getWeight()

@@ -29,7 +29,7 @@ public class EnrollmentAggregate {
     /**
      * maps assessment IDs to grades
      */
-    private Map<UUID, Integer> grades = new HashMap<>();
+    private final Map<UUID, Integer> grades = new HashMap<>();
 
     private boolean areCreditsAwarded = false;
 

@@ -4,5 +4,5 @@ public enum AssessmentType {
     EXAM,
     MIDTERM,
     PAPER,
-    PROJECT;
+    PROJECT
 }

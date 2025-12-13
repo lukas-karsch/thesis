@@ -107,7 +107,6 @@ public class LectureProjector {
         List<LectureAssessmentDTO> assessments = objectMapper.readerForListOf(LectureAssessmentDTO.class).readValue(lecture.getAssessmentsJson());
         assessments.add(
                 new LectureAssessmentDTO(
-                        toSimpleDto(lecture),
                         event.assessmentType(),
                         event.timeSlot(),
                         event.weight()

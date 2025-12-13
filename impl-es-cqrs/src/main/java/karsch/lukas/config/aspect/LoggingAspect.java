@@ -28,6 +28,7 @@ public class LoggingAspect {
      * ..* -> Any class in 'queries' or its sub-packages
      * (..)                            -> Any method arguments
      */
+    @SuppressWarnings("EmptyMethod")
     @Pointcut("execution(* karsch.lukas.features.*.queries..*(..))")
     public void queryLayer() {
     }
