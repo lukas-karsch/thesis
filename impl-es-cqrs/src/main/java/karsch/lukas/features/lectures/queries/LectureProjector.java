@@ -149,7 +149,7 @@ public class LectureProjector {
 
         enrolledStudents.add(student);
 
-        List<WaitlistEntryDTO> waitlist = objectMapper.readerForListOf(WaitlistEntryDTO.class).readValue(lecture.getWaitingListDtoJson());
+        List<WaitlistedStudentDTO> waitlist = objectMapper.readerForListOf(WaitlistedStudentDTO.class).readValue(lecture.getWaitingListDtoJson());
         waitlist.removeIf(w -> w.student().id().equals(event.studentId()));
         lecture.setWaitingListDtoJson(objectMapper.writeValueAsString(waitlist));
 
@@ -172,7 +172,7 @@ public class LectureProjector {
 
         var lecture = lectureDetailRepository.findById(event.lectureId()).orElseThrow();
 
-        List<WaitlistEntryDTO> waitlist = objectMapper.readerForListOf(WaitlistEntryDTO.class).readValue(lecture.getWaitingListDtoJson());
+        List<WaitlistedStudentDTO> waitlist = objectMapper.readerForListOf(WaitlistedStudentDTO.class).readValue(lecture.getWaitingListDtoJson());
 
         var student = studentFuture.join();
         if (student == null) {
@@ -180,8 +180,7 @@ public class LectureProjector {
         }
 
         waitlist.add(
-                new WaitlistEntryDTO(
-                        toSimpleDto(lecture),
+                new WaitlistedStudentDTO(
                         student,
                         event.timestamp().atZone(ZoneId.of("UTC")).toLocalDateTime()
                 )
@@ -216,7 +215,7 @@ public class LectureProjector {
 
         var lecture = lectureDetailRepository.findById(event.lectureId()).orElseThrow();
 
-        List<WaitlistEntryDTO> waitlist = objectMapper.readerForListOf(WaitlistEntryDTO.class).readValue(lecture.getWaitingListDtoJson());
+        List<WaitlistedStudentDTO> waitlist = objectMapper.readerForListOf(WaitlistedStudentDTO.class).readValue(lecture.getWaitingListDtoJson());
         waitlist.removeIf(w -> w.student().id().equals(event.studentId()));
         lecture.setWaitingListDtoJson(objectMapper.writeValueAsString(waitlist));
 
@@ -253,7 +252,7 @@ public class LectureProjector {
                 objectMapper.readerForListOf(TimeSlot.class).readValue(lecture.getDatesJson()),
                 objectMapper.readValue(lecture.getProfessorDtoJson(), ProfessorDTO.class),
                 new HashSet<>(objectMapper.readerForListOf(StudentDTO.class).readValue(lecture.getEnrolledStudentsDtoJson())),
-                objectMapper.readerForListOf(WaitlistEntryDTO.class).readValue(lecture.getWaitingListDtoJson()),
+                objectMapper.readerForListOf(WaitlistedStudentDTO.class).readValue(lecture.getWaitingListDtoJson()),
                 lecture.getLectureStatus(),
                 new HashSet<>(objectMapper.readerForListOf(LectureAssessmentDTO.class).readValue(lecture.getAssessmentsJson()))
         );
@@ -264,7 +263,7 @@ public class LectureProjector {
         var lecture = lectureDetailRepository.findById(query.lectureId()).orElseThrow();
 
         List<StudentDTO> enrolledStudents = objectMapper.readerForListOf(StudentDTO.class).readValue(lecture.getEnrolledStudentsDtoJson());
-        List<WaitlistEntryDTO> waitlistedStudents = objectMapper.readerForListOf(WaitlistEntryDTO.class).readValue(lecture.getWaitingListDtoJson());
+        List<WaitlistedStudentDTO> waitlistedStudents = objectMapper.readerForListOf(WaitlistedStudentDTO.class).readValue(lecture.getWaitingListDtoJson());
 
         EnrollmentStatus status = null;
         if (enrolledStudents.stream().anyMatch(student -> student.id().equals(query.studentId()))) {
@@ -286,10 +285,10 @@ public class LectureProjector {
         var lecture = lectureDetailRepository.findById(query.lectureId()).orElseThrow(
                 () -> new LectureNotFoundException(query.lectureId())
         );
-        List<WaitlistEntryDTO> waitlist = objectMapper.readerForListOf(WaitlistEntryDTO.class).readValue(lecture.getWaitingListDtoJson());
+        List<WaitlistedStudentDTO> waitlist = objectMapper.readerForListOf(WaitlistedStudentDTO.class).readValue(lecture.getWaitingListDtoJson());
 
         return new WaitlistDTO(
-                waitlist.stream().map(w -> new WaitlistedStudentDTO(w.student(), w.createdAt())).toList(),
+                waitlist.stream().map(w -> new WaitlistedStudentDTO(w.student(), w.waitlistedAt())).toList(),
                 toSimpleDto(lecture)
         );
     }

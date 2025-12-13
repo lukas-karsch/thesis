@@ -4,5 +4,7 @@ import karsch.lukas.student.StudentDTO;
 
 import java.time.LocalDateTime;
 
-public record WaitlistedStudentDTO(StudentDTO student, LocalDateTime waitlistedAt) {
+public record WaitlistedStudentDTO(
+        StudentDTO student,
+        LocalDateTime waitlistedAt) {
 }

@@ -10,6 +10,6 @@ import java.util.UUID;
 
 public record LectureDetailDTO(UUID lectureId, CourseDTO course, int maximumStudents, List<TimeSlot> dates,
                                ProfessorDTO professor, Set<StudentDTO> enrolledStudents,
-                               List<WaitlistEntryDTO> waitingList, LectureStatus status,
+                               List<WaitlistedStudentDTO> waitingList, LectureStatus status,
                                Set<LectureAssessmentDTO> assessments) {
 }

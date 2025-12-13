@@ -46,7 +46,7 @@ public class LectureDetailProjectionEntity {
     private String enrolledStudentsDtoJson;
 
     /**
-     * @see karsch.lukas.lecture.WaitlistEntryDTO
+     * @see karsch.lukas.lecture.WaitlistedStudentDTO
      */
     @Column(columnDefinition = "TEXT")
     private String waitingListDtoJson;

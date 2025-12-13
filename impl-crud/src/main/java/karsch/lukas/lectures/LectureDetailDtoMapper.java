@@ -17,7 +17,7 @@ public class LectureDetailDtoMapper implements Mapper<LectureEntity, LectureDeta
     private final ProfessorDtoMapper professorDtoMapper;
     private final StudentDtoMapper studentDtoMapper;
     private final TimeSlotMapper timeSlotMapper;
-    private final WaitlistEntryMapper waitlistEntryMapper;
+    private final WaitlistedStudentMapper waitlistedStudentMapper;
     private final LectureAssessmentMapper lectureAssessmentMapper;
 
     @Override
@@ -29,7 +29,7 @@ public class LectureDetailDtoMapper implements Mapper<LectureEntity, LectureDeta
                 timeSlotMapper.mapToList(lectureEntity.getTimeSlots()),
                 professorDtoMapper.map(lectureEntity.getProfessor()),
                 studentDtoMapper.map(lectureEntity.getEnrolledStudents()),
-                waitlistEntryMapper.mapToList(lectureEntity.getWaitlist()),
+                waitlistedStudentMapper.mapToList(lectureEntity.getWaitlist()),
                 lectureEntity.getLectureStatus(),
                 lectureAssessmentMapper.map(lectureEntity.getAssessments())
         );

@@ -21,7 +21,6 @@
 - create GEMINI.md file in the project root #llm
 - code
 	- remove LectureDto from AssessmentDTO
-	- remove LectureDto from waitlist, clean up WaitlistEntryDto and WaitlistedStudentDto 
     - CRUD
 	    - check if indexes are set up correctly 
 	    - clean up StatsService 
