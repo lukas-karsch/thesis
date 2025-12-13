@@ -23,6 +23,7 @@ public class LectureDetailProjectionEntity {
     private UUID id;
 
     private UUID courseId;
+
     private String courseDtoJson;
 
     private int maximumStudents;

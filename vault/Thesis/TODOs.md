@@ -33,7 +33,6 @@
 	    - contain JSON parsing and logic inside the projected entities 
 	    - set subscribing processors in bean, not application.properties 
 	    - unit test event handlers and aggregates 
-	    - add @Repository annotations 
 	    - architecture tests:
 		    - validation services annotated 
 - look at axon transaction manager? 
