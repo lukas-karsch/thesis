@@ -7,12 +7,16 @@ import karsch.lukas.features.course.exceptions.MissingCoursesException;
 import karsch.lukas.features.lectures.api.*;
 import karsch.lukas.features.professor.command.IProfessorValidator;
 import karsch.lukas.lecture.LectureStatus;
+import karsch.lukas.lecture.TimeSlot;
+import karsch.lukas.stats.AssessmentType;
 import karsch.lukas.time.TimeSlotService;
 import org.axonframework.test.aggregate.AggregateTestFixture;
 import org.axonframework.test.aggregate.FixtureConfiguration;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+import java.time.LocalDate;
+import java.time.LocalTime;
 import java.util.List;
 import java.util.UUID;
 
@@ -132,5 +136,57 @@ class LectureAggregateTest {
                         new LectureLifecycleAdvancedEvent(lectureId, LectureStatus.IN_PROGRESS, professorId),
                         new WaitlistClearedEvent(lectureId, professorId)
                 );
+    }
+
+    @Test
+    void testAddingAssessment_shouldThrow_ifWrongProfessor() {
+        final UUID lectureId = UUID.randomUUID();
+
+        fixture.given(lectureCreatedEvent(lectureId))
+                .when(new AddAssessmentCommand(lectureId, UUID.randomUUID(), anyTimeSlot(), AssessmentType.EXAM, 1, UUID.randomUUID()))
+                .expectException(NotAllowedException.class);
+    }
+
+    @Test
+    void testAddingAssessment_shouldThrow_ifInvalidTimeSlot() {
+        final UUID lectureId = UUID.randomUUID();
+        final UUID professorId = UUID.randomUUID();
+
+        when(timeSlotService.isLive(any())).thenReturn(true);
+
+        fixture.given(lectureCreatedEvent(lectureId, professorId))
+                .when(new AddAssessmentCommand(lectureId, UUID.randomUUID(), anyTimeSlot(), AssessmentType.EXAM, 1, professorId))
+                .expectException(DomainException.class);
+    }
+
+    @Test
+    void testAddingAssessment_shouldEmitEvent() {
+        final UUID lectureId = UUID.randomUUID();
+        final UUID professorId = UUID.randomUUID();
+        final UUID assessmentId = UUID.randomUUID();
+
+        final TimeSlot timeSlot = anyTimeSlot();
+
+        when(timeSlotService.isLive(any())).thenReturn(false);
+        when(timeSlotService.hasEnded(any())).thenReturn(false);
+
+        fixture.given(lectureCreatedEvent(lectureId, professorId))
+                .when(new AddAssessmentCommand(lectureId, assessmentId, timeSlot, AssessmentType.EXAM, 1, professorId))
+                .expectSuccessfulHandlerExecution()
+                .expectEvents(
+                        new AssessmentAddedEvent(lectureId, assessmentId, timeSlot, AssessmentType.EXAM, 1, professorId)
+                );
+    }
+
+    private static LectureCreatedEvent lectureCreatedEvent(UUID lectureId, UUID professorId) {
+        return new LectureCreatedEvent(lectureId, UUID.randomUUID(), 1, List.of(), professorId, LectureStatus.DRAFT);
+    }
+
+    private static LectureCreatedEvent lectureCreatedEvent(UUID lectureId) {
+        return lectureCreatedEvent(lectureId, UUID.randomUUID());
+    }
+
+    private static TimeSlot anyTimeSlot() {
+        return new TimeSlot(LocalDate.of(2025, 12, 1), LocalTime.of(10, 0), LocalTime.of(12, 0));
     }
 }
