@@ -22,7 +22,7 @@ class CourseAggregateTest {
     private ICourseValidator courseValidator = mock(ICourseValidator.class);
 
     @BeforeEach
-    public void setUp() {
+    void setUp() {
         fixture = new AggregateTestFixture<>(CourseAggregate.class);
 
         fixture.registerInjectableResource(courseValidator);
