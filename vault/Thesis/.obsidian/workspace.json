@@ -13,12 +13,12 @@
             "state": {
               "type": "markdown",
               "state": {
-                "file": "Advice/DDD AXON Digital Restaurant Demo.md",
+                "file": "Technical Design Log/2025-12-12 The dangers of directly adding entities to the database.md",
                 "mode": "source",
                 "source": false
               },
               "icon": "lucide-file",
-              "title": "DDD AXON Digital Restaurant Demo"
+              "title": "2025-12-12 The dangers of directly adding entities to the database"
             }
           },
           {
@@ -185,6 +185,7 @@
   },
   "active": "c44da624bc1d47f5",
   "lastOpenFiles": [
+    "Advice/DDD AXON Digital Restaurant Demo.md",
     "TODOs.md",
     "Technical Design Log/2025-12-12 ArchUnit.md",
     "Technologies/ArchUnit.md",
@@ -201,7 +202,6 @@
     "Technical Design Log/2025-11-26 Designing the ES-CQRS application (4daaf015).md",
     "Advice/Axon Error Codes.md",
     "System Design/API Design.md",
-    "Advice/DDD AXON Digital Restaurant Demo.md",
     "Technical Design Log/2025-12-08 Resetting the Axon server.md",
     "Advice/(How To Fake) Authentication.md",
     "Advice/Implementing CQRS in SpringBoot.md",
