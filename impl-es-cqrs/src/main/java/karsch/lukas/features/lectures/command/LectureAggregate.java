@@ -171,7 +171,7 @@ public class LectureAggregate {
                     EnrollmentAggregate.class,
                     () -> new EnrollmentAggregate(newEnrollmentId, command.studentId(), this.id)
             );
-            apply(new StudentEnrolledEvent(this.id, command.studentId()));
+            apply(new StudentEnrolledEvent(this.id, command.studentId())); // TODO remove this, the enrollment aggregate already emits an event
         }
     }
 
