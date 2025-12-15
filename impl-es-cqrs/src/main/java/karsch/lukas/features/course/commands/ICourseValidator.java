@@ -1,6 +1,7 @@
 package karsch.lukas.features.course.commands;
 
 import java.util.Collection;
+import java.util.List;
 import java.util.UUID;
 
 public interface ICourseValidator {
@@ -11,4 +12,6 @@ public interface ICourseValidator {
     int getCreditsForCourse(UUID id);
 
     int getMinimumCreditsToEnroll(UUID id);
+
+    List<UUID> getPrerequisitesForCourse(UUID id);
 }

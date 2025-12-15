@@ -4,6 +4,8 @@ import karsch.lukas.features.course.commands.ICourseValidator;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.util.Collections;
+import java.util.HashSet;
 import java.util.UUID;
 
 @Service
@@ -18,5 +20,13 @@ class StudentCreditsValidator implements IStudentCreditsValidator {
     public boolean hasEnoughCreditsToEnroll(UUID studentId, UUID courseId) {
         int studentCredits = studentCreditsLookupRepository.findById(studentId).map(StudentCreditsLookupProjectionEntity::getCredits).orElse(0);
         return studentCredits >= courseValidator.getMinimumCreditsToEnroll(courseId);
+    }
+
+    @Override
+    public boolean hasPassedAllPrerequisites(UUID studentId, UUID courseId) {
+        var passedCourses = studentCreditsLookupRepository.findById(studentId).map(StudentCreditsLookupProjectionEntity::getPassedCourses).orElse(Collections.emptyList());
+        var coursePrerequisites = courseValidator.getPrerequisitesForCourse(courseId);
+
+        return new HashSet<>(passedCourses).containsAll(coursePrerequisites);
     }
 }

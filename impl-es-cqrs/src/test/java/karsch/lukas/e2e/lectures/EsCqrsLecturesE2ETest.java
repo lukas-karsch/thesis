@@ -112,26 +112,30 @@ public class EsCqrsLecturesE2ETest extends AbstractLecturesE2ETest {
     protected LectureSeedData createLectureSeedData(int minimumCreditsRequired) {
         var courseSeedData = createCourseSeedData(minimumCreditsRequired);
 
+        return createLecture(courseSeedData.courseId(), courseSeedData.professorId(), minimumCreditsRequired);
+    }
+
+    private LectureSeedData createLecture(UUID courseId, UUID professorId, int minimumCreditsRequired) {
         var lectureId = UuidUtils.randomV7();
         commandGateway.sendAndWait(new CreateLectureCommand(
                 lectureId,
-                courseSeedData.courseId(),
+                courseId,
                 1,
                 List.of(
                         new TimeSlot(LocalDate.of(2025, 12, 1), LocalTime.of(10, 0), LocalTime.of(12, 0)),
                         new TimeSlot(LocalDate.of(2025, 12, 2), LocalTime.of(10, 0), LocalTime.of(12, 0))
                 ),
-                courseSeedData.professorId()
+                professorId
         ));
 
-        commandGateway.sendAndWait(new AdvanceLectureLifecycleCommand(lectureId, LectureStatus.OPEN_FOR_ENROLLMENT, courseSeedData.professorId()));
+        commandGateway.sendAndWait(new AdvanceLectureLifecycleCommand(lectureId, LectureStatus.OPEN_FOR_ENROLLMENT, professorId));
 
         var studentId = createStudent(0);
 
         return new LectureSeedData(
                 lectureId,
                 studentId,
-                courseSeedData.professorId()
+                professorId
         );
     }
 
@@ -172,7 +176,35 @@ public class EsCqrsLecturesE2ETest extends AbstractLecturesE2ETest {
 
     @Override
     protected CourseWithPrerequisitesSeedData createCourseAndLectureWithPrerequisites(boolean prerequisitePassed) {
-        return null;
+        var course = createCourseSeedData();
+        var lectureSeedData = createLecture(course.courseId(), course.professorId(), 0);
+
+        var currentClock = dateTimeProvider.getClock();
+
+        try {
+            if (prerequisitePassed) {
+                UUID assessmentId = UuidUtils.randomV7();
+                commandGateway.sendAndWait(new EnrollStudentCommand(lectureSeedData.lectureId(), lectureSeedData.studentId()));
+                commandGateway.sendAndWait(new AddAssessmentCommand(lectureSeedData.lectureId(), assessmentId, new TimeSlot(LocalDate.of(2025, 12, 5), LocalTime.of(10, 0), LocalTime.of(12, 0)), AssessmentType.EXAM, 1, lectureSeedData.professorId()));
+                commandGateway.sendAndWait(new AdvanceLectureLifecycleCommand(lectureSeedData.lectureId(), LectureStatus.IN_PROGRESS, lectureSeedData.professorId()));
+
+                setSystemTime(Clock.fixed(LocalDateTime.of(2025, 12, 10, 12, 0).toInstant(ZoneOffset.UTC), ZoneId.of("UTC")));
+
+                commandGateway.sendAndWait(new AssignGradeCommand(assessmentId, lectureSeedData.lectureId(), lectureSeedData.studentId(), 80, lectureSeedData.professorId()));
+
+                commandGateway.sendAndWait(new AdvanceLectureLifecycleCommand(lectureSeedData.lectureId(), LectureStatus.FINISHED, lectureSeedData.professorId()));
+            }
+
+            var newCourseId = UuidUtils.randomV7();
+            commandGateway.sendAndWait(new CreateCourseCommand(newCourseId, "Course with prerequisites", null, 4, Set.of(course.courseId()), 0));
+            var newLectureId = UuidUtils.randomV7();
+            commandGateway.sendAndWait(new CreateLectureCommand(newLectureId, newCourseId, 1, List.of(), lectureSeedData.professorId()));
+            commandGateway.sendAndWait(new AdvanceLectureLifecycleCommand(newLectureId, LectureStatus.OPEN_FOR_ENROLLMENT, lectureSeedData.professorId()));
+
+            return new CourseWithPrerequisitesSeedData(newLectureId, lectureSeedData.lectureId(), lectureSeedData.studentId());
+        } finally {
+            dateTimeProvider.setClock(currentClock);
+        }
     }
 
     @Override

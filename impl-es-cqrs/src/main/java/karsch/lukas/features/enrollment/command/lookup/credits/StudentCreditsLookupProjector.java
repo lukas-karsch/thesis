@@ -8,6 +8,8 @@ import org.axonframework.config.ProcessingGroup;
 import org.axonframework.eventhandling.EventHandler;
 import org.springframework.stereotype.Component;
 
+import java.util.ArrayList;
+
 @Component
 @ProcessingGroup(EnrollmentAggregate.PROCESSING_GROUP)
 @RequiredArgsConstructor
@@ -23,11 +25,13 @@ class StudentCreditsLookupProjector {
         }
 
         var creditsEntity = studentCreditsLookupRepository.findById(event.studentId())
-                .orElseGet(() -> new StudentCreditsLookupProjectionEntity(event.studentId(), 0));
+                .orElseGet(() -> new StudentCreditsLookupProjectionEntity(event.studentId(), 0, new ArrayList<>()));
 
         int currentCredits = creditsEntity.getCredits();
         int courseIsWorth = courseValidator.getCreditsForCourse(event.courseId());
         creditsEntity.setCredits(currentCredits + courseIsWorth);
+
+        creditsEntity.getPassedCourses().add(event.courseId());
 
         studentCreditsLookupRepository.save(creditsEntity);
     }

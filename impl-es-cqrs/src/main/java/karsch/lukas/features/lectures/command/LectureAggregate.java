@@ -170,6 +170,10 @@ public class LectureAggregate {
             throw new DomainException("Student has not enough credits to enroll");
         }
 
+        if (!studentCreditsValidator.hasPassedAllPrerequisites(command.studentId(), this.courseId)) {
+            throw new DomainException("Student has not passed all prerequisites");
+        }
+
         if (this.enrolledStudents.size() >= this.maximumStudents) {
             apply(new StudentWaitlistedEvent(this.id, command.studentId(), Instant.now(dateTimeProvider.getClock())));
         } else {

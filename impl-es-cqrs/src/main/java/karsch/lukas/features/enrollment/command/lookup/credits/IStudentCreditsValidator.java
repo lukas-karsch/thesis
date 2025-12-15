@@ -4,4 +4,6 @@ import java.util.UUID;
 
 public interface IStudentCreditsValidator {
     boolean hasEnoughCreditsToEnroll(UUID studentId, UUID courseId);
+
+    boolean hasPassedAllPrerequisites(UUID studentId, UUID courseId);
 }

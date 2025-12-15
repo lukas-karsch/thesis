@@ -4,6 +4,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.Collection;
+import java.util.Collections;
+import java.util.List;
 import java.util.UUID;
 
 @Service
@@ -38,5 +40,13 @@ class CourseValidator implements ICourseValidator {
                 .findById(id)
                 .orElseThrow()
                 .getMinimumCreditsRequired();
+    }
+
+    @Override
+    public List<UUID> getPrerequisitesForCourse(UUID id) {
+        return courseLookupRepository
+                .findById(id)
+                .map(CoursesLookupJpaEntity::getPrerequisiteCourses)
+                .orElse(Collections.emptyList());
     }
 }
