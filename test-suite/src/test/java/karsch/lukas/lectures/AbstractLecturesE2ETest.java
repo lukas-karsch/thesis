@@ -16,6 +16,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Set;
 import java.util.UUID;
+import java.util.concurrent.TimeUnit;
 import java.util.function.BiConsumer;
 import java.util.function.Supplier;
 
@@ -23,6 +24,7 @@ import static io.restassured.RestAssured.given;
 import static karsch.lukas.helper.AuthHelper.getProfessorAuthHeader;
 import static karsch.lukas.helper.AuthHelper.getStudentAuthHeader;
 import static org.hamcrest.Matchers.*;
+import static org.testcontainers.shaded.org.awaitility.Awaitility.await;
 
 public abstract class AbstractLecturesE2ETest implements BaseE2ETest {
 
@@ -872,24 +874,28 @@ public abstract class AbstractLecturesE2ETest implements BaseE2ETest {
                 .statusCode(200);
 
         // lower semester student is still waitlisted
-        given()
+        await()
+                .atMost(5, TimeUnit.SECONDS)
+                .untilAsserted(() -> given()
                 .when()
                 .queryParam("studentId", lowerSemesterStudentId)
                 .get("/lectures")
                 .then()
                 .statusCode(200)
                 .body("data.waitlisted", hasSize(1))
-                .body("data.enrolled", hasSize(0));
+                        .body("data.enrolled", hasSize(0)));
 
         // higher semester student was enrolled
-        given()
+        await() // await -> workaround for the CQRS app
+                .atMost(5, TimeUnit.SECONDS)
+                .untilAsserted(() -> given()
                 .when()
                 .queryParam("studentId", higherSemesterStudentId)
                 .get("/lectures")
                 .then()
                 .statusCode(200)
                 .body("data.waitlisted", hasSize(0))
-                .body("data.enrolled", hasSize(1));
+                        .body("data.enrolled", hasSize(1)));
     }
 
     public record CourseWithPrerequisitesSeedData(UUID lectureId, UUID prerequisiteLectureId, UUID studentId) {

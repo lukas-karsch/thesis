@@ -1,8 +1,6 @@
 package karsch.lukas.features.lectures.command.lookup.assessment;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.Id;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
 import karsch.lukas.stats.AssessmentType;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -12,7 +10,12 @@ import lombok.Setter;
 import java.util.UUID;
 
 @Entity
-@Table(name = "assessment_lookup")
+@Table(
+        name = "assessment_lookup",
+        indexes = {
+                @Index(name = "idx_lecture_id", columnList = "lecture_id")
+        }
+)
 @NoArgsConstructor
 @AllArgsConstructor
 @Getter
@@ -21,6 +24,7 @@ public class AssessmentLookupEntity {
     @Id
     private UUID id;
 
+    @Column(name = "lecture_id")
     private UUID lectureId;
 
     private float weight;

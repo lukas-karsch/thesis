@@ -4,6 +4,7 @@ import karsch.lukas.core.exceptions.DomainException;
 import karsch.lukas.core.exceptions.NotAllowedException;
 import karsch.lukas.features.course.commands.ICourseValidator;
 import karsch.lukas.features.course.exceptions.MissingCoursesException;
+import karsch.lukas.features.enrollment.command.lookup.credits.IStudentCreditsValidator;
 import karsch.lukas.features.lectures.api.*;
 import karsch.lukas.features.lectures.command.lookup.timeSlot.ITimeSlotValidator;
 import karsch.lukas.features.professor.command.IProfessorValidator;
@@ -143,7 +144,12 @@ public class LectureAggregate {
     }
 
     @CommandHandler
-    public void handle(EnrollStudentCommand command, DateTimeProvider dateTimeProvider, IStudentValidator studentValidator, ITimeSlotValidator timeSlotValidator) throws Exception {
+    public void handle(EnrollStudentCommand command,
+                       DateTimeProvider dateTimeProvider,
+                       IStudentValidator studentValidator,
+                       ITimeSlotValidator timeSlotValidator,
+                       IStudentCreditsValidator studentCreditsValidator
+    ) {
         if (this.lectureStatus != LectureStatus.OPEN_FOR_ENROLLMENT) {
             throw new DomainException("Lecture " + this.id + " is not open for enrollment (" + this.lectureStatus + ")");
         }
@@ -160,10 +166,14 @@ public class LectureAggregate {
             throw new DomainException("Can not enroll in lectures with overlapping timeslots.");
         }
 
+        if (!studentCreditsValidator.hasEnoughCreditsToEnroll(command.studentId(), this.courseId)) {
+            throw new DomainException("Student has not enough credits to enroll");
+        }
+
         if (this.enrolledStudents.size() >= this.maximumStudents) {
             apply(new StudentWaitlistedEvent(this.id, command.studentId(), Instant.now(dateTimeProvider.getClock())));
         } else {
-            apply(new StudentEnrollmentApprovedEvent(this.id, command.studentId()));
+            apply(new StudentEnrollmentApprovedEvent(this.id, command.studentId(), this.courseId));
         }
     }
 
@@ -191,7 +201,7 @@ public class LectureAggregate {
                     .ifPresent(nextEligibleStudent -> {
                         log.debug("Next eligible student for lecture {} is {}", this.id, nextEligibleStudent);
                         apply(new StudentRemovedFromWaitlistEvent(this.id, nextEligibleStudent));
-                        apply(new StudentEnrollmentApprovedEvent(this.id, nextEligibleStudent));
+                        apply(new StudentEnrollmentApprovedEvent(this.id, nextEligibleStudent, this.courseId));
                     });
         }
     }

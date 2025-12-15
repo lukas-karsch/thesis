@@ -23,4 +23,20 @@ class CourseValidator implements ICourseValidator {
     public boolean courseExists(UUID id) {
         return courseLookupRepository.existsById(id);
     }
+
+    @Override
+    public int getCreditsForCourse(UUID id) {
+        return courseLookupRepository
+                .findById(id)
+                .orElseThrow()
+                .getCredits();
+    }
+
+    @Override
+    public int getMinimumCreditsToEnroll(UUID id) {
+        return courseLookupRepository
+                .findById(id)
+                .orElseThrow()
+                .getMinimumCreditsRequired();
+    }
 }

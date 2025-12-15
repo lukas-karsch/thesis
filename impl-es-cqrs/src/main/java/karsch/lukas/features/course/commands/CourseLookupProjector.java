@@ -12,13 +12,13 @@ import org.springframework.stereotype.Component;
 @ProcessingGroup(CourseAggregate.PROCESSING_GROUP)
 @Component
 @Slf4j
-class CourseLookupTable {
+class CourseLookupProjector {
 
     @EventHandler
     public void on(CourseCreatedEvent event, CourseLookupRepository courseRepository) {
         log.debug("Handling {}, creating entry in lookup table.", event);
         courseRepository.save(
-                new CoursesLookupJpaEntity(event.courseId())
+                new CoursesLookupJpaEntity(event.courseId(), event.credits(), event.minimumCreditsRequired())
         );
     }
 }

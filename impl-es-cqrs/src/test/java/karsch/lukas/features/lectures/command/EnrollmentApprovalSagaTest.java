@@ -21,6 +21,7 @@ class EnrollmentApprovalSagaTest {
     private final UUID lectureId = UUID.randomUUID();
     private final UUID studentId = UUID.randomUUID();
     private final UUID enrollmentId = UUID.randomUUID();
+    private final UUID courseId = UUID.randomUUID();
 
     private UuidProvider uuidProvider;
 
@@ -38,19 +39,19 @@ class EnrollmentApprovalSagaTest {
 
         fixture.givenNoPriorActivity()
                 .whenAggregate(lectureId.toString())
-                .publishes(new StudentEnrollmentApprovedEvent(lectureId, studentId))
+                .publishes(new StudentEnrollmentApprovedEvent(lectureId, studentId, courseId))
                 .expectActiveSagas(1)
-                .expectDispatchedCommands(new CreateEnrollmentCommand(enrollmentId, lectureId, studentId));
+                .expectDispatchedCommands(new CreateEnrollmentCommand(enrollmentId, lectureId, studentId, courseId));
     }
 
     @Test
     void testHandleEnrollmentCreatedEvent() {
         fixture.givenAggregate(lectureId.toString())
                 .published(
-                        new StudentEnrollmentApprovedEvent(lectureId, studentId)
+                        new StudentEnrollmentApprovedEvent(lectureId, studentId, courseId)
                 )
                 .whenAggregate(enrollmentId.toString())
-                .publishes(new EnrollmentCreatedEvent(enrollmentId, studentId, lectureId))
+                .publishes(new EnrollmentCreatedEvent(enrollmentId, studentId, lectureId, courseId))
                 .expectActiveSagas(0)
                 .expectDispatchedCommands(new ConfirmStudentEnrollmentCommand(lectureId, studentId));
     }

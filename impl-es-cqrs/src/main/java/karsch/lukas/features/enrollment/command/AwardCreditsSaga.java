@@ -1,9 +1,11 @@
-package karsch.lukas.features.enrollment;
+package karsch.lukas.features.enrollment.command;
 
 import karsch.lukas.features.enrollment.api.AwardCreditsCommand;
 import karsch.lukas.features.enrollment.api.CreditsAwardedEvent;
 import karsch.lukas.features.enrollment.api.EnrollmentCreatedEvent;
 import karsch.lukas.features.lectures.api.LectureLifecycleAdvancedEvent;
+import karsch.lukas.features.lectures.command.lookup.assessment.AssessmentLookupEntity;
+import karsch.lukas.features.lectures.command.lookup.assessment.IAssessmentValidator;
 import karsch.lukas.lecture.LectureStatus;
 import lombok.extern.slf4j.Slf4j;
 import org.axonframework.commandhandling.gateway.CommandGateway;
@@ -13,6 +15,7 @@ import org.axonframework.modelling.saga.SagaLifecycle;
 import org.axonframework.modelling.saga.StartSaga;
 import org.axonframework.spring.stereotype.Saga;
 
+import java.util.List;
 import java.util.UUID;
 
 @Saga
@@ -30,11 +33,18 @@ public class AwardCreditsSaga {
     }
 
     @SagaEventHandler(associationProperty = "lectureId")
-    public void handle(LectureLifecycleAdvancedEvent event, CommandGateway commandGateway) {
-        if (event.lectureStatus() == LectureStatus.FINISHED) {
-            // send command to apply grades
-            commandGateway.send(new AwardCreditsCommand(this.enrollmentId));
+    public void handle(LectureLifecycleAdvancedEvent event, CommandGateway commandGateway, IAssessmentValidator assessmentValidator) {
+        if (event.lectureStatus() != LectureStatus.FINISHED) {
+            return;
         }
+
+        List<UUID> allAssessmentIds = assessmentValidator
+                .findByLecture(event.lectureId())
+                .stream()
+                .map(AssessmentLookupEntity::getId)
+                .toList();
+
+        commandGateway.send(new AwardCreditsCommand(this.enrollmentId, allAssessmentIds));
     }
 
     @EndSaga

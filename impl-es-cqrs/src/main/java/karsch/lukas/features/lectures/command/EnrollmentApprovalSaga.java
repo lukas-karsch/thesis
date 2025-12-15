@@ -25,7 +25,7 @@ public class EnrollmentApprovalSaga {
         UUID enrollmentId = uuidProvider.generateUuid();
 
         commandGateway.send(
-                new CreateEnrollmentCommand(enrollmentId, event.lectureId(), event.studentId())
+                new CreateEnrollmentCommand(enrollmentId, event.lectureId(), event.studentId(), event.courseId())
         );
     }
 

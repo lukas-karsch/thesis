@@ -4,6 +4,7 @@ import java.util.UUID;
 
 public record StudentEnrollmentApprovedEvent(
         UUID lectureId,
-        UUID studentId
+        UUID studentId,
+        UUID courseId
 ) {
 }

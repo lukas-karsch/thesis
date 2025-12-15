@@ -4,6 +4,7 @@ import karsch.lukas.core.exceptions.DomainException;
 import karsch.lukas.core.exceptions.NotAllowedException;
 import karsch.lukas.features.course.commands.ICourseValidator;
 import karsch.lukas.features.course.exceptions.MissingCoursesException;
+import karsch.lukas.features.enrollment.command.lookup.credits.IStudentCreditsValidator;
 import karsch.lukas.features.lectures.api.*;
 import karsch.lukas.features.lectures.command.lookup.timeSlot.ITimeSlotValidator;
 import karsch.lukas.features.professor.command.IProfessorValidator;
@@ -38,6 +39,7 @@ class LectureAggregateTest {
     private IProfessorValidator professorValidator;
     private DateTimeProvider dateTimeProvider;
     private IStudentValidator studentValidator;
+    private IStudentCreditsValidator studentCreditsValidator;
     private ITimeSlotValidator timeSlotValidator;
 
 
@@ -50,14 +52,15 @@ class LectureAggregateTest {
         professorValidator = mock(IProfessorValidator.class);
         dateTimeProvider = mock(DateTimeProvider.class);
         studentValidator = mock(IStudentValidator.class);
+        studentCreditsValidator = mock(IStudentCreditsValidator.class);
         timeSlotValidator = mock(ITimeSlotValidator.class);
-
 
         fixture.registerInjectableResource(courseValidator);
         fixture.registerInjectableResource(timeSlotService);
         fixture.registerInjectableResource(professorValidator);
         fixture.registerInjectableResource(dateTimeProvider);
         fixture.registerInjectableResource(studentValidator);
+        fixture.registerInjectableResource(studentCreditsValidator);
         fixture.registerInjectableResource(timeSlotValidator);
     }
 
@@ -284,6 +287,7 @@ class LectureAggregateTest {
     @Nested
     class EnrollStudentTests {
 
+        private final UUID courseId = UUID.randomUUID();
         private final UUID lectureId = UUID.randomUUID();
         private final UUID professorId = UUID.randomUUID();
 
@@ -341,7 +345,10 @@ class LectureAggregateTest {
             var studentToEnroll = UUID.randomUUID();
             var enrolledStudent = UUID.randomUUID();
             var now = Instant.now();
+
             when(dateTimeProvider.getClock()).thenReturn(Clock.fixed(now, ZoneId.systemDefault()));
+
+            when(studentCreditsValidator.hasEnoughCreditsToEnroll(any(), any())).thenReturn(true);
 
             fixture.given(
                             new LectureCreatedEvent(lectureId, UUID.randomUUID(), 1, List.of(), professorId, LectureStatus.DRAFT),
@@ -356,14 +363,16 @@ class LectureAggregateTest {
         void testEnrollStudent_shouldApproveEnrollment_ifLectureIsNotFull() {
             var studentId = UUID.randomUUID();
 
+            when(studentCreditsValidator.hasEnoughCreditsToEnroll(any(), any())).thenReturn(true);
+
             fixture.given(
-                            new LectureCreatedEvent(lectureId, UUID.randomUUID(), 1, List.of(), professorId, LectureStatus.DRAFT),
+                            new LectureCreatedEvent(lectureId, courseId, 1, List.of(), professorId, LectureStatus.DRAFT),
                             new LectureLifecycleAdvancedEvent(lectureId, LectureStatus.OPEN_FOR_ENROLLMENT, professorId)
                     )
                     .when(new EnrollStudentCommand(lectureId, studentId))
                     .expectSuccessfulHandlerExecution()
                     .expectEvents(
-                            new StudentEnrollmentApprovedEvent(lectureId, studentId)
+                            new StudentEnrollmentApprovedEvent(lectureId, studentId, courseId)
                     );
         }
 
@@ -373,9 +382,9 @@ class LectureAggregateTest {
             var studentId = UUID.randomUUID();
 
             fixture.given(
-                            lectureCreatedEvent(lectureId, professorId),
+                            new LectureCreatedEvent(lectureId, courseId, 1, List.of(), professorId, LectureStatus.DRAFT),
                             new AdvanceLectureLifecycleCommand(lectureId, LectureStatus.OPEN_FOR_ENROLLMENT, professorId),
-                            new StudentEnrollmentApprovedEvent(lectureId, studentId)
+                            new StudentEnrollmentApprovedEvent(lectureId, studentId, courseId)
                     )
                     .when(new ConfirmStudentEnrollmentCommand(lectureId, studentId))
                     .expectSuccessfulHandlerExecution()
@@ -385,6 +394,7 @@ class LectureAggregateTest {
 
     @Nested
     class DisenrollStudentTests {
+        private final UUID courseId = UUID.randomUUID();
         private final UUID lectureId = UUID.randomUUID();
         private final UUID professorId = UUID.randomUUID();
 
@@ -452,7 +462,7 @@ class LectureAggregateTest {
             when(studentValidator.findByIds(List.of(studentOnWaitlist1, studentOnWaitlist2))).thenReturn(List.of(student1Lookup, student2Lookup));
 
             fixture.given(
-                            new LectureCreatedEvent(lectureId, UUID.randomUUID(), 1, List.of(), professorId, LectureStatus.DRAFT),
+                            new LectureCreatedEvent(lectureId, courseId, 1, List.of(), professorId, LectureStatus.DRAFT),
                             new StudentEnrolledEvent(lectureId, studentToDisenroll),
                             new StudentWaitlistedEvent(lectureId, studentOnWaitlist1, now1),
                             new StudentWaitlistedEvent(lectureId, studentOnWaitlist2, now2)
@@ -461,7 +471,7 @@ class LectureAggregateTest {
                     .expectEvents(
                             new StudentDisenrolledEvent(lectureId, studentToDisenroll),
                             new StudentRemovedFromWaitlistEvent(lectureId, studentOnWaitlist2),
-                            new StudentEnrollmentApprovedEvent(lectureId, studentOnWaitlist2)
+                            new StudentEnrollmentApprovedEvent(lectureId, studentOnWaitlist2, courseId)
                     );
         }
 
@@ -471,7 +481,7 @@ class LectureAggregateTest {
             var studentOnWaitlist1 = UUID.randomUUID(); // first on waitlist
             var studentOnWaitlist2 = UUID.randomUUID(); // second on waitlist
 
-            var createEvent = new LectureCreatedEvent(lectureId, UUID.randomUUID(), 1, List.of(), professorId, LectureStatus.DRAFT);
+            var createEvent = new LectureCreatedEvent(lectureId, courseId, 1, List.of(), professorId, LectureStatus.DRAFT);
 
             var now1 = Instant.now();
             var now2 = now1.plusSeconds(1);
@@ -490,7 +500,7 @@ class LectureAggregateTest {
                     .expectEvents(
                             new StudentDisenrolledEvent(lectureId, studentToDisenroll),
                             new StudentRemovedFromWaitlistEvent(lectureId, studentOnWaitlist1),
-                            new StudentEnrollmentApprovedEvent(lectureId, studentOnWaitlist1)
+                            new StudentEnrollmentApprovedEvent(lectureId, studentOnWaitlist1, courseId)
                     );
         }
     }

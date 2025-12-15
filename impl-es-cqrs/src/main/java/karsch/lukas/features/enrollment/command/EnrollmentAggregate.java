@@ -10,6 +10,7 @@ import org.axonframework.modelling.command.AggregateIdentifier;
 import org.axonframework.spring.stereotype.Aggregate;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
@@ -28,6 +29,8 @@ public class EnrollmentAggregate {
 
     private UUID lectureId;
 
+    private UUID courseId;
+
     /**
      * maps assessment IDs to grades
      */
@@ -35,9 +38,11 @@ public class EnrollmentAggregate {
 
     private boolean areCreditsAwarded = false;
 
+    private boolean hasPassed = false;
+
     @CommandHandler
     public EnrollmentAggregate(CreateEnrollmentCommand command) {
-        apply(new EnrollmentCreatedEvent(command.enrollmentId(), command.studentId(), command.lectureId()));
+        apply(new EnrollmentCreatedEvent(command.enrollmentId(), command.studentId(), command.lectureId(), command.courseId()));
     }
 
     protected EnrollmentAggregate() {
@@ -60,7 +65,12 @@ public class EnrollmentAggregate {
         if (areCreditsAwarded) {
             return;
         }
-        apply(new CreditsAwardedEvent(this.id, lectureId, studentId));
+        boolean hasPassed = calculateHasPassed(command.allAssessmentIds());
+        apply(new CreditsAwardedEvent(this.id, this.studentId, hasPassed, this.courseId));
+    }
+
+    private boolean calculateHasPassed(List<UUID> allAssessmentIds) {
+        return this.grades.keySet().containsAll(allAssessmentIds) && this.grades.values().stream().allMatch(g -> g >= 50);
     }
 
     @EventHandler
@@ -68,6 +78,7 @@ public class EnrollmentAggregate {
         this.id = event.enrollmentId();
         this.studentId = event.studentId();
         this.lectureId = event.lectureId();
+        this.courseId = event.courseId();
     }
 
     @EventHandler
@@ -83,6 +94,7 @@ public class EnrollmentAggregate {
     @EventHandler
     public void on(CreditsAwardedEvent event) {
         this.areCreditsAwarded = true;
+        this.hasPassed = event.hasPassed();
     }
 
 }

@@ -22,4 +22,8 @@ class CoursesLookupJpaEntity {
     @NotNull
     private UUID id;
 
+    private int credits;
+
+    private int minimumCreditsRequired;
+
 }

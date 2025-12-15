@@ -7,4 +7,8 @@ public interface ICourseValidator {
     boolean allCoursesExist(Collection<UUID> ids);
 
     boolean courseExists(UUID id);
+
+    int getCreditsForCourse(UUID id);
+
+    int getMinimumCreditsToEnroll(UUID id);
 }
