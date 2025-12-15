@@ -46,15 +46,15 @@ public class EnrollmentCommandHandler {
             throw new NotAllowedException("Professor " + command.professorId() + " is not allowed to assign grades to lecture " + command.lectureId());
         }
 
-        if (lecture.getLectureStatus() != LectureStatus.FINISHED) {
-            throw new DomainException("Can not assign grades to a lecture that isn't finished");
+        if (lecture.getLectureStatus() != LectureStatus.IN_PROGRESS) {
+            throw new DomainException("Can only assign grades to a lecture which is IN_PROGRESS");
         }
 
         AssessmentLookupEntity assessment = assessmentValidator.findById(command.assessmentId())
                 .orElseThrow(() -> new AssessmentNotFoundException(command.assessmentId()));
 
         if (!timeSlotService.hasEnded(assessment.getTimeSlot(), t -> new TimeSlot(t.date(), t.startTime(), t.endTime()))) {
-            throw new DomainException("Assessment has already ended (timeSlot=" + assessment.getTimeSlot() + "), system time=" + timeSlotService.getCurrentTime());
+            throw new DomainException("Assessment has not yet ended (timeSlot=" + assessment.getTimeSlot() + "), system time=" + timeSlotService.getCurrentTime());
         }
 
         repository.load(enrollmentId.toString())

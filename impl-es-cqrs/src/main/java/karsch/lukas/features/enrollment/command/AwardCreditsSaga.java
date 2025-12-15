@@ -7,6 +7,8 @@ import karsch.lukas.features.lectures.api.LectureLifecycleAdvancedEvent;
 import karsch.lukas.features.lectures.command.lookup.assessment.AssessmentLookupEntity;
 import karsch.lukas.features.lectures.command.lookup.assessment.IAssessmentValidator;
 import karsch.lukas.lecture.LectureStatus;
+import lombok.Getter;
+import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import org.axonframework.commandhandling.gateway.CommandGateway;
 import org.axonframework.modelling.saga.EndSaga;
@@ -22,18 +24,21 @@ import java.util.UUID;
 @Slf4j
 public class AwardCreditsSaga {
 
+    @Getter
+    @Setter
     private UUID enrollmentId;
 
     @StartSaga
     @SagaEventHandler(associationProperty = "enrollmentId")
     public void handle(EnrollmentCreatedEvent event) {
-        log.debug("@StartSaga enrollmentId={};associating with lectureId={}", event.enrollmentId(), event.lectureId());
+        log.debug("AwardCreditsSaga@StartSaga enrollmentId={};associating with lectureId={}", event.enrollmentId(), event.lectureId());
         SagaLifecycle.associateWith("lectureId", event.lectureId().toString());
         this.enrollmentId = event.enrollmentId();
     }
 
     @SagaEventHandler(associationProperty = "lectureId")
     public void handle(LectureLifecycleAdvancedEvent event, CommandGateway commandGateway, IAssessmentValidator assessmentValidator) {
+        log.debug("AwardCreditsSaga.{} | handling {}", this.enrollmentId, event);
         if (event.lectureStatus() != LectureStatus.FINISHED) {
             return;
         }
@@ -50,6 +55,6 @@ public class AwardCreditsSaga {
     @EndSaga
     @SagaEventHandler(associationProperty = "enrollmentId")
     public void handle(CreditsAwardedEvent event) {
-        log.debug("@EndSaga enrollmentId={}", event.enrollmentId());
+        log.debug("AwardCreditsSaga@EndSaga enrollmentId={}", event.enrollmentId());
     }
 }

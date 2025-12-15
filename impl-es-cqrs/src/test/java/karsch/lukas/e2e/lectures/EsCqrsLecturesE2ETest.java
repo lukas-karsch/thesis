@@ -4,9 +4,11 @@ import karsch.lukas.AxonTestcontainerConfiguration;
 import karsch.lukas.PostgresTestcontainerConfiguration;
 import karsch.lukas.e2e.config.AxonTestConfiguration;
 import karsch.lukas.features.course.api.CreateCourseCommand;
+import karsch.lukas.features.enrollment.api.AssignGradeCommand;
 import karsch.lukas.features.lectures.api.AddAssessmentCommand;
 import karsch.lukas.features.lectures.api.AdvanceLectureLifecycleCommand;
 import karsch.lukas.features.lectures.api.CreateLectureCommand;
+import karsch.lukas.features.lectures.api.EnrollStudentCommand;
 import karsch.lukas.features.professor.api.CreateProfessorCommand;
 import karsch.lukas.features.student.api.CreateStudentCommand;
 import karsch.lukas.lecture.LectureStatus;
@@ -27,11 +29,10 @@ import javax.sql.DataSource;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.sql.Statement;
-import java.time.Clock;
-import java.time.LocalDate;
-import java.time.LocalTime;
+import java.time.*;
 import java.util.Collections;
 import java.util.List;
+import java.util.Set;
 import java.util.UUID;
 
 import static io.restassured.RestAssured.given;
@@ -175,7 +176,30 @@ public class EsCqrsLecturesE2ETest extends AbstractLecturesE2ETest {
     }
 
     @Override
-    protected LectureWithMinimumCredits createAssessmentAndGrade(UUID lectureId, UUID studentId) {
-        return null;
+    protected LectureWithMinimumCredits createAssessmentAndGrade(UUID lectureId, UUID studentId, UUID professorId) {
+        var currentClock = dateTimeProvider.getClock();
+
+        try {
+            UUID assessmentId = UuidUtils.randomV7();
+            commandGateway.sendAndWait(new EnrollStudentCommand(lectureId, studentId));
+            commandGateway.sendAndWait(new AddAssessmentCommand(lectureId, assessmentId, new TimeSlot(LocalDate.of(2025, 12, 5), LocalTime.of(10, 0), LocalTime.of(12, 0)), AssessmentType.EXAM, 1, professorId));
+            commandGateway.sendAndWait(new AdvanceLectureLifecycleCommand(lectureId, LectureStatus.IN_PROGRESS, professorId));
+
+            setSystemTime(Clock.fixed(LocalDateTime.of(2025, 12, 10, 12, 0).toInstant(ZoneOffset.UTC), ZoneId.of("UTC")));
+
+            commandGateway.sendAndWait(new AssignGradeCommand(assessmentId, lectureId, studentId, 80, professorId));
+
+            commandGateway.sendAndWait(new AdvanceLectureLifecycleCommand(lectureId, LectureStatus.FINISHED, professorId));
+
+            var newCourseId = UuidUtils.randomV7();
+            commandGateway.sendAndWait(new CreateCourseCommand(newCourseId, "New course", null, 4, Set.of(), 1));
+            var newLectureId = UuidUtils.randomV7();
+            commandGateway.sendAndWait(new CreateLectureCommand(newLectureId, newCourseId, 1, List.of(), professorId));
+            commandGateway.sendAndWait(new AdvanceLectureLifecycleCommand(newLectureId, LectureStatus.OPEN_FOR_ENROLLMENT, professorId));
+
+            return new LectureWithMinimumCredits(newLectureId);
+        } finally {
+            dateTimeProvider.setClock(currentClock);
+        }
     }
 }

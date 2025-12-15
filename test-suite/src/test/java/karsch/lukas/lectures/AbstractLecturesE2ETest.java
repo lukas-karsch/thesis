@@ -428,10 +428,10 @@ public abstract class AbstractLecturesE2ETest implements BaseE2ETest {
                 .then()
                 .statusCode(201);
 
-        // Then, set the lecture to FINISHED so it's allowed to assign grades (IN_PROGRESS is also valid)
+        // Then, set the lecture to IN_PROGRESS
         given()
                 .header(getProfessorAuthHeader(lectureSeedData.professorId()))
-                .queryParam("newLectureStatus", LectureStatus.FINISHED)
+                .queryParam("newLectureStatus", LectureStatus.IN_PROGRESS)
                 .post("/lectures/{lectureId}/lifecycle", lectureSeedData.lectureId())
                 .then()
                 .statusCode(201);
@@ -592,10 +592,10 @@ public abstract class AbstractLecturesE2ETest implements BaseE2ETest {
                 .then()
                 .statusCode(201);
 
-        // set lecture to FINISHED
+        // set lecture to IN_PROGRESS
         given()
                 .header(getProfessorAuthHeader(lectureSeedData.professorId()))
-                .queryParam("newLectureStatus", LectureStatus.FINISHED)
+                .queryParam("newLectureStatus", LectureStatus.IN_PROGRESS)
                 .post("/lectures/{lectureId}/lifecycle", lectureSeedData.lectureId())
                 .then()
                 .statusCode(201);
@@ -643,10 +643,10 @@ public abstract class AbstractLecturesE2ETest implements BaseE2ETest {
                 .then()
                 .statusCode(201);
 
-        // Then, set the lecture to FINISHED so it's allowed to assign grades
+        // Then, set the lecture to IN_PROGRESS so it's allowed to assign grades
         given()
                 .header(getProfessorAuthHeader(lectureSeedData.professorId()))
-                .queryParam("newLectureStatus", LectureStatus.FINISHED)
+                .queryParam("newLectureStatus", LectureStatus.IN_PROGRESS)
                 .post("/lectures/{lectureId}/lifecycle", lectureSeedData.lectureId())
                 .then()
                 .statusCode(201);
@@ -877,24 +877,24 @@ public abstract class AbstractLecturesE2ETest implements BaseE2ETest {
         await()
                 .atMost(5, TimeUnit.SECONDS)
                 .untilAsserted(() -> given()
-                .when()
-                .queryParam("studentId", lowerSemesterStudentId)
-                .get("/lectures")
-                .then()
-                .statusCode(200)
-                .body("data.waitlisted", hasSize(1))
+                        .when()
+                        .queryParam("studentId", lowerSemesterStudentId)
+                        .get("/lectures")
+                        .then()
+                        .statusCode(200)
+                        .body("data.waitlisted", hasSize(1))
                         .body("data.enrolled", hasSize(0)));
 
         // higher semester student was enrolled
         await() // await -> workaround for the CQRS app
                 .atMost(5, TimeUnit.SECONDS)
                 .untilAsserted(() -> given()
-                .when()
-                .queryParam("studentId", higherSemesterStudentId)
-                .get("/lectures")
-                .then()
-                .statusCode(200)
-                .body("data.waitlisted", hasSize(0))
+                        .when()
+                        .queryParam("studentId", higherSemesterStudentId)
+                        .get("/lectures")
+                        .then()
+                        .statusCode(200)
+                        .body("data.waitlisted", hasSize(0))
                         .body("data.enrolled", hasSize(1)));
     }
 
@@ -946,13 +946,24 @@ public abstract class AbstractLecturesE2ETest implements BaseE2ETest {
     public record LectureWithMinimumCredits(UUID lectureId) {
     }
 
-    protected abstract LectureWithMinimumCredits createAssessmentAndGrade(UUID lectureId, UUID studentId);
+    /**
+     * Create an assessment for the given lecture (2025-12-5). Assign grades for the given lecture. Create a new course with
+     * minimum credits and a lecture for this course.
+     *
+     * @return ID of the new lecture
+     */
+    protected abstract LectureWithMinimumCredits createAssessmentAndGrade(UUID lectureId, UUID studentId, UUID professorId);
 
     @Test
     @DisplayName("Student should be able to enroll if minimum credits are met.")
     void studentShouldBeAbleToEnroll_ifMinimumCreditsAreMet() {
+        setSystemTime(
+                Clock.fixed(LocalDateTime.of(2025, 12, 3, 12, 0).toInstant(ZoneOffset.UTC),
+                        ZoneId.of("UTC"))
+        );
+
         var passedLectureSeed = createLectureSeedData();
-        var newLecture = createAssessmentAndGrade(passedLectureSeed.lectureId(), passedLectureSeed.studentId());
+        var newLecture = createAssessmentAndGrade(passedLectureSeed.lectureId(), passedLectureSeed.studentId(), passedLectureSeed.professorId());
 
         given()
                 .when()

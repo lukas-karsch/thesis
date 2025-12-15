@@ -62,7 +62,7 @@ public class EnrollmentAggregate {
 
     @CommandHandler
     public void handle(AwardCreditsCommand command) {
-        if (areCreditsAwarded) {
+        if (this.areCreditsAwarded) {
             return;
         }
         boolean hasPassed = calculateHasPassed(command.allAssessmentIds());

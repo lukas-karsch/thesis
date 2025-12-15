@@ -183,7 +183,7 @@ public class CrudLecturesE2ETest extends AbstractLecturesE2ETest {
     }
 
     @Override
-    protected LectureWithMinimumCredits createAssessmentAndGrade(UUID lectureId, UUID studentId) {
+    protected LectureWithMinimumCredits createAssessmentAndGrade(UUID lectureId, UUID studentId, UUID professorId) {
         return inTransaction(() -> {
             var lecture = entityManager.getReference(LectureEntity.class, lectureId);
             var student = entityManager.getReference(StudentEntity.class, studentId);
@@ -192,6 +192,7 @@ public class CrudLecturesE2ETest extends AbstractLecturesE2ETest {
             assessment.setWeight(1);
             assessment.setAssessmentType(AssessmentType.EXAM);
             assessment.setLecture(lecture);
+            assessment.setTimeSlot(new TimeSlotValueObject(LocalDate.of(2025, 12, 5), LocalTime.of(10, 0), LocalTime.of(12, 0)));
 
             lecture.setLectureStatus(LectureStatus.FINISHED);
 
@@ -202,8 +203,10 @@ public class CrudLecturesE2ETest extends AbstractLecturesE2ETest {
             grade.setLectureAssessment(assessment);
             grade.setGrade(100);
 
+            var professor = entityManager.getReference(ProfessorEntity.class, professorId);
+
             var newCourse = createCourseEntity(5, "Computer Science", null, 1);
-            var newLecture = createLectureEntity(lecture.getProfessor(), newCourse);
+            var newLecture = createLectureEntity(professor, newCourse);
             newLecture.setLectureStatus(LectureStatus.OPEN_FOR_ENROLLMENT);
 
             entityManager.persist(grade);
