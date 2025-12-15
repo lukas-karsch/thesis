@@ -16,7 +16,7 @@ public class EnrollmentLookupProjector {
 
     @EventHandler
     public void on(EnrollmentCreatedEvent event) {
-        var entity = new EnrollmentLookupEntity(event.id(), event.lectureId(), event.studentId());
+        var entity = new EnrollmentLookupEntity(event.enrollmentId(), event.lectureId(), event.studentId());
 
         enrollmentLookupRepository.save(entity);
     }

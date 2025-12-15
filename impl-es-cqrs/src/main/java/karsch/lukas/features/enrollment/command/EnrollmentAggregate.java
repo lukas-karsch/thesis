@@ -55,9 +55,17 @@ public class EnrollmentAggregate {
         apply(new GradeUpdatedEvent(this.id, command.assessmentId(), command.grade(), command.professorId()));
     }
 
+    @CommandHandler
+    public void handle(AwardCreditsCommand command) {
+        if (areCreditsAwarded) {
+            return;
+        }
+        apply(new CreditsAwardedEvent(this.id, lectureId, studentId));
+    }
+
     @EventHandler
     public void on(EnrollmentCreatedEvent event) {
-        this.id = event.id();
+        this.id = event.enrollmentId();
         this.studentId = event.studentId();
         this.lectureId = event.lectureId();
     }
@@ -70,6 +78,11 @@ public class EnrollmentAggregate {
     @EventHandler
     public void on(GradeUpdatedEvent event) {
         this.grades.put(event.assessmentId(), event.grade());
+    }
+
+    @EventHandler
+    public void on(CreditsAwardedEvent event) {
+        this.areCreditsAwarded = true;
     }
 
 }

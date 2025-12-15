@@ -18,9 +18,9 @@ class EnrollmentApprovalSagaTest {
 
     private SagaTestFixture<EnrollmentApprovalSaga> fixture;
 
-    private UUID lectureId = UUID.randomUUID();
-    private UUID studentId = UUID.randomUUID();
-    private UUID enrollmentId = UUID.randomUUID();
+    private final UUID lectureId = UUID.randomUUID();
+    private final UUID studentId = UUID.randomUUID();
+    private final UUID enrollmentId = UUID.randomUUID();
 
     private UuidProvider uuidProvider;
 

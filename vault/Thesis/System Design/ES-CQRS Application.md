@@ -148,6 +148,7 @@ Fields:
 #### 3.1 Why "isCreditsAwarded"?
 You asked: _"Are they necessary for further business logic, considering that the 'validation' happens by querying projections?"_
 
+
 **Answer:** You are correct that _future_ validation (e.g., checking prerequisites for the _next_ course) will happen via Projections. The Aggregate does not need to store the credit value to help _other_ aggregates.
 
 **However**, the Aggregate **must** store the `isAwarded` flag to help **itself**:
