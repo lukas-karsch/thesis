@@ -1,10 +1,10 @@
 package karsch.lukas.features.lectures.command;
 
+import karsch.lukas.core.uuid.UuidProvider;
 import karsch.lukas.features.enrollment.api.EnrollmentCreatedEvent;
 import karsch.lukas.features.lectures.api.ConfirmStudentEnrollmentCommand;
 import karsch.lukas.features.lectures.api.CreateEnrollmentCommand;
 import karsch.lukas.features.lectures.api.StudentEnrollmentApprovedEvent;
-import karsch.lukas.uuid.UuidUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.axonframework.commandhandling.gateway.CommandGateway;
 import org.axonframework.modelling.saga.EndSaga;
@@ -20,9 +20,9 @@ public class EnrollmentApprovalSaga {
 
     @StartSaga
     @SagaEventHandler(associationProperty = "lectureId")
-    public void handle(StudentEnrollmentApprovedEvent event, CommandGateway commandGateway) {
+    public void handle(StudentEnrollmentApprovedEvent event, CommandGateway commandGateway, UuidProvider uuidProvider) {
         log.debug("@StartSaga Handling {}", event);
-        UUID enrollmentId = UuidUtils.randomV7();
+        UUID enrollmentId = uuidProvider.generateUuid();
 
         commandGateway.send(
                 new CreateEnrollmentCommand(enrollmentId, event.lectureId(), event.studentId())
