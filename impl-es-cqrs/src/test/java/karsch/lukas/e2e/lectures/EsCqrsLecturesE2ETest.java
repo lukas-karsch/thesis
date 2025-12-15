@@ -94,8 +94,12 @@ public class EsCqrsLecturesE2ETest extends AbstractLecturesE2ETest {
 
     @Override
     protected CreateCourseSeedData createCourseSeedData() {
+        return createCourseSeedData(0);
+    }
+
+    private CreateCourseSeedData createCourseSeedData(int minimumCreditsRequired) {
         var courseId = UuidUtils.randomV7();
-        commandGateway.sendAndWait(new CreateCourseCommand(courseId, "Test course", null, 5, Collections.emptySet(), 0));
+        commandGateway.sendAndWait(new CreateCourseCommand(courseId, "Test course", null, 5, Collections.emptySet(), minimumCreditsRequired));
 
         var professorId = UuidUtils.randomV7();
         commandGateway.sendAndWait(new CreateProfessorCommand(professorId, "Mr.", "Bean"));
@@ -105,7 +109,7 @@ public class EsCqrsLecturesE2ETest extends AbstractLecturesE2ETest {
 
     @Override
     protected LectureSeedData createLectureSeedData(int minimumCreditsRequired) {
-        var courseSeedData = createCourseSeedData();
+        var courseSeedData = createCourseSeedData(minimumCreditsRequired);
 
         var lectureId = UuidUtils.randomV7();
         commandGateway.sendAndWait(new CreateLectureCommand(
@@ -132,8 +136,6 @@ public class EsCqrsLecturesE2ETest extends AbstractLecturesE2ETest {
 
     @Override
     protected OverlappingLecturesSeedData createOverlappingLecturesSeedData() {
-        var timeSlot = new TimeSlot(LocalDate.of(2025, 12, 1), LocalTime.of(10, 0), LocalTime.of(12, 0));
-
         var lecture1 = createLectureSeedData(0);
         var lecture2 = createLectureSeedData(0);
 

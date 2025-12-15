@@ -444,8 +444,6 @@ class LectureAggregateTest {
             var studentOnWaitlist1 = UUID.randomUUID(); // lower semester
             var studentOnWaitlist2 = UUID.randomUUID(); // higher semester, should be chosen
 
-            var createEvent = new LectureCreatedEvent(lectureId, UUID.randomUUID(), 1, List.of(), professorId, LectureStatus.DRAFT);
-
             var now1 = Instant.now();
             var now2 = now1.plusSeconds(1);
 
@@ -454,7 +452,7 @@ class LectureAggregateTest {
             when(studentValidator.findByIds(List.of(studentOnWaitlist1, studentOnWaitlist2))).thenReturn(List.of(student1Lookup, student2Lookup));
 
             fixture.given(
-                            createEvent,
+                            new LectureCreatedEvent(lectureId, UUID.randomUUID(), 1, List.of(), professorId, LectureStatus.DRAFT),
                             new StudentEnrolledEvent(lectureId, studentToDisenroll),
                             new StudentWaitlistedEvent(lectureId, studentOnWaitlist1, now1),
                             new StudentWaitlistedEvent(lectureId, studentOnWaitlist2, now2)
@@ -463,7 +461,7 @@ class LectureAggregateTest {
                     .expectEvents(
                             new StudentDisenrolledEvent(lectureId, studentToDisenroll),
                             new StudentRemovedFromWaitlistEvent(lectureId, studentOnWaitlist2),
-                            new StudentEnrolledEvent(lectureId, studentOnWaitlist2)
+                            new StudentEnrollmentApprovedEvent(lectureId, studentOnWaitlist2)
                     );
         }
 
@@ -492,7 +490,7 @@ class LectureAggregateTest {
                     .expectEvents(
                             new StudentDisenrolledEvent(lectureId, studentToDisenroll),
                             new StudentRemovedFromWaitlistEvent(lectureId, studentOnWaitlist1),
-                            new StudentEnrolledEvent(lectureId, studentOnWaitlist1)
+                            new StudentEnrollmentApprovedEvent(lectureId, studentOnWaitlist1)
                     );
         }
     }

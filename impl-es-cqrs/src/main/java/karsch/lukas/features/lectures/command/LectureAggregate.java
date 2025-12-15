@@ -191,7 +191,7 @@ public class LectureAggregate {
                     .ifPresent(nextEligibleStudent -> {
                         log.debug("Next eligible student for lecture {} is {}", this.id, nextEligibleStudent);
                         apply(new StudentRemovedFromWaitlistEvent(this.id, nextEligibleStudent));
-                        apply(new StudentEnrolledEvent(this.id, nextEligibleStudent));
+                        apply(new StudentEnrollmentApprovedEvent(this.id, nextEligibleStudent));
                     });
         }
     }
