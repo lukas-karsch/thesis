@@ -1,4 +1,4 @@
-package karsch.lukas.features.enrollment.query.credits;
+package karsch.lukas.features.stats.query.credits;
 
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
