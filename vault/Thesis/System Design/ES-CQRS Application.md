@@ -14,13 +14,15 @@ com.lukaskarsch.university
     │   │   └── dtos.kt 
     │   │   
     │   ├── command
+    │   │   ├── lookup
+    │   │   │   ├── EnrollmentLookupProjector.java  # Command-side lookups 
     │   │   ├── CourseAggregate.java   # The ES Aggregate
     │   │   └── CourseService.java     # Optional: orchestration only!
     │   │   
     │   ├── query
-    │   │   ├── StudentCreditsProjection.java  # Entity for Read DB
+    │   │   ├── StudentCreditsProjectionEntity.java  # Entity for Read DB
     │   │   ├── StudentCreditsRepository.java  # Spring Data Repo
-    │   │   └── StudentCreditsHandler.java     # Event Handlers & Query Handlers
+    │   │   └── StudentCreditsProjector.java     # Event Handlers & Query Handlers
     │   │   
     │   └── web              
     │       └── EnrollmentController.java
