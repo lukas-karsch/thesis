@@ -3,6 +3,7 @@ package karsch.lukas.features.enrollment.command;
 import karsch.lukas.features.enrollment.api.*;
 import karsch.lukas.features.enrollment.exception.MissingGradeException;
 import karsch.lukas.features.lectures.api.CreateEnrollmentCommand;
+import karsch.lukas.time.TimeSlotService;
 import lombok.extern.slf4j.Slf4j;
 import org.axonframework.commandhandling.CommandHandler;
 import org.axonframework.eventhandling.EventHandler;
@@ -48,8 +49,8 @@ public class EnrollmentAggregate {
     protected EnrollmentAggregate() {
     }
 
-    public void handle(AssignGradeCommand command) {
-        apply(new GradeAssignedEvent(this.id, command.assessmentId(), command.grade(), command.professorId()));
+    public void handle(AssignGradeCommand command, TimeSlotService timeSlotService) {
+        apply(new GradeAssignedEvent(this.id, command.assessmentId(), command.grade(), command.professorId(), this.studentId, timeSlotService.getCurrentTime()));
     }
 
     public void handle(UpdateGradeCommand command) {

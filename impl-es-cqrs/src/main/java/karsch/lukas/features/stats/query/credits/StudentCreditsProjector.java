@@ -4,7 +4,7 @@ import jakarta.transaction.Transactional;
 import karsch.lukas.course.CourseDTO;
 import karsch.lukas.features.course.api.FindCourseByIdQuery;
 import karsch.lukas.features.enrollment.api.CreditsAwardedEvent;
-import karsch.lukas.features.enrollment.api.GetCreditsForStudentQuery;
+import karsch.lukas.features.stats.api.GetCreditsForStudentQuery;
 import karsch.lukas.stats.AccumulatedCreditsResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -13,7 +13,6 @@ import org.axonframework.messaging.responsetypes.ResponseTypes;
 import org.axonframework.queryhandling.QueryGateway;
 import org.axonframework.queryhandling.QueryHandler;
 import org.springframework.retry.annotation.Retryable;
-import org.springframework.retry.support.RetrySynchronizationManager;
 import org.springframework.stereotype.Component;
 
 @Component
@@ -29,8 +28,6 @@ public class StudentCreditsProjector {
     @Transactional
     @Retryable(retryFor = {IllegalStateException.class})
     public void on(CreditsAwardedEvent event) {
-        logRetries();
-
         if (!event.hasPassed()) {
             return;
         }
@@ -56,12 +53,5 @@ public class StudentCreditsProjector {
                 .findById(query.studentId())
                 .map(r -> new AccumulatedCreditsResponse(r.getId(), r.getTotalCredits()))
                 .orElse(null);
-    }
-
-    private static void logRetries() {
-        // TODO create an aspect that does this for every method annotated with @Retryable
-        if (RetrySynchronizationManager.getContext().getRetryCount() > 0) {
-            log.debug("Retry #{}", RetrySynchronizationManager.getContext().getRetryCount());
-        }
     }
 }

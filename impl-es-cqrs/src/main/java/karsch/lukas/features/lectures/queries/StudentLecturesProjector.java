@@ -39,6 +39,7 @@ public class StudentLecturesProjector {
     public void on(StudentEnrolledEvent e) throws JsonProcessingException {
         logRetries();
 
+        // TODO remove this query
         var lecture = queryGateway.query(new FindLectureByIdQuery(e.lectureId()), ResponseTypes.instanceOf(LectureDetailDTO.class)).join();
         if (lecture == null) {
             throw new IllegalStateException("Lecture not found in repository");
@@ -50,6 +51,10 @@ public class StudentLecturesProjector {
                     newEntity.setId(e.studentId());
                     return newEntity;
                 });
+
+        if (entity.getEnrolledIds().contains(e.lectureId())) {
+            return;
+        }
 
         List<LectureDTO> enrolled = objectMapper.readerForListOf(LectureDTO.class).readValue(entity.getEnrolledJson());
         enrolled.add(new LectureDTO(
@@ -88,6 +93,10 @@ public class StudentLecturesProjector {
                     newEntity.setId(e.studentId());
                     return newEntity;
                 });
+
+        if (entity.getWaitlistedIds().contains(e.lectureId())) {
+            return;
+        }
 
         List<LectureDTO> waitlisted = objectMapper.readerForListOf(LectureDTO.class).readValue(entity.getWaitlistedJson());
         waitlisted.add(new LectureDTO(

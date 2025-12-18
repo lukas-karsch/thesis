@@ -29,16 +29,19 @@
 	    - use @SequenceNumber aggregateVersion in repositories (https://github.com/idugalic/digital-restaurant/blob/master/drestaurant-apps/drestaurant-monolith-rest/src/main/kotlin/com/drestaurant/query/handler/RestaurantHandler.kt) ??
 	    - improve thrown exceptions by adding more context, e.g. require aggregate ID 
 	    - contain JSON parsing and logic inside the projected entities 
-	    - set subscribing processors in bean, not application.properties 
+	    - maybe set subscribing processors in bean, not application.properties 
 	    - unit test event handlers and aggregates 
 	    - architecture tests:
 		    - validation services annotated 
+		- check if i have to configure TEPs to not be in-memory 
+		- every projection needs to handle events it cares about, DON'T query local projections 
+			- rename projections tables -> prefix with their context 
+		- maybe move external validation (using lookup tables) to message interceptors to avoid blocking the aggregate 
 - look at axon transaction manager? 
 	- what is it  
 	- for what can it be used?
 	- compare to [[Axon Unit Of Work]]
 - multiple aggregates invariants: read https://discuss.axoniq.io/t/need-advice-on-our-first-saga-use-case/2230/2
-- Lecture E2E Test: "It is not allowed to assign grades when the lecture status is not set to FINISHED" -> why? maybe drop this requirement 
 - Zitationsstil klären
 - [[LLMs bei der Bachelorarbeit (Infoveranstaltung)]] MindMap abholen
 ## Before Finishing

@@ -1,4 +1,4 @@
-package karsch.lukas.features.enrollment.api;
+package karsch.lukas.features.stats.api;
 
 import java.util.UUID;
 

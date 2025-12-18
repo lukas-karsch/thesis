@@ -32,7 +32,6 @@ import java.sql.Statement;
 import java.time.*;
 import java.util.Collections;
 import java.util.UUID;
-import java.util.concurrent.CompletableFuture;
 
 import static io.restassured.RestAssured.given;
 
@@ -114,10 +113,8 @@ public class EsCqrsStatsE2ETest extends AbstractStatsE2ETest {
         UUID lecture2 = UuidUtils.randomV7();
         commandGateway.sendAndWait(new CreateLectureCommand(lecture2, course2, 1, Collections.emptyList(), professorId));
 
-        CompletableFuture.allOf(
-                commandGateway.send(new AdvanceLectureLifecycleCommand(lecture1, LectureStatus.OPEN_FOR_ENROLLMENT, professorId)),
-                commandGateway.send(new AdvanceLectureLifecycleCommand(lecture2, LectureStatus.OPEN_FOR_ENROLLMENT, professorId))
-        );
+        commandGateway.sendAndWait(new AdvanceLectureLifecycleCommand(lecture1, LectureStatus.OPEN_FOR_ENROLLMENT, professorId));
+        commandGateway.sendAndWait(new AdvanceLectureLifecycleCommand(lecture2, LectureStatus.OPEN_FOR_ENROLLMENT, professorId));
 
         commandGateway.sendAndWait(new EnrollStudentCommand(lecture1, studentId));
         commandGateway.sendAndWait(new EnrollStudentCommand(lecture2, studentId));
@@ -128,20 +125,16 @@ public class EsCqrsStatsE2ETest extends AbstractStatsE2ETest {
         UUID assessment2 = UuidUtils.randomV7();
         commandGateway.sendAndWait(new AddAssessmentCommand(lecture2, assessment2, new TimeSlot(LocalDate.of(2025, 12, 5), LocalTime.of(10, 0), LocalTime.of(12, 0)), AssessmentType.EXAM, 1, professorId));
 
-        CompletableFuture.allOf(
-                commandGateway.send(new AdvanceLectureLifecycleCommand(lecture1, LectureStatus.IN_PROGRESS, professorId)),
-                commandGateway.send(new AdvanceLectureLifecycleCommand(lecture2, LectureStatus.IN_PROGRESS, professorId))
-        ).join();
+        commandGateway.sendAndWait(new AdvanceLectureLifecycleCommand(lecture1, LectureStatus.IN_PROGRESS, professorId));
+        commandGateway.sendAndWait(new AdvanceLectureLifecycleCommand(lecture2, LectureStatus.IN_PROGRESS, professorId));
 
         setSystemTime(Clock.fixed(LocalDateTime.of(2025, 12, 10, 12, 0).toInstant(ZoneOffset.UTC), ZoneId.of("UTC")));
 
         commandGateway.sendAndWait(new AssignGradeCommand(assessment1, lecture1, studentId, 100, professorId));
         commandGateway.sendAndWait(new AssignGradeCommand(assessment2, lecture2, studentId, 0, professorId));
 
-        CompletableFuture.allOf(
-                commandGateway.send(new AdvanceLectureLifecycleCommand(lecture1, LectureStatus.FINISHED, professorId)),
-                commandGateway.send(new AdvanceLectureLifecycleCommand(lecture2, LectureStatus.FINISHED, professorId))
-        ).join();
+        commandGateway.sendAndWait(new AdvanceLectureLifecycleCommand(lecture1, LectureStatus.FINISHED, professorId));
+        commandGateway.sendAndWait(new AdvanceLectureLifecycleCommand(lecture2, LectureStatus.FINISHED, professorId));
 
         return new GradingSeedData(
                 studentId,

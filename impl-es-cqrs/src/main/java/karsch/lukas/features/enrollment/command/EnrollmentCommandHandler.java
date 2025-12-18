@@ -58,7 +58,7 @@ public class EnrollmentCommandHandler {
         }
 
         repository.load(enrollmentId.toString())
-                .execute(enrollment -> enrollment.handle(command));
+                .execute(enrollment -> enrollment.handle(command, timeSlotService));
     }
 
     @CommandHandler

@@ -1,7 +1,8 @@
 package karsch.lukas.features.stats.web;
 
 import karsch.lukas.core.exceptions.ErrorDetails;
-import karsch.lukas.features.enrollment.api.GetCreditsForStudentQuery;
+import karsch.lukas.features.stats.api.GetCreditsForStudentQuery;
+import karsch.lukas.features.stats.api.GetGradesForStudentQuery;
 import karsch.lukas.response.ApiResponse;
 import karsch.lukas.stats.AccumulatedCreditsResponse;
 import karsch.lukas.stats.GradeHistoryResponse;
@@ -38,7 +39,14 @@ public class StatsController implements IStatsController {
 
     @Override
     public ResponseEntity<ApiResponse<GradesResponse>> getGrades(UUID studentId) {
-        return null;
+        var gradesResponse = queryGateway.query(new GetGradesForStudentQuery(studentId), ResponseTypes.instanceOf(GradesResponse.class)).join();
+        if (gradesResponse == null) {
+            throw new QueryExecutionException("Student " + studentId + " not found", null, ErrorDetails.RESOURCE_NOT_FOUND);
+        }
+
+        return new ResponseEntity<>(
+                new ApiResponse<>(HttpStatus.OK, gradesResponse), HttpStatus.OK
+        );
     }
 
     @Override
