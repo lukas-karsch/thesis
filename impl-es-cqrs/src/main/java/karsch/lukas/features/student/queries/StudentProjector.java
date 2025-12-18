@@ -1,4 +1,4 @@
-package karsch.lukas.features.student.query;
+package karsch.lukas.features.student.queries;
 
 import jakarta.annotation.Nullable;
 import jakarta.transaction.Transactional;

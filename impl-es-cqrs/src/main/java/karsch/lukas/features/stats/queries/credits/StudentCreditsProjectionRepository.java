@@ -1,4 +1,4 @@
-package karsch.lukas.features.stats.query.credits;
+package karsch.lukas.features.stats.queries.credits;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 

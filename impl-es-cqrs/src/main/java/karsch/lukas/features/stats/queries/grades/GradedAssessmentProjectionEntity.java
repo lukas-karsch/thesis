@@ -1,4 +1,4 @@
-package karsch.lukas.features.stats.query.grades;
+package karsch.lukas.features.stats.queries.grades;
 
 import jakarta.persistence.*;
 import karsch.lukas.stats.AssessmentType;

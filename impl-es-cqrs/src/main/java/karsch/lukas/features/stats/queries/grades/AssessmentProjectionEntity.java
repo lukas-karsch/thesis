@@ -1,4 +1,4 @@
-package karsch.lukas.features.stats.query.grades;
+package karsch.lukas.features.stats.queries.grades;
 
 import jakarta.persistence.*;
 import karsch.lukas.stats.AssessmentType;
@@ -9,7 +9,7 @@ import lombok.Setter;
 
 import java.util.UUID;
 
-@Entity
+@Entity(name = "grades.AssessmentProjectionEntity")
 @Table(
         name = "assessment_projection",
         indexes = {

@@ -1,8 +1,7 @@
-package karsch.lukas.features.stats.query.grades;
+package karsch.lukas.features.student.queries;
 
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
-import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -11,18 +10,19 @@ import lombok.Setter;
 import java.util.UUID;
 
 @Entity
-@Table(name = "simple_course_projection")
-@NoArgsConstructor
 @AllArgsConstructor
+@NoArgsConstructor
 @Getter
 @Setter
-public class SimpleCourseProjectionEntity {
+public class StudentProjectionEntity {
 
     @Id
     private UUID id;
 
-    private String name;
+    private String firstName;
 
-    private int credits;
+    private String lastName;
+
+    private int semester;
 
 }

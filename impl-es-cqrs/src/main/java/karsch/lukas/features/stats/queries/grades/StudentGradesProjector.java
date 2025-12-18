@@ -1,4 +1,4 @@
-package karsch.lukas.features.stats.query.grades;
+package karsch.lukas.features.stats.queries.grades;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -15,6 +15,7 @@ import karsch.lukas.stats.GradedAssessmentDTO;
 import karsch.lukas.stats.GradesResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.axonframework.config.ProcessingGroup;
 import org.axonframework.eventhandling.EventHandler;
 import org.axonframework.queryhandling.QueryHandler;
 import org.springframework.retry.annotation.Retryable;
@@ -26,6 +27,7 @@ import java.util.List;
 @Component
 @RequiredArgsConstructor
 @Slf4j
+@ProcessingGroup("grades")
 public class StudentGradesProjector {
 
     private final StudentGradesRepository studentGradesRepository;

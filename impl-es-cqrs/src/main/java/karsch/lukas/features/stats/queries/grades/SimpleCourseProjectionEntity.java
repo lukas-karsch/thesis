@@ -1,4 +1,4 @@
-package karsch.lukas.features.stats.query.grades;
+package karsch.lukas.features.stats.queries.grades;
 
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
@@ -11,16 +11,18 @@ import lombok.Setter;
 import java.util.UUID;
 
 @Entity
-@Table(name = "simple_lecture_projection")
+@Table(name = "simple_course_projection")
 @NoArgsConstructor
 @AllArgsConstructor
 @Getter
 @Setter
-public class SimpleLectureProjectionEntity {
+public class SimpleCourseProjectionEntity {
+
     @Id
     private UUID id;
 
-    private UUID courseId;
+    private String name;
 
-    private String courseName;
+    private int credits;
+
 }

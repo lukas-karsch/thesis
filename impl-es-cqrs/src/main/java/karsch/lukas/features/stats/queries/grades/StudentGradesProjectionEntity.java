@@ -1,10 +1,7 @@
-package karsch.lukas.features.stats.query.grades;
+package karsch.lukas.features.stats.queries.grades;
 
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
 import java.util.UUID;
 
@@ -30,6 +27,7 @@ public class StudentGradesProjectionEntity {
 
 @NoArgsConstructor
 @AllArgsConstructor
+@EqualsAndHashCode
 class StudentGradesProjectionEntityId {
     private UUID studentId;
     private UUID lectureId;

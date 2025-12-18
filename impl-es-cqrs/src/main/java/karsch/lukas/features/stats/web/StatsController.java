@@ -2,6 +2,7 @@ package karsch.lukas.features.stats.web;
 
 import karsch.lukas.core.exceptions.ErrorDetails;
 import karsch.lukas.features.stats.api.GetCreditsForStudentQuery;
+import karsch.lukas.features.stats.api.GetGradeHistoryQuery;
 import karsch.lukas.features.stats.api.GetGradesForStudentQuery;
 import karsch.lukas.response.ApiResponse;
 import karsch.lukas.stats.AccumulatedCreditsResponse;
@@ -51,6 +52,10 @@ public class StatsController implements IStatsController {
 
     @Override
     public ResponseEntity<ApiResponse<GradeHistoryResponse>> getGradesHistory(UUID studentId, UUID lectureAssessmentId, LocalDateTime startDate, LocalDateTime endDate) {
-        return null;
+        var result = queryGateway.query(new GetGradeHistoryQuery(studentId, lectureAssessmentId, startDate, endDate), ResponseTypes.instanceOf(GradeHistoryResponse.class)).join();
+
+        return new ResponseEntity<>(
+                new ApiResponse<>(HttpStatus.OK, result), HttpStatus.OK
+        );
     }
 }
