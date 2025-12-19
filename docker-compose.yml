@@ -1,0 +1,64 @@
+version: '3.8'
+
+services:
+  postgres:
+    image: postgres:14-alpine
+    environment:
+      - POSTGRES_DB=thesis_db
+      - POSTGRES_USER=user
+      - POSTGRES_PASSWORD=password
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: [ "CMD-SHELL", "pg_isready -U user -d thesis_db" ]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  axon-server:
+    image: axoniq/axonserver:latest-jdk-17-dev
+    ports:
+      - "8024:8024"
+      - "8124:8124"
+    environment:
+      - AXONIQ_AXONSERVER_DEVMODE_ENABLED=true
+
+  crud-app:
+    build:
+      context: ./impl-crud
+      dockerfile: Dockerfile
+    ports:
+      - "8080:8080"
+    environment:
+      - DB_HOST=postgres
+      - DB_PORT=5432
+      - DB_NAME=thesis_db
+      - DB_USER=user
+      - DB_PASSWORD=password
+    depends_on:
+      postgres:
+        condition: service_healthy
+
+  es-cqrs-app:
+    build:
+      context: ./impl-es-cqrs
+      dockerfile: Dockerfile
+    ports:
+      - "8081:8080" # Run on a different host port to avoid conflicts
+    environment:
+      - DB_HOST=postgres
+      - DB_PORT=5432
+      - DB_NAME=thesis_db
+      - DB_USER=user
+      - DB_PASSWORD=password
+      - AXON_HOST=axon-server
+    depends_on:
+      postgres:
+        condition: service_healthy
+      axon-server:
+        condition: service_started
+
+volumes:
+  postgres_data:

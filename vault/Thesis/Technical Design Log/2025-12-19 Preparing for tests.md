@@ -12,3 +12,15 @@ My apps are not building.
 What I had to do to fix it:
 - **Lombok**: add build plugin: https://projectlombok.org/setup/maven
 - **Dependencies**: Had trouble with the "test-jar" dependency on `test-suite`. Had to add a `<goal>` to the `test-suite` pom.xml
+## Dockerizing
+After fixing the `mvn clean package` errors, i tried to run `docker-compose up --build -d crud-app`. This seemed to work, but the spring container immediately exited with this message: no main manifest attribute, in application.jar
+
+Apparently, a spring maven build plugin was missing:
+```xml
+<plugin>  
+    <groupId>org.springframework.boot</groupId>  
+    <artifactId>spring-boot-maven-plugin</artifactId>  
+</plugin>
+```
+Yes, that was it! 
+CRUD application is running ✅
