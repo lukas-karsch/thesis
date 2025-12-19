@@ -12,7 +12,7 @@ import org.springframework.stereotype.Component;
 @Component
 @ProcessingGroup(StudentAggregate.PROCESSING_GROUP)
 @RequiredArgsConstructor
-public class StudentLookupProjector {
+class StudentLookupProjector {
 
     private final StudentLookupRepository studentLookupRepository;
 

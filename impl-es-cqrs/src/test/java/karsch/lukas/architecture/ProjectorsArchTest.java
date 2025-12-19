@@ -20,4 +20,9 @@ public class ProjectorsArchTest {
     public static ArchRule projectorsShouldHaveAProcessingGroup = classes()
             .that().haveSimpleNameEndingWith("Projector")
             .should().beAnnotatedWith(ProcessingGroup.class);
+
+    @ArchTest
+    public static ArchRule projectorsShouldBePackagePrivate = classes()
+            .that().haveSimpleNameEndingWith("Projector")
+            .should().bePackagePrivate();
 }

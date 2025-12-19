@@ -29,7 +29,7 @@ import java.util.UUID;
 @RequiredArgsConstructor
 @Slf4j
 @ProcessingGroup("grades")
-public class StudentGradesProjector {
+class StudentGradesProjector {
 
     private final StudentGradesRepository studentGradesRepository;
     private final AssessmentProjectionRepository assessmentProjectionRepository;

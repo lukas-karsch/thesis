@@ -35,7 +35,7 @@ import static karsch.lukas.core.json.Defaults.EMPTY_LIST;
 @Slf4j
 @ProcessingGroup("lectures")
 @RequiredArgsConstructor
-public class LectureProjector {
+class LectureProjector {
 
     private final LectureDetailRepository lectureDetailRepository;
     private final QueryGateway queryGateway;

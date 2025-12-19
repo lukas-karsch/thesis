@@ -26,7 +26,7 @@ import java.util.NoSuchElementException;
 @Slf4j
 @ProcessingGroup("lectures")
 @RequiredArgsConstructor
-public class StudentLecturesProjector {
+class StudentLecturesProjector {
 
     private final QueryGateway queryGateway;
     private final ObjectMapper objectMapper;

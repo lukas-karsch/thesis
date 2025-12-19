@@ -10,7 +10,7 @@ import java.util.UUID;
 
 @Entity(name = "gradeHistory.AssessmentProjectionEntity")
 @Table(
-        name = "stats__assessment_projection",
+        name = "stats__gradeHistory__assessment_projection",
         indexes = @Index(name = "assessment_projection__idx_lecture_id", columnList = "lecture_id")
 )
 @NoArgsConstructor

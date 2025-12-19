@@ -11,7 +11,7 @@ import org.springframework.stereotype.Component;
 @Component
 @RequiredArgsConstructor
 @ProcessingGroup(LectureAggregate.PROCESSING_GROUP)
-public class AssessmentLookupProjector {
+class AssessmentLookupProjector {
 
     private final AssessmentLookupRepository assessmentLookupRepository;
 

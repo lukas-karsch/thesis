@@ -20,7 +20,7 @@ import org.springframework.stereotype.Component;
 @RequiredArgsConstructor
 @Slf4j
 @ProcessingGroup("credits")
-public class StudentCreditsProjector {
+class StudentCreditsProjector {
 
     private final StudentCreditsProjectionRepository studentCreditsRepository;
 

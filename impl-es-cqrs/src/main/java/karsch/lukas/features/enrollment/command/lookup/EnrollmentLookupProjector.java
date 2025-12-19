@@ -10,7 +10,7 @@ import org.springframework.stereotype.Component;
 @Component
 @RequiredArgsConstructor
 @ProcessingGroup(EnrollmentAggregate.PROCESSING_GROUP)
-public class EnrollmentLookupProjector {
+class EnrollmentLookupProjector {
 
     private final EnrollmentLookupRepository enrollmentLookupRepository;
 

@@ -21,7 +21,7 @@ import java.util.stream.Collectors;
 @Component
 @ProcessingGroup(LectureAggregate.PROCESSING_GROUP)
 @RequiredArgsConstructor
-public class LectureTimeSlotProjector {
+class LectureTimeSlotProjector {
     private final LectureTimeslotLookupRepository lectureTimeslotLookupRepository;
 
     @EventHandler

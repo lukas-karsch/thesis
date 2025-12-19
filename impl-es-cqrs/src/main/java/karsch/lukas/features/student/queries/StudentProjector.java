@@ -16,7 +16,7 @@ import org.springframework.stereotype.Component;
 @Slf4j
 @ProcessingGroup("students")
 @RequiredArgsConstructor
-public class StudentProjector {
+class StudentProjector {
 
     private final StudentRepository studentRepository;
 

@@ -25,7 +25,7 @@ import java.util.UUID;
 @RequiredArgsConstructor
 @Slf4j
 @ProcessingGroup("gradeHistory")
-public class GradeHistoryProjector {
+class GradeHistoryProjector {
 
     private final EventStore eventStore;
 
