@@ -31,7 +31,7 @@ class ProfessorAggregate {
     @EventSourcingHandler
     public void on(ProfessorCreatedEvent event) {
         this.id = event.id();
-        //  first and last name are only interesting for the read model -> can leave them out in the aggregate
+        //  first and last name are only interesting for the read model -> no need to store them in the aggregate
     }
 
 }

@@ -21,7 +21,6 @@ import java.time.*;
 @Slf4j
 @RequiredArgsConstructor
 public class DateTimeActuatorEndpoints {
-
     private final DateTimeProvider dateTimeProvider;
 
     @ReadOperation()

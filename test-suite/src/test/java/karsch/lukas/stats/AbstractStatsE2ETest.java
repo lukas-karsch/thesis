@@ -88,6 +88,8 @@ public abstract class AbstractStatsE2ETest implements BaseE2ETest {
 
         var gradingSeedData = createGradingSeedData();
 
+        setSystemTime(Clock.fixed(LocalDateTime.of(2025, 11, 24, 13, 0, 0).toInstant(ZoneOffset.UTC), ZoneOffset.UTC));
+
         given()
                 .header(getProfessorAuthHeader(gradingSeedData.professorId()))
                 .contentType(ContentType.JSON)

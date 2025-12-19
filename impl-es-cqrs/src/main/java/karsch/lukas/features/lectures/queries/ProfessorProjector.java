@@ -12,7 +12,6 @@ import org.springframework.stereotype.Component;
 @RequiredArgsConstructor
 @ProcessingGroup("professors")
 class ProfessorProjector {
-    // TODO maybe move the read model for professor to lectures?
 
     private final ProfessorRepository repository;
 
