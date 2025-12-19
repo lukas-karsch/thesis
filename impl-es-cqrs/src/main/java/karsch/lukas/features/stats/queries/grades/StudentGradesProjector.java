@@ -23,6 +23,7 @@ import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
 @Component
 @RequiredArgsConstructor
@@ -35,6 +36,7 @@ public class StudentGradesProjector {
     private final SimpleCourseProjectionRepository simpleCourseProjectionRepository;
     private final SimpleLectureProjectionRepository simpleLectureProjectionRepository;
     private final GradedAssessmentProjectionRepository gradedAssessmentProjectionRepository;
+
     private final ObjectMapper objectMapper;
 
     @EventHandler
@@ -63,8 +65,7 @@ public class StudentGradesProjector {
     @Retryable(retryFor = IllegalStateException.class)
     public void on(GradeAssignedEvent gradeAssignedEvent) throws JsonProcessingException {
         // record the grade itself
-        var assessment = assessmentProjectionRepository.findById(gradeAssignedEvent.assessmentId())
-                .orElseThrow(() -> new IllegalStateException("Assessment not found in AssessmentProjectionRepository"));
+        AssessmentProjectionEntity assessment = getAssessmentById(gradeAssignedEvent.assessmentId());
 
         boolean gradeIsAlreadyRecorded = studentGradesRepository.existsById(
                 new StudentGradesProjectionEntityId(gradeAssignedEvent.studentId(), assessment.getLectureId())
@@ -115,6 +116,11 @@ public class StudentGradesProjector {
         studentGradesRepository.save(newGradesProjectionEntity);
     }
 
+    private AssessmentProjectionEntity getAssessmentById(UUID assessmentId) {
+        return assessmentProjectionRepository.findById(assessmentId)
+                .orElseThrow(() -> new IllegalStateException("Assessment not found in AssessmentProjectionRepository"));
+    }
+
     private int calculateCombinedGrade(List<GradedAssessmentProjectionEntity> grades) {
         if (grades.isEmpty()) {
             return 0;
@@ -147,16 +153,49 @@ public class StudentGradesProjector {
     @EventHandler
     @Transactional
     @Retryable(retryFor = IllegalStateException.class)
-    public void on(GradeUpdatedEvent gradeUpdatedEvent) {
-        throw new RuntimeException("on(GradeUpdatedEvent): Not implemented");
+    public void on(GradeUpdatedEvent gradeUpdatedEvent) throws JsonProcessingException {
+        var assessment = getAssessmentById(gradeUpdatedEvent.assessmentId());
+
+        var gradedAssessmentEntity = gradedAssessmentProjectionRepository
+                .findById(new GradedAssessmentId(assessment.getId(), gradeUpdatedEvent.studentId()))
+                .orElseThrow();
+
+        gradedAssessmentEntity.setGrade(gradeUpdatedEvent.grade());
+        gradedAssessmentProjectionRepository.save(gradedAssessmentEntity);
+
+        var studentGrade = studentGradesRepository.findById(new StudentGradesProjectionEntityId(gradeUpdatedEvent.studentId(), assessment.getLectureId()))
+                .orElseThrow();
+
+        GradeDTO gradeDTO = objectMapper.readerFor(GradeDTO.class).readValue(studentGrade.getGradeDtoJson());
+
+        // recalculate credits and build new DTO
+        long assessmentsForLectureCount = assessmentProjectionRepository
+                .countByLectureId(assessment.getLectureId());
+
+        List<GradedAssessmentProjectionEntity> gradesForLecture = gradedAssessmentProjectionRepository
+                .findByLectureIdAndStudentId(assessment.getLectureId(), gradeUpdatedEvent.studentId());
+
+        int combinedGrade = calculateCombinedGrade(gradesForLecture);
+        boolean lectureIsFailed = combinedGrade < 50;
+        var newGradeDto = new GradeDTO(
+                lectureIsFailed ? 0 : combinedGrade,
+                lectureIsFailed ? 0 : gradeDTO.credits(),
+                gradeDTO.lecture(),
+                map(gradesForLecture),
+                gradesForLecture.size() == assessmentsForLectureCount,
+                lectureIsFailed
+        );
+        studentGrade.setGradeDtoJson(objectMapper.writeValueAsString(newGradeDto));
+        studentGradesRepository.save(studentGrade);
     }
 
     @QueryHandler
     public GradesResponse getGradesForStudent(GetGradesForStudentQuery query) throws JsonProcessingException {
-        var grades = studentGradesRepository.findByStudentId(query.studentId());
+        List<StudentGradesProjectionEntity> grades = studentGradesRepository.findByStudentId(query.studentId());
+
         List<GradeDTO> gradeDTOS = new ArrayList<>();
-        for (var g : grades) {
-            gradeDTOS.add(objectMapper.readerFor(GradeDTO.class).readValue(g.getGradeDtoJson()));
+        for (var grade : grades) {
+            gradeDTOS.add(objectMapper.readerFor(GradeDTO.class).readValue(grade.getGradeDtoJson()));
         }
 
         return new GradesResponse(

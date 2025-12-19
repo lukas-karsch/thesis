@@ -47,7 +47,7 @@ public class LectureProjector {
     @EventHandler
     @Retryable(retryFor = {IllegalStateException.class, CompletionException.class})
     public void on(LectureCreatedEvent event) throws JsonProcessingException {
-        var courseFuture = queryGateway.query(
+        var courseFuture = queryGateway.query( // TODO Fix, dont use queryGateway here
                 new FindCourseByIdQuery(event.courseId()),
                 ResponseTypes.instanceOf(CourseDTO.class)
         );

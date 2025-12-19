@@ -51,6 +51,8 @@ public abstract class AbstractStatsE2ETest implements BaseE2ETest {
     @Test
     @DisplayName("A student should see his accumulated credits")
     void getAccumulatedCredits() {
+        setSystemTime(Clock.fixed(LocalDateTime.of(2025, 11, 24, 12, 0, 0).toInstant(ZoneOffset.UTC), ZoneOffset.UTC));
+
         var gradingSeedData = createGradingSeedData();
 
         given()
@@ -63,6 +65,8 @@ public abstract class AbstractStatsE2ETest implements BaseE2ETest {
     @Test
     @DisplayName("Should correctly return the student's grades")
     void getGradesForStudent() {
+        setSystemTime(Clock.fixed(LocalDateTime.of(2025, 11, 24, 12, 0, 0).toInstant(ZoneOffset.UTC), ZoneOffset.UTC));
+
         var gradingSeedData = createGradingSeedData();
 
         given()
@@ -80,6 +84,8 @@ public abstract class AbstractStatsE2ETest implements BaseE2ETest {
     @Test
     @DisplayName("Should return the correct grade history for a lecture assessment")
     void getGradesHistory() {
+        setSystemTime(Clock.fixed(LocalDateTime.of(2025, 11, 24, 12, 0, 0).toInstant(ZoneOffset.UTC), ZoneOffset.UTC));
+
         var gradingSeedData = createGradingSeedData();
 
         given()
