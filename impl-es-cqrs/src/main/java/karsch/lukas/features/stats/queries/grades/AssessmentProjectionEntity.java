@@ -11,7 +11,7 @@ import java.util.UUID;
 
 @Entity(name = "grades.AssessmentProjectionEntity")
 @Table(
-        name = "assessment_projection",
+        name = "stats__assessment_projection",
         indexes = {
                 @Index(name = "assessment__idx_lecture_id", columnList = "lecture_id")
         }

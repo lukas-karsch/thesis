@@ -11,7 +11,7 @@ import lombok.Setter;
 import java.util.UUID;
 
 @Entity
-@Table(name = "student_credits_projection")
+@Table(name = "stats__student_credits_projection")
 @NoArgsConstructor
 @AllArgsConstructor
 @Getter

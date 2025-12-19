@@ -6,7 +6,7 @@ import lombok.*;
 import java.util.UUID;
 
 @Entity
-@Table(name = "student_grades_projection")
+@Table(name = "stats__student_grades_projection")
 @NoArgsConstructor
 @AllArgsConstructor
 @Getter
@@ -28,6 +28,8 @@ public class StudentGradesProjectionEntity {
 @NoArgsConstructor
 @AllArgsConstructor
 @EqualsAndHashCode
+@Getter
+@Setter
 class StudentGradesProjectionEntityId {
     private UUID studentId;
     private UUID lectureId;

@@ -2,17 +2,14 @@ package karsch.lukas.features.stats.queries.grades;
 
 import jakarta.persistence.*;
 import karsch.lukas.stats.AssessmentType;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
 import java.time.LocalDateTime;
 import java.util.UUID;
 
 @Entity
 @Table(
-        name = "graded_assessment_projection",
+        name = "stats__graded_assessment_projection",
         indexes = {
                 @Index(name = "graded_assessment__idx_student_id_lecture_id", columnList = "student_id,lecture_id"),
                 @Index(name = "graded_assessment__idx_lecture_id", columnList = "lecture_id"),
@@ -43,5 +40,18 @@ public class GradedAssessmentProjectionEntity {
 
     @Column(name = "lecture_id")
     private UUID lectureId;
+
+}
+
+@AllArgsConstructor
+@NoArgsConstructor
+@EqualsAndHashCode
+@Getter
+@Setter
+class GradedAssessmentId {
+
+    private UUID assessmentId;
+
+    private UUID studentId;
 
 }
