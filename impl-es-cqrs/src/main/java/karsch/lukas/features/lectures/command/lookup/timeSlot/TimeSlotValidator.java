@@ -1,8 +1,8 @@
 package karsch.lukas.features.lectures.command.lookup.timeSlot;
 
+import karsch.lukas.core.lookup.TimeSlotEmbeddable;
 import karsch.lukas.features.enrollment.command.lookup.EnrollmentLookupEntity;
 import karsch.lukas.features.enrollment.command.lookup.IEnrollmentValidator;
-import karsch.lukas.features.lectures.command.lookup.assessment.TimeSlotEmbeddable;
 import karsch.lukas.lecture.TimeSlot;
 import karsch.lukas.time.TimeSlotComparator;
 import karsch.lukas.time.TimeSlotService;

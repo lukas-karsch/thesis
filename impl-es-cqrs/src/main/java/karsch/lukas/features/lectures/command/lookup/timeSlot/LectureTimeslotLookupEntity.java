@@ -1,8 +1,8 @@
 package karsch.lukas.features.lectures.command.lookup.timeSlot;
 
 import jakarta.persistence.*;
-import karsch.lukas.features.lectures.command.lookup.assessment.TimeSlotEmbeddable;
-import karsch.lukas.features.lectures.command.lookup.assessment.TimeSlotEmbeddableComparator;
+import karsch.lukas.core.lookup.TimeSlotEmbeddable;
+import karsch.lukas.core.lookup.TimeSlotEmbeddableComparator;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;

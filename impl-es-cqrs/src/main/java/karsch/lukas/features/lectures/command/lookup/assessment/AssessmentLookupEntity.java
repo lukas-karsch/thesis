@@ -1,6 +1,7 @@
 package karsch.lukas.features.lectures.command.lookup.assessment;
 
 import jakarta.persistence.*;
+import karsch.lukas.core.lookup.TimeSlotEmbeddable;
 import karsch.lukas.stats.AssessmentType;
 import lombok.AllArgsConstructor;
 import lombok.Getter;

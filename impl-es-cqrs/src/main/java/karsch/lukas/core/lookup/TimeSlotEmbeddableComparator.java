@@ -1,8 +1,6 @@
-package karsch.lukas.features.lectures.command.lookup.assessment;
+package karsch.lukas.core.lookup;
 
 import java.util.Comparator;
-
-// TODO: move
 
 public class TimeSlotEmbeddableComparator implements Comparator<TimeSlotEmbeddable> {
 

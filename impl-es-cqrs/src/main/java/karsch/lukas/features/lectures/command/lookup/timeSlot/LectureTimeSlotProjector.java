@@ -1,11 +1,11 @@
 package karsch.lukas.features.lectures.command.lookup.timeSlot;
 
 import jakarta.transaction.Transactional;
+import karsch.lukas.core.lookup.TimeSlotEmbeddable;
+import karsch.lukas.core.lookup.TimeSlotEmbeddableComparator;
 import karsch.lukas.features.lectures.api.LectureCreatedEvent;
 import karsch.lukas.features.lectures.api.TimeSlotsAssignedEvent;
 import karsch.lukas.features.lectures.command.LectureAggregate;
-import karsch.lukas.features.lectures.command.lookup.assessment.TimeSlotEmbeddable;
-import karsch.lukas.features.lectures.command.lookup.assessment.TimeSlotEmbeddableComparator;
 import karsch.lukas.lecture.TimeSlot;
 import lombok.RequiredArgsConstructor;
 import org.axonframework.config.ProcessingGroup;

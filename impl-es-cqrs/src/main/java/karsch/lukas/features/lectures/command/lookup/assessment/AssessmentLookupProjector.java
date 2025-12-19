@@ -1,5 +1,6 @@
 package karsch.lukas.features.lectures.command.lookup.assessment;
 
+import karsch.lukas.core.lookup.TimeSlotEmbeddable;
 import karsch.lukas.features.lectures.api.AssessmentAddedEvent;
 import karsch.lukas.features.lectures.command.LectureAggregate;
 import lombok.RequiredArgsConstructor;
