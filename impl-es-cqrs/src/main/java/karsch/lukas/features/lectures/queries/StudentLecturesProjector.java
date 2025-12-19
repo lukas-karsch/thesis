@@ -40,20 +40,26 @@ public class StudentLecturesProjector {
         logRetries();
 
         // TODO remove this query
-        var lecture = queryGateway.query(new FindLectureByIdQuery(e.lectureId()), ResponseTypes.instanceOf(LectureDetailDTO.class)).join();
-        if (lecture == null) {
-            throw new IllegalStateException("Lecture not found in repository");
+        var lectureQuery = queryGateway.query(new FindLectureByIdQuery(e.lectureId()), ResponseTypes.instanceOf(LectureDetailDTO.class));
+
+        try {
+            var insert = new StudentLecturesProjectionEntity();
+            insert.setId(e.studentId());
+            studentLecturesRepository.saveAndFlush(insert);
+        } catch (Exception ignored) {
+            log.debug("on(StudentEnrolledEvent): StudentLecturesProjectionEntity with id={} already exists", e.studentId());
         }
 
         var entity = studentLecturesRepository.findById(e.studentId())
-                .orElseGet(() -> {
-                    var newEntity = new StudentLecturesProjectionEntity();
-                    newEntity.setId(e.studentId());
-                    return newEntity;
-                });
+                .orElseThrow();
 
         if (entity.getEnrolledIds().contains(e.lectureId())) {
             return;
+        }
+
+        var lecture = lectureQuery.join();
+        if (lecture == null) {
+            throw new IllegalStateException("Lecture not found in repository");
         }
 
         List<LectureDTO> enrolled = objectMapper.readerForListOf(LectureDTO.class).readValue(entity.getEnrolledJson());

@@ -108,7 +108,7 @@ public class LectureAggregate {
 
         if (timeSlotService.isLive(command.timeSlot()) || timeSlotService.hasEnded(command.timeSlot())) {
             log.debug("Current system time is {}", timeSlotService.getCurrentTime());
-            throw new DomainException("Can not add assessment. TimeSlot " + command.timeSlot() + " is in the past.");
+            throw new DomainException("Can not add assessment. TimeSlot " + command.timeSlot() + " is in the past. System time: " + timeSlotService.getCurrentTime());
         }
 
         apply(new AssessmentAddedEvent(

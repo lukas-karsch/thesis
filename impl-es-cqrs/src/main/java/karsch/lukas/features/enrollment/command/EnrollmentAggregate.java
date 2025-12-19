@@ -53,12 +53,12 @@ public class EnrollmentAggregate {
         apply(new GradeAssignedEvent(this.id, command.assessmentId(), command.grade(), command.professorId(), this.studentId, timeSlotService.getCurrentTime()));
     }
 
-    public void handle(UpdateGradeCommand command) {
+    public void handle(UpdateGradeCommand command, TimeSlotService timeSlotService) {
         if (!this.grades.containsKey(command.assessmentId())) {
             throw new MissingGradeException(command.assessmentId(), command.studentId());
         }
 
-        apply(new GradeUpdatedEvent(this.id, command.assessmentId(), command.grade(), command.professorId()));
+        apply(new GradeUpdatedEvent(this.id, command.assessmentId(), command.grade(), command.professorId(), this.studentId, timeSlotService.getCurrentTime()));
     }
 
     @CommandHandler
