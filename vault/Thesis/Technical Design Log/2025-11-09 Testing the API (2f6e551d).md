@@ -15,11 +15,9 @@ Those will be contract tests - no performance. Test that the interfaces are impl
 #performance
 Repeated (e2e) tests that measure performance.
 Requirements here:
-
 - make sure to save all data points
 - make sure that test setups are identical
 - repeat the tests an appropriate number of times
-
 ## Problem with Axon
 I tried the following approach:
 - test-suite package contains two application runners that start the impl-crud and impl-es-cqrs implementations

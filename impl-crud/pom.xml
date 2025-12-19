@@ -16,7 +16,7 @@
     <url>https://gitlab.mi.hdm-stuttgart.de/lk224/thesis/-/tree/master/impl-crud</url>
 
     <dependencies>
-        <!-- Project Dependency -->
+        <!-- Local project Dependency -->
         <dependency>
             <groupId>karsch.lukas</groupId>
             <artifactId>api</artifactId>
@@ -88,4 +88,22 @@
             <scope>test</scope>
         </dependency>
     </dependencies>
+
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <configuration>
+                    <annotationProcessorPaths>
+                        <path>
+                            <groupId>org.projectlombok</groupId>
+                            <artifactId>lombok</artifactId>
+                            <version>1.18.42</version>
+                        </path>
+                    </annotationProcessorPaths>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
 </project>

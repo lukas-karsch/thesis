@@ -1,0 +1,1 @@
+Today, every E2E test passes for both apps. 

@@ -27,7 +27,6 @@
     - CQRS
 	    - try to use TEPs in my E2E tests
 	    - use @SequenceNumber aggregateVersion in repositories (https://github.com/idugalic/digital-restaurant/blob/master/drestaurant-apps/drestaurant-monolith-rest/src/main/kotlin/com/drestaurant/query/handler/RestaurantHandler.kt) ??
-	    - improve thrown exceptions by adding more context, e.g. require aggregate ID 
 	    - contain JSON parsing and logic inside the projected entities? 
 	    - maybe set subscribing processors in bean, not application.properties 
 	    - unit test event handlers and aggregates 
