@@ -17,7 +17,6 @@ import org.axonframework.messaging.responsetypes.ResponseTypes;
 import org.axonframework.queryhandling.QueryGateway;
 import org.axonframework.queryhandling.QueryHandler;
 import org.springframework.retry.annotation.Retryable;
-import org.springframework.retry.support.RetrySynchronizationManager;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
@@ -37,8 +36,6 @@ public class StudentLecturesProjector {
     @Transactional
     @Retryable(retryFor = {IllegalStateException.class})
     public void on(StudentEnrolledEvent e) throws JsonProcessingException {
-        logRetries();
-
         // TODO remove this query
         var lectureQuery = queryGateway.query(new FindLectureByIdQuery(e.lectureId()), ResponseTypes.instanceOf(LectureDetailDTO.class));
 
@@ -86,8 +83,6 @@ public class StudentLecturesProjector {
     @Transactional
     @Retryable(retryFor = {IllegalStateException.class})
     public void on(StudentWaitlistedEvent e) throws JsonProcessingException {
-        logRetries();
-
         var lecture = queryGateway.query(new FindLectureByIdQuery(e.lectureId()), ResponseTypes.instanceOf(LectureDetailDTO.class)).join();
         if (lecture == null) {
             throw new IllegalStateException("Lecture not found in repository");
@@ -123,7 +118,6 @@ public class StudentLecturesProjector {
     @Transactional
     @Retryable
     public void on(WaitlistClearedEvent event) {
-        logRetries();
         var affectedStudents = studentLecturesRepository.findByLectureIdInWaitlist(event.lectureId());
         affectedStudents
                 .forEach(s -> {
@@ -144,8 +138,6 @@ public class StudentLecturesProjector {
     @Transactional
     @Retryable(retryFor = {NoSuchElementException.class})
     public void on(StudentRemovedFromWaitlistEvent event) throws JsonProcessingException {
-        logRetries();
-
         var student = studentLecturesRepository.findById(event.studentId()).orElseThrow();
 
         List<LectureDTO> waitlistedLectures = objectMapper.readerForListOf(LectureDTO.class).readValue(student.getWaitlistedJson());
@@ -160,8 +152,6 @@ public class StudentLecturesProjector {
     @Transactional
     @Retryable(retryFor = {NoSuchElementException.class})
     public void on(StudentDisenrolledEvent event) throws JsonProcessingException {
-        logRetries();
-
         var student = studentLecturesRepository.findById(event.studentId()).orElseThrow();
 
         List<LectureDTO> enrolledLectures = objectMapper.readerForListOf(LectureDTO.class).readValue(student.getEnrolledJson());
@@ -181,13 +171,6 @@ public class StudentLecturesProjector {
                 reader.readValue(entity.getEnrolledJson()),
                 reader.readValue(entity.getWaitlistedJson())
         );
-    }
-
-    private static void logRetries() {
-        // TODO create an aspect that does this for every method annotated with @Retryable
-        if (RetrySynchronizationManager.getContext().getRetryCount() > 0) {
-            log.debug("Retry #{}", RetrySynchronizationManager.getContext().getRetryCount());
-        }
     }
 
 }
