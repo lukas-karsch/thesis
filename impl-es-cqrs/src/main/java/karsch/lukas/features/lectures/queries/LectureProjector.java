@@ -7,7 +7,6 @@ import karsch.lukas.course.CourseDTO;
 import karsch.lukas.features.course.api.FindCourseByIdQuery;
 import karsch.lukas.features.lectures.api.*;
 import karsch.lukas.features.lectures.exceptions.LectureNotFoundException;
-import karsch.lukas.features.professor.api.FindProfessorByIdQuery;
 import karsch.lukas.features.student.api.FindStudentByIdQuery;
 import karsch.lukas.lecture.*;
 import karsch.lukas.professor.ProfessorDTO;
@@ -28,7 +27,6 @@ import java.time.ZoneId;
 import java.util.HashSet;
 import java.util.List;
 import java.util.NoSuchElementException;
-import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.CompletionException;
 
 import static karsch.lukas.core.json.Defaults.EMPTY_LIST;
@@ -43,30 +41,22 @@ public class LectureProjector {
     private final QueryGateway queryGateway;
     private final ObjectMapper objectMapper;
     private final QueryUpdateEmitter updateEmitter;
+    private final ProfessorRepository professorRepository;
 
     @EventHandler
     @Retryable(retryFor = {IllegalStateException.class, CompletionException.class})
     public void on(LectureCreatedEvent event) throws JsonProcessingException {
-        var courseFuture = queryGateway.query( // TODO Fix, dont use queryGateway here
+        var courseFuture = queryGateway.query( // TODO Don't use queryGateway here
                 new FindCourseByIdQuery(event.courseId()),
                 ResponseTypes.instanceOf(CourseDTO.class)
         );
 
-        var professorFuture = queryGateway.query(
-                new FindProfessorByIdQuery(event.professorId()),
-                ResponseTypes.instanceOf(ProfessorDTO.class)
-        );
-
-        CompletableFuture.allOf(courseFuture, professorFuture).join();
+        var professor = professorRepository.findById(event.professorId())
+                .orElseThrow(() -> new IllegalStateException("Professor " + event.professorId() + " not found"));
 
         var course = courseFuture.join();
-        var professor = professorFuture.join();
-
         if (course == null) {
             throw new IllegalStateException("Course not found for ID: " + event.courseId());
-        }
-        if (professor == null) {
-            throw new IllegalStateException("Professor not found for ID: " + event.professorId());
         }
 
         var lectureEntity = new LectureDetailProjectionEntity();

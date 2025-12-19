@@ -1,4 +1,4 @@
-package karsch.lukas.features.professor.queries;
+package karsch.lukas.features.lectures.queries;
 
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;

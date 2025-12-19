@@ -1,13 +1,10 @@
-package karsch.lukas.features.professor.queries;
+package karsch.lukas.features.lectures.queries;
 
-import karsch.lukas.features.professor.api.FindProfessorByIdQuery;
 import karsch.lukas.features.professor.api.ProfessorCreatedEvent;
-import karsch.lukas.professor.ProfessorDTO;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.axonframework.config.ProcessingGroup;
 import org.axonframework.eventhandling.EventHandler;
-import org.axonframework.queryhandling.QueryHandler;
 import org.springframework.stereotype.Component;
 
 @Component
@@ -28,22 +25,5 @@ class ProfessorProjector {
         entity.setLastName(event.lastName());
 
         repository.save(entity);
-    }
-
-    @QueryHandler
-    public ProfessorDTO findById(FindProfessorByIdQuery query) {
-        return toDto(repository.findById(query.professorId()).orElse(null));
-    }
-
-    private ProfessorDTO toDto(ProfessorProjectionEntity entity) {
-        if (entity == null) {
-            return null;
-        }
-
-        return new ProfessorDTO(
-                entity.getId(),
-                entity.getFirstName(),
-                entity.getLastName()
-        );
     }
 }

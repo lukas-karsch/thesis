@@ -1,4 +1,4 @@
-package karsch.lukas.features.professor.queries;
+package karsch.lukas.features.lectures.queries;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
