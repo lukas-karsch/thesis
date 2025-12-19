@@ -6,5 +6,5 @@ import org.springframework.stereotype.Repository;
 import java.util.UUID;
 
 @Repository
-public interface SimpleCourseProjectionRepository extends JpaRepository<SimpleCourseProjectionEntity, UUID> {
+interface SimpleCourseProjectionRepository extends JpaRepository<SimpleCourseProjectionEntity, UUID> {
 }

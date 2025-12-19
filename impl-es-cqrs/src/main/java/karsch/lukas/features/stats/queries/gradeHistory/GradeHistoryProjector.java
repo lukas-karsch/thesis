@@ -16,9 +16,7 @@ import org.axonframework.eventsourcing.eventstore.EventStore;
 import org.axonframework.queryhandling.QueryHandler;
 import org.springframework.stereotype.Component;
 
-import java.time.Instant;
 import java.time.LocalDateTime;
-import java.time.ZoneId;
 import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.UUID;
@@ -99,10 +97,6 @@ public class GradeHistoryProjector {
             case GradeUpdatedEvent gradeUpdatedEvent -> gradeUpdatedEvent.assignedAt();
             default -> throw new IllegalStateException();
         };
-    }
-
-    private LocalDateTime fromInstant(Instant instant) {
-        return LocalDateTime.ofInstant(instant, ZoneId.of("UTC"));
     }
 
     private UUID getEnrollmentIdFromQuery(GetGradeHistoryQuery query) {

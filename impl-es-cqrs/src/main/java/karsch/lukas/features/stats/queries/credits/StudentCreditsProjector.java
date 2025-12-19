@@ -8,6 +8,7 @@ import karsch.lukas.features.stats.api.GetCreditsForStudentQuery;
 import karsch.lukas.stats.AccumulatedCreditsResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.axonframework.config.ProcessingGroup;
 import org.axonframework.eventhandling.EventHandler;
 import org.axonframework.messaging.responsetypes.ResponseTypes;
 import org.axonframework.queryhandling.QueryGateway;
@@ -18,6 +19,7 @@ import org.springframework.stereotype.Component;
 @Component
 @RequiredArgsConstructor
 @Slf4j
+@ProcessingGroup("credits")
 public class StudentCreditsProjector {
 
     private final StudentCreditsProjectionRepository studentCreditsRepository;

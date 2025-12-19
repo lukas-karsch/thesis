@@ -32,7 +32,7 @@
 	    - maybe set subscribing processors in bean, not application.properties 
 	    - unit test event handlers and aggregates 
 	    - architecture tests:
-		    - validation services annotated 
+		    - validation services annotated with @Service
 		- check if i have to configure TEPs to not be in-memory 
 		- every projection needs to handle events it cares about, DON'T query local projections 
 			- rename projections tables -> prefix with their context 

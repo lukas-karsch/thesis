@@ -7,6 +7,6 @@ import java.util.List;
 import java.util.UUID;
 
 @Repository
-public interface StudentGradesRepository extends JpaRepository<StudentGradesProjectionEntity, StudentGradesProjectionEntityId> {
+interface StudentGradesRepository extends JpaRepository<StudentGradesProjectionEntity, StudentGradesProjectionEntityId> {
     List<StudentGradesProjectionEntity> findByStudentId(UUID studentId);
 }
