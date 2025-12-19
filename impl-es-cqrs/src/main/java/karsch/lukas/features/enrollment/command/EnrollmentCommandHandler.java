@@ -33,18 +33,13 @@ public class EnrollmentCommandHandler {
     private final IAssessmentValidator assessmentValidator;
     private final TimeSlotService timeSlotService;
 
-    // TODO remove duplicate code
-
     @CommandHandler
     public void handle(AssignGradeCommand command) {
         UUID enrollmentId = getEnrollmentId(command.lectureId(), command.studentId());
 
-        LectureLookupEntity lecture = lectureValidator.findById(command.lectureId())
-                .orElseThrow(() -> new LectureNotFoundException(command.lectureId()));
+        LectureLookupEntity lecture = getLectureLookupEntity(command.lectureId());
 
-        if (!lecture.getProfessorId().equals(command.professorId())) {
-            throw new NotAllowedException("Professor " + command.professorId() + " is not allowed to assign grades to lecture " + command.lectureId());
-        }
+        validateActingProfessor(lecture, command.professorId());
 
         if (lecture.getLectureStatus() != LectureStatus.IN_PROGRESS) {
             throw new DomainException("Can only assign grades to a lecture which is IN_PROGRESS");
@@ -65,12 +60,9 @@ public class EnrollmentCommandHandler {
     public void handle(UpdateGradeCommand command) {
         UUID enrollmentId = getEnrollmentId(command.lectureId(), command.studentId());
 
-        LectureLookupEntity lecture = lectureValidator.findById(command.lectureId())
-                .orElseThrow(() -> new LectureNotFoundException(command.lectureId()));
+        LectureLookupEntity lecture = getLectureLookupEntity(command.lectureId());
 
-        if (!lecture.getProfessorId().equals(command.professorId())) {
-            throw new NotAllowedException("Professor " + command.professorId() + " is not allowed to assign grades to lecture " + command.lectureId());
-        }
+        validateActingProfessor(lecture, command.professorId());
 
         repository.load(enrollmentId.toString())
                 .execute(enrollment -> enrollment.handle(command, timeSlotService));
@@ -79,6 +71,20 @@ public class EnrollmentCommandHandler {
     private UUID getEnrollmentId(UUID lectureId, UUID studentId) {
         return enrollmentValidator.getEnrollmentId(lectureId, studentId)
                 .orElseThrow(() -> new StudentNotEnrolledException(lectureId, studentId));
+    }
+
+    private LectureLookupEntity getLectureLookupEntity(UUID command) {
+        return lectureValidator.findById(command)
+                .orElseThrow(() -> new LectureNotFoundException(command));
+    }
+
+    /**
+     * @throws NotAllowedException if the professor is not allowed to assign grades to this lecture
+     */
+    private static void validateActingProfessor(LectureLookupEntity lecture, UUID command) {
+        if (!lecture.getProfessorId().equals(command)) {
+            throw new NotAllowedException("Professor " + command + " is not allowed to assign grades to lecture " + lecture.getId());
+        }
     }
 
 }
