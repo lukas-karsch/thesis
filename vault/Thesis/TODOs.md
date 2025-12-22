@@ -20,6 +20,8 @@
 - roter Faden / Gliederung entwickeln (und besprechen)
 - create GEMINI.md file in the project root #llm
 - code
+	- api
+		- add swagger docs / javadoc to controllers 
     - CRUD
 	    - check if indexes are set up correctly 
 	    - clean up StatsService 
@@ -31,9 +33,9 @@
 	    - maybe set subscribing processors in bean, not application.properties 
 	    - unit test event handlers and aggregates 
 		- check if i have to configure TEPs to not be in-memory 
-		- every projection needs to handle events it cares about, DON'T query local projections 
-			- rename projections tables -> prefix with their context 
+		- every projection needs to handle events it cares about, DON'T query local 
 		- maybe move external validation (using lookup tables) to message interceptors to avoid blocking the aggregate 
+		- fix failing unit test 
 - look at axon transaction manager? 
 	- what is it  
 	- for what can it be used?

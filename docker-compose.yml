@@ -1,5 +1,3 @@
-version: '3.8'
-
 services:
   postgres:
     image: postgres:14-alpine
@@ -18,12 +16,21 @@ services:
       retries: 5
 
   axon-server:
-    image: axoniq/axonserver:latest-jdk-17-dev
+    image: axoniq/axonserver:latest
+    hostname: axon-server
     ports:
       - "8024:8024"
       - "8124:8124"
-    environment:
+    environment: # TODO clean up
       - AXONIQ_AXONSERVER_DEVMODE_ENABLED=true
+      - AXONIQ_AXONSERVER_HOSTNAME=axon-server
+      - AXONIQ_AXONSERVER_STANDALONE=true # make sure a node and default context exists
+    healthcheck:
+      test: [ "CMD-SHELL", "wget -qO- http://localhost:8024/actuator/health | grep -q '\"status\":\"UP\"'" ]
+      interval: 5s
+      timeout: 3s
+      retries: 15
+      start_period: 30s
 
   crud-app:
     build:
@@ -58,7 +65,7 @@ services:
       postgres:
         condition: service_healthy
       axon-server:
-        condition: service_started
+        condition: service_healthy
 
 volumes:
   postgres_data:

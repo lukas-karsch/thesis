@@ -1,6 +1,6 @@
 Docker can be used to containerize my Spring applications.
 ## Commands 
-Build the image in maven:
+Build the image:
 **CRUD** 
 ```bash
 docker build -t lkarsch/impl-crud-docker .
@@ -10,6 +10,7 @@ docker build -t lkarsch/impl-crud-docker .
 ```bash
 docker build -t lkarsch/impl-es-cqrs-docker .
 ```
+
 **Run with docker-compose**
 ```bash
 docker-compose up --build -d crud-app

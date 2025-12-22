@@ -17,6 +17,15 @@ export const options = {
     },
 };
 
+const uuids = {}
+
+const getUuid = (VU) => {
+    if (!uuids[VU]) {
+        uuids[VU] = crypto.randomUUID();
+    }
+    return uuids[VU];
+}
+
 export default function () {
     const url = `${TARGET_HOST}/courses`;
 
@@ -31,7 +40,7 @@ export default function () {
     const params = {
         headers: {
             'Content-Type': 'application/json',
-            'customAuth': 'professor_1' // Assuming this is a required header
+            'customAuth': `professor_${getUuid(__VU)}`
         },
     };
 
