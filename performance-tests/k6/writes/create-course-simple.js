@@ -1,13 +1,11 @@
 import http from 'k6/http';
 import {check, sleep} from 'k6';
 
-// The host to target, configurable via an environment variable
 const TARGET_HOST = __ENV.HOST || 'http://localhost:8080';
 
-// Test options
 export const options = {
     stages: [
-        {duration: '30s', target: 20}, // Ramp-up to 20 virtual users over 30s
+        {duration: '10s', target: 20}, // Ramp-up to 20 virtual users over 30s
         {duration: '1m', target: 20},  // Stay at 20 virtual users for 1 minute
         {duration: '10s', target: 0},   // Ramp-down to 0 users
     ],
@@ -18,7 +16,6 @@ export const options = {
 };
 
 const uuids = {}
-
 const getUuid = (VU) => {
     if (!uuids[VU]) {
         uuids[VU] = crypto.randomUUID();
@@ -47,7 +44,7 @@ export default function () {
     const res = http.post(url, payload, params);
 
     check(res, {
-        'is status 200 or 201': (r) => r.status === 200 || r.status === 201,
+        'is status 201': (r) => r.status === 201,
     });
 
     sleep(1); // Wait for 1 second between requests per VU

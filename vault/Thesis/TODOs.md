@@ -32,13 +32,12 @@
 	    - contain JSON parsing and logic inside the projected entities? 
 	    - maybe set subscribing processors in bean, not application.properties 
 	    - unit test event handlers and aggregates 
-		- check if i have to configure TEPs to not be in-memory 
 		- every projection needs to handle events it cares about, DON'T query local 
 		- maybe move external validation (using lookup tables) to message interceptors to avoid blocking the aggregate 
 		- fix failing unit test 
 - look at axon transaction manager? 
 	- what is it  
-	- for what can it be used?
+	- for what can it be used / how is it used 
 	- compare to [[Axon Unit Of Work]]
 - multiple aggregates invariants: read https://discuss.axoniq.io/t/need-advice-on-our-first-saga-use-case/2230/2
 - Zitationsstil klären

@@ -1,3 +1,4 @@
+#performance 
 To do the performance tests, I will dockerize the application. 
 ## Steps 
 1. Make sure both applications can build with maven 

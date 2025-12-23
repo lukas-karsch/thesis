@@ -15,3 +15,5 @@ docker build -t lkarsch/impl-es-cqrs-docker .
 ```bash
 docker-compose up --build -d crud-app
 ```
+## Run Configurations
+I added IntelliJ run configurations to automatically build the images and start docker compose. 

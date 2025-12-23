@@ -5,6 +5,9 @@ Message intercepting: https://docs.axoniq.io/axon-framework-reference/4.11/messa
 Building an Axon application from scratch: https://docs.axoniq.io/bikerental-demo/main/
 ## Accessing Aggregates 
 Can inject an `EventSourcingRepository<T>` to access aggregates. This will replay events and give access to version-controlled aggregates (that can throw `ConcurrencyException`)
+## Axon Server Dashboard 
+![[Pasted image 20251223012238.png]]
+Access event payloads, commands etc. Available at `localhost:8024` or at the testcontainer (check SpringBoot logs)
 ## Links 
 - [[CQRS (Command Query Responsibility Segregation)]]
 - [[AXON Subscription Queries]]
