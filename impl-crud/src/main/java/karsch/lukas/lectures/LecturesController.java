@@ -30,7 +30,7 @@ public class LecturesController implements ILecturesController {
     @Override
     public ResponseEntity<ApiResponse<EnrollStudentResponse>> enrollToLecture(UUID lectureId) {
         if (!"student".equals(requestContext.getUserType())) {
-            throw new NotAuthenticatedException("Only users can enroll to courses");
+            throw new NotAuthenticatedException("Only students can enroll to courses");
         }
 
         var enrollmentResult = lecturesService.enrollStudent(requestContext.getUserId(), lectureId);
@@ -44,7 +44,7 @@ public class LecturesController implements ILecturesController {
     @Override
     public ResponseEntity<ApiResponse<Void>> disenrollFromLecture(UUID lectureId) {
         if (!"student".equals(requestContext.getUserType())) {
-            throw new NotAuthenticatedException("Only users can disenroll from courses");
+            throw new NotAuthenticatedException("Only students can disenroll from courses");
         }
 
         lecturesService.disenrollStudent(requestContext.getUserId(), lectureId);

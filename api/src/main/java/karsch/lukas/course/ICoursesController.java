@@ -1,14 +1,14 @@
 package karsch.lukas.course;
 
 import io.swagger.v3.oas.annotations.Operation;
-import io.swagger.v3.oas.annotations.Parameter;
-import io.swagger.v3.oas.annotations.enums.ParameterIn;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import karsch.lukas.response.ApiResponse;
+import karsch.lukas.swagger.OpenApiConfig;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -32,9 +32,9 @@ public interface ICoursesController {
     @ResponseStatus(HttpStatus.CREATED)
     @Operation(
             summary = "Create a new course",
-            description = "Creates a new course. Requires professor privileges.",
-            parameters = {@Parameter(in = ParameterIn.HEADER, name = "customAuth", description = "A custom auth header in the format of professor_<uuid>")}
+            description = "Creates a new course. Requires professor privileges."
     )
+    @SecurityRequirement(name = OpenApiConfig.PROFESSOR_AUTH)
     @ApiResponses(value = {
             @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "201", description = "Course created successfully",
                     content = @Content(schema = @Schema(implementation = UUID.class))),
