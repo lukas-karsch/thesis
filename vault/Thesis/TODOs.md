@@ -20,8 +20,6 @@
 - roter Faden / Gliederung entwickeln (und besprechen)
 - create GEMINI.md file in the project root #llm
 - code
-	- api
-		- add swagger docs / javadoc to controllers 
     - CRUD
 	    - check if indexes are set up correctly 
 	    - clean up StatsService 
@@ -34,7 +32,6 @@
 	    - unit test event handlers and aggregates 
 		- every projection needs to handle events it cares about, DON'T query local 
 		- maybe move external validation (using lookup tables) to message interceptors to avoid blocking the aggregate 
-		- fix failing unit test 
 - look at axon transaction manager? 
 	- what is it  
 	- for what can it be used / how is it used 
@@ -46,3 +43,7 @@
 - Check README
 - Clone repo in blank folder, check everything works
     - -> refine "installation" section of README
+- Make sure swagger UI works and requests can be sent 
+- Demonstrate how to start docker 
+- Demonstrate how to start test run with testcontainers 
+- Make sure external links all exist (e.g. to Docker, Axon, etc)

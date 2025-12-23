@@ -299,6 +299,9 @@ class LectureAggregateTest {
 
         @Test
         void testEnrollStudent_shouldThrow_ifLectureNotOpenForEnrollment() {
+            when(studentCreditsValidator.hasPassedAllPrerequisites(any(), any())).thenReturn(true);
+            when(studentCreditsValidator.hasEnoughCreditsToEnroll(any(), any())).thenReturn(true);
+
             fixture.given(lectureCreatedEvent(lectureId, professorId))
                     .when(new EnrollStudentCommand(lectureId, UUID.randomUUID()))
                     .expectException(DomainException.class);
@@ -306,6 +309,9 @@ class LectureAggregateTest {
 
         @Test
         void testEnrollStudent_shouldThrow_ifStudentAlreadyEnrolled() {
+            when(studentCreditsValidator.hasPassedAllPrerequisites(any(), any())).thenReturn(true);
+            when(studentCreditsValidator.hasEnoughCreditsToEnroll(any(), any())).thenReturn(true);
+
             var studentId = UUID.randomUUID();
             fixture.given(
                             lectureCreatedEvent(lectureId, professorId),
@@ -332,6 +338,9 @@ class LectureAggregateTest {
         void testEnrollStudent_shouldThrow_ifOverlappingLectures() {
             when(timeSlotValidator.overlapsWithOtherLectures(any(), any())).thenReturn(true);
 
+            when(studentCreditsValidator.hasPassedAllPrerequisites(any(), any())).thenReturn(true);
+            when(studentCreditsValidator.hasEnoughCreditsToEnroll(any(), any())).thenReturn(true);
+
             fixture.given(
                             lectureCreatedEvent(lectureId, professorId),
                             new LectureLifecycleAdvancedEvent(lectureId, LectureStatus.OPEN_FOR_ENROLLMENT, professorId)
@@ -349,6 +358,7 @@ class LectureAggregateTest {
             when(dateTimeProvider.getClock()).thenReturn(Clock.fixed(now, ZoneId.systemDefault()));
 
             when(studentCreditsValidator.hasEnoughCreditsToEnroll(any(), any())).thenReturn(true);
+            when(studentCreditsValidator.hasPassedAllPrerequisites(any(), any())).thenReturn(true);
 
             fixture.given(
                             new LectureCreatedEvent(lectureId, UUID.randomUUID(), 1, List.of(), professorId, LectureStatus.DRAFT),
@@ -364,6 +374,7 @@ class LectureAggregateTest {
             var studentId = UUID.randomUUID();
 
             when(studentCreditsValidator.hasEnoughCreditsToEnroll(any(), any())).thenReturn(true);
+            when(studentCreditsValidator.hasPassedAllPrerequisites(any(), any())).thenReturn(true);
 
             fixture.given(
                             new LectureCreatedEvent(lectureId, courseId, 1, List.of(), professorId, LectureStatus.DRAFT),
