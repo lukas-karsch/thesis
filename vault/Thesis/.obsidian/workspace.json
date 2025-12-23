@@ -6,7 +6,6 @@
       {
         "id": "13cf22d972eda8f8",
         "type": "tabs",
-        "dimension": 53.477051460361615,
         "children": [
           {
             "id": "c44da624bc1d47f5",
@@ -14,31 +13,12 @@
             "state": {
               "type": "markdown",
               "state": {
-                "file": "TODOs.md",
+                "file": "Writing/Outline.md",
                 "mode": "source",
                 "source": false
               },
               "icon": "lucide-file",
-              "title": "TODOs"
-            }
-          }
-        ]
-      },
-      {
-        "id": "c5ea62254fdb57d9",
-        "type": "tabs",
-        "dimension": 46.522948539638385,
-        "children": [
-          {
-            "id": "d20dfe0ade0e190d",
-            "type": "leaf",
-            "state": {
-              "type": "pdf",
-              "state": {
-                "file": "Documents/Expose Lukas Karsch Bachelorarbeit_02.pdf"
-              },
-              "icon": "lucide-file-text",
-              "title": "Expose Lukas Karsch Bachelorarbeit_02"
+              "title": "Outline"
             }
           }
         ]
@@ -191,13 +171,13 @@
   },
   "active": "c44da624bc1d47f5",
   "lastOpenFiles": [
-    "Writing/Outline.md",
-    "TODOs.md",
+    "Schedule.md",
     "Thesis - Landing Page.md",
+    "TODOs.md",
+    "Writing/Outline.md",
     "Documents/BachelorarbeitVorlage.pdf",
     "Documents/Expose Lukas Karsch Bachelorarbeit_02.pdf",
     "Writing",
-    "Schedule.md",
     "Technologies/k6.md",
     "Technologies/Spring Retry.md",
     "Technical Design Log/2025-12-12 ArchUnit.md",

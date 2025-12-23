@@ -3,7 +3,7 @@ This file contains my current outline, always up to date. It was created by look
 - orientieren an https://www.dirk-heuzeroth.de/forschung-und-lehre/#theses-types (Messungs-Thesis) und [[BachelorarbeitVorlage.pdf]]
 ---
 ## Ehrenwörtliche Erklärung
-## 1. Table of contents  
+## 1. Table of contents 
 ## 2. Introduction
 ### 2.1 Motivation
 ### 2.2 Research question(s)
@@ -19,7 +19,7 @@ This file contains my current outline, always up to date. It was created by look
 #### 3.3.1 Why is traceability a business requirement 
 #### 3.3.2 Audit Logs 
 #### 3.3.3 Event Streams 
-#### 3.3.4 Differences between replaying an audit log and an event stream
+#### 3.3.4 Rebuilding state from an audit log and an event stream
 ### 3.4 Event Sourcing and event-driven architectures
 - Formal definition
 - event stream as single source of truth 
@@ -41,7 +41,7 @@ This file contains my current outline, always up to date. It was created by look
 ### 5.2 Performance measurement 
 -> meant to answer the "performance" part of my research question 
 Benchmarking via load testing. Time taken per request (Median, P95); CPU utilization, database IO; Database size for a fixed number of operations ... 
-### 5.3 Scalability 
+### 5.3 Scalability or flexibility (TODO)
 -> meant to answer the "scalability" part of my research question 
 - measure db size, IO; suggest ways to scale 
 #todo **QUESTION**: replace with "flexibility"? 
