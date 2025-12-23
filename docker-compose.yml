@@ -21,7 +21,7 @@ services:
     ports:
       - "8024:8024"
       - "8124:8124"
-    environment: # TODO clean up
+    environment:
       - AXONIQ_AXONSERVER_DEVMODE_ENABLED=true
       - AXONIQ_AXONSERVER_HOSTNAME=axon-server
       - AXONIQ_AXONSERVER_STANDALONE=true # make sure a node and default context exists
@@ -53,7 +53,7 @@ services:
       context: ./impl-es-cqrs
       dockerfile: Dockerfile
     ports:
-      - "8081:8080" # Run on a different host port to avoid conflicts
+      - "8081:8080"
     environment:
       - DB_HOST=postgres
       - DB_PORT=5432
