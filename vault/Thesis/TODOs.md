@@ -32,6 +32,7 @@
 	    - unit test event handlers and aggregates 
 		- every projection needs to handle events it cares about, DON'T query local 
 		- maybe move external validation (using lookup tables) to message interceptors to avoid blocking the aggregate 
+		- is it clean that the lookup tables are injected into every command side? -> should they also keep their own projections? but they would have to be subscribing anyways.. so maybe it doesnt matter because its a "smell" either way 
 - look at axon transaction manager? 
 	- what is it  
 	- for what can it be used / how is it used 
