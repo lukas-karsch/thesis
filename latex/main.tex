@@ -193,7 +193,7 @@ The data in layered applications is often times modeled in an \emph{anemic} way.
 
 The core idea of \acrshort{ddd} is that the primary focus of a software project should not be the underlying technologies, but the domain. The domain is the topic with which a software concerns itself. The software design should be based on a model that closely matches the domain and reflects a deep understanding of business requirements. \parencite[8, 12]{evans_domain-driven_2004}
 
-This domain model is built from a \emph{ubiquitous language} which is a language shared between domain experts and software experts. This ubiquitous language is built directly from the domain model and must be used in all communications regarding the software. \parencite[24-26]{evans_domain-driven_2004}
+This domain model is built from a \emph{ubiquitous language} which is a language shared between domain experts and software experts. This ubiquitous language is built directly from the real domain and must be used in all communications regarding the software. \parencite[24-26]{evans_domain-driven_2004}
 
 %s TODO here, talk about model driven design -> way from the language to the code 
 
@@ -225,6 +225,10 @@ Using a \gls{rdm} does not mean that there should be no layers, the opposite is 
     \item The operation is stateless
 \end{itemize}
 
+\subsection{Event Sourcing and event-driven architectures}
+
+\subsection{(Eventual) Consistency}
+
 \subsection{Traceability and auditing in IT systems}
 
 \subsubsection{Why is traceability a business requirement}
@@ -234,10 +238,6 @@ Using a \gls{rdm} does not mean that there should be no layers, the opposite is 
 \subsubsection{Event Streams}
 
 \subsubsection{Rebuilding state from an audit log and an event stream}
-
-\subsection{Event Sourcing and event-driven architectures}
-
-\subsection{(Eventual) Consistency}
 
 \subsection{Scalability of systems}
 

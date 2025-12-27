@@ -35,7 +35,8 @@
               "title": "Outline"
             }
           }
-        ]
+        ],
+        "currentTab": 1
       }
     ],
     "direction": "vertical"
@@ -183,10 +184,10 @@
       "bases:Create new base": false
     }
   },
-  "active": "c44da624bc1d47f5",
+  "active": "48197a41a731044b",
   "lastOpenFiles": [
-    "Writing/Outline.md",
     "Literature/Domain-Driven Design Quickly, A Summary of Eric Evans' Domain-Driven Design.md",
+    "Writing/Outline.md",
     "Literature/Topics I should not miss.md",
     "Literature/Design Patterns by Gamma et all.md",
     "Technologies/Docker.md",
