@@ -4,13 +4,42 @@
 \usepackage{graphicx}
 \usepackage[automake]{glossaries}
 
+\usepackage[
+  backend=biber,
+  style=authoryear, % or numeric, ieee, apa, ...
+]{biblatex}
+
+\addbibresource{references.bib}
+
 \makeglossaries
 
-\newglossaryentry{API}
+\newglossaryentry{api}
 {
     name=API, 
     description={API stands for \emph{Application Programming Interface}. It describes the public interface of a module or service, often exposed over a network}
 }
+
+\newglossaryentry{rest}
+{
+    name=REST,
+    description={REST stands for \emph{Representational State Transfer}. It is an architectural style for distributed hypermedia systems.}
+}
+
+\newglossaryentry{http}
+{
+    name=HTTP,
+    description={HTTP stands for \emph{Hypertext Transfer Protocol}. It is a protocol used in internet communication and was defined in RFC 2616 \parencite{rfc2616}}
+}
+
+\newacronym{www}{WWW}{World Wide Web}
+
+\newacronym{hateoas}{HATEOAS}{Hypermedia as the engine of application state}
+
+\newacronym{html}{HTML}{Hypertext Markup Language}
+
+\newacronym{json}{JSON}{JavaScript Object Notation}
+
+\newacronym{xml}{XML}{Extensible Markup Language}
 
 \begin{document}
 
@@ -79,7 +108,7 @@
 
 \section{Introduction}
 
-I will build an \gls{API} using two different architectural approaches.
+here i use \gls{api}
 
 \subsection{Motivation}
 
@@ -91,7 +120,29 @@ I will build an \gls{API} using two different architectural approaches.
 
 \section{Basics}
 
-\subsection{Layered Architecture Foundation (CRUD)}
+\subsection{WWW, Web APIs, REST}
+
+The \acrfull{www} is a connected information network used to exchange data. Resources are can be accessed via URIs which are transferred using formats like JSON or HTML via protocols like \gls{http}. HTTP is a stateless protocol based on a request-response structure. It supports standardized request types (e.g. GET and POST) which convey a semantic meaning \parencite{jacobs_architecture_2004}.
+
+Web APIs are interfaces which enable applications to communicate. They use HTTP as network-based API \parencite[138]{fielding_architectural_2000}. Modern APIs typically follow \gls{rest} principles. REST stands for "Representational State Transfer" and describes an architectural style for distributed hypermedia systems \parencite[76]{fielding_architectural_2000}.
+
+REST APIs follow principles derived from a set of constraints (e.g. imposed by the HTTP protocol). One of them is "stateless communication": Communication between clients and the server must be \emph{stateless}, meaning the client has to attach all necessary information for the server to fully understand the request.
+
+Further, in REST applications, every resource must be addressable via a unique ID, which can then be used to derive URIs to access the resource. Below are some examples for resources and URIs which could be derived from them:
+
+\begin{itemize}
+    \item Book; ID=1; URI=\texttt{http://example.com/books/1}
+    \item Book; ID=2; URI=\texttt{http://example.com/books/2}
+    \item Author; ID=100; URI=\texttt{http://example.com/authors/100}
+\end{itemize}
+
+The "\acrfull{hateoas}" principle describes that resources should be linked to each other. Clients should be able to control the application by following a series of links provided by the server \parencite{tilkov_brief_2007}.
+
+Every resource must support the same interface, typically that of HTTP methods (GET, POST, PUT, etc.) where operations on the resource are mapped to one method of the interface. A POST operation on a customer might map to the \texttt{createCustomer()} operation on a service.
+
+Resources are decoupled from their representations. Client can request different representations of a resource, depending on their needs \parencite{tilkov_brief_2007}: a web browser might request \acrshort{html}, while another server or application might request \acrshort{xml} or \acrshort{json}.
+
+\subsection{Layered Architecture Foundations (CRUD)}
 
 \subsection{DDD Architectural Foundations}
 
@@ -143,8 +194,8 @@ I will build an \gls{API} using two different architectural approaches.
 
 Finally, I'm done.
 
-\section{Glossary}
-
 \printglossaries
+
+\printbibliography
 
 \end{document} % This is the end of the document

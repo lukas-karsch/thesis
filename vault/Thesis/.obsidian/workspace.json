@@ -13,12 +13,12 @@
             "state": {
               "type": "markdown",
               "state": {
-                "file": "Technologies/Docker.md",
+                "file": "Writing/Outline.md",
                 "mode": "source",
                 "source": false
               },
               "icon": "lucide-file",
-              "title": "Docker"
+              "title": "Outline"
             }
           }
         ]
@@ -171,6 +171,7 @@
   },
   "active": "c44da624bc1d47f5",
   "lastOpenFiles": [
+    "Technologies/Docker.md",
     "Technologies/Event Sourcing.md",
     "TODOs.md",
     "Writing/Outline.md",
@@ -193,7 +194,6 @@
     "images",
     "Technologies/Awaitility.md",
     "Technologies/Axon Unit Of Work.md",
-    "Technologies/Docker.md",
     "Technologies/JMH - Performance Testing.md",
     "Technical Design Log/2025-11-09 Testing the API (2f6e551d).md",
     "Technical Design Log/2025-12-13 My first Saga.md",

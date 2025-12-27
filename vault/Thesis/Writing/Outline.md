@@ -12,22 +12,24 @@ This file contains my current outline, always up to date. It was created by look
 ### 2.4 Structure of the paper  
 - every chapter, short description of contents 
 ## 3. Basics
-### 3.1 Layered Architecture Foundation (CRUD)
+### 3.1 Web APIs 
+http, (stateless) communication, the term "API", REST principles 
+### 3.2 Layered Architecture Foundations (CRUD)
 - anemic data model 
-### 3.2 DDD Architectural Foundations 
-### 3.3 Traceability and auditing in IT systems 
-#### 3.3.1 Why is traceability a business requirement 
-#### 3.3.2 Audit Logs 
-#### 3.3.3 Event Streams 
-#### 3.3.4 Rebuilding state from an audit log and an event stream
-### 3.4 Event Sourcing and event-driven architectures
+### 3.3 DDD Architectural Foundations 
+### 3.4 Traceability and auditing in IT systems 
+#### 3.4.1 Why is traceability a business requirement 
+#### 3.4.2 Audit Logs 
+#### 3.4.3 Event Streams 
+#### 3.4.4 Rebuilding state from an audit log and an event stream
+### 3.5 Event Sourcing and event-driven architectures
 - Formal definition
 - event stream as single source of truth 
-### 3.5 (Eventual) Consistency 
+### 3.6 (Eventual) Consistency 
 - differences in CRUD and CQRS 
 - ACID vs. BASE
 - (maybe: concurrency control / optimistic vs pessimistic locking)
-### 3.6 Scalability of systems 
+### 3.7 Scalability of systems 
 -> Only if i plan to do the database scaling
 - Different ways to scale systems
 - How to scale reads and writes (in general and specific to event sourced systems)
