@@ -13,10 +13,16 @@ This file contains my current outline, always up to date. It was created by look
 - every chapter, short description of contents 
 ## 3. Basics
 ### 3.1 Web APIs 
-http, (stateless) communication, the term "API", REST principles 
-### 3.2 Layered Architecture Foundations (CRUD)
+http, (stateless) communication, the term "API", REST principles, CRUD
+### 3.2 Layered Architecture Foundations
+- layered architecture
 - anemic data model 
 ### 3.3 DDD Architectural Foundations 
+- domain driven design
+- rich domain model 
+- what is aspect driven design?
+- differences to CRUD 
+- vertical slice, screaming architecture, and more architecture styles 
 ### 3.4 Traceability and auditing in IT systems 
 #### 3.4.1 Why is traceability a business requirement 
 #### 3.4.2 Audit Logs 

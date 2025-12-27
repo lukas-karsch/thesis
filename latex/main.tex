@@ -3,11 +3,15 @@
 \usepackage[T1]{fontenc}
 \usepackage{graphicx}
 \usepackage[automake]{glossaries}
+\usepackage{array}
+\usepackage[table]{xcolor}
 
 \usepackage[
   backend=biber,
   style=authoryear, % or numeric, ieee, apa, ...
 ]{biblatex}
+
+\usepackage{hyperref}
 
 \addbibresource{references.bib}
 
@@ -22,7 +26,7 @@
 \newglossaryentry{rest}
 {
     name=REST,
-    description={REST stands for \emph{Representational State Transfer}. It is an architectural style for distributed hypermedia systems.}
+    description={REST stands for \emph{Representational State Transfer}. It is an architectural style for distributed hypermedia systems}
 }
 
 \newglossaryentry{http}
@@ -31,15 +35,31 @@
     description={HTTP stands for \emph{Hypertext Transfer Protocol}. It is a protocol used in internet communication and was defined in RFC 2616 \parencite{rfc2616}}
 }
 
+\newglossaryentry{adm}
+{
+    name={Anemic Domain Model},
+    description={The objects describing the domain only hold data, no logic}
+}
+
+\newglossaryentry{rdm}
+{
+    name={Rich Domain Model},
+    description={Objects incorporate both data and the behavior or rules that govern that data}
+}
+
 \newacronym{www}{WWW}{World Wide Web}
 
 \newacronym{hateoas}{HATEOAS}{Hypermedia as the engine of application state}
 
-\newacronym{html}{HTML}{Hypertext Markup Language}
+\newacronym{html}{HTML}{HyperText Markup Language}
 
 \newacronym{json}{JSON}{JavaScript Object Notation}
 
 \newacronym{xml}{XML}{Extensible Markup Language}
+
+\newacronym{dao}{DAO}{Data Access Object}
+
+\newacronym{ddd}{DDD}{Domain Driven Design}
 
 \begin{document}
 
@@ -142,9 +162,68 @@ Every resource must support the same interface, typically that of HTTP methods (
 
 Resources are decoupled from their representations. Client can request different representations of a resource, depending on their needs \parencite{tilkov_brief_2007}: a web browser might request \acrshort{html}, while another server or application might request \acrshort{xml} or \acrshort{json}.
 
-\subsection{Layered Architecture Foundations (CRUD)}
+%s TODO explain CRUD! 
 
-\subsection{DDD Architectural Foundations}
+\subsection{Layered Architecture Foundations}
+\label{sec:layered}
+
+Layered Architecture is the most common architecture pattern in enterprise applications. Applications following a layered architecture are divided into \emph{horizontal layers}, with each layer performing a specific role. A standard implementation consists of the following layers:
+
+\begin{itemize}
+    \item Presentation: Handles requests and displays data in a user interface or by turning it into representations (e.g. JSON)
+    \item Business: Encapsulates business logic
+    \item Persistence: Persists data by interacting with the underlying persistence technologies (e.g. SQL databases)
+    \item Database
+\end{itemize}
+
+A key concept in this design is layers of isolation, where layers are "closed", meaning a request must pass through the layer directly below it to reach the next, ensuring that changes in one layer do not affect others.
+
+In a layered application, data flows downwards during request handling and upwards during the response: a request arrives in the presentation layer, which delegates to the business layer. The business layer fetches data from the persistence layer which holds logic to retrieve data, e.g. by encapsulating SQL statements.
+
+The database responds with raw data, which is turned into a \acrlong{dao} by the persistence layer. The business layer uses this data to execute rules and make decisions. The result will be returned to the presentation layer which can then wrap the response and return it to the caller. \parencite{richards_software_2015}
+
+The data in layered applications is often times modeled in an \emph{anemic} way. In an \gls{adm}, business entities are treated as only data. They are objects which contain no business logic, only getters and setters. Business logic is entirely contained in the business (or "service") layer. \textcite{anemic-fowler-2003} describes this as an object-oriented \emph{antipattern}.
+
+% TODO figure
+
+\subsection{Domain Driven Design}
+\label{sec:ddd}
+
+\acrfull{ddd} is a different architectural approach for applications.  It differs from layered architecture primarily in the way the domain is modelled and the responsibilities of application services.
+
+The core idea of \acrshort{ddd} is that the primary focus of a software project should not be the underlying technologies, but the domain. The domain is the topic with which a software concerns itself. The software design should be based on a model that closely matches the domain and reflects a deep understanding of business requirements. \parencite[8, 12]{evans_domain-driven_2004}
+
+This domain model is built from a \emph{ubiquitous language} which is a language shared between domain experts and software experts. This ubiquitous language is built directly from the domain model and must be used in all communications regarding the software. \parencite[24-26]{evans_domain-driven_2004}
+
+%s TODO here, talk about model driven design -> way from the language to the code 
+
+The software must always reflect the way that the domain is talked about. Changes to the domain and the ubiquitous language must result in an immediate change to the domain model.
+
+When modeling the domain model, the aim should not be to create a perfect replica of the real world. While it should carefully be chosen, the domain model artificial and forms a selective abstraction which should be chosen for its utility. \parencite[12, 13]{evans_domain-driven_2004}
+
+While \hyperref[sec:layered]{Layered Architecture} organizes code into technical tiers and is typically built on anemic domain models, often resulting in the \emph{big ball of mud} antipattern \parencite[V]{richards_software_2015}, \acrshort{ddd} demands a \gls{rdm} where objects incorporate both data and the behavior or rules that govern that data. The code is structured semantically into bounded context and modules which are chosen to tell the "story" of a system rather than its technicalities. \parencite[80]{evans_domain-driven_2004}
+
+%s todo entities and value objects. 
+Entities (also known as reference objects) are domain elements fundamentally defined by a thread of continuity and identity rather than their specific attributes. Entities must be distinguishable from other entities, even if they share the same characteristics. To ensure consistency and identity, a unique identifier is assigned to entities. This identifier is immutable throughout the object's life. \parencite[65-69]{evans_domain-driven_2004}
+
+Value Objects are elements that describe the nature or state of something and have no conceptual identity of their own. They are interesting only for their characteristics. While two entities with the same characteristics are considered as different from each other, the system does not care about "identity" of a value object, since only its characteristics are relevant. Value objects should be used to encapsulate concepts, such as using an "Address" object instead of distinct "Street" and "City" attributes. Value objects should be immutable. They are never modified, instead they are replaced entirely when a new value is required. \parencite[70-72]{evans_domain-driven_2004}
+
+Using a \gls{rdm} does not mean that there should be no layers, the opposite is the case. \textcite{evans_domain-driven_2004} advocates for using layers in domain driven designs. He proposes the following layers: \parencite[53]{evans_domain-driven_2004}
+
+\begin{itemize}
+    \item Presentation: Presents information and handles commands
+    \item Application Layer: Coordinates app activity. Does not hold business logic, but delegate tasks and hold information about their progress
+    \item Domain Layer: Holds information about the domain. Stateful objects (rich domain model) that hold business logic and rules
+    \item Infrastructure layer: Supports other layers. Handles concerns like communication and persistence
+\end{itemize}
+
+\textcite[75]{evans_domain-driven_2004} points out that in some cases, operations in the domain can not be mapped to one object. For example, transferring money does conceptually not belong to one bank account. In those cases, where operations are important domain concepts, domain services can be introduced as part of model-driven design. To keep the domain model rich and not fall back into procedural style programming like with \gls{adm}, it is important to use services only when necessary. Services are not allowed to strip the entities and value objects in the domain of behavior. According to Evans, a good domain service has the following characteristics:
+
+\begin{itemize}
+    \item The operation relates to a domain concept which would be misplaced on an entity or a value object
+    \item The operation performed refers to other objects in the domain
+    \item The operation is stateless
+\end{itemize}
 
 \subsection{Traceability and auditing in IT systems}
 

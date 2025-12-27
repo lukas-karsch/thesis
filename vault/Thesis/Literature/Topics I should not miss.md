@@ -12,19 +12,12 @@ A critical comparison requires looking at the actual effort and tools involved.
         
     - **Topics to Research:** Required skill set for developers, availability of tooling/frameworks (Event Store, Kafka, etc.) versus common CRUD tools (SQL, ORMs). The necessity of combining ES with CQRS for practical read models.
         
-- **Versioning and Schema Evolution:**
-    - **Question:** How does the immutability of events in ES—a core feature—complicate the essential process of **event versioning** when business requirements or event schemas change over time? How does this compare to schema migrations in a traditional relational CRUD database?
-        
-    - **Topics to Research:** Event-upcasting strategies, schema migration tools in both models, the cost of backward compatibility in ES.
-        
 - **State Reconstruction and Snapshots:**
     - **Question:** Since the current state in ES is derived by **replaying** all past events, how is performance maintained for long-lived aggregates? What are the complexities and overhead of implementing and managing **snapshots** in Event Sourcing?
         
     - **Topics to Research:** Snapshotting frequency, storage overhead for events versus current state, and the read-model complexity (projections) in CQRS/ES systems.
-        
 
 ---
-
 ## ⚖️ Architectural Trade-offs and Consistency
 This section focuses on the fundamental nature of data storage and consistency models.
 - **Data Consistency Models:**
@@ -40,7 +33,6 @@ This section focuses on the fundamental nature of data storage and consistency m
     - **Question:** Given the requirement for **immutable, append-only storage** in Event Sourcing, how does one handle the legal requirement for data deletion, such as the EU's GDPR "Right to Erasure"? Is the complexity of solving this problem (e.g., encryption keys, tombstone events) a significant argument _against_ adopting ES?
         
     - **Topics to Research:** Strategies for deletion/anonymization in immutable logs, and comparing this to the relatively simple `DELETE FROM` in CRUD.
-        
 
 ---
 ## 📈 Business Value and Auditability
