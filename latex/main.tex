@@ -2,6 +2,15 @@
 \usepackage[utf8]{inputenc}
 \usepackage[T1]{fontenc}
 \usepackage{graphicx}
+\usepackage[automake]{glossaries}
+
+\makeglossaries
+
+\newglossaryentry{API}
+{
+    name=API, 
+    description={API stands for \emph{Application Programming Interface}. It describes the public interface of a module or service, often exposed over a network}
+}
 
 \begin{document}
 
@@ -70,7 +79,7 @@
 
 \section{Introduction}
 
-This thesis will talk about blabla!
+I will build an \gls{API} using two different architectural approaches.
 
 \subsection{Motivation}
 
@@ -133,5 +142,9 @@ This thesis will talk about blabla!
 \subsection{Conclusion \& Further work}
 
 Finally, I'm done.
+
+\section{Glossary}
+
+\printglossaries
 
 \end{document} % This is the end of the document
