@@ -61,6 +61,8 @@
 
 \newacronym{ddd}{DDD}{Domain Driven Design}
 
+\newacronym[plural=URIs]{uri}{URI}{Uniform Resource Identifier}
+
 \begin{document}
 
 \title{How does an Event Sourcing architecture compare to CRUD systems with an independent audit log, when it comes to scalability, performance and traceability?}
@@ -142,13 +144,13 @@ here i use \gls{api}
 
 \subsection{WWW, Web APIs, REST}
 
-The \acrfull{www} is a connected information network used to exchange data. Resources are can be accessed via URIs which are transferred using formats like JSON or HTML via protocols like \gls{http}. HTTP is a stateless protocol based on a request-response structure. It supports standardized request types (e.g. GET and POST) which convey a semantic meaning \parencite{jacobs_architecture_2004}.
+The \acrfull{www} is a connected information network used to exchange data. Resources are can be accessed via \glspl{uri} which are transferred using formats like JSON or HTML via protocols like \gls{http}. HTTP is a stateless protocol based on a request-response structure. It supports standardized request types, such as \texttt{GET} and \texttt{POST}, which convey a semantic meaning \parencite{jacobs_architecture_2004}.
 
-Web APIs are interfaces which enable applications to communicate. They use HTTP as network-based API \parencite[138]{fielding_architectural_2000}. Modern APIs typically follow \gls{rest} principles. REST stands for "Representational State Transfer" and describes an architectural style for distributed hypermedia systems \parencite[76]{fielding_architectural_2000}.
+Web APIs are interfaces that enable applications to communicate. They use HTTP as a network-based API \parencite[138]{fielding_architectural_2000}. Modern APIs typically follow \gls{rest} principles. REST stands for "Representational State Transfer" and describes an architectural style for distributed hypermedia systems \parencite[76]{fielding_architectural_2000}.
 
-REST APIs follow principles derived from a set of constraints (e.g. imposed by the HTTP protocol). One of them is "stateless communication": Communication between clients and the server must be \emph{stateless}, meaning the client has to attach all necessary information for the server to fully understand the request.
+REST APIs adhere to principles derived from a set of constraints imposed by the HTTP protocol, for example. One such constraint is "stateless communication": Communication between clients and the server must be \emph{stateless}, meaning the client must provide all the necessary information for the server to fully understand the request.
 
-Further, in REST applications, every resource must be addressable via a unique ID, which can then be used to derive URIs to access the resource. Below are some examples for resources and URIs which could be derived from them:
+Furthermore, every resource in REST applications must be addressable via a unique ID, which can then be used to derive a \acrshort{uri} to access the resource. Below are some examples for resources and \glspl{uri} which could be derived from them:
 
 \begin{itemize}
     \item Book; ID=1; URI=\texttt{http://example.com/books/1}
@@ -156,13 +158,13 @@ Further, in REST applications, every resource must be addressable via a unique I
     \item Author; ID=100; URI=\texttt{http://example.com/authors/100}
 \end{itemize}
 
-The "\acrfull{hateoas}" principle describes that resources should be linked to each other. Clients should be able to control the application by following a series of links provided by the server \parencite{tilkov_brief_2007}.
+The "\acrfull{hateoas}" principle states that resources should be linked to each other. Clients should be able to control the application by following a series of links provided by the server \parencite{tilkov_brief_2007}.
 
-Every resource must support the same interface, typically that of HTTP methods (GET, POST, PUT, etc.) where operations on the resource are mapped to one method of the interface. A POST operation on a customer might map to the \texttt{createCustomer()} operation on a service.
+Every resource must support the same interface, usually HTTP methods (GET, POST, PUT, etc.) where operations on the resource correspond to one method of the interface. For example, a POST operation on a customer might map to the \texttt{createCustomer()} operation on a service.
 
-Resources are decoupled from their representations. Client can request different representations of a resource, depending on their needs \parencite{tilkov_brief_2007}: a web browser might request \acrshort{html}, while another server or application might request \acrshort{xml} or \acrshort{json}.
+Resources are decoupled from their representations. Clients can request different representations of a resource, depending on their needs \parencite{tilkov_brief_2007}: a web browser might request \acrshort{html}, while another server or application might request \acrshort{xml} or \acrshort{json}.
 
-%s TODO explain CRUD! 
+%s TODO explain CRUD! here or somewhere else? 
 
 \subsection{Layered Architecture Foundations}
 \label{sec:layered}
