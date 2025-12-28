@@ -14,7 +14,6 @@ given()
         .then()  
         .statusCode(200);
 ```
-TODO: how can i assert that the events are actually deleted? 
 ## Reset tracking 
 ```java
 eventProcessingConfiguration.eventProcessors().values().stream()  

@@ -26,16 +26,31 @@ http, (stateless) communication, the term "API", REST principles, CRUD
 ### 3.4 Event Sourcing and event-driven architectures
 - Formal definition
 - event stream as single source of truth 
-### 3.5 (Eventual) Consistency 
+### 3.5 CRUD architecture 
+**Characteristics:**
+- Same objects/services handle **reads and writes**
+- Same data model for:
+    - Commands (`create/update/delete`)
+    - Queries (`read`)
+- Typically exposed via REST:
+    - `GET /users`
+    - `POST /users`
+    - `PUT /users/{id}`
+- Direct mapping between database tables and domain objects
+- ACID 
+### 3.6 CQRS Architecture
+- BASE 
+- separation of reads and writes 
+### 3.7 (Eventual) Consistency 
 - differences in CRUD and CQRS 
 - ACID vs. BASE
 - (maybe: concurrency control / optimistic vs pessimistic locking)
-### 3.6 Traceability and auditing in IT systems 
-#### 3.6.1 Why is traceability a business requirement 
-#### 3.6.2 Audit Logs 
-#### 3.6.3 Event Streams 
-#### 3.6.4 Rebuilding state from an audit log and an event stream
-### 3.7 Scalability of systems 
+### 3.8 Traceability and auditing in IT systems 
+#### 3.8.1 Why is traceability a business requirement 
+#### 3.8.2 Audit Logs 
+#### 3.8.3 Event Streams 
+#### 3.8.4 Rebuilding state from an audit log and an event stream
+### 3.9 Scalability of systems 
 -> Only if i plan to do the database scaling
 - Different ways to scale systems
 - How to scale reads and writes (in general and specific to event sourced systems)

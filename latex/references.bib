@@ -341,7 +341,7 @@ Adding tracing to ES thus seems like an unexplored and powerful approach to impr
 	language = {en},
 	author = {Fielding, Roy Thomas},
 	year = {2000},
-	keywords = {api, http, rest},
+	keywords = {rest, api, http},
 	file = {PDF:C\:\\Users\\lukas\\Zotero\\storage\\Z44LJRVZ\\Fielding - 2000 - in Information and Computer Science.pdf:application/pdf},
 }
 
@@ -422,7 +422,7 @@ Adding tracing to ES thus seems like an unexplored and powerful approach to impr
 	month = may,
 	year = {2014},
 	note = {arXiv:1405.1618 [cs]},
-	keywords = {architecture, Computer Science - Programming Languages, Computer Science - Software Engineering, layered},
+	keywords = {architecture, Computer Science - Software Engineering, Computer Science - Programming Languages, layered},
 	file = {Full Text PDF:C\:\\Users\\lukas\\Zotero\\storage\\NPSWN4MF\\Sadikov und Pidkameny - 2014 - Complete Separation of the 3 Tiers - Divide and Conquer.pdf:application/pdf;Snapshot:C\:\\Users\\lukas\\Zotero\\storage\\F5F3E2XE\\1405.html:text/html},
 }
 
@@ -436,6 +436,87 @@ Adding tracing to ES thus seems like an unexplored and powerful approach to impr
 	author = {Fowler, Martin},
 	month = nov,
 	year = {2003},
-	keywords = {anemic, architecture, domain model},
+	keywords = {architecture, anemic, domain model},
 	file = {Snapshot:C\:\\Users\\lukas\\Zotero\\storage\\N7GZ5FDW\\AnemicDomainModel.html:text/html},
+}
+
+@article{noauthor_implementing_2024,
+	title = {Implementing {Command} {Query} {Responsibility} {Segregation} ({CQRS}) in {Large}-{Scale} {Systems}},
+	volume = {12},
+	issn = {23206586},
+	url = {https://ijrmeet.org/implementing-command-query-responsibility-segregation-cqrs-in-large-scale-systems/},
+	doi = {10.63345/ijrmeet.org.v12.i12.3},
+	abstract = {Command Query Responsibility Segregation (CQRS) is an architectural pattern that separates the responsibility of data modification (commands) from data retrieval (queries). This segregation enhances performance, scalability, and security by optimizing each operation independently. In large-scale systems, where the volume of transactions and queries can overwhelm traditional monolithic designs, CQRS offers significant benefits by allowing for more tailored approaches to handling reads and writes. By decoupling commands and queries, the system can be fine-tuned to address the specific needs of each operation.},
+	language = {en},
+	number = {12},
+	urldate = {2025-12-28},
+	journal = {International Journal of Research in Modern Engineering \& Emerging Technology},
+	month = dec,
+	year = {2024},
+	keywords = {architecture, cqrs, crud},
+	pages = {49--73},
+	file = {PDF:C\:\\Users\\lukas\\Zotero\\storage\\PKL5F9RE\\2024 - Implementing Command Query Responsibility Segregation (CQRS) in Large-Scale Systems.pdf:application/pdf},
+}
+
+@article{eschmann_maintaining_nodate,
+	title = {Maintaining {Parallel} {Realities} in {CQRS} and {Event} {Sourcing}},
+	language = {en},
+	author = {Eschmann, Ehren Thomas},
+	keywords = {architecture, cqrs, crud},
+	file = {PDF:C\:\\Users\\lukas\\Zotero\\storage\\5VPFRWU2\\Eschmann - Maintaining Parallel Realities in CQRS and Event Sourcing.pdf:application/pdf},
+}
+
+@book{martin_managing_1983,
+	address = {Englewood Cliffs, N.J.},
+	title = {Managing the data-base environment},
+	isbn = {978-0-13-550582-3},
+	language = {eng},
+	publisher = {Prentice-Hall},
+	author = {Martin, James},
+	year = {1983},
+	keywords = {crud},
+	file = {PDF:C\:\\Users\\lukas\\Zotero\\storage\\JFSUFBQU\\Martin - 1983 - Managing the data-base environment.pdf:application/pdf},
+}
+
+@misc{fowler_cqrs_2011,
+	title = {{CQRS}},
+	shorttitle = {bliki},
+	url = {https://martinfowler.com/bliki/CQRS.html},
+	abstract = {CQRS (Command Query Responsibility Segregation) is the notion that you can use a different model to update information than the model you use to read information},
+	urldate = {2025-12-28},
+	journal = {martinfowler.com},
+	author = {Fowler, Martin},
+	month = jul,
+	year = {2011},
+}
+
+@article{abdullin_cqrs_nodate,
+	title = {{CQRS} {Documents} by {Greg} {Young}},
+	language = {en},
+	author = {Abdullin, Rinat},
+	keywords = {architecture, cqrs},
+	file = {PDF:C\:\\Users\\lukas\\Zotero\\storage\\2ABZGUUH\\Abdullin - CQRS Documents by Greg Young.pdf:application/pdf},
+}
+
+@article{diakov_application_2019,
+	title = {Application of {Event} {Sourcing} and {CQRS} {Patterns} in {Distributed} {Systems}},
+	url = {https://ela.kpi.ua/server/api/core/bitstreams/3620ea48-2fb9-47e7-a2fc-a83100d52dbc/content},
+	urldate = {2025-12-28},
+	author = {Diakov, S. O. and Zubrei, T. E. and Samoidiuk, A.S.},
+	year = {2019},
+	file = {PDF:C\:\\Users\\lukas\\Zotero\\storage\\43ICIRF8\\ela.kpi.uaserverapicorebitstreams3620ea48-2fb9-47e7-a2fc-a83100d52dbccontent.pdf:application/pdf},
+}
+
+@book{bernstein_principles_2009,
+	address = {Burlington, MA},
+	edition = {2nd ed},
+	series = {The {Morgan} {Kaufmann} series in data management systems},
+	title = {Principles of transaction processing},
+	isbn = {978-1-55860-623-4},
+	abstract = {"Principles of Transaction Processing, Second Edition offers a clear, concise guide for anyone involved in developing applications, evaluating products, designing systems, managing databases, or engineering products. It provides an understanding of the internals of transaction processing systems, describing how they work and how best to use them. It includes the architecture of application servers, transactional communications paradigms, and mechanisms for recovering from transaction and system failures."--Jacket},
+	language = {eng},
+	publisher = {Morgan Kaufmann Publishers},
+	author = {Bernstein, Philip A. and Newcomer, Eric},
+	year = {2009},
+	file = {PDF:C\:\\Users\\lukas\\Zotero\\storage\\V7RT2SWL\\Bernstein und Newcomer - 2009 - Principles of transaction processing.pdf:application/pdf},
 }

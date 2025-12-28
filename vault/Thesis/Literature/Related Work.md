@@ -1,0 +1,3 @@
+- Implementing Command Query Responsibility Segregation (CQRS) in Large-Scale Systems
+- Maintaining Parallel Realities in CQRS and Event Sourcing
+- Master's thesis: "Comparative Study of Traditional CRUD versus DDD/CQRS/Event Sourcing Architectures" - **Léonard, Maxime**. Couldn't find full text 

@@ -10,6 +10,9 @@
   backend=biber,
   style=authoryear, % or numeric, ieee, apa, ...
 ]{biblatex}
+\DefineBibliographyStrings{english}{
+  and = {\&}
+}
 
 \usepackage{hyperref}
 
@@ -47,6 +50,12 @@
     description={Objects incorporate both data and the behavior or rules that govern that data}
 }
 
+\newglossaryentry{atomicity}
+{
+    name=Atomicity,
+    description={Atomicity means that an action is either fully executed or not at all. Atomic operations make sure the application is not left in an invalid state \parencite[10]{bernstein_principles_2009}}
+}
+
 \newacronym{www}{WWW}{World Wide Web}
 
 \newacronym{hateoas}{HATEOAS}{Hypermedia as the engine of application state}
@@ -62,6 +71,14 @@
 \newacronym{ddd}{DDD}{Domain Driven Design}
 
 \newacronym[plural=URIs]{uri}{URI}{Uniform Resource Identifier}
+
+\newacronym{crud}{CRUD}{Create Read Update Delete}
+
+\newacronym{dto}{DTO}{Data Transfer Object}
+
+\newacronym{acid}{ACID}{Atomicity, Consistency, Isolation, Durability}
+
+\newacronym{cqrs}{CQRS}{Command Query Responsibility Segregation}
 
 \begin{document}
 
@@ -228,6 +245,20 @@ Using a \gls{rdm} does not mean that there should be no layers, the opposite is 
 \end{itemize}
 
 \subsection{Event Sourcing and event-driven architectures}
+
+\subsection{CRUD architecture}
+
+% TODO refine 
+
+\hyperref[sec:layered]{Layered architectures} are the standard for data-oriented enterprise applications. These applications mostly follow a \acrshort{crud} architecture. \acrshort{crud} is an acronym coined by \textcite{martin_managing_1983} that stands for "Create, Read, Update, Delete". These four actions can be applied to any record of data.
+
+The state of domain objects in a \acrshort{crud} architecture is often mapped to normalized tables on a relational database, though other storage mechanisms maybe used. The application acts on the current state of the data. % TODO cite 
+
+\acrshort{acid} (\acrlong{acid}) are an important feature of CRUD applications. They can be guaranteed using transactions, ensuring that data stays consistent and operations are \glslink{atomicity}{atomic}. \parencite[10,11]{bernstein_principles_2009}
+
+\subsection{CQRS Architecture}
+
+
 
 \subsection{(Eventual) Consistency}
 
