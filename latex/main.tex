@@ -82,6 +82,8 @@
 
 \newacronym{cqs}{CQS}{Command And Query Separation}
 
+\newacronym{base}{BASE}{Basically Available, Soft State, Eventual Consistency}
+
 \begin{document}
 
 \title{How does an Event Sourcing architecture compare to CRUD systems with an independent audit log, when it comes to scalability, performance and traceability?}
@@ -278,6 +280,11 @@ Each read service independently updates its model by consuming notifications or 
 %s TODO figure 
 
 \subsection{(Eventual) Consistency}
+
+% TODO have to talk about "read your writes"? 
+% TODO maybe move above CRUD and CQRS 
+
+\textcite{gray_dangers_1996} explain that large-scale systems become unstable if they are held consistent at all times according to \acrshort{acid} principles. The reasons are deadlocks and the large amount of communication necessary to handle atomic transactions in distributed systems. To address these issues, modern distributed systems often adopt the \acrshort{base} (\acrlong{base}) model which explicitly trades off isolation and strong consistency for availability. Eventually consistent systems are allowed to exist in a so-called "soft state" which eventually converges through the use of synchronization mechanisms over time rather than being strongly consistent at all times. \parencite{braun_tackling_2021, vogels_eventually_2009} This creates an inconsistency window in which data is not consistent across the system. During this window, stale data may be read. \parencite{vogels_eventually_2009}
 
 \subsection{Traceability and auditing in IT systems}
 
