@@ -1,73 +1,101 @@
 import argparse
+import json
 import subprocess
 import time
 from datetime import datetime
 from pathlib import Path
 from urllib.parse import urlparse
 
+import requests
+
+# ============================================================================
+# Defaults / Configuration
+# ============================================================================
+
 ES_CQRS_HOST = "http://localhost:8081"
 CRUD_HOST = "http://localhost:8080"
 
+PROMETHEUS_IMAGE = "prom/prometheus"
+PROMETHEUS_PORT = 9090
+PROMETHEUS_SCRAPE_INTERVAL_SECONDS = 5
+PROMETHEUS_READY_RETRIES = 5
+PROMETHEUS_READY_SLEEP_SECONDS = 2
 
-def run(cmd, check=True):
+PROMETHEUS_LATENCY_WINDOW = "2m"
+
+PROMETHEUS_QUERIES = {
+    "latency_avg.json": (
+        "rate(http_server_requests_seconds_sum[{w}]) "
+        "/ rate(http_server_requests_seconds_count[{w}])"
+    ),
+    "latency_p50.json": (
+        "histogram_quantile(0.50, sum by (le) "
+        "(rate(http_server_requests_seconds_bucket[{w}])))"
+    ),
+    "latency_p95.json": (
+        "histogram_quantile(0.95, sum by (le) "
+        "(rate(http_server_requests_seconds_bucket[{w}])))"
+    ),
+    "latency_p99.json": (
+        "histogram_quantile(0.99, sum by (le) "
+        "(rate(http_server_requests_seconds_bucket[{w}])))"
+    ),
+}
+
+
+# ============================================================================
+# Utility helpers
+# ============================================================================
+
+
+def run(cmd: list[str], check: bool = True) -> subprocess.CompletedProcess:
     print(f"> {' '.join(cmd)}")
     return subprocess.run(cmd, check=check)
 
 
-def docker_available():
+def docker_available() -> bool:
     try:
-        print("Checking docker...")
         run(["docker", "--version"])
         return True
-    except Exception as e:
-        print(e)
+    except Exception as exc:
+        print(exc)
         return False
 
 
-def main():
-    parser = argparse.ArgumentParser()
-    parser.add_argument(
-        "--app",
-        required=True,
-        help="Which app is running.",
-        choices=["es-cqrs", "crud"],
-    )
-    parser.add_argument("--k6-script", required=True, help="Path to k6 script")
-    args = parser.parse_args()
+def resolve_host(app: str) -> str:
+    if app == "crud":
+        return CRUD_HOST
+    if app == "es-cqrs":
+        return ES_CQRS_HOST
+    raise ValueError(f"Unsupported app: {app}")
 
-    if not docker_available():
-        raise RuntimeError("Docker is required but not available")
 
-    host_url = (
-        CRUD_HOST
-        if args.app == "crud"
-        else (ES_CQRS_HOST if args.app == "cqrs" else None)
-    )
-    if not host_url:
-        raise ValueError(f"host_url can not be set from {args.app}")
-    parsed = urlparse(host_url)
+# ============================================================================
+# Run setup
+# ============================================================================
 
-    app_port = parsed.port
 
-    ########################################
-    # Run folder
-    ########################################
-    script_name = args.k6_script.replace(".js", "")
-    run_id = (
-        f"run-{script_name}-{args.app}-{datetime.now().strftime('%Y-%m-%d_%H-%M-%S')}"
-    )
+def create_run_dirs(k6_script: str, app: str) -> tuple[str, Path, Path]:
+    script_name = Path(k6_script).stem
+    run_date = datetime.now().strftime("%Y-%m-%d_%H-%M-%S")
+    run_id = f"run-{script_name}-{app}-{run_date}"
+
     run_dir = Path(run_id)
-    prom_dir = run_dir / "prometheus"
+    prom_dir = Path("run-k6") / run_dir / "prometheus"
+
     prom_dir.mkdir(parents=True)
 
-    ########################################
-    # Prometheus config
-    ########################################
-    prom_config = run_dir / "prometheus.yml"
-    prom_config.write_text(
+    return run_id, run_dir, prom_dir
+
+
+def write_prometheus_config(
+    config_path: Path,
+    app_port: int,
+) -> None:
+    config_path.write_text(
         f"""
 global:
-  scrape_interval: 2s
+  scrape_interval: {PROMETHEUS_SCRAPE_INTERVAL_SECONDS}s
 
 scrape_configs:
   - job_name: "spring"
@@ -77,96 +105,190 @@ scrape_configs:
 """.strip()
     )
 
-    prom_container = f"prometheus-{run_id}"
 
-    # run(
-    #     [
-    #         "docker",
-    #         "run",
-    #         "-d",
-    #         "--name",
-    #         prom_container,
-    #         "-p",
-    #         "9090:9090",
-    #         "-v",
-    #         f"{prom_config.absolute()}:/etc/prometheus/prometheus.yml",
-    #         "prom/prometheus",
-    #     ]
-    # )
+# ============================================================================
+# Prometheus (Docker)
+# ============================================================================
 
-    # print("Prometheus started")
-    # time.sleep(5)
 
-    ########################################
-    # Run k6
-    ########################################
-    test_start = int(time.time())
+def start_prometheus_container(
+    config_path: Path,
+    run_date: str,
+) -> str:
+    container_name = f"prometheus-{run_date}"
 
-    k6_summary_json = run_dir / "k6-summary.json"
-    k6_summary_txt = run_dir / "k6-summary.txt"
+    run(
+        [
+            "docker",
+            "run",
+            "-d",
+            "--name",
+            container_name,
+            "-p",
+            f"{PROMETHEUS_PORT}:9090",
+            "-v",
+            f"{config_path.absolute()}:/etc/prometheus/prometheus.yml",
+            PROMETHEUS_IMAGE,
+        ]
+    )
 
-    with k6_summary_txt.open("w") as out:
-        print("Running k6...")
+    wait_for_prometheus()
+
+    return container_name
+
+
+def wait_for_prometheus() -> None:
+    base_url = f"http://localhost:{PROMETHEUS_PORT}"
+
+    for attempt in range(PROMETHEUS_READY_RETRIES):
+        print(f"Waiting for Prometheus... ({attempt + 1}/{PROMETHEUS_READY_RETRIES})")
+        try:
+            resp = requests.get(f"{base_url}/-/ready")
+            if resp.status_code == 200:
+                print("Prometheus is healthy")
+                return
+        except Exception:
+            pass
+
+        time.sleep(PROMETHEUS_READY_SLEEP_SECONDS)
+
+    raise RuntimeError("Prometheus did not become ready in time")
+
+
+def stop_and_remove_container(container_name: str) -> None:
+    run(["docker", "stop", container_name])
+    run(["docker", "rm", container_name])
+
+
+# ============================================================================
+# k6
+# ============================================================================
+
+
+def run_k6(
+    host_url: str,
+    k6_script: str,
+    run_dir: Path,
+) -> tuple[int, int]:
+    print("Starting k6 run.")
+    start_ts = int(time.time())
+
+    summary_json = run_dir / "k6-summary.json"
+    summary_txt = run_dir / "k6-summary.txt"
+
+    with summary_txt.open("w") as out:
         subprocess.run(
             [
                 "k6",
                 "run",
-                f"--summary-export={k6_summary_json}",
+                f"--summary-export={summary_json}",
                 "-e",
                 f"HOST={host_url}",
-                args.k6_script,
+                k6_script,
             ],
             stdout=out,
             stderr=subprocess.STDOUT,
             check=True,
         )
 
-    test_end = int(time.time())
+    end_ts = int(time.time())
+    print("k6 run finished.")
+    return start_ts, end_ts
 
-    ########################################
-    # Prometheus queries
-    ########################################
-    prom_url = "http://localhost:9090/api/v1/query"
-    window = "1m"
 
-    queries = {
-        "latency_avg.json": f"rate(http_server_requests_seconds_sum[{window}])"
-        f" / rate(http_server_requests_seconds_count[{window}])",
-        "latency_p50.json": f"histogram_quantile(0.50, sum by (le) "
-        f"(rate(http_server_requests_seconds_bucket[{window}])))",
-        "latency_p95.json": f"histogram_quantile(0.95, sum by (le) "
-        f"(rate(http_server_requests_seconds_bucket[{window}])))",
-        "latency_p99.json": f"histogram_quantile(0.99, sum by (le) "
-        f"(rate(http_server_requests_seconds_bucket[{window}])))",
-    }
+# ============================================================================
+# Prometheus queries
+# ============================================================================
 
-    #     for filename, query in queries.items():
-    #         resp = requests.get(prom_url, params={"query": query})
-    #         resp.raise_for_status()
-    #         (prom_dir / filename).write_text(json.dumps(resp.json(), indent=2))
-    #
-    #     ########################################
-    #     # Metadata
-    #     ########################################
-    #     notes = run_dir / "notes.md"
-    #     notes.write_text(
-    #         f"""Run ID: {run_id}
-    # Host: {host_url}
-    # K6 script: {args.k6_script}
-    # Test start (epoch): {test_start}
-    # Test end (epoch):   {test_end}
-    # Scrape interval: 2s
-    # Latency window: {window}
-    # """
-    #     )
-    #
-    #     ########################################
-    #     # Cleanup
-    #     ########################################
-    #     run(["docker", "stop", prom_container])
-    #     run(["docker", "rm", prom_container])
 
-    print(f"\nDone in {test_end - test_start}s. Results stored in {run_dir.absolute()}")
+def query_prometheus(
+    prom_dir: Path,
+    window: str,
+) -> None:
+    prom_url = f"http://localhost:{PROMETHEUS_PORT}/api/v1/query"
+
+    for filename, query in PROMETHEUS_QUERIES.items():
+        rendered_query = query.format(w=window)
+        resp = requests.get(prom_url, params={"query": rendered_query})
+        resp.raise_for_status()
+        (prom_dir / filename).write_text(json.dumps(resp.json(), indent=2))
+
+
+# ============================================================================
+# Metadata
+# ============================================================================
+
+
+def write_metadata(
+    run_dir: Path,
+    run_id: str,
+    host_url: str,
+    k6_script: str,
+    test_start: int,
+    test_end: int,
+    window: str,
+) -> None:
+    (run_dir / "notes.md").write_text(
+        f"""# Prometheus Notes
+> Run ID: {run_id}
+
+- Host: {host_url}
+- K6 script: {k6_script}
+- Test start (epoch): {test_start}
+- Test end (epoch):   {test_end}
+- Scrape interval: {PROMETHEUS_SCRAPE_INTERVAL_SECONDS}s
+- Latency window: {window}
+"""
+    )
+
+
+def main() -> None:
+    parser = argparse.ArgumentParser()
+    parser.add_argument("--app", required=True, choices=["es-cqrs", "crud"])
+    parser.add_argument("--k6-script", required=True)
+    args = parser.parse_args()
+
+    if not docker_available():
+        raise RuntimeError("Docker is required but not available")
+
+    host_url = resolve_host(args.app)
+    app_port = urlparse(host_url).port
+
+    run_id, run_dir, prom_dir = create_run_dirs(args.k6_script, args.app)
+
+    prom_config = run_dir / "prometheus.yml"
+    write_prometheus_config(prom_config, app_port)
+
+    prom_container = start_prometheus_container(
+        config_path=prom_config,
+        run_date=run_id.split("-")[-1],
+    )
+
+    try:
+        test_start, test_end = run_k6(
+            host_url=host_url,
+            k6_script=args.k6_script,
+            run_dir=run_dir,
+        )
+
+        query_prometheus(
+            prom_dir=prom_dir,
+            window=PROMETHEUS_LATENCY_WINDOW,
+        )
+
+        write_metadata(
+            run_dir=run_dir,
+            run_id=run_id,
+            host_url=host_url,
+            k6_script=args.k6_script,
+            test_start=test_start,
+            test_end=test_end,
+            window=PROMETHEUS_LATENCY_WINDOW,
+        )
+    finally:
+        stop_and_remove_container(prom_container)
+
+    print(f"\nDone in {test_end - test_start}s. Results in {run_dir.absolute()}")
 
 
 if __name__ == "__main__":

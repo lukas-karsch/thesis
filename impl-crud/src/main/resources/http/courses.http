@@ -1,5 +1,5 @@
 POST http://localhost:8080/courses
-customAuth: professor_1
+customAuth: professor_{{$uuid}}
 Content-Type: application/json
 
 {
