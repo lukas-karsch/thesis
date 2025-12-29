@@ -27,12 +27,12 @@
             "state": {
               "type": "markdown",
               "state": {
-                "file": "Writing/Outline.md",
+                "file": "Technical Design Log/2025-12-29 Where to measure.md",
                 "mode": "source",
                 "source": false
               },
               "icon": "lucide-file",
-              "title": "Outline"
+              "title": "2025-12-29 Where to measure"
             }
           },
           {
@@ -200,9 +200,10 @@
   },
   "active": "48197a41a731044b",
   "lastOpenFiles": [
+    "Writing/Outline.md",
+    "Technical Design Log/2025-12-29 Where to measure.md",
     "Literature/Domain-Driven Design Quickly, A Summary of Eric Evans' Domain-Driven Design.md",
     "Literature/Related Work.md",
-    "Writing/Outline.md",
     "Writing/CRUD vs. CQRS.md",
     "Schedule.md",
     "Advice/LLMs bei der Bachelorarbeit (Infoveranstaltung).md",
@@ -225,7 +226,6 @@
     "Technical Design Log/2025-12-12 The dangers of directly adding entities to the database.md",
     "Technical Design Log/2025-12-13 My first Saga.md",
     "Technical Design Log/2025-12-01 Using UUIDs instead of Long for IDs.md",
-    "Technical Design Log/2025-11-24 Audit Log - include ID (7ccd99be).md",
     "Documents/BachelorarbeitVorlage.pdf",
     "Documents/Expose Lukas Karsch Bachelorarbeit_02.pdf",
     "Writing",
