@@ -22,8 +22,6 @@ export function setup() {
     //
     // CREATE COURSES
     //
-    const createCourseUrl = `${TARGET_HOST}/courses`;
-
     const createCoursePayloads = []
     for (let i = 0; i < courseLimit; i++) {
         createCoursePayloads.push(JSON.stringify({
@@ -57,7 +55,7 @@ export function setup() {
     const courseIds = []
     createCoursePayloads.forEach(
         payload => {
-            const res = http.post(createCourseUrl, payload, professorParams)
+            const res = http.post(`${TARGET_HOST}/courses`, payload, professorParams)
             assertResponseIs201(res)
             const courseId = res.json().data
             console.log({courseId})

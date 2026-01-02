@@ -27,12 +27,12 @@
             "state": {
               "type": "markdown",
               "state": {
-                "file": "Technical Design Log/2025-12-29 Where to measure.md",
+                "file": "Technical Design Log/2025-12-19 Preparing for performance tests.md",
                 "mode": "source",
                 "source": false
               },
               "icon": "lucide-file",
-              "title": "2025-12-29 Where to measure"
+              "title": "2025-12-19 Preparing for performance tests"
             }
           },
           {
@@ -200,8 +200,14 @@
   },
   "active": "48197a41a731044b",
   "lastOpenFiles": [
-    "Writing/Outline.md",
+    "Technical Design Log/2025-12-19 Apps are finished.md",
+    "Technical Design Log/2025-12-16 Problems with my Axon projections.md",
+    "Technical Design Log/2025-12-13 My first Saga.md",
+    "Technical Design Log/2025-12-12 The dangers of directly adding entities to the database.md",
     "Technical Design Log/2025-12-29 Where to measure.md",
+    "Technical Design Log/2025-12-22 What can i benchmark.md",
+    "Technical Design Log/2025-12-19 Preparing for performance tests.md",
+    "Writing/Outline.md",
     "Literature/Domain-Driven Design Quickly, A Summary of Eric Evans' Domain-Driven Design.md",
     "Literature/Related Work.md",
     "Writing/CRUD vs. CQRS.md",
@@ -211,8 +217,6 @@
     "Advice/Implementing CQRS in SpringBoot.md",
     "Advice/Flyway.md",
     "Advice/Designing Aggregates.md",
-    "Technical Design Log/2025-12-16 Problems with my Axon projections.md",
-    "Technical Design Log/2025-12-19 Apps are finished.md",
     "Technical Design Log/2025-12-06 I discovered set based validation.md",
     "Technical Design Log/2025-11-25 Grade History (98d39a8f).md",
     "Technical Design Log/2025-11-25 Dropping a column (5c8947e2).md",
@@ -222,10 +226,6 @@
     "Technologies/Swagger; Open API Documentation.md",
     "Technologies/Spring Retry.md",
     "Technologies/k6.md",
-    "Technologies/Spring Devtools.md",
-    "Technical Design Log/2025-12-12 The dangers of directly adding entities to the database.md",
-    "Technical Design Log/2025-12-13 My first Saga.md",
-    "Technical Design Log/2025-12-01 Using UUIDs instead of Long for IDs.md",
     "Documents/BachelorarbeitVorlage.pdf",
     "Documents/Expose Lukas Karsch Bachelorarbeit_02.pdf",
     "Writing",

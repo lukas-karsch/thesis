@@ -4,19 +4,8 @@ from pathlib import Path
 import matplotlib.pyplot as plt
 import pandas as pd
 
-
-def _load_csv(path: Path) -> pd.DataFrame:
-    df = pd.read_csv(path)
-
-    required_cols = {"app", "metric", "method", "uri", "value"}
-    missing = required_cols - set(df.columns)
-    if missing:
-        raise ValueError(f"{path} is missing columns: {missing}")
-
-    # Convert seconds → milliseconds
-    df["value_ms"] = df["value"] * 1000.0
-    return df
-
+from aggregate import aggregate
+from helper import load_csv
 
 APP_COLORS = {
     "crud": "#1f77b4",  # blue
@@ -101,16 +90,21 @@ def _plot_grouped_metrics(df: pd.DataFrame) -> None:
         plt.show()
 
 
-def do_visualize(crud_csv: Path, es_cqrs_csv: Path):
+def visualize_one_csv_each(crud_csv: Path, es_cqrs_csv: Path):
     df = pd.concat(
         [
-            _load_csv(crud_csv),
-            _load_csv(es_cqrs_csv),
+            load_csv(crud_csv),
+            load_csv(es_cqrs_csv),
         ],
         ignore_index=True,
     )
 
     _plot_grouped_metrics(df)
+
+
+def visualize_aggregated(base_name: str, directory: Path):
+    aggregated = aggregate(base_name, directory)
+    _plot_grouped_metrics(aggregated)
 
 
 def main() -> None:
@@ -120,7 +114,7 @@ def main() -> None:
     crud_csv = Path(sys.argv[1])
     es_cqrs_csv = Path(sys.argv[2])
 
-    do_visualize(crud_csv, es_cqrs_csv)
+    visualize_one_csv_each(crud_csv, es_cqrs_csv)
 
 
 if __name__ == "__main__":

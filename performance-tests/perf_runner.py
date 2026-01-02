@@ -6,9 +6,13 @@ import subprocess
 import time
 from datetime import datetime
 from pathlib import Path
+from typing import Literal
 from urllib.parse import urlparse
 
 import requests
+
+import polling
+from helper import run_command, stop_and_remove_container
 
 # ============================================================================
 # Defaults / Configuration
@@ -68,21 +72,16 @@ PROMETHEUS_QUERIES = {
 # ============================================================================
 
 
-def run(cmd: list[str], check: bool = True) -> subprocess.CompletedProcess:
-    print(f"> {' '.join(cmd)}")
-    return subprocess.run(cmd, check=check)
-
-
 def docker_available() -> bool:
     try:
-        run(["docker", "--version"])
+        run_command(["docker", "--version"])
         return True
     except Exception as exc:
         print(exc)
         return False
 
 
-def resolve_host(app: str) -> str:
+def resolve_host(app: Literal["crud", "es-cqrs"]) -> str:
     if app == "crud":
         return CRUD_HOST
     if app == "es-cqrs":
@@ -90,12 +89,28 @@ def resolve_host(app: str) -> str:
     raise ValueError(f"Unsupported app: {app}")
 
 
+def start_app_with_docker_compose(app: Literal["crud", "es-cqrs"]) -> None:
+    app_service = "crud-app" if app == "crud" else "es-cqrs-app"
+
+    run_command(["docker", "compose", "up", "-d", app_service])
+
+    host = resolve_host(app)
+    polling.poll(f"{host}/actuator/health", interval_seconds=5, retries=25)
+
+
+def docker_compose_down() -> None:
+    """
+    Runs `docker compose down -v`
+    """
+    run_command(["docker", "compose", "down", "-v"])
+
+
 # ============================================================================
 # Run setup
 # ============================================================================
 
 
-def create_run_dirs(k6_script: str, app: str) -> tuple[str, Path, Path]:
+def create_run_dirs(k6_script: Path, app: str) -> tuple[str, Path, Path]:
     script_name = Path(k6_script).stem
     run_date = datetime.now().strftime("%Y-%m-%d_%H-%M-%S")
     run_id = f"run-{script_name}-{app}-{run_date}"
@@ -139,7 +154,7 @@ def start_prometheus_container(
 ) -> str:
     container_name = f"prometheus-{run_date}"
 
-    run(
+    run_command(
         [
             "docker",
             "run",
@@ -154,32 +169,13 @@ def start_prometheus_container(
         ]
     )
 
-    wait_for_prometheus()
+    polling.poll(
+        f"http://localhost:{PROMETHEUS_PORT}/-/ready",
+        interval_seconds=PROMETHEUS_READY_SLEEP_SECONDS,
+        retries=PROMETHEUS_READY_RETRIES,
+    )
 
     return container_name
-
-
-def wait_for_prometheus() -> None:
-    base_url = f"http://localhost:{PROMETHEUS_PORT}"
-
-    for attempt in range(PROMETHEUS_READY_RETRIES):
-        print(f"Waiting for Prometheus... ({attempt + 1}/{PROMETHEUS_READY_RETRIES})")
-        try:
-            resp = requests.get(f"{base_url}/-/ready")
-            if resp.status_code == 200:
-                print("Prometheus is healthy")
-                return
-        except Exception:
-            pass
-
-        time.sleep(PROMETHEUS_READY_SLEEP_SECONDS)
-
-    raise RuntimeError("Prometheus did not become ready in time")
-
-
-def stop_and_remove_container(container_name: str) -> None:
-    run(["docker", "stop", container_name])
-    run(["docker", "rm", container_name])
 
 
 # ============================================================================
@@ -189,7 +185,7 @@ def stop_and_remove_container(container_name: str) -> None:
 
 def run_k6(
     host_url: str,
-    k6_script: str,
+    k6_script: Path,
     run_dir: Path,
 ) -> tuple[int, int]:
     print("Starting k6 run.")
@@ -246,7 +242,7 @@ def write_metadata(
     run_dir: Path,
     run_id: str,
     host_url: str,
-    k6_script: str,
+    k6_script: Path,
     test_start: int,
     test_end: int,
     window: str,
@@ -313,7 +309,7 @@ def extract_metrics_to_csv(
     with output_csv.open("w", newline="") as f:
         writer = csv.DictWriter(
             f,
-            fieldnames=["metric", "method", "uri", "value"],
+            fieldnames=["metric", "method", "uri", "value", "app"],
         )
         writer.writeheader()
         writer.writerows(rows)
@@ -321,36 +317,30 @@ def extract_metrics_to_csv(
     print(f"📄 Extracted metrics written to {output_csv}")
 
 
-def main() -> None:
-    parser = argparse.ArgumentParser()
-    parser.add_argument("--app", required=True, choices=["es-cqrs", "crud"])
-    parser.add_argument(
-        "--metric",
-        required=True,
-        help="Path to the metric.json file which describes the metric.",
-    )
-    args = parser.parse_args()
-
+def do_run(app: Literal["crud", "es-cqrs"], metric: Path):
     if not docker_available():
         raise RuntimeError("Docker is required but not available")
 
-    host_url = resolve_host(args.app)
-    app_port = urlparse(host_url).port
-
-    metric_content = json.loads(Path(args.metric).read_text())
-    k6_script = os.path.dirname(args.metric) / Path(metric_content["file"])
-
-    run_id, run_dir, prom_dir = create_run_dirs(k6_script, args.app)
-
-    prom_config = run_dir / "prometheus.yml"
-    write_prometheus_config(prom_config, app_port)
-
-    prom_container = start_prometheus_container(
-        config_path=prom_config,
-        run_date=run_id.split("-")[-1],
-    )
-
+    prom_container = None
     try:
+        start_app_with_docker_compose(app)
+
+        host_url = resolve_host(app)
+        app_port = urlparse(host_url).port
+
+        metric_content = json.loads(Path(metric).read_text())
+        k6_script = os.path.dirname(metric) / Path(metric_content["file"])
+
+        run_id, run_dir, prom_dir = create_run_dirs(k6_script, app)
+
+        prom_config = run_dir / "prometheus.yml"
+        write_prometheus_config(prom_config, app_port)
+
+        prom_container = start_prometheus_container(
+            config_path=prom_config,
+            run_date=run_id.split("-")[-1],
+        )
+
         test_start, test_end = run_k6(
             host_url=host_url,
             k6_script=k6_script,
@@ -363,14 +353,14 @@ def main() -> None:
         )
 
         extract_metrics_to_csv(
-            metric_definition_path=Path(args.metric),
+            metric_definition_path=Path(metric),
             prom_dir=prom_dir,
             output_csv=run_dir / "metrics.csv",
-            app=args.app,
+            app=app,
         )
 
         write_metadata(
-            metric_definition_path=Path(args.metric),
+            metric_definition_path=Path(metric),
             run_dir=run_dir,
             run_id=run_id,
             host_url=host_url,
@@ -380,9 +370,24 @@ def main() -> None:
             window=PROMETHEUS_LATENCY_WINDOW,
         )
     finally:
-        stop_and_remove_container(prom_container)
+        if prom_container is not None:
+            stop_and_remove_container(prom_container)
+        docker_compose_down()
 
     print(f"\nDone in {test_end - test_start}s. Results in {run_dir.absolute()}")
+
+
+def main() -> None:
+    parser = argparse.ArgumentParser()
+    parser.add_argument("--app", required=True, choices=["es-cqrs", "crud"])
+    parser.add_argument(
+        "--metric",
+        required=True,
+        help="Path to the metric.json file which describes the metric.",
+    )
+    args = parser.parse_args()
+
+    do_run(app=args.app, metric=Path(args.metric))
 
 
 if __name__ == "__main__":
