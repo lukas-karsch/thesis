@@ -1,5 +1,6 @@
 import http from 'k6/http';
 import {check, sleep} from 'k6';
+import {getUuidForVu} from "../helper/uuids.js";
 
 const TARGET_HOST = __ENV.HOST || 'http://localhost:8080';
 
@@ -16,12 +17,6 @@ export const options = {
 };
 
 const uuids = {}
-const getUuid = (VU) => {
-    if (!uuids[VU]) {
-        uuids[VU] = crypto.randomUUID();
-    }
-    return uuids[VU];
-}
 
 export default function () {
     const url = `${TARGET_HOST}/courses`;
@@ -37,7 +32,7 @@ export default function () {
     const params = {
         headers: {
             'Content-Type': 'application/json',
-            'customAuth': `professor_${getUuid(__VU)}`
+            'customAuth': `professor_${getUuidForVu(__VU, uuids)}`
         },
     };
 

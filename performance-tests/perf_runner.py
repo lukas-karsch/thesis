@@ -23,22 +23,59 @@ PROMETHEUS_READY_SLEEP_SECONDS = 2
 
 PROMETHEUS_LATENCY_WINDOW = "2m"
 
+# PROMETHEUS_QUERIES = {
+#     "latency_avg.json": (
+#         "rate(http_server_requests_seconds_sum[{w}]) "
+#         "/ rate(http_server_requests_seconds_count[{w}])"
+#     ),
+#     "latency_p50.json": (
+#         "histogram_quantile(0.50, sum by (le) "
+#         "(rate(http_server_requests_seconds_bucket[{w}])))"
+#     ),
+#     "latency_p95.json": (
+#         "histogram_quantile(0.95, sum by (le) "
+#         "(rate(http_server_requests_seconds_bucket[{w}])))"
+#     ),
+#     "latency_p99.json": (
+#         "histogram_quantile(0.99, sum by (le) "
+#         "(rate(http_server_requests_seconds_bucket[{w}])))"
+#     ),
+# }
+
 PROMETHEUS_QUERIES = {
+    # Average latency per endpoint
     "latency_avg.json": (
-        "rate(http_server_requests_seconds_sum[{w}]) "
-        "/ rate(http_server_requests_seconds_count[{w}])"
+        "sum by (uri, method) ("
+        "  rate(http_server_requests_seconds_sum[{w}])"
+        ") "
+        "/ "
+        "sum by (uri, method) ("
+        "  rate(http_server_requests_seconds_count[{w}])"
+        ")"
     ),
+    # p50 (median) per endpoint
     "latency_p50.json": (
-        "histogram_quantile(0.50, sum by (le) "
-        "(rate(http_server_requests_seconds_bucket[{w}])))"
+        "histogram_quantile(0.50, "
+        "  sum by (le, uri, method) ("
+        "    rate(http_server_requests_seconds_bucket[{w}])"
+        "  )"
+        ")"
     ),
+    # p95 per endpoint
     "latency_p95.json": (
-        "histogram_quantile(0.95, sum by (le) "
-        "(rate(http_server_requests_seconds_bucket[{w}])))"
+        "histogram_quantile(0.95, "
+        "  sum by (le, uri, method) ("
+        "    rate(http_server_requests_seconds_bucket[{w}])"
+        "  )"
+        ")"
     ),
+    # p99 per endpoint
     "latency_p99.json": (
-        "histogram_quantile(0.99, sum by (le) "
-        "(rate(http_server_requests_seconds_bucket[{w}])))"
+        "histogram_quantile(0.99, "
+        "  sum by (le, uri, method) ("
+        "    rate(http_server_requests_seconds_bucket[{w}])"
+        "  )"
+        ")"
     ),
 }
 
@@ -80,8 +117,8 @@ def create_run_dirs(k6_script: str, app: str) -> tuple[str, Path, Path]:
     run_date = datetime.now().strftime("%Y-%m-%d_%H-%M-%S")
     run_id = f"run-{script_name}-{app}-{run_date}"
 
-    run_dir = Path(run_id)
-    prom_dir = Path("run-k6") / run_dir / "prometheus"
+    run_dir = Path("run-k6") / Path(run_id)
+    prom_dir = run_dir / "prometheus"
 
     prom_dir.mkdir(parents=True)
 
@@ -92,6 +129,8 @@ def write_prometheus_config(
     config_path: Path,
     app_port: int,
 ) -> None:
+    print(f"Writing prometheus config to '{config_path}'")
+    config_path.touch()
     config_path.write_text(
         f"""
 global:
