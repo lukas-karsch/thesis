@@ -5,7 +5,7 @@ export const checkResponseIs201 = res => check(res, {
 });
 
 export const checkResponseIs200 = res => check(res, {
-    'is status 201': (r) => r.status === 200,
+    'is status 200': (r) => r.status === 200,
 });
 
 export const assertResponseIs201 = res => {

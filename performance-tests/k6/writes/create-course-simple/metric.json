@@ -3,5 +3,8 @@
     "method": "POST",
     "uri": "/courses"
   },
-  "file": "create-course-simple.js"
+  "file": "create-course-simple.js",
+  "metadata": {
+    "title": "Create courses without prerequisites"
+  }
 }

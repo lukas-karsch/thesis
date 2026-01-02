@@ -3,5 +3,8 @@
     "method": "GET",
     "uri": "/lectures"
   },
-  "file": "read-lectures.js"
+  "file": "read-lectures.js",
+  "metadata": {
+    "title": "Read lectures for a student"
+  }
 }

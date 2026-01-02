@@ -242,6 +242,7 @@ def query_prometheus(
 
 
 def write_metadata(
+    metric_definition_path: Path,
     run_dir: Path,
     run_id: str,
     host_url: str,
@@ -250,10 +251,14 @@ def write_metadata(
     test_end: int,
     window: str,
 ) -> None:
+    metric_def = json.loads(metric_definition_path.read_text())
+    metric_title = metric_def["metadata"]["title"]
+
     (run_dir / "notes.md").write_text(
         f"""# Prometheus Notes
 > Run ID: {run_id}
 
+- Title: '{metric_title}'
 - Host: {host_url}
 - K6 script: {k6_script}
 - Test start (epoch): {test_start}
@@ -265,9 +270,7 @@ def write_metadata(
 
 
 def extract_metrics_to_csv(
-    metric_definition_path: Path,
-    prom_dir: Path,
-    output_csv: Path,
+    metric_definition_path: Path, prom_dir: Path, output_csv: Path, app: str
 ) -> None:
     """
     Extracts relevant Prometheus metrics (based on metric.json)
@@ -295,6 +298,7 @@ def extract_metrics_to_csv(
             ):
                 rows.append(
                     {
+                        "app": app,
                         "metric": metric_name,
                         "method": target_method,
                         "uri": target_uri,
@@ -362,9 +366,11 @@ def main() -> None:
             metric_definition_path=Path(args.metric),
             prom_dir=prom_dir,
             output_csv=run_dir / "metrics.csv",
+            app=args.app,
         )
 
         write_metadata(
+            metric_definition_path=Path(args.metric),
             run_dir=run_dir,
             run_id=run_id,
             host_url=host_url,

@@ -65,6 +65,7 @@ export function setup() {
         }
     );
     console.log(`Created ${courseLimit} courses`)
+    sleep(1)
 
     setTime({
         "year": 2025,
@@ -105,6 +106,7 @@ export function setup() {
         }
     );
     console.log(`Created a lecture per course.`)
+    sleep(1)
 
     lectureIds.forEach(
         lectureId => {
@@ -113,6 +115,7 @@ export function setup() {
         }
     )
     console.log("Advanced lifecycle of all lectures to OPEN_FOR_ENROLLMENT")
+    sleep(1)
 
     //
     // CREATE STUDENTS AND ENROLL
@@ -153,8 +156,6 @@ export function setup() {
 
 export default function (data) {
     const {
-        courseIds,
-        lectureIds,
         studentIds
     } = data
 
