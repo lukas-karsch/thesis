@@ -1,6 +1,7 @@
 import http from 'k6/http';
-import {check, sleep} from 'k6';
+import {sleep} from 'k6';
 import {getUuidForVu} from "../../helper/uuids.js";
+import {checkResponseIs201} from "../../helper/assert.js";
 
 const TARGET_HOST = __ENV.HOST || 'http://localhost:8080';
 
@@ -49,7 +50,7 @@ export function setup() {
     payloads.forEach(
         p => {
             const res = http.post(url, p, params)
-            assertResponseIs201(res)
+            checkResponseIs201(res)
             const uuid = res.json().data
             console.log({uuid})
             prerequisiteIds.push(uuid)
@@ -95,11 +96,7 @@ export default function (data) {
 
     const res = http.post(url, payload, params);
 
-    assertResponseIs201(res)
+    checkResponseIs201(res)
 
     sleep(1); // Wait for 1 second between requests per VU
 }
-
-const assertResponseIs201 = res => check(res, {
-    'is status 201': (r) => r.status === 201,
-})

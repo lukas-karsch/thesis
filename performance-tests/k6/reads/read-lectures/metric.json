@@ -1,0 +1,7 @@
+{
+  "metric": {
+    "method": "GET",
+    "uri": "/lectures"
+  },
+  "file": "read-lectures.js"
+}
