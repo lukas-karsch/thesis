@@ -1,0 +1,7 @@
+{
+  "metric": {
+    "method": "POST",
+    "uri": "/courses"
+  },
+  "file": "create-course-simple.js"
+}

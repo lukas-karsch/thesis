@@ -1,6 +1,6 @@
 import http from 'k6/http';
 import {check, sleep} from 'k6';
-import {getUuidForVu} from "../helper/uuids.js";
+import {getUuidForVu} from "../../helper/uuids.js";
 
 const TARGET_HOST = __ENV.HOST || 'http://localhost:8080';
 

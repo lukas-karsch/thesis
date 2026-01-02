@@ -1,5 +1,6 @@
 import argparse
 import json
+import os.path
 import subprocess
 import time
 from datetime import datetime
@@ -284,7 +285,11 @@ def write_metadata(
 def main() -> None:
     parser = argparse.ArgumentParser()
     parser.add_argument("--app", required=True, choices=["es-cqrs", "crud"])
-    parser.add_argument("--k6-script", required=True)
+    parser.add_argument(
+        "--metric",
+        required=True,
+        help="Path to the metric.json file which describes the metric.",
+    )
     args = parser.parse_args()
 
     if not docker_available():
@@ -293,7 +298,10 @@ def main() -> None:
     host_url = resolve_host(args.app)
     app_port = urlparse(host_url).port
 
-    run_id, run_dir, prom_dir = create_run_dirs(args.k6_script, args.app)
+    metric_content = json.loads(Path(args.metric).read_text())
+    k6_script = os.path.dirname(args.metric) / Path(metric_content["file"])
+
+    run_id, run_dir, prom_dir = create_run_dirs(k6_script, args.app)
 
     prom_config = run_dir / "prometheus.yml"
     write_prometheus_config(prom_config, app_port)
@@ -306,7 +314,7 @@ def main() -> None:
     try:
         test_start, test_end = run_k6(
             host_url=host_url,
-            k6_script=args.k6_script,
+            k6_script=k6_script,
             run_dir=run_dir,
         )
 
@@ -319,7 +327,7 @@ def main() -> None:
             run_dir=run_dir,
             run_id=run_id,
             host_url=host_url,
-            k6_script=args.k6_script,
+            k6_script=k6_script,
             test_start=test_start,
             test_end=test_end,
             window=PROMETHEUS_LATENCY_WINDOW,
