@@ -12,7 +12,7 @@
 	file = {Volltext:C\:\\Users\\lukas\\Zotero\\storage\\2A6PZ4DT\\Avram und Marinescu - 2006 - Domain-Driven Design Quickly A Summary of Eric Evans' Domain-Driven Design.pdf:application/pdf},
 }
 
-@article{lviv_polytechnic_national_university_developing_2024,
+@article{malyi_developing_2024,
 	title = {Developing a {Performance} {Evaluation} {Benchmark} for {Event} {Sourcing} {Databases}},
 	volume = {15},
 	issn = {2524065X, 26630001},
@@ -21,8 +21,8 @@
 	abstract = {In the domain of software architecture, Event Sourcing (ES) has emerged as a significant paradigm, especially for systems requiring high levels of auditability, traceability, and intricate state management. Systems such as financial transaction platforms, inventory management systems, customer relationship management (CRM) software, and any application requiring a detailed audit trail can significantly benefit from this approach. Numerous aspects of ES remain unexplored, as they have yet to be thoroughly investigated by scientific research. The unique demands of such systems, particularly in terms of database performance and functionality, are not adequately addressed by existing database benchmarks. By establishing benchmarks, organizations can compare different databases to determine which best meets their needs for applications. This aids in selecting the most appropriate technology based on empirical data rather than assumptions or marketing claims.This paper introduces a novel benchmarking framework specifically designed for evaluating databases in the context of event sourcing. The framework addresses critical aspects unique to ES, including event append performance, efficient handling of Projections (separate databases for read operations), strong consistency, ordered data insertion, and robust versioning controls. Through rigorous testing and analysis, this framework aims to fill the gap in existing database benchmarking tools, providing a more accurate and relevant assessment for ES systems. We also conducted experiments that not only demonstrated the effectiveness of our approach but also yielded meaningful results, substantiating its practicality and applicability.},
 	language = {en},
 	urldate = {2025-11-03},
-	journal = {Vìsnik Nacìonalʹnogo unìversitetu "Lʹvìvsʹka polìtehnìka". Serìâ Ìnformacìjnì sistemi ta merežì},
-	author = {{Lviv Polytechnic National University} and Malyi, Roman and Serdyuk, Pavlo and {Lviv Polytechnic National University}},
+	journal = {Vìsnik Nacìonal'nogo unìversitetu "L'vìvs'ka polìtehnìka". Serìâ Ìnformacìjnì sistemi ta merežì},
+	author = {Malyi, Roman and Serdyuk, Pavlo},
 	month = aug,
 	year = {2024},
 	keywords = {event-sourcing, performance},
@@ -63,7 +63,7 @@
 	author = {Overeem, Michiel and Spoor, Marten and Jansen, Slinger and Brinkkemper, Sjaak},
 	month = aug,
 	year = {2021},
-	keywords = {event-sourcing, schema-evolution},
+	keywords = {axon, event-sourcing, schema-evolution},
 	pages = {110970},
 	file = {PDF:C\:\\Users\\lukas\\Zotero\\storage\\5QDQMVG8\\Overeem et al. - 2021 - An empirical characterization of event sourced systems and their schema evolution — Lessons from ind.pdf:application/pdf},
 }
@@ -167,14 +167,16 @@ Adding tracing to ES thus seems like an unexplored and powerful approach to impr
 	file = {Snapshot:C\:\\Users\\lukas\\Zotero\\storage\\HLQUK2LH\\EventSourcing.html:text/html},
 }
 
-@misc{fowler_what_nodate,
+@misc{fowler_what_2017,
 	title = {What do you mean by “{Event}-{Driven}”?},
 	url = {https://martinfowler.com/articles/201701-event-driven.html},
 	abstract = {Some notes on the different patterns that may be present when people talk about event-driven architectures.},
 	urldate = {2025-11-13},
 	journal = {martinfowler.com},
 	author = {Fowler, Martin},
-	keywords = {event-sourcing, event-driven},
+	month = feb,
+	year = {2017},
+	keywords = {event-driven, event-sourcing},
 	file = {Snapshot:C\:\\Users\\lukas\\Zotero\\storage\\GPXVVCWD\\201701-event-driven.html:text/html},
 }
 
@@ -588,4 +590,38 @@ Adding tracing to ES thus seems like an unexplored and powerful approach to impr
 	doi = {10.1145/1435417.1435432},
 	pages = {40--44},
 	file = {Snapshot:C\:\\Users\\lukas\\Zotero\\storage\\VDWRGSWW\\1435417.html:text/html;Volltext:C\:\\Users\\lukas\\Zotero\\storage\\YL723A6W\\Eventually consistent.pdf:application/pdf},
+}
+
+@techreport{michelson_event-driven_2006,
+	address = {Boston, MA},
+	title = {Event-{Driven} {Architecture} {Overview}},
+	url = {http://www.customers.com/articles/event-driven-architecture-overview},
+	language = {en},
+	number = {681},
+	urldate = {2026-01-02},
+	institution = {Patricia Seybold Group},
+	author = {Michelson, Brenda},
+	month = feb,
+	year = {2006},
+	doi = {10.1571/bda2-2-06cc},
+	pages = {681},
+	file = {PDF:C\:\\Users\\lukas\\Zotero\\storage\\NWHS49TY\\Michelson - 2006 - Event-Driven Architecture Overview.pdf:application/pdf},
+}
+
+@article{gilbert_brewers_2002,
+	title = {Brewer's conjecture and the feasibility of consistent, available, partition-tolerant web services},
+	volume = {33},
+	issn = {0163-5700},
+	url = {https://dl.acm.org/doi/10.1145/564585.564601},
+	doi = {10.1145/564585.564601},
+	abstract = {When designing distributed web services, there are three properties that are commonly desired: consistency, availability, and partition tolerance. It is impossible to achieve all three. In this note, we prove this conjecture in the asynchronous network model, and then discuss solutions to this dilemma in the partially synchronous model.},
+	language = {en},
+	number = {2},
+	urldate = {2026-01-02},
+	journal = {ACM SIGACT News},
+	author = {Gilbert, Seth and Lynch, Nancy},
+	month = jun,
+	year = {2002},
+	pages = {51--59},
+	file = {PDF:C\:\\Users\\lukas\\Zotero\\storage\\6FME98PW\\Gilbert und Lynch - 2002 - Brewer's conjecture and the feasibility of consistent, available, partition-tolerant web services.pdf:application/pdf},
 }
