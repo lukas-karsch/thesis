@@ -1,4 +1,5 @@
 import argparse
+import csv
 import json
 import os.path
 import subprocess
@@ -23,25 +24,6 @@ PROMETHEUS_READY_RETRIES = 5
 PROMETHEUS_READY_SLEEP_SECONDS = 2
 
 PROMETHEUS_LATENCY_WINDOW = "2m"
-
-# PROMETHEUS_QUERIES = {
-#     "latency_avg.json": (
-#         "rate(http_server_requests_seconds_sum[{w}]) "
-#         "/ rate(http_server_requests_seconds_count[{w}])"
-#     ),
-#     "latency_p50.json": (
-#         "histogram_quantile(0.50, sum by (le) "
-#         "(rate(http_server_requests_seconds_bucket[{w}])))"
-#     ),
-#     "latency_p95.json": (
-#         "histogram_quantile(0.95, sum by (le) "
-#         "(rate(http_server_requests_seconds_bucket[{w}])))"
-#     ),
-#     "latency_p99.json": (
-#         "histogram_quantile(0.99, sum by (le) "
-#         "(rate(http_server_requests_seconds_bucket[{w}])))"
-#     ),
-# }
 
 PROMETHEUS_QUERIES = {
     # Average latency per endpoint
@@ -282,6 +264,59 @@ def write_metadata(
     )
 
 
+def extract_metrics_to_csv(
+    metric_definition_path: Path,
+    prom_dir: Path,
+    output_csv: Path,
+) -> None:
+    """
+    Extracts relevant Prometheus metrics (based on metric.json)
+    and writes them to a CSV file.
+    """
+    metric_def = json.loads(metric_definition_path.read_text())
+    target_method = metric_def["metric"]["method"]
+    target_uri = metric_def["metric"]["uri"]
+
+    rows: list[dict[str, str]] = []
+
+    for prom_file in prom_dir.glob("*.json"):
+        metric_name = prom_file.stem  # e.g. latency_avg, latency_p95
+        content = json.loads(prom_file.read_text())
+
+        results = content.get("data", {}).get("result", [])
+        for entry in results:
+            labels = entry.get("metric", {})
+            value = entry.get("value", [None, None])[1]
+
+            if (
+                labels.get("method") == target_method
+                and labels.get("uri") == target_uri
+                and value is not None
+            ):
+                rows.append(
+                    {
+                        "metric": metric_name,
+                        "method": target_method,
+                        "uri": target_uri,
+                        "value": value,
+                    }
+                )
+
+    if not rows:
+        print("⚠️ No matching metrics found for CSV export.")
+        return
+
+    with output_csv.open("w", newline="") as f:
+        writer = csv.DictWriter(
+            f,
+            fieldnames=["metric", "method", "uri", "value"],
+        )
+        writer.writeheader()
+        writer.writerows(rows)
+
+    print(f"📄 Extracted metrics written to {output_csv}")
+
+
 def main() -> None:
     parser = argparse.ArgumentParser()
     parser.add_argument("--app", required=True, choices=["es-cqrs", "crud"])
@@ -321,6 +356,12 @@ def main() -> None:
         query_prometheus(
             prom_dir=prom_dir,
             window=PROMETHEUS_LATENCY_WINDOW,
+        )
+
+        extract_metrics_to_csv(
+            metric_definition_path=Path(args.metric),
+            prom_dir=prom_dir,
+            output_csv=run_dir / "metrics.csv",
         )
 
         write_metadata(
