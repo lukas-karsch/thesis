@@ -91,3 +91,4 @@ The latex file for the thesis can be found [here](latex/main.tex).
 
 - https://spring.io/projects/spring-boot
 - https://www.postgresql.org/
+- https://www.axoniq.io/ 

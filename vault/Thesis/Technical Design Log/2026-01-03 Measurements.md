@@ -31,6 +31,7 @@ stages: [
 ![[plot_get_lectures_latency_comparison.png]]
 Questions / To do:
 - measure with more VUs 
+- relative comparison (1:x)
 ### 50 VUs
 ![[plot_get_lectures_latency_comparison_50vu.png]]
 ### Latency vs. load 

@@ -22,7 +22,7 @@ http, (stateless) communication, the term "API", REST principles, CRUD
 - rich domain model 
 - what is aspect driven design?
 - differences to CRUD 
-- vertical slice, screaming architecture, and more architecture styles 
+- vertical slice, screaming architecture, and more architecture styles
 ### 3.4 Event Sourcing and event-driven architectures
 - Formal definition
 - event stream as single source of truth 
