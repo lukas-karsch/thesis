@@ -27,12 +27,12 @@
             "state": {
               "type": "markdown",
               "state": {
-                "file": "Technical Design Log/2026-01-03 Measurements.md",
+                "file": "Technologies/Prometheus.md",
                 "mode": "source",
                 "source": false
               },
               "icon": "lucide-file",
-              "title": "2026-01-03 Measurements"
+              "title": "Prometheus"
             }
           }
         ],
@@ -186,12 +186,12 @@
   },
   "active": "7006912a7208129b",
   "lastOpenFiles": [
+    "Technical Design Log/2026-01-03 Measurements.md",
     "images/plot_get_lectures_latency_vs_virtual_users.png",
     "images/plot_get_lectures_latency_vs_virtual_users",
     "images/plot_get_lectures_latency_comparison_50vu.png",
     "Literature/Related Work.md",
     "Advice/Performance Metrics.md",
-    "Technical Design Log/2026-01-03 Measurements.md",
     "Technologies/Testing in SpringBoot.md",
     "Literature/Domain-Driven Design Quickly, A Summary of Eric Evans' Domain-Driven Design.md",
     "images/Pasted image 20260103201102.png",
