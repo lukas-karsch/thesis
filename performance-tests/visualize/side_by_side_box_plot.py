@@ -4,8 +4,8 @@ from pathlib import Path
 import matplotlib.pyplot as plt
 import pandas as pd
 
-from aggregate import aggregate
-from helper import load_csv
+from visualize.aggregate import aggregate
+from visualize.helper import load_csv
 
 APP_COLORS = {
     "crud": "#1f77b4",  # blue
@@ -21,7 +21,7 @@ def pretty_name(app: str) -> str:
     raise ValueError(f"{app} is not supported.")
 
 
-def _plot_grouped_metrics(df: pd.DataFrame) -> None:
+def _boxplot_grouped_metrics(df: pd.DataFrame) -> None:
     for uri in sorted(df["uri"].unique()):
         uri_df = df[df["uri"] == uri]
 
@@ -90,6 +90,47 @@ def _plot_grouped_metrics(df: pd.DataFrame) -> None:
         plt.show()
 
 
+def _lineplot_latency_vs_users(df: pd.DataFrame) -> None:
+    percentiles = {
+        "latency_p50": "p50",
+        "latency_p99": "p99",
+    }
+
+    for uri in sorted(df["uri"].unique()):
+        uri_df = df[df["uri"] == uri]
+
+        fig, ax = plt.subplots()
+
+        for app in ["crud", "es-cqrs"]:
+            app_df = uri_df[uri_df["app"] == app]
+
+            for metric, label in percentiles.items():
+                metric_df = app_df[app_df["metric"] == metric]
+
+                if metric_df.empty:
+                    continue
+
+                metric_df = metric_df.sort_values("virtual_users")
+
+                ax.plot(
+                    metric_df["virtual_users"],
+                    metric_df["value_ms"],
+                    marker="o",
+                    linestyle="--" if metric == "latency_p99" else "-",
+                    color=APP_COLORS[app],
+                    label=f"{pretty_name(app)} {label}",
+                )
+
+        ax.set_xlabel("Virtual users")
+        ax.set_ylabel("Latency (ms)")
+        ax.set_title(f"Latency vs load — {df['method'].iloc[0]} {uri}")
+
+        ax.grid(True, linestyle="--", alpha=0.6)
+        ax.legend()
+        plt.tight_layout()
+        plt.show()
+
+
 def visualize_one_csv_each(crud_csv: Path, es_cqrs_csv: Path):
     df = pd.concat(
         [
@@ -99,12 +140,17 @@ def visualize_one_csv_each(crud_csv: Path, es_cqrs_csv: Path):
         ignore_index=True,
     )
 
-    _plot_grouped_metrics(df)
+    _boxplot_grouped_metrics(df)
 
 
 def visualize_aggregated(base_name: str, directory: Path):
     aggregated = aggregate(base_name, directory)
-    _plot_grouped_metrics(aggregated)
+    _boxplot_grouped_metrics(aggregated)
+
+
+def visualize_aggregated_lineplot(base_name: str, directory: Path):
+    aggregated = aggregate(base_name, directory)
+    _lineplot_latency_vs_users(aggregated)
 
 
 def main() -> None:

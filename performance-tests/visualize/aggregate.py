@@ -5,7 +5,7 @@ from typing import List
 
 import pandas as pd
 
-from helper import load_csv
+from visualize.helper import load_csv
 
 
 def _find_matching_metrics_csv(base_name: str, directory: Path) -> List[Path]:

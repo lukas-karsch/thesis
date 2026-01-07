@@ -6,7 +6,7 @@ import subprocess
 import time
 from datetime import datetime
 from pathlib import Path
-from typing import Literal
+from typing import Literal, Any
 from urllib.parse import urlparse
 
 import requests
@@ -110,10 +110,10 @@ def docker_compose_down() -> None:
 # ============================================================================
 
 
-def create_run_dirs(k6_script: Path, app: str) -> tuple[str, Path, Path]:
+def create_run_dirs(k6_script: Path, app: str, VUs: int) -> tuple[str, Path, Path]:
     script_name = Path(k6_script).stem
     run_date = datetime.now().strftime("%Y-%m-%d_%H-%M-%S")
-    run_id = f"run-{script_name}-{app}-{run_date}"
+    run_id = f"run-{script_name}-{VUs}-{app}-{run_date}"
 
     run_dir = Path("run-k6") / Path(run_id)
     prom_dir = run_dir / "prometheus"
@@ -183,11 +183,7 @@ def start_prometheus_container(
 # ============================================================================
 
 
-def run_k6(
-    host_url: str,
-    k6_script: Path,
-    run_dir: Path,
-) -> tuple[int, int]:
+def run_k6(host_url: str, k6_script: Path, run_dir: Path, VUs: int) -> tuple[int, int]:
     print("Starting k6 run.")
     start_ts = int(time.time())
 
@@ -202,6 +198,8 @@ def run_k6(
                 f"--summary-export={summary_json}",
                 "-e",
                 f"HOST={host_url}",
+                "-e",
+                f"VUs={VUs}",
                 k6_script,
             ],
             stdout=out,
@@ -275,6 +273,7 @@ def extract_metrics_to_csv(
     metric_def = json.loads(metric_definition_path.read_text())
     target_method = metric_def["metric"]["method"]
     target_uri = metric_def["metric"]["uri"]
+    VUs = metric_def["VUs"]
 
     rows: list[dict[str, str]] = []
 
@@ -299,6 +298,7 @@ def extract_metrics_to_csv(
                         "method": target_method,
                         "uri": target_uri,
                         "value": value,
+                        "virtual_users": VUs,
                     }
                 )
 
@@ -317,6 +317,13 @@ def extract_metrics_to_csv(
     print(f"📄 Extracted metrics written to {output_csv}")
 
 
+def _get_metric_content(metric: Path) -> tuple[Any, Path]:
+    metric_content = json.loads(Path(metric).read_text())
+    k6_script = os.path.dirname(metric) / Path(metric_content["file"])
+
+    return metric_content, k6_script
+
+
 def do_run(app: Literal["crud", "es-cqrs"], metric: Path):
     if not docker_available():
         raise RuntimeError("Docker is required but not available")
@@ -328,10 +335,15 @@ def do_run(app: Literal["crud", "es-cqrs"], metric: Path):
         host_url = resolve_host(app)
         app_port = urlparse(host_url).port
 
-        metric_content = json.loads(Path(metric).read_text())
-        k6_script = os.path.dirname(metric) / Path(metric_content["file"])
+        metric_content, k6_script = _get_metric_content(metric)
 
-        run_id, run_dir, prom_dir = create_run_dirs(k6_script, app)
+        VUs = metric_content["VUs"]
+        if VUs is None:
+            raise ValueError(
+                "Configuration Error: No field 'VUs' configured in metric.json"
+            )
+
+        run_id, run_dir, prom_dir = create_run_dirs(k6_script, app, VUs)
 
         prom_config = run_dir / "prometheus.yml"
         write_prometheus_config(prom_config, app_port)
@@ -345,6 +357,7 @@ def do_run(app: Literal["crud", "es-cqrs"], metric: Path):
             host_url=host_url,
             k6_script=k6_script,
             run_dir=run_dir,
+            VUs=VUs,
         )
 
         query_prometheus(
@@ -369,6 +382,7 @@ def do_run(app: Literal["crud", "es-cqrs"], metric: Path):
             test_end=test_end,
             window=PROMETHEUS_LATENCY_WINDOW,
         )
+
     finally:
         if prom_container is not None:
             stop_and_remove_container(prom_container)

@@ -6,5 +6,6 @@
   "file": "read-lectures.js",
   "metadata": {
     "title": "Read lectures for a student"
-  }
+  },
+  "VUs": 50
 }

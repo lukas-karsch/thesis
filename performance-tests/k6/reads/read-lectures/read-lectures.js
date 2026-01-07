@@ -1,14 +1,17 @@
 import http from 'k6/http';
 import {sleep} from "k6";
 import {assertResponseIs201, checkResponseIs200} from "../../helper/assert.js";
+import {getVUS} from "../../helper/env.js";
 
 const TARGET_HOST = __ENV.HOST || 'http://localhost:8080';
 
+const VUS = getVUS(__ENV);
+
 export const options = {
     stages: [
-        {duration: '10s', target: 20}, // Ramp-up to 20 virtual users over 30s
-        {duration: '1m', target: 20},  // Stay at 20 virtual users for 1 minute
-        {duration: '10s', target: 0},   // Ramp-down to 0 users
+        {duration: '10s', target: VUS},
+        {duration: '1m', target: VUS},
+        {duration: '10s', target: 0},
     ],
     thresholds: {
         'http_req_duration': ['p(95)<500'], // 95% of requests must complete below 500ms
@@ -58,7 +61,6 @@ export function setup() {
             const res = http.post(`${TARGET_HOST}/courses`, payload, professorParams)
             assertResponseIs201(res)
             const courseId = res.json().data
-            console.log({courseId})
             courseIds.push(courseId)
         }
     );
@@ -99,7 +101,6 @@ export function setup() {
             const res = http.post(`${TARGET_HOST}/lectures/create`, payload, professorParams)
             assertResponseIs201(res)
             const lectureId = res.json().data
-            console.log({lectureId})
             lectureIds.push(lectureId)
         }
     );
