@@ -97,7 +97,7 @@
 \newglossaryentry{groovy}
 {
     name=Groovy,
-    description={A dynamic JVM language that extends Java with concise syntax and powerful features such as closures, making it well suited for scripting, DSLs, and test code \parencite{noauthor_apache_nodate-1}}
+    description={A dynamic JVM language that extends Java with concise syntax and powerful features such as closures, making it well suited for scripting, DSLs, and test code \parencite{groovy-homepage}}
 }
 
 \newglossaryentry{gpath}
@@ -105,7 +105,13 @@
     name={GPath Expression},
     text={GPath expression},
     plural={GPath expressions},
-    description={A Groovy-based path language for navigating and querying nested object graphs (such as JSON or XML) using concise, expressive selectors and closures  \parencite{noauthor_apache_nodate}}
+    description={A Groovy-based path language for navigating and querying nested object graphs (such as JSON or XML) using concise, expressive selectors and closures  \parencite{groovy-gpath}}
+}
+
+\newglossaryentry{testcontainer}
+{
+    name=Testcontainer,
+    description={Testcontainers are a way to declare infrastructure dependencies as code using Docker \parencite{testcontainers-homepage}}
 }
 
 \newacronym{www}{WWW}{World Wide Web}
@@ -239,7 +245,7 @@ Every resource must support the same interface, usually HTTP methods (GET, POST,
 
 Resources are decoupled from their representations. Clients can request different representations of a resource, depending on their needs \parencite{tilkov_brief_2007}: a web browser might request \acrshort{html}, while another server or application might request \acrshort{xml} or \acrshort{json}.
 
-%s TODO explain CRUD! here or somewhere else? 
+%s TODO explain CRUD here or somewhere else? 
 
 \subsection{Layered Architecture Foundations}
 \label{sec:layered}
@@ -424,7 +430,7 @@ To ensure both implementations adhere to the business rules, an extensive test s
 
 \subsection{Contract Tests}
 
-The contract tests were implemented in a separate maven module called \texttt{test-suite}, \footnote{Source code available at /test-suite/src/test/java/karsch.lukas}, where all business rules can be viewed. The test classes use the \texttt{JUnit 5} testing framework and \texttt{REST Assured} to send and assert \gls{http} requests. A basic example might look like this:
+The contract tests are implemented in a separate maven module called \texttt{test-{\allowbreak}suite}, \footnote{Source code available at /test-suite/src/test/java/karsch.lukas}, where all business rules can be viewed. The test classes use the \texttt{JUnit 5} testing framework and \texttt{REST Assured} to send and assert \gls{http} requests. A basic example might look like this:
 
 \begin{lstlisting}
 %%@Test%%
@@ -458,6 +464,32 @@ RestAssured.when()
 \end{lstlisting}
 
 Here, the path \texttt{data.grades} of the returned JSON object is expected to be an array. The array is filtered using a \gls{gpath} with a closure to find the first entry where \texttt{combinedGrade} equals 0. Then, this entry's \texttt{credits} field is extracted and validated using the \texttt{equalTo(0)} matcher.
+
+The test classes in \texttt{test-suite} are all \texttt{abstract}, meaning they can not be run directly. Instead, they are intended to be subclassed by the modules implementing the concrete applications (\texttt{impl-crud} \& \texttt{impl-es-cqrs}). The subclasses must implement a set of abstract methods which are implementation specific, for example a method to reset the database in between each test, a method to set the application's time and methods to create seed data for tests.
+
+Necessary infrastructure is spun up by the subclasses using \glspl{testcontainer}. \glspl{testcontainer} is a way to declare infrastructure dependencies as code and is an open-source library available for many programming languages. \parencite{testcontainers-homepage}
+
+\begin{lstlisting}
+%%@TestConfiguration%%(proxyBeanMethods = false)
+public class PostgresTestcontainerConfiguration {
+    %%@Bean%%
+    %%@ServiceConnection%%
+    %%@RestartScope%%
+    PostgreSQLContainer<?> postgreSQLContainer() {
+        return new PostgreSQLContainer<>(
+                DockerImageName.parse("postgres:latest")
+        );
+    }
+}
+\end{lstlisting}
+
+The above code snippet starts a PostgreSQL container using the latest available image. \texttt{@ServiceConnection} makes sure the Spring application can connect to the container. This configuration can then be imported into the test class:
+
+\begin{lstlisting}
+%%@SpringBootTest%%
+%%@Import%%(PostgresTestcontainerConfiguration.class)
+public class CrudLecturesE2ETest extends AbstractLecturesE2ETest { }
+\end{lstlisting}
 
 \subsection{CRUD implementation}
 

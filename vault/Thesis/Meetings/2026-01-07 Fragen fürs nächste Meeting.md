@@ -8,6 +8,7 @@
 - Wie sollte der "Related Work" Teil aussehen? Ähnliche Arbeiten nennen und zusammenfassen? 
 - wie genau soll ich die Projekt requirements präsentieren? Also Business Regeln. UML Diagramm für Entities? Tabelle der Endpoint? Alle Entities erläutern? 
 - Zitieren von source code dokumentation? JUnit, Axon? 
+- Glossary passt? (zeigen)
 ## Fachlich 
 - Flexibility anstatt Scalability:
   eigene "Metrik" erstellen, die z.B bewertet, wie leicht neue Features dazukommen: time to implement, new code, changes to existing code, new dependencies / coupling 
