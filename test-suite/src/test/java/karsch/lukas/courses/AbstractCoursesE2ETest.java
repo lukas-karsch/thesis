@@ -64,7 +64,7 @@ public abstract class AbstractCoursesE2ETest implements BaseE2ETest {
 
     @Test
     @DisplayName("POST /courses should return status code 201; GET /courses should return a list")
-    void createCourses_shouldReturn201() throws InterruptedException {
+    void createCourses_shouldReturn201() {
         int minimumCreditsRequired = 1;
 
         var request = new CreateCourseRequest(

@@ -62,6 +62,14 @@
     description={The CAP theorem by Eric Brewer states that a distributed data store can only display at most two of the following three guarantees at the same time: consistency, availability and partition tolerance \parencite{gilbert_brewers_2002}}
 }
 
+\newglossaryentry{contract-test}
+{
+    name={Contract Test},
+    text={contract test},
+    plural={contract tests},
+    description={A contract test verifies that services implement a shared interface by testing their interactions against an explicitly defined contract}
+}
+
 \newacronym{www}{WWW}{World Wide Web}
 
 \newacronym{hateoas}{HATEOAS}{Hypermedia as the engine of application state}
@@ -321,7 +329,50 @@ Traceability and auditing are legal requirements across various sectors, as they
 
 \section{Proposed Method}
 
+This thesis aims to provide a fair, quantitative comparison of \acrshort{crud} and \acrshort{cqrs} / \acrshort{es} architectures. To achieve this, the architectures should be applied not only to the same domain, but to the exact same requirements. The implementations can then be tested against the same \glspl{contract-test}.
+
+This chapter will first present the requirements for the actual application, then outline metrics and comparison methods.
+
 \subsection{Project requirements}
+
+The applications will implement a course enrollment and grading system which might for example be used in universities. Core features include:
+
+\begin{itemize}
+    \item Professors can create courses and lectures
+    \item Students can enroll and disenroll from lectures
+    \item Professors can enter grades
+    \item Students can view their current and past lectures
+    \item Students can view their credits
+\end{itemize}
+
+\subsubsection{Entities}
+\label{sec:entities}
+
+Two types of users exist in the domain: professors and students. Their personal information is not relevant for this thesis, which is why only their first and last name are stored for presentation reasons. The student additionally has a semester.
+
+Professors can create courses. Courses have a name, a description, an amount of credits they yield, a minimum amount of credits required to enroll and can have a set of courses as prerequisites.
+
+Courses are the "blueprints" for lectures. Lectures are the "implementation" of a course for a semester. Each lecture created from a course yields the course's amount of credits and has the requirements specified by the course. Lectures have a lifecycle: they can be in draft state, open for enrollment, in progress, finished or archived. A lecture has a list of time slots and a maximum amount of students that can enroll.
+
+A lecture can have several assessments. Each assessment has a type. The professor can enter grades for a student and an assessment. Grades are integers in the range of 0 to 100. Credits are awarded to a student as soon as they completed all assessments for a lecture with a passing grade (grade higher than 50).
+
+\subsubsection{Business rules}
+
+Relationships and business rules in this system are deliberately chosen complex, involving many relationships between \hyperref[sec:entities]{entities} and intricate validation rules. This approach was adopted in order to be able to make realistic assumptions about the research question by evaluating a project that closely resembles complex, real-world scenarios.
+
+\begin{itemize}
+    \item Existence checks: any requests including references to entities will fail if the references entities do not exist.
+    \item Requests leading to conflicts, for example creating a lecture with overlapping time slots, will fail
+    \item When a student tries enrolling to a lecture which is already full, they will be put on a waitlist
+    \item When a student disenrolls from a lecture, the next eligible student (higher semesters are preferred) will be enrolled
+    \item Actions on a lecture can only be done during the appropriate lifecycle state (enrolling only when the lifecycle is "open for enrollment", grades can only be assigned when the lecture is "finished")
+\end{itemize}
+
+\subsubsection{Contract Tests}
+
+To ensure both implementations adhere to the business rules, an extensive test suite was set up. While the internals of the implementations are vastly different architecturally and conceptually, they both have the same public \gls{api}. This makes it possible to run the same test suite on both apps by sending \gls{http} requests and verifying their responses. The test suite includes integration tests for all \gls{api} endpoint covering both regular and edge-case (error) scenarios to ensure that the \acrshort{crud} and \acrshort{es}-\acrshort{cqrs} application exhibit identical state transitions and error behaviors.
+
+These contract tests were implemented in a separate maven module called \texttt{test-suite}. The test classes use \texttt{JUnit 5} and \texttt{restassured} to send and assert \gls{http} requests. A pseudocode example might look like this:
 
 \subsection{Performance}
 
@@ -352,5 +403,11 @@ Finally, I'm done!
 \printglossaries
 
 \printbibliography
+
+\appendix
+
+\section{Source Code}
+
+The full source code for this thesis, including both apps, performance tests and markdown notes, is available at: \url{https://gitlab.mi.hdm-stuttgart.de/lk224/thesis}
 
 \end{document} % This is the end of the document

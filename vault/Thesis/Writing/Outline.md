@@ -54,6 +54,7 @@ http, (stateless) communication, the term "API", REST principles, CRUD
 -> Only if i plan to do the database scaling
 - Different ways to scale systems
 - How to scale reads and writes (in general and specific to event sourced systems)
+- Bottlenecks 
 ## 4. Related Work 
 ## 5. Proposed Method 
 ### 5.1 Project requirements

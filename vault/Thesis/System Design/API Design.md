@@ -1,7 +1,5 @@
 This file always contains the most current version of my endpoints.
-
 ## Included
-
 - [[2025-11-09 API Design (2f6e551d)]]
 - [[2025-11-13 Defining additional requirements (9aa823f1, 1c08c5be)]]
 

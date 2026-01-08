@@ -20,6 +20,18 @@
               "icon": "lucide-file",
               "title": "TODOs"
             }
+          },
+          {
+            "id": "bb9da7d369b57dfa",
+            "type": "leaf",
+            "state": {
+              "type": "pdf",
+              "state": {
+                "file": "Documents/Expose Lukas Karsch Bachelorarbeit_02.pdf"
+              },
+              "icon": "lucide-file-text",
+              "title": "Expose Lukas Karsch Bachelorarbeit_02"
+            }
           }
         ]
       }
@@ -171,19 +183,28 @@
   },
   "active": "7006912a7208129b",
   "lastOpenFiles": [
+    "Technical Design Log/2025-11-09 API Design (2f6e551d).md",
+    "Documents/Expose Lukas Karsch Bachelorarbeit_02.pdf",
+    "Technical Design Log/2025-11-13 Defining additional requirements (9aa823f1, 1c08c5be).md",
+    "Technical Design Log/2025-11-14 Audit Log (c5367a6b).md",
+    "Technical Design Log/2025-12-22 What can i benchmark.md",
+    "Technical Design Log/2025-12-19 Preparing for performance tests.md",
+    "Technical Design Log/2025-11-08 Initial Setup (6840cebf).md",
+    "System Design/ES-CQRS Application.md",
+    "System Design/API Design.md",
+    "Meetings/2026-01-07 Fragen fürs nächste Meeting.md",
+    "Writing/Outline.md",
+    "Technical Design Log/2026-01-07 What else to measure.md",
+    "Technical Design Log/2026-01-07 How i could measure flexibility.md",
+    "TODOs.md",
     "Writing/CRUD vs. CQRS.md",
     "Thesis - Landing Page.md",
-    "Technical Design Log/2026-01-07 How i could measure flexibility.md",
-    "Meetings/2026-01-07 Fragen fürs nächste Meeting.md",
-    "Technical Design Log/2026-01-07 What else to measure.md",
     "Technical Design Log/2026-01-03 Measurements.md",
     "Documents/Hinweise_zur_Abschlussarbeit_Jordine_v1-2-0.pdf",
-    "Writing/Outline.md",
     "Schedule.md",
     "Advice/Performance Metrics.md",
     "Meetings/2025-11-12 Exposé Feedback.md",
     "Technical Design Log/2025-12-29 Where to measure.md",
-    "System Design/ES-CQRS Application.md",
     "Technologies/k6.md",
     "Technologies/JMH - Performance Testing.md",
     "Technologies/Swagger; Open API Documentation.md",
@@ -192,20 +213,10 @@
     "images/plot_get_lectures_latency_vs_virtual_users",
     "images/plot_get_lectures_latency_comparison_50vu.png",
     "Literature/Related Work.md",
-    "Technologies/Testing in SpringBoot.md",
-    "Literature/Domain-Driven Design Quickly, A Summary of Eric Evans' Domain-Driven Design.md",
     "images/Pasted image 20260103201102.png",
     "images/plot_get_lectures_latency_comparison.png",
     "images/plot_get_lectures_latency_comparison",
-    "Technical Design Log/2025-12-22 What can i benchmark.md",
-    "Technical Design Log/2025-12-19 Preparing for performance tests.md",
-    "Technical Design Log/2025-12-19 Apps are finished.md",
-    "Technical Design Log/2025-12-16 Problems with my Axon projections.md",
-    "Technical Design Log/2025-12-13 My first Saga.md",
-    "Technical Design Log/2025-12-12 The dangers of directly adding entities to the database.md",
-    "Advice/LLMs bei der Bachelorarbeit (Infoveranstaltung).md",
     "Documents/BachelorarbeitVorlage.pdf",
-    "Documents/Expose Lukas Karsch Bachelorarbeit_02.pdf",
     "Writing",
     "images/Pasted image 20251223012238.png",
     "images/Pasted image 20251222211426.png",

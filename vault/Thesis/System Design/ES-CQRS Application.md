@@ -71,7 +71,6 @@ If the validation is complex or requires strict consistency (e.g., reserving mon
 - **Pros:** Eventually consistent, robust, handles rollbacks (compensating actions) if the check fails.
 - **Cons:** High complexity. For a Bachelor's thesis, this might be overkill unless "complex cross-aggregate transactions" is a specific goal.
 ### 3. The "Interceptor / Dispatch Interceptor" Pattern (The "Cleaner" Alternative to #1)
-
 This is a sophisticated version of Option 1 using Axon's infrastructure. You can intercept the command before it reaches the Aggregate to perform validation against a projection.
 - **How it works:** You write a `MessageDispatchInterceptor`. Before the `EnrollStudentCommand` is dispatched to the Aggregate, the interceptor checks the `StudentCreditsProjection` database.
 - **The Code:**
@@ -100,14 +99,6 @@ Create a lookup table that belongs to the command side and is immediately consis
 This lookup table can be injected into command handlers. 
 ### Recommendation for your Thesis
 **Use Option 4 (Parameter Injection / Lookup table Check).**
-
--> Why?
-1. **Scope:** Your thesis focuses on _Performance, Scalability, and Traceability_. Implementing Sagas adds massive complexity that doesn't necessarily help you answer those specific questions.
-2. **Realism:** In a university context, "Eventual Consistency" is acceptable. If a student drops a prerequisite course _milliseconds_ before enrolling in the advanced course, the system can tolerate that edge case (or catch it later with a reconciliation process).
-3. **Comparison:** It provides a clear contrast to CRUD.
-    - **CRUD:** JOIN `Student` and `Course` tables in a transaction (ACID).
-    - **ES:** Query `StudentProjection`, then Command `CourseAggregate` (BASE).
-For most cases, option 1 is probably fine. However, I have to look if any cases require strict consistency. Also, i probably still need a simple SAGA that can revert illegal states. 
 ### Projections 
 - save denormalized projections
 - one view = one table
@@ -117,7 +108,7 @@ For most cases, option 1 is probably fine. However, I have to look if any cases 
 	- this is called **Reverse Lookup** or **Inverted Index** 
 	- add @JsonIgnore 
 ## Endpoints 
-To keep the APIs similar, I want my rest adapter to be synchronous. Basically, the backend stays async, in Axon fashion, and the REST layer is like a synchronous frontend.
+To keep the APIs identical, I want my rest adapter to be synchronous. Basically, the backend stays async, in Axon fashion, and the REST layer is like a synchronous frontend.
 This can be achieved using [[AXON Subscription Queries]].
 
 However, this is not typical for CQRS applications and might lead to additional latency. I will have to think about how this can be presented in the thesis and how it would influence my performance metrics.
