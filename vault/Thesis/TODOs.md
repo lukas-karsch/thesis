@@ -1,8 +1,4 @@
-- think about the database that stores projections #database #projection
-    - i want to use postgres
-    - but maybe its not good to use the same db instance as the instance that logs the event stream?
-- find and read papers relevant to the topics
-	- tactical design 
+- **Literature**
     - DDD #DDD
         - [[Domain-Driven Design Quickly, A Summary of Eric Evans' Domain-Driven Design]]
     - ES #es
@@ -45,3 +41,4 @@
 - Demonstrate how to start docker 
 - Demonstrate how to start test run with testcontainers 
 - Make sure external links all exist (e.g. to Docker, Axon, etc)
+- Push to GitHub aswell and add the link to latex 

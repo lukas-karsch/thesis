@@ -35,8 +35,7 @@
               "title": "2026-01-07 Fragen fürs nächste Meeting"
             }
           }
-        ],
-        "currentTab": 1
+        ]
       }
     ],
     "direction": "vertical"
@@ -184,10 +183,13 @@
       "bases:Create new base": false
     }
   },
-  "active": "bb9da7d369b57dfa",
+  "active": "7006912a7208129b",
   "lastOpenFiles": [
-    "Documents/Expose Lukas Karsch Bachelorarbeit_02.pdf",
+    "Advice/LLMs bei der Bachelorarbeit (Infoveranstaltung).md",
     "TODOs.md",
+    "Writing/Outline.md",
+    "Meetings/2026-01-07 Fragen fürs nächste Meeting.md",
+    "Documents/Expose Lukas Karsch Bachelorarbeit_02.pdf",
     "Technical Design Log/2025-11-09 API Design (2f6e551d).md",
     "Technical Design Log/2025-11-13 Defining additional requirements (9aa823f1, 1c08c5be).md",
     "Technical Design Log/2025-11-14 Audit Log (c5367a6b).md",
@@ -196,8 +198,6 @@
     "Technical Design Log/2025-11-08 Initial Setup (6840cebf).md",
     "System Design/ES-CQRS Application.md",
     "System Design/API Design.md",
-    "Meetings/2026-01-07 Fragen fürs nächste Meeting.md",
-    "Writing/Outline.md",
     "Technical Design Log/2026-01-07 What else to measure.md",
     "Technical Design Log/2026-01-07 How i could measure flexibility.md",
     "Writing/CRUD vs. CQRS.md",

@@ -81,17 +81,19 @@ Benchmarking via load testing. Time taken per request (Median, P95); CPU utiliza
 - show how i tried to avoid bias in technologies 
 - measurements with k6 
 ## 6. Implementation
-### 6.1 CRUD implementation
+### 6.1 Contract tests
+### 6.2 CRUD implementation
 - Relational Modeling 
 - Audit log implementation
-### 6.2 ES/CQRS implementation 
+### 6.3 ES/CQRS implementation 
 - aggregates 
 - event modeling / data flows 
 - show example for one flow of data from controller via command handler to synchronous (write-side) and tracking (read-side) projectors 
-### 6.3 Infrastructure
+### 6.4 Infrastructure
 - Testcontainers 
 - Dockerfiles, docker-compose.yml 
 - (if applicable) deployment to VM 
+### 6.4 Performance tests
 ## 7. Results 
 **Important:** no assessment here! Only show data 
 - **Performance Benchmarking:** Raw data for write/read latency (P95, Median).

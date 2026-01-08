@@ -1,3 +1,4 @@
+%LTeX: enabled=false
 \documentclass[12pt,a4paper]{article}
 \usepackage[utf8]{inputenc}
 \usepackage[T1]{fontenc}
@@ -40,10 +41,24 @@
 
 \usepackage{hyperref}
 
+% Source - https://tex.stackexchange.com/a
+% Posted by Don Hosek
+% Retrieved 2026-01-08, License - CC BY-SA 4.0
+\ExplSyntaxOn
+\NewDocumentCommand{\javaname}{ m }
+  {
+    \seq_set_split:Nnn \l_tmpa_seq { . } { #1 } % ❶
+    \texttt{
+      \seq_use:Nn \l_tmpa_seq { .\allowbreak } % ❷
+    }
+  }
+\ExplSyntaxOff
+
 \addbibresource{references.bib}
 
 \makeglossaries
 
+%LTeX: enabled=true
 \newglossaryentry{api}
 {
     name=API, 
@@ -201,6 +216,7 @@
 
 \newpage
 
+\pagenumbering{roman}
 %LTeX: language=de-DE
 \section*{Ehrenwörtliche Erklärung}
 %LTeX: language=en-US
@@ -210,6 +226,8 @@
 \tableofcontents
 
 \newpage
+
+\pagenumbering{arabic}
 
 \section{Introduction}
 
@@ -263,9 +281,9 @@ A key concept in this design is layers of isolation, where layers are "closed", 
 
 In a layered application, data flows downwards during request handling and upwards during the response: a request arrives in the presentation layer, which delegates to the business layer. The business layer fetches data from the persistence layer which holds logic to retrieve data, e.g. by encapsulating SQL statements.
 
-The database responds with raw data, which is turned into a \acrlong{dao} by the persistence layer. The business layer uses this data to execute rules and make decisions. The result will be returned to the presentation layer which can then wrap the response and return it to the caller. \parencite{richards_software_2015}
+The database responds with raw data, which is turned into a \acrlong{dao} (\acrshort{dao}) by the persistence layer. The business layer uses this data to execute rules and make decisions. The result will be returned to the presentation layer which can then wrap the response and return it to the caller. \parencite{richards_software_2015}
 
-The data in layered applications is often times modeled in an \emph{anemic} way. In an \gls{adm}, business entities are treated as only data. They are objects which contain no business logic, only getters and setters. Business logic is entirely contained in the business (or "service") layer. \textcite{anemic-fowler-2003} describes this as an object-oriented \emph{antipattern}.
+The data in layered applications is often times modeled in an \emph{anemic} way. In an \gls{adm}, business entities are treated as only data. They are objects which contain no business logic, only getters and setters. Business logic is entirely contained in the business (or "service") layer. \textcite{anemic-fowler-2003} describes this as an object-oriented \emph{antipattern}. % TODO explain why (this is procedural style, not actually object oriented)
 
 % TODO figure
 
@@ -299,7 +317,7 @@ Using a \gls{rdm} does not mean that there should be no layers, the opposite is 
     \item Infrastructure layer: Supports other layers. Handles concerns like communication and persistence
 \end{itemize}
 
-\textcite[75]{evans_domain-driven_2004} points out that in some cases, operations in the domain can not be mapped to one object. For example, transferring money does conceptually not belong to one bank account. In those cases, where operations are important domain concepts, domain services can be introduced as part of model-driven design. To keep the domain model rich and not fall back into procedural style programming like with \gls{adm}, it is important to use services only when necessary. Services are not allowed to strip the entities and value objects in the domain of behavior. According to Evans, a good domain service has the following characteristics:
+\textcite[75]{evans_domain-driven_2004} points out that in some cases, operations in the domain can not be mapped to one object. For example, transferring money does conceptually not belong to one bank account. In those cases, where operations are important domain concepts, domain services can be introduced as part of model-driven design. To keep the domain model rich and not fall back into procedural style programming like with an \gls{adm}, it is important to use services only when necessary. Services are not allowed to strip the entities and value objects in the domain of behavior. According to Evans, a good domain service has the following characteristics:
 
 \begin{itemize}
     \item The operation relates to a domain concept which would be misplaced on an entity or a value object
@@ -315,7 +333,7 @@ Using a \gls{rdm} does not mean that there should be no layers, the opposite is 
 
 The state of domain objects in a \acrshort{crud} architecture is often mapped to normalized tables on a relational database, though other storage mechanisms maybe used. The application acts on the current state of the data, with all actions (reads and writes) acting on the same data. % TODO cite 
 
-\acrshort{acid} (\acrlong{acid}) are an important feature of CRUD applications. They can be guaranteed using transactions, ensuring that data stays consistent and operations are \glslink{atomicity}{atomic}. \parencite[10,11]{bernstein_principles_2009}
+\acrshort{acid} (\acrlong{acid}) are an important feature of CRUD applications. They can be guaranteed using transactions, ensuring that data stays consistent and operations are \glslink{atomicity}{atomic}. \parencite[10,11]{bernstein_principles_2009} % TODO more explanation: what is a transaction, commit, rollback, etc 
 
 \subsection{CQRS Architecture}
 \label{sec:cqrs}
@@ -416,7 +434,7 @@ Relationships and business rules in this system are deliberately chosen complex,
 
 \subsubsection{Contract Tests}
 
-To ensure both implementations adhere to the business rules, an extensive test suite was set up. While the internals of the implementations are vastly different architecturally and conceptually, they both have the same public \gls{api}. This makes it possible to run the same test suite on both apps by sending \gls{http} requests and verifying their responses. The test suite includes integration tests for all \gls{api} endpoint covering both regular and edge-case (error) scenarios to ensure that the \acrshort{crud} and \acrshort{es}-\acrshort{cqrs} application exhibit identical state transitions and error behaviors.
+To ensure both implementations adhere to the business rules, an extensive test suite was set up. While the internals of the implementations are vastly different architecturally and conceptually, they both have the same public \gls{api}. This makes it possible to run the same test suite on both apps by sending \gls{http} requests and verifying their responses. The test suite includes integration tests for all \gls{api} endpoint covering both regular and edge-case (error) scenarios to ensure that the \acrshort{crud} and \acrshort{es}-\acrshort{cqrs} application exhibit identical state transitions and error behaviors. \hyperref[sec:contract-test-implementation]{Section \ref{sec:contract-test-implementation}} outlines the implementation of those tests in detail.
 
 \subsection{Performance}
 
@@ -429,8 +447,9 @@ To ensure both implementations adhere to the business rules, an extensive test s
 \section{Implementation}
 
 \subsection{Contract Tests}
+\label{sec:contract-test-implementation}
 
-The contract tests are implemented in a separate maven module called \texttt{test-{\allowbreak}suite}, \footnote{Source code available at /test-suite/src/test/java/karsch.lukas}, where all business rules can be viewed. The test classes use the \texttt{JUnit 5} testing framework and \texttt{REST Assured} to send and assert \gls{http} requests. A basic example might look like this:
+The contract tests are implemented in a separate maven module called \texttt{test-{\allowbreak}suite}\footnote{\javaname{test-suite/src/test/java/karsch.lukas}}, where all business rules can be viewed. The test classes use the \texttt{JUnit 5} testing framework and \texttt{REST Assured} to send and assert \gls{http} requests. A basic example might look like this:
 
 \begin{lstlisting}
 %%@Test%%
@@ -449,7 +468,7 @@ void getLectureDetails_shouldReturn200() {
 
 JUnit is an open-source testing framework for Java. It offers a structured way of writing tests, driven by lifecycle methods like \texttt{beforeEach} or \texttt{afterAll}. Tests are annotated with \texttt{@Test}. They can also be parametrized and run repeatedly. Results can be asserted using assertion methods like \texttt{assertTrue()}. \parencite{noauthor_junit_nodate}
 
-REST Assured is a Java library that provides a highly fluent \acrshort{dsl} for testing and validating REST APIs in a readable, chainable style. It allows complex assertions to be written inline using \gls{groovy} expressions, making it easy to deeply verify JSON responses beyond simple field checks. \parencite{haleby_rest_nodate}
+REST Assured is a Java library that provides a highly fluent \acrshort{dsl} for testing and validating REST APIs in a readable, chainable style. It allows complex assertions to be written inline using \gls{groovy} expressions, making it easy to deeply verify JSON responses beyond simple field checks. \parencite{restassured-documentation}
 
 The below code example shows how to use a complex expression to find and validate a path in the returned JSON object:
 
@@ -470,18 +489,18 @@ The test classes in \texttt{test-suite} are all \texttt{abstract}, meaning they 
 Necessary infrastructure is spun up by the subclasses using \glspl{testcontainer}. \glspl{testcontainer} is a way to declare infrastructure dependencies as code and is an open-source library available for many programming languages. \parencite{testcontainers-homepage}
 
 \begin{lstlisting}
-%%@TestConfiguration%%(proxyBeanMethods = false)
+%%@TestConfiguration%%
 public class PostgresTestcontainerConfiguration {
     %%@Bean%%
     %%@ServiceConnection%%
     %%@RestartScope%%
     PostgreSQLContainer<?> postgreSQLContainer() {
         return new PostgreSQLContainer<>(
-                DockerImageName.parse("postgres:latest")
-        );
+                DockerImageName.parse("postgres:latest"));
     }
 }
 \end{lstlisting}
+\footnote{\javaname{impl-crud/src/test/karsch.lukas.PostgresTestcontainerConfiguration}}
 
 The above code snippet starts a PostgreSQL container using the latest available image. \texttt{@ServiceConnection} makes sure the Spring application can connect to the container. This configuration can then be imported into the test class:
 
@@ -490,12 +509,15 @@ The above code snippet starts a PostgreSQL container using the latest available 
 %%@Import%%(PostgresTestcontainerConfiguration.class)
 public class CrudLecturesE2ETest extends AbstractLecturesE2ETest { }
 \end{lstlisting}
+\footnote{\javaname{impl-crud/src/test/karsch.lukas.e2e.lectures.CrudLecturesE2ETest}}
 
 \subsection{CRUD implementation}
 
 \subsection{ES/CQRS implementation}
 
 \subsection{Infrastructure}
+
+\subsection{Performance Tests}
 
 \section{Results}
 
@@ -507,8 +529,10 @@ public class CrudLecturesE2ETest extends AbstractLecturesE2ETest { }
 
 Finally, I'm done!
 
+\newpage
 \printglossaries
 
+\newpage
 \printbibliography
 
 \appendix
