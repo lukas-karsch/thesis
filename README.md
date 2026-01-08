@@ -1,6 +1,6 @@
 # Event Sourcing vs. CRUD
 
-This is the source code to Lukas Karsch's bachelor's thesis, written in during the winter semester 2025 / 2026 under
+This is the source code to Lukas Karsch's bachelor's thesis, written during the winter semester 2025 / 2026 under
 supervision of Prof. Dr. Tobias Jordine and Felix Messner.
 
 The research question for the thesis is
@@ -29,7 +29,7 @@ Both implementations use the same underlying technologies:
 
 ### ES-CQRS App
 
-The es-cqrs app additionally uses the Axon server and the Axon framework for command handling and CQRS.
+The es-cqrs app additionally uses the Axon server and the Axon framework for command handling, event sourcing and CQRS.
 
 ## Get started
 

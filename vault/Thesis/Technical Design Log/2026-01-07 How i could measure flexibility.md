@@ -15,3 +15,11 @@ Careful: Audit Log implementation might skew results. Projections are async -> r
 What i was thinking first: create a metric which scores ease of development, changes to existing code, any introduced dependencies or coupling (less is better), time to implement. 
 -> wanted to score this in numbers so it gets more comparable 
 -> but probably still bad practice 
+
+GEMINI suggestion: 
+- **Schema Evolution Impact:** Measure what happens when a requirement changes
+    - _CRUD:_ maybe requires a database migration (DDL) and potential data loss for historical records.
+    - _ES:_ Requires a new projection or "upcasting." (new event schema)
+- **Temporal Query Capability:** Flexibility often means the ability to answer new questions about the past.
+    - _Metric:_ Can the system answer a question today that it wasn't designed to answer yesterday? (e.g., "What was the average grade on a specific date?").
+- **Coupling Metric (Afferent/Efferent):** Use static analysis tools to count dependencies between modules. This is less subjective than "ease of development.

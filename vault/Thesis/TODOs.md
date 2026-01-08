@@ -7,7 +7,7 @@
         - [[Domain-Driven Design Quickly, A Summary of Eric Evans' Domain-Driven Design]]
     - ES #es
         - Projections!
-        - read "Evaluation and Use of Event Sourcing" (Bachelorarbeit)
+        - lesen "Evaluation and Use of Event Sourcing" (Bachelorarbeit)
     - Audit Logs #audit-log
         - "Evaluation and Use of Event Sourcing (BA)"
     - Performance measurement best practices #performance
@@ -15,11 +15,7 @@
     - CQRS #cqrs
     - -> check HdM library for some books
         - DDD full version?
-  - anemic domain model?
-      - what is it, opposite of DDD, relevance?
-- roter Faden / Gliederung entwickeln (und besprechen)
-- create GEMINI.md file in the project root #llm
-- code
+- **Code**
     - CRUD
 	    - check if indexes are set up correctly 
 	    - clean up StatsService 
@@ -38,8 +34,8 @@
 	- for what can it be used / how is it used 
 	- compare to [[Axon Unit Of Work]]
 - multiple aggregates invariants: read https://discuss.axoniq.io/t/need-advice-on-our-first-saga-use-case/2230/2
-- Zitationsstil klären
-- [[LLMs bei der Bachelorarbeit (Infoveranstaltung)]] MindMap abholen
+- Jordine schreiben wegen Meeting 
+- [[LLMs bei der Bachelorarbeit (Infoveranstaltung)]] MindMap abholen 
 ## Before Finishing
 - Check README
 - Clone repo in blank folder, check everything works

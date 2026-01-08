@@ -13,4 +13,4 @@ If CQRS says:
 CRUD says:
 > “Reads and writes are just operations on the same data”
 
-- CQRS has built-in auditability 
+- CQRS has built-in auditability, if event-driven
