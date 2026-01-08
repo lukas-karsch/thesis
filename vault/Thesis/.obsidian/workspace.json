@@ -25,15 +25,18 @@
             "id": "bb9da7d369b57dfa",
             "type": "leaf",
             "state": {
-              "type": "pdf",
+              "type": "markdown",
               "state": {
-                "file": "Documents/Expose Lukas Karsch Bachelorarbeit_02.pdf"
+                "file": "Meetings/2026-01-07 Fragen fürs nächste Meeting.md",
+                "mode": "source",
+                "source": false
               },
-              "icon": "lucide-file-text",
-              "title": "Expose Lukas Karsch Bachelorarbeit_02"
+              "icon": "lucide-file",
+              "title": "2026-01-07 Fragen fürs nächste Meeting"
             }
           }
-        ]
+        ],
+        "currentTab": 1
       }
     ],
     "direction": "vertical"
@@ -181,10 +184,11 @@
       "bases:Create new base": false
     }
   },
-  "active": "7006912a7208129b",
+  "active": "bb9da7d369b57dfa",
   "lastOpenFiles": [
-    "Technical Design Log/2025-11-09 API Design (2f6e551d).md",
     "Documents/Expose Lukas Karsch Bachelorarbeit_02.pdf",
+    "TODOs.md",
+    "Technical Design Log/2025-11-09 API Design (2f6e551d).md",
     "Technical Design Log/2025-11-13 Defining additional requirements (9aa823f1, 1c08c5be).md",
     "Technical Design Log/2025-11-14 Audit Log (c5367a6b).md",
     "Technical Design Log/2025-12-22 What can i benchmark.md",
@@ -196,7 +200,6 @@
     "Writing/Outline.md",
     "Technical Design Log/2026-01-07 What else to measure.md",
     "Technical Design Log/2026-01-07 How i could measure flexibility.md",
-    "TODOs.md",
     "Writing/CRUD vs. CQRS.md",
     "Thesis - Landing Page.md",
     "Technical Design Log/2026-01-03 Measurements.md",

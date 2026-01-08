@@ -6,6 +6,30 @@
 \usepackage{array}
 \usepackage[table]{xcolor}
 
+\usepackage{color}
+
+\definecolor{pblue}{rgb}{0.13,0.13,1}
+\definecolor{pgreen}{rgb}{0,0.5,0}
+\definecolor{pred}{rgb}{0.9,0,0}
+\definecolor{pgrey}{rgb}{0.46,0.45,0.48}
+\definecolor{porange}{rgb}{1,0.5,0.1}
+
+\usepackage{listings}
+\lstset{language=Java,
+  showspaces=false,
+  showtabs=false,
+  breaklines=true,
+  showstringspaces=false,
+  breakatwhitespace=true,
+  columns=flexible,
+  commentstyle=\color{pgrey},
+  keywordstyle=\color{porange},
+  stringstyle=\color{pgreen},
+  basicstyle={\ttfamily\small},
+  moredelim=[il][\textcolor{pgrey}]{\$\$},
+  moredelim=[is][\textcolor{pgrey}]{\%\%}{\%\%}
+}
+
 \usepackage[
   backend=biber,
   style=authoryear, % or numeric, ieee, apa, ...
@@ -70,6 +94,20 @@
     description={A contract test verifies that services implement a shared interface by testing their interactions against an explicitly defined contract}
 }
 
+\newglossaryentry{groovy}
+{
+    name=Groovy,
+    description={A dynamic JVM language that extends Java with concise syntax and powerful features such as closures, making it well suited for scripting, DSLs, and test code \parencite{noauthor_apache_nodate-1}}
+}
+
+\newglossaryentry{gpath}
+{
+    name={GPath Expression},
+    text={GPath expression},
+    plural={GPath expressions},
+    description={A Groovy-based path language for navigating and querying nested object graphs (such as JSON or XML) using concise, expressive selectors and closures  \parencite{noauthor_apache_nodate}}
+}
+
 \newacronym{www}{WWW}{World Wide Web}
 
 \newacronym{hateoas}{HATEOAS}{Hypermedia as the engine of application state}
@@ -99,6 +137,8 @@
 \newacronym{base}{BASE}{Basically Available, Soft State, Eventual Consistency}
 
 \newacronym{es}{ES}{Event Sourcing}
+
+\newacronym{dsl}{DSL}{Data Specific Language}
 
 \begin{document}
 
@@ -372,8 +412,6 @@ Relationships and business rules in this system are deliberately chosen complex,
 
 To ensure both implementations adhere to the business rules, an extensive test suite was set up. While the internals of the implementations are vastly different architecturally and conceptually, they both have the same public \gls{api}. This makes it possible to run the same test suite on both apps by sending \gls{http} requests and verifying their responses. The test suite includes integration tests for all \gls{api} endpoint covering both regular and edge-case (error) scenarios to ensure that the \acrshort{crud} and \acrshort{es}-\acrshort{cqrs} application exhibit identical state transitions and error behaviors.
 
-These contract tests were implemented in a separate maven module called \texttt{test-suite}. The test classes use \texttt{JUnit 5} and \texttt{restassured} to send and assert \gls{http} requests. A pseudocode example might look like this:
-
 \subsection{Performance}
 
 \subsection{Scalability or flexibility (TODO)}
@@ -383,6 +421,43 @@ These contract tests were implemented in a separate maven module called \texttt{
 \subsection{Tech Stack}
 
 \section{Implementation}
+
+\subsection{Contract Tests}
+
+The contract tests were implemented in a separate maven module called \texttt{test-suite}, \footnote{Source code available at /test-suite/src/test/java/karsch.lukas}, where all business rules can be viewed. The test classes use the \texttt{JUnit 5} testing framework and \texttt{REST Assured} to send and assert \gls{http} requests. A basic example might look like this:
+
+\begin{lstlisting}
+%%@Test%%
+void getLectureDetails_shouldReturn200() {
+    // First, create seed data
+    var lectureSeedData = createLectureSeedData();
+
+    RestAssured.given()
+            .when() 
+            .get("/lectures/{lectureId}", lectureSeedData.lectureId())
+            .then()
+            .statusCode(200)
+            .body("data.dates", hasSize(2));
+}
+\end{lstlisting}
+
+JUnit is an open-source testing framework for Java. It offers a structured way of writing tests, driven by lifecycle methods like \texttt{beforeEach} or \texttt{afterAll}. Tests are annotated with \texttt{@Test}. They can also be parametrized and run repeatedly. Results can be asserted using assertion methods like \texttt{assertTrue()}. \parencite{noauthor_junit_nodate}
+
+REST Assured is a Java library that provides a highly fluent \acrshort{dsl} for testing and validating REST APIs in a readable, chainable style. It allows complex assertions to be written inline using \gls{groovy} expressions, making it easy to deeply verify JSON responses beyond simple field checks. \parencite{haleby_rest_nodate}
+
+The below code example shows how to use a complex expression to find and validate a path in the returned JSON object:
+
+\begin{lstlisting}
+RestAssured.when()
+// omitted request 
+.then()
+.body(
+    "data.grades.find { it.combinedGrade == 0 }.credits", 
+    equalTo(0)
+);
+\end{lstlisting}
+
+Here, the path \texttt{data.grades} of the returned JSON object is expected to be an array. The array is filtered using a \gls{gpath} with a closure to find the first entry where \texttt{combinedGrade} equals 0. Then, this entry's \texttt{credits} field is extracted and validated using the \texttt{equalTo(0)} matcher.
 
 \subsection{CRUD implementation}
 

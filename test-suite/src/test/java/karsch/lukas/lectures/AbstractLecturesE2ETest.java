@@ -392,7 +392,7 @@ public abstract class AbstractLecturesE2ETest implements BaseE2ETest {
                 LocalDateTime.of(2025, 11, 30, 10, 0).toInstant(ZoneOffset.UTC),
                 ZoneId.of("UTC")));
 
-        // assessment takes place at at 01.12.2025
+        // assessment takes place at 01.12.2025
         TimeSlot assessmentTimeSlot = new TimeSlot(
                 LocalDate.of(2025, 12, 1),
                 LocalTime.of(10, 0),
