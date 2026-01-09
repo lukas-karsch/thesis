@@ -5,7 +5,6 @@ import karsch.lukas.course.SimpleCourseDTO;
 import karsch.lukas.features.course.api.CourseCreatedEvent;
 import karsch.lukas.features.course.api.FindAllCoursesQuery;
 import karsch.lukas.features.course.api.FindCourseByIdQuery;
-import karsch.lukas.features.course.api.FindCoursesByIdsQuery;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.axonframework.config.ProcessingGroup;
@@ -14,7 +13,6 @@ import org.axonframework.queryhandling.QueryHandler;
 import org.springframework.stereotype.Component;
 
 import java.util.Set;
-import java.util.UUID;
 import java.util.stream.Collectors;
 
 @Component
@@ -49,20 +47,9 @@ class CourseProjector {
         return findAll();
     }
 
-    private Set<CourseDTO> findByIds(Set<UUID> ids) {
-        return courseRepository.findAllById(ids).stream()
-                .map(this::toDto)
-                .collect(Collectors.toSet());
-    }
-
     @QueryHandler
     public CourseDTO findById(FindCourseByIdQuery query) {
         return courseRepository.findById(query.courseId()).map(this::toDto).orElse(null);
-    }
-
-    @QueryHandler
-    public Set<CourseDTO> handle(FindCoursesByIdsQuery query) {
-        return findByIds(query.courseIds());
     }
 
     private CourseDTO toDto(CourseProjectionEntity entity) {

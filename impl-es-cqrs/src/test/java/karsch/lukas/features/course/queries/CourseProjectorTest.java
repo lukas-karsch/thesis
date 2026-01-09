@@ -5,7 +5,6 @@ import karsch.lukas.course.SimpleCourseDTO;
 import karsch.lukas.features.course.api.CourseCreatedEvent;
 import karsch.lukas.features.course.api.FindAllCoursesQuery;
 import karsch.lukas.features.course.api.FindCourseByIdQuery;
-import karsch.lukas.features.course.api.FindCoursesByIdsQuery;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentCaptor;
@@ -131,36 +130,5 @@ class CourseProjectorTest {
 
         // then
         assertThat(result).isNull();
-    }
-
-    @Test
-    void handleFindCoursesByIdsQuery_shouldReturnMatchingCourses() {
-        // given
-        var id1 = UUID.randomUUID();
-        var id2 = UUID.randomUUID();
-        var id3 = UUID.randomUUID();
-        var queryIds = Set.of(id1, id2);
-
-        var entity1 = new CourseProjectionEntity();
-        entity1.setId(id1);
-        entity1.setName("Course 1");
-        entity1.setPrerequisiteCourseIds(Collections.emptySet());
-
-        var entity2 = new CourseProjectionEntity();
-        entity2.setId(id2);
-        entity2.setName("Course 2");
-        entity2.setPrerequisiteCourseIds(Collections.emptySet());
-
-        when(courseRepository.findAllById(queryIds)).thenReturn(List.of(entity1, entity2));
-
-        // when
-        var query = new FindCoursesByIdsQuery(queryIds);
-        Set<CourseDTO> result = courseProjector.handle(query);
-
-        // then
-        assertThat(result).hasSize(2);
-        var ids = result.stream().map(CourseDTO::id).collect(Collectors.toSet());
-        assertThat(ids).contains(id1, id2);
-        assertThat(ids).doesNotContain(id3);
     }
 }
