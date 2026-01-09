@@ -1,17 +1,16 @@
 package karsch.lukas.config.aspect;
 
-import lombok.extern.slf4j.Slf4j;
 import org.aspectj.lang.JoinPoint;
 import org.aspectj.lang.annotation.Aspect;
 import org.aspectj.lang.annotation.Before;
 import org.aspectj.lang.annotation.Pointcut;
+import org.slf4j.LoggerFactory;
 import org.springframework.retry.annotation.Retryable;
 import org.springframework.retry.support.RetrySynchronizationManager;
 import org.springframework.stereotype.Component;
 
 @Aspect
 @Component
-@Slf4j
 public class RetryLoggingAspect {
 
     @Pointcut("@annotation(retryable)")
@@ -25,6 +24,8 @@ public class RetryLoggingAspect {
     }
 
     private static void logRetries(JoinPoint joinPoint) {
+        var log = LoggerFactory.getLogger(joinPoint.getTarget().getClass());
+
         var context = RetrySynchronizationManager.getContext();
         if (context != null && context.getRetryCount() > 0) {
             log.debug("Retry #{} - {}", context.getRetryCount(), joinPoint.getSignature().toLongString());

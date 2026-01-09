@@ -27,7 +27,7 @@ public class LectureAssessmentEntity extends AuditableEntity {
     @EqualsAndHashCode.Include
     private UUID id;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "lecture_id", nullable = false)
     private LectureEntity lecture;
 

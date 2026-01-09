@@ -33,7 +33,7 @@ public class LectureEntity extends AuditableEntity {
     @EqualsAndHashCode.Include
     private UUID id;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "course_id", nullable = false)
     private CourseEntity course;
 
@@ -45,7 +45,7 @@ public class LectureEntity extends AuditableEntity {
     @SortComparator(TimeSlotValueObjectComparator.class)
     private SortedSet<TimeSlotValueObject> timeSlots = new TreeSet<>(new TimeSlotValueObjectComparator());
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "professor_id", nullable = false)
     private ProfessorEntity professor;
 

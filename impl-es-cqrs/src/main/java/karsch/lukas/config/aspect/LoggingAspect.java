@@ -1,10 +1,10 @@
 package karsch.lukas.config.aspect;
 
-import lombok.extern.slf4j.Slf4j;
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.Around;
 import org.aspectj.lang.annotation.Aspect;
 import org.aspectj.lang.annotation.Pointcut;
+import org.slf4j.LoggerFactory;
 import org.slf4j.event.Level;
 import org.springframework.stereotype.Component;
 
@@ -15,7 +15,6 @@ import java.util.Arrays;
  */
 @Aspect
 @Component
-@Slf4j
 public class LoggingAspect {
     // generated using Gemini
 
@@ -35,6 +34,8 @@ public class LoggingAspect {
 
     @Around("queryLayer()")
     public Object logAround(ProceedingJoinPoint joinPoint) throws Throwable {
+        var log = LoggerFactory.getLogger(joinPoint.getTarget().getClass());
+
         if (!log.isEnabledForLevel(Level.TRACE)) {
             return joinPoint.proceed();
         }
@@ -43,7 +44,7 @@ public class LoggingAspect {
         String methodName = joinPoint.getSignature().getName();
         Object[] args = joinPoint.getArgs();
 
-        log.trace("Entry: {}.{}(args: {})", className, methodName, Arrays.toString(args));
+        log.trace("Entry: {}(args: {})", methodName, Arrays.toString(args));
 
         long startTime = System.currentTimeMillis();
 
@@ -51,11 +52,11 @@ public class LoggingAspect {
             Object result = joinPoint.proceed();
 
             long duration = System.currentTimeMillis() - startTime;
-            log.trace("Exit: {}.{}(return: {}) - {}ms", className, methodName, result, duration);
+            log.trace("Exit: {}(return: {}) - {}ms", methodName, result, duration);
 
             return result;
         } catch (Throwable e) {
-            log.error("Exception in {}.{}: {}", className, methodName, e.getMessage());
+            log.error("Exception in {}: {}", methodName, e.getMessage());
             throw e;
         }
     }

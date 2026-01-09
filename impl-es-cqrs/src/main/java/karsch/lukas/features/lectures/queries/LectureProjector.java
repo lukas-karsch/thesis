@@ -124,8 +124,6 @@ class LectureProjector {
             return;
         }
 
-        // FIXME this is probably still a bug: no guarantee that events on other aggregates are processed before this projector runs
-        // if student data IS necessary for a projection, it should be included in the event
         var student = studentRepository.findById(event.studentId())
                 .map(this::toStudentDto)
                 .orElseThrow(() -> new NoSuchElementException("Student " + event.studentId() + " not found"));
