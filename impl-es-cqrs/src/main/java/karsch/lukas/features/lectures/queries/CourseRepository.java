@@ -1,10 +1,10 @@
-package karsch.lukas.features.course.queries;
+package karsch.lukas.features.lectures.queries;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
 import java.util.UUID;
 
-@Repository("course.CourseRepository")
+@Repository("lectures.CourseRepository")
 interface CourseRepository extends JpaRepository<CourseProjectionEntity, UUID> {
 }

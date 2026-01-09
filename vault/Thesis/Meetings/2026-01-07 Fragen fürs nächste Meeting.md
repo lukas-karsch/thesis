@@ -7,8 +7,9 @@
 - Vorgabe für Länge des Theorieteils? 
 - Wie sollte der "Related Work" Teil aussehen? Ähnliche Arbeiten nennen und zusammenfassen? 
 - wie genau soll ich die Projekt requirements präsentieren? Also Business Regeln. UML Diagramm für Entities? Tabelle der Endpoint? Alle Entities erläutern? 
-- Zitieren von source code dokumentation? JUnit, Axon? 
+- Zitieren von source code dokumentation? JUnit, Axon? WIe Quellen? 
 - Glossary passt? (zeigen)
+	- vor oder nach dem content? 
 - Unter Code snippets per footnote verlinken? 
 ## Fachlich 
 - Flexibility anstatt Scalability:

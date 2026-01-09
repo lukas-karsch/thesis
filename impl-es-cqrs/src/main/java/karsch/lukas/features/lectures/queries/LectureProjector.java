@@ -3,11 +3,13 @@ package karsch.lukas.features.lectures.queries;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.transaction.Transactional;
+import karsch.lukas.core.queries.CourseMapper;
 import karsch.lukas.course.CourseDTO;
-import karsch.lukas.features.course.api.FindCourseByIdQuery;
+import karsch.lukas.features.course.api.CourseCreatedEvent;
 import karsch.lukas.features.lectures.api.*;
 import karsch.lukas.features.lectures.exceptions.LectureNotFoundException;
-import karsch.lukas.features.student.api.FindStudentByIdQuery;
+import karsch.lukas.features.professor.api.ProfessorCreatedEvent;
+import karsch.lukas.features.student.api.StudentCreatedEvent;
 import karsch.lukas.lecture.*;
 import karsch.lukas.professor.ProfessorDTO;
 import karsch.lukas.student.StudentDTO;
@@ -16,8 +18,6 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.axonframework.config.ProcessingGroup;
 import org.axonframework.eventhandling.EventHandler;
-import org.axonframework.messaging.responsetypes.ResponseTypes;
-import org.axonframework.queryhandling.QueryGateway;
 import org.axonframework.queryhandling.QueryHandler;
 import org.axonframework.queryhandling.QueryUpdateEmitter;
 import org.springframework.retry.annotation.Retryable;
@@ -27,7 +27,7 @@ import java.time.ZoneId;
 import java.util.HashSet;
 import java.util.List;
 import java.util.NoSuchElementException;
-import java.util.concurrent.CompletionException;
+import java.util.Objects;
 
 import static karsch.lukas.core.json.Defaults.EMPTY_LIST;
 
@@ -38,26 +38,23 @@ import static karsch.lukas.core.json.Defaults.EMPTY_LIST;
 class LectureProjector {
 
     private final LectureDetailRepository lectureDetailRepository;
-    private final QueryGateway queryGateway;
     private final ObjectMapper objectMapper;
     private final QueryUpdateEmitter updateEmitter;
     private final ProfessorRepository professorRepository;
+    private final StudentRepository studentRepository;
+    private final CourseRepository courseRepository;
+
+    private final CourseMapper courseMapper;
 
     @EventHandler
-    @Retryable(retryFor = {IllegalStateException.class, CompletionException.class})
+    @Retryable(retryFor = {NoSuchElementException.class})
     public void on(LectureCreatedEvent event) throws JsonProcessingException {
-        var courseFuture = queryGateway.query( // TODO Don't use queryGateway here
-                new FindCourseByIdQuery(event.courseId()),
-                ResponseTypes.instanceOf(CourseDTO.class)
-        );
-
         var professor = professorRepository.findById(event.professorId())
-                .orElseThrow(() -> new IllegalStateException("Professor " + event.professorId() + " not found"));
+                .orElseThrow(() -> new NoSuchElementException("Professor " + event.professorId() + " not found"));
 
-        var course = courseFuture.join();
-        if (course == null) {
-            throw new IllegalStateException("Course not found for ID: " + event.courseId());
-        }
+        var course = courseRepository.findById(event.courseId())
+                .map(c -> courseMapper.map(c, () -> courseRepository.findAllById(c.getPrerequisiteCourseIds())))
+                .orElseThrow(() -> new NoSuchElementException("Course " + event.courseId() + " not found"));
 
         var lectureEntity = new LectureDetailProjectionEntity();
         lectureEntity.setId(event.lectureId());
@@ -117,18 +114,21 @@ class LectureProjector {
 
     @EventHandler
     @Transactional
-    @Retryable(retryFor = {NoSuchElementException.class, IllegalStateException.class})
+    @Retryable(retryFor = {NoSuchElementException.class})
     public void on(StudentEnrolledEvent event) throws JsonProcessingException {
-        var studentFuture = queryGateway.query(new FindStudentByIdQuery(event.studentId()), ResponseTypes.instanceOf(StudentDTO.class));
-
         var lecture = lectureDetailRepository.findById(event.lectureId()).orElseThrow();
 
         List<StudentDTO> enrolledStudents = objectMapper.readerForListOf(StudentDTO.class).readValue(lecture.getEnrolledStudentsDtoJson());
 
-        var student = studentFuture.join();
-        if (student == null) {
-            throw new IllegalStateException("Student not found for ID: " + event.studentId());
+        if (enrolledStudents.stream().anyMatch(s -> Objects.equals(s.id(), event.studentId()))) {
+            return;
         }
+
+        // FIXME this is probably still a bug: no guarantee that events on other aggregates are processed before this projector runs
+        // if student data IS necessary for a projection, it should be included in the event
+        var student = studentRepository.findById(event.studentId())
+                .map(this::toStudentDto)
+                .orElseThrow(() -> new NoSuchElementException("Student " + event.studentId() + " not found"));
 
         enrolledStudents.add(student);
 
@@ -149,16 +149,13 @@ class LectureProjector {
     @Transactional
     @Retryable(retryFor = {NoSuchElementException.class, IllegalStateException.class})
     public void on(StudentWaitlistedEvent event) throws JsonProcessingException {
-        var studentFuture = queryGateway.query(new FindStudentByIdQuery(event.studentId()), ResponseTypes.instanceOf(StudentDTO.class));
-
         var lecture = lectureDetailRepository.findById(event.lectureId()).orElseThrow();
 
         List<WaitlistedStudentDTO> waitlist = objectMapper.readerForListOf(WaitlistedStudentDTO.class).readValue(lecture.getWaitingListDtoJson());
 
-        var student = studentFuture.join();
-        if (student == null) {
-            throw new IllegalStateException("Student not found for ID: " + event.studentId());
-        }
+        var student = studentRepository.findById(event.studentId())
+                .map(this::toStudentDto)
+                .orElseThrow(() -> new NoSuchElementException("Student " + event.studentId() + " not found"));
 
         waitlist.add(
                 new WaitlistedStudentDTO(
@@ -210,6 +207,45 @@ class LectureProjector {
         lecture.setEnrolledStudentsDtoJson(objectMapper.writeValueAsString(enrolled));
 
         lectureDetailRepository.save(lecture);
+    }
+
+    @Transactional
+    @EventHandler
+    public void on(ProfessorCreatedEvent event) {
+        var entity = new ProfessorProjectionEntity();
+
+        entity.setId(event.id());
+        entity.setFirstName(event.firstName());
+        entity.setLastName(event.lastName());
+
+        log.debug("projected professor: {}", entity);
+        professorRepository.save(entity);
+    }
+
+    @EventHandler
+    @Transactional
+    public void on(StudentCreatedEvent event) {
+        var entity = new StudentProjectionEntity(
+                event.studentId(),
+                event.firstName(),
+                event.lastName(),
+                event.semester()
+        );
+        log.debug("projected student: {}", entity);
+        studentRepository.save(entity);
+    }
+
+    @EventHandler
+    public void on(CourseCreatedEvent event) {
+        CourseProjectionEntity courseEntity = new CourseProjectionEntity();
+        courseEntity.setId(event.courseId());
+        courseEntity.setName(event.name());
+        courseEntity.setDescription(event.description());
+        courseEntity.setCredits(event.credits());
+        courseEntity.setPrerequisiteCourseIds(event.prerequisiteCourseIds());
+        courseEntity.setMinimumCreditsRequired(event.minimumCreditsRequired());
+
+        courseRepository.save(courseEntity);
     }
 
     @QueryHandler
@@ -264,16 +300,20 @@ class LectureProjector {
 
         return new WaitlistDTO(
                 waitlist.stream().map(w -> new WaitlistedStudentDTO(w.student(), w.waitlistedAt())).toList(),
-                toSimpleDto(lecture)
+                toSimplLectureDto(lecture)
         );
     }
 
-    private SimpleLectureDTO toSimpleDto(LectureDetailProjectionEntity entity) throws JsonProcessingException {
+    private SimpleLectureDTO toSimplLectureDto(LectureDetailProjectionEntity entity) throws JsonProcessingException {
         return new SimpleLectureDTO(
                 entity.getId(),
                 entity.getCourseId(),
                 objectMapper.readValue(entity.getCourseDtoJson(), CourseDTO.class).name()
         );
+    }
+
+    private StudentDTO toStudentDto(StudentProjectionEntity student) {
+        return new StudentDTO(student.getId(), student.getFirstName(), student.getLastName());
     }
 
 }

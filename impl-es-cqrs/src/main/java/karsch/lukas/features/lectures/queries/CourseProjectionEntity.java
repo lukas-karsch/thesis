@@ -1,4 +1,4 @@
-package karsch.lukas.features.course.queries;
+package karsch.lukas.features.lectures.queries;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
@@ -9,10 +9,10 @@ import lombok.Setter;
 import java.util.Set;
 import java.util.UUID;
 
-@Entity(name = "courses.CourseProjectionEntity")
+@Entity(name = "lectures.CourseProjectionEntity")
 @Getter
 @Setter
-@Table(name = "courses__course_projection")
+@Table(name = "lectures__course_projection")
 class CourseProjectionEntity implements ICourseProjectionEntity {
     @Id
     @Column(unique = true)
@@ -25,3 +25,4 @@ class CourseProjectionEntity implements ICourseProjectionEntity {
     private Set<UUID> prerequisiteCourseIds;
     private int minimumCreditsRequired;
 }
+

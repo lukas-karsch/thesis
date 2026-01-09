@@ -1,7 +1,7 @@
 package karsch.lukas.features.course.queries;
 
+import karsch.lukas.core.queries.CourseMapper;
 import karsch.lukas.course.CourseDTO;
-import karsch.lukas.course.SimpleCourseDTO;
 import karsch.lukas.features.course.api.CourseCreatedEvent;
 import karsch.lukas.features.course.api.FindAllCoursesQuery;
 import karsch.lukas.features.course.api.FindCourseByIdQuery;
@@ -22,6 +22,7 @@ import java.util.stream.Collectors;
 class CourseProjector {
 
     private final CourseRepository courseRepository;
+    private final CourseMapper courseMapper;
 
     @EventHandler
     public void on(CourseCreatedEvent event) {
@@ -37,8 +38,13 @@ class CourseProjector {
     }
 
     private Set<CourseDTO> findAll() {
+        var all = courseRepository.findAll();
+
         return courseRepository.findAll().stream()
-                .map(this::toDto)
+                .map(c -> courseMapper.map(
+                        c,
+                        () -> all.stream().filter(potentialP -> c.getPrerequisiteCourseIds().contains(potentialP.getId())).toList()
+                ))
                 .collect(Collectors.toSet());
     }
 
@@ -49,23 +55,8 @@ class CourseProjector {
 
     @QueryHandler
     public CourseDTO findById(FindCourseByIdQuery query) {
-        return courseRepository.findById(query.courseId()).map(this::toDto).orElse(null);
-    }
-
-    private CourseDTO toDto(CourseProjectionEntity entity) {
-        var prerequisites = courseRepository
-                .findAllById(entity.getPrerequisiteCourseIds())
-                .stream()
-                .map(p -> new SimpleCourseDTO(p.getId(), p.getName(), p.getDescription(), p.getCredits()))
-                .collect(Collectors.toSet());
-
-        return new CourseDTO(
-                entity.getId(),
-                entity.getName(),
-                entity.getDescription(),
-                entity.getCredits(),
-                prerequisites,
-                entity.getMinimumCreditsRequired()
-        );
+        return courseRepository.findById(query.courseId())
+                .map(c -> courseMapper.map(c, () -> courseRepository.findAllById(c.getPrerequisiteCourseIds())))
+                .orElse(null);
     }
 }
