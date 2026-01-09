@@ -12,5 +12,5 @@ public class CommandSideArchTest {
     @ArchTest
     public static ArchRule commandSideShouldNotDependOnReadSide = classes()
             .that().resideInAPackage("..command..")
-            .should().onlyDependOnClassesThat().resideOutsideOfPackage("..query..");
+            .should().onlyDependOnClassesThat().resideOutsideOfPackage("..queries..");
 }
