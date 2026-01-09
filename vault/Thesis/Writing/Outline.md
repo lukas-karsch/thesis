@@ -84,6 +84,10 @@ Benchmarking via load testing. Time taken per request (Median, P95); CPU utiliza
 ### 6.1 Contract tests
 ### 6.2 CRUD implementation
 - Relational Modeling 
+	- JPA entities 
+	- Transactional methods 
+	- Entity graph 
+	- @Version? 
 - Audit log implementation
 ### 6.3 ES/CQRS implementation 
 - aggregates 

@@ -16,6 +16,7 @@
 	    - check if indexes are set up correctly 
 	    - clean up StatsService 
 	    - get rid of N+1 queries (especially StatsService)
+	    - examine default lock type, if i have any race conditions, @Version usage 
     - CQRS
 	    - try to use TEPs in my E2E tests
 	    - use @SequenceNumber aggregateVersion in repositories (https://github.com/idugalic/digital-restaurant/blob/master/drestaurant-apps/drestaurant-monolith-rest/src/main/kotlin/com/drestaurant/query/handler/RestaurantHandler.kt) ??
@@ -26,6 +27,7 @@
 		- maybe move external validation (using lookup tables) to message interceptors to avoid blocking the aggregate 
 		- is it clean that the lookup tables are injected into every command side? -> should they also keep their own projections? but they would have to be subscribing anyways.. so maybe it doesnt matter because its a "smell" either way 
 		- make sure event handlers are idempotent 
+		- add @Version to projection entities; retry on OptimisticLockException 
 - look at axon transaction manager? 
 	- what is it  
 	- for what can it be used / how is it used 

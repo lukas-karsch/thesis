@@ -6,6 +6,7 @@
 \usepackage[automake]{glossaries}
 \usepackage{array}
 \usepackage[table]{xcolor}
+\usepackage[export]{adjustbox}
 
 \usepackage{color}
 
@@ -161,6 +162,8 @@
 
 \newacronym{dsl}{DSL}{Data Specific Language}
 
+\newacronym{jpa}{JPA}{Jakarta Persistence API}
+
 \begin{document}
 
 \title{How does an Event Sourcing architecture compare to CRUD systems with an independent audit log, when it comes to scalability, performance and traceability?}
@@ -224,6 +227,10 @@
 \newpage
 
 \tableofcontents
+
+\newpage
+
+\listoffigures
 
 \newpage
 
@@ -333,7 +340,7 @@ Using a \gls{rdm} does not mean that there should be no layers, the opposite is 
 
 The state of domain objects in a \acrshort{crud} architecture is often mapped to normalized tables on a relational database, though other storage mechanisms maybe used. The application acts on the current state of the data, with all actions (reads and writes) acting on the same data. % TODO cite 
 
-\acrshort{acid} (\acrlong{acid}) are an important feature of CRUD applications. They can be guaranteed using transactions, ensuring that data stays consistent and operations are \glslink{atomicity}{atomic}. \parencite[10,11]{bernstein_principles_2009} % TODO more explanation: what is a transaction, commit, rollback, etc 
+\acrshort{acid} (\acrlong{acid}) are an important feature of \acrshort{crud} applications. They can be guaranteed using transactions, ensuring that data stays consistent and operations are \glslink{atomicity}{atomic}. \parencite[10,11]{bernstein_principles_2009} % TODO more explanation: what is a transaction, commit, rollback, etc 
 
 \subsection{CQRS Architecture}
 \label{sec:cqrs}
@@ -512,6 +519,18 @@ public class CrudLecturesE2ETest extends AbstractLecturesE2ETest { }
 \footnote{\javaname{impl-crud/src/test/karsch.lukas.e2e.lectures.CrudLecturesE2ETest}}
 
 \subsection{CRUD implementation}
+
+This chapter presents the relevant aspects of the CRUD implementation, mainly focusing on relational modeling using \acrfull{jpa} and the audit log implementation.
+
+\subsubsection{Relational Modeling}
+
+\begin{figure}[h]
+    \includegraphics[width=\textwidth, inner]{../vault/Thesis/images/CRUD_ER_Diagram_2.png}
+    \caption{Entity Relationship Diagram for the CRUD App}
+    \label{fig:crud-er-diagram}
+\end{figure}
+
+\subsubsection{Audit Log implementation}
 
 \subsection{ES/CQRS implementation}
 
