@@ -60,3 +60,12 @@ runcmd:
 
   # Git clone repo
   - git clone https://gitlab.mi.hdm-stuttgart.de/lk224/thesis.git /home/thesis/code
+  - cd /home/thesis/code
+  - mvn clean install -DskipTests
+
+  # Build docker images
+  - cd impl-crud
+  - docker build -t lkarsch/impl-crud-docker .
+  - cd ..
+  - cd impl-es-cqrs
+  - docker build -t lkarsch/impl-es-cqrs-docker .
