@@ -14,7 +14,6 @@ virt-customize \
   --install qemu-guest-agent \
   --run-command 'systemctl enable qemu-guest-agent'
 ```
-
 - Copy the files `cloud-init.yml` and `create-vm.sh` to the Proxmox host (e.g. to `/var/lib/vz/snippets`)
 - Customize user:
     - change name

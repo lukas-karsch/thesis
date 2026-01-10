@@ -20,3 +20,6 @@
 - Oder Scalability: **Resource consumption (efficiency)**
    "Scalability" als Funktion der Effizienz - more CPU or RAM overhead, Disk I/O will require twice the hardware to scale to the same level; **Database Growth, Index performance**: Test read performance at 10k and 1M records, e.g. for SumAllCredits - does it slow down linearly in one application, but not in the other? **Write Contention / Lock analysis**:  Pessimistic locking in CRUD overhead? Compare maximum throughput on write operations -> increase VUs
 - -> nicht "wirklich" skalieren (mit mehreren Nodes), aber analysieren, welches System die bessere performance ceiling hat anhand von contention, cpu und memory footprint
+## Organisation 
+- Bis wann kann ich einen Draft schicken? 
+- 2-wöchige Besprechung mit fixem Termin? 

@@ -21,3 +21,19 @@ For performance testing, standard virtualization overhead can skew results. Use 
    RAM: 12288MiB (12GB)
    Disk: 32 GB
    BIOS: UEFI
+> UPDATE: no manual setup, use scripts and clout-init [[#Script setup]]
+## Script setup 
+1. Script creates template:
+	1. Create VM
+	2. Add -cicustom cloud-init file 
+	3. Wait for cloud-init to finish 
+	4. Stop VM
+	5. Turn VM into template 
+2. Create VMs from template 
+`/performance-tests/vm`
+## Orchestration
+Can use docker contexts https://docs.docker.com/engine/manage-resources/contexts/
+```bash
+docker context create sut-remote --docker "host=ssh://user@vm-sut-ip"
+docker context use sut-remote
+```

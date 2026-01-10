@@ -25,7 +25,7 @@ if [[ ! -f "$IMAGE_PATH" ]]; then
   exit 1
 fi
 
-qm importdisk $VMID "$IMAGE_PATH" local-lvm
+qm importdisk $VMID "$IMAGE_PATH" local-lvm > /dev/null
 
 echo "Imported disk"
 
