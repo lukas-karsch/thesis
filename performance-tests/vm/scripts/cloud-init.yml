@@ -1,0 +1,62 @@
+#cloud-config
+
+users:
+  - default
+  - name: thesis
+    groups: [ sudo ]
+    shell: /bin/bash
+    sudo: ALL=(ALL) NOPASSWD:ALL
+    ssh_authorized_keys:
+      - ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIPS2eYYk59yj/dYCkKLRgK3DayM9y8KUDkQrhWsZuekZ root@pve
+
+package_update: true
+package_upgrade: false
+
+ssh_pwauth: false
+
+growpart:
+  mode: auto
+  devices: [ '/' ]
+resize_rootfs: true
+
+network:
+  version: 2
+  ethernets:
+    ens18:
+      dhcp4: true
+
+packages:
+  - qemu-guest-agent
+  - curl
+  - ca-certificates
+  - htop
+  - curl
+  - git
+  - wget
+  - maven
+
+runcmd:
+  - systemctl enable --now qemu-guest-agent
+  - systemctl start qemu-guest-agent
+
+  # 1. Install Docker
+  - [ curl, -sSL, "https://get.docker.com", -o, "/tmp/get-docker.sh" ]
+  - [ sh, "/tmp/get-docker.sh" ]
+  - [ usermod, -aG, docker, noble ]
+
+  # 2. Install Miniconda (Silent Install)
+  - wget https://repo.anaconda.com/miniconda/Miniconda3-latest-Linux-x86_64.sh -O /tmp/miniconda.sh
+  - bash /tmp/miniconda.sh -b -p /opt/miniconda
+  - ln -s /opt/miniconda/etc/profile.d/conda.sh /etc/profile.d/conda.sh
+
+  # 3. Initialize Conda
+  - sudo -u thesis -i bash -c "/opt/miniconda/bin/conda init bash"
+
+  # 4. Create a specific Conda environment with Python 3.14
+  - sudo -u thesis -i bash -c "/opt/miniconda/bin/conda create -y -n dev_env python=3.14"
+
+  # 5. Optional: Pre-install a library into that environment
+  - sudo -u thesis -i bash -c "/opt/miniconda/bin/conda install -n dev_env -y pandas numpy matplotlib requests"
+
+  # Git clone repo
+  - git clone https://gitlab.mi.hdm-stuttgart.de/lk224/thesis.git /home/thesis/code
