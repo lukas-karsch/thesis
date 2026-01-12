@@ -160,9 +160,9 @@ def write_prometheus_config(
     print(f"Writing prometheus config to '{config_path}'")
     config_path.touch()
 
-
     if test_config is None:
         import platform
+
         if platform.system() == "Windows":
             prometheus_target = f"host.docker.internal:{app_port}"
         else:
