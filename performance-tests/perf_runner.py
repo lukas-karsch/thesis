@@ -451,7 +451,9 @@ def main() -> None:
         help="Path to the metric.json file which describes the metric.",
     )
     parser.add_argument(
-        "--config", required=False, help="When running on a VM, must provide this file"
+        "--config",
+        required=False,
+        help="When trying to run on two VMs, must provide this file",
     )
     args = parser.parse_args()
 

@@ -6,5 +6,6 @@
   "file": "create-course-prerequisites.js",
   "metadata": {
     "title": "Create new courses with prerequisites."
-  }
+  },
+  "VUs": 50
 }

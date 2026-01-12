@@ -6,5 +6,6 @@
   "file": "create-course-simple.js",
   "metadata": {
     "title": "Create courses without prerequisites"
-  }
+  },
+  "VUs": 50
 }
