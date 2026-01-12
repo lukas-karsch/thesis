@@ -4,6 +4,7 @@ import json
 import os.path
 import subprocess
 import time
+from contextlib import contextmanager
 from datetime import datetime
 from pathlib import Path
 from typing import Literal, Any
@@ -18,8 +19,8 @@ from helper import run_command, stop_and_remove_container, docker_available
 # Defaults / Configuration
 # ============================================================================
 
-ES_CQRS_HOST = "http://localhost:8081"
-CRUD_HOST = "http://localhost:8080"
+CRUD_PORT = 8080
+ES_CQRS_PORT = 8081
 
 PROMETHEUS_IMAGE = "prom/prometheus"
 PROMETHEUS_PORT = 9090
@@ -72,20 +73,55 @@ PROMETHEUS_QUERIES = {
 # ============================================================================
 
 
-def resolve_host(app: Literal["crud", "es-cqrs"]) -> str:
+def resolve_host(app: Literal["crud", "es-cqrs"], config: dict | None) -> str:
     if app == "crud":
-        return CRUD_HOST
+        if config is None:
+            return f"http://localhost:{CRUD_PORT}"
+        return f'{config["SERVER_IP"]}:{CRUD_PORT}'
     if app == "es-cqrs":
-        return ES_CQRS_HOST
+        if config is None:
+            return f"http://localhost:{ES_CQRS_PORT}"
+        return f'{config["SERVER_IP"]}:{ES_CQRS_PORT}'
     raise ValueError(f"Unsupported app: {app}")
 
 
-def start_app_with_docker_compose(app: Literal["crud", "es-cqrs"]) -> None:
+def create_remote_context(config: dict | None) -> None:
+    server_ip = config["SERVER_IP"]
+
+    print(f"Try to create docker remote context for {server_ip}")
+    run_command(
+        [
+            "docker",
+            "context",
+            "create",
+            "server-remote",
+            f'--docker "host=ssh://thesis@{server_ip}"',
+        ]
+    )
+
+
+@contextmanager
+def docker_remote(config: dict | None):
+    try:
+        if config is not None:
+            print("Enabling docker remote context")
+            run_command(["docker", "context", "use", "server-remote"])
+        yield
+    finally:
+        if config is not None:
+            print("Disabling docker remote context")
+            run_command(["docker", "context", "use", "default"])
+
+
+def start_app_with_docker_compose(
+    app: Literal["crud", "es-cqrs"], config: dict | None
+) -> None:
     app_service = "crud-app" if app == "crud" else "es-cqrs-app"
 
-    run_command(["docker", "compose", "up", "-d", app_service])
+    with docker_remote(config):
+        run_command(["docker", "compose", "up", "-d", app_service])
 
-    host = resolve_host(app)
+    host = resolve_host(app, config)
     polling.poll(f"{host}/actuator/health", interval_seconds=5, retries=25)
 
 
@@ -115,11 +151,17 @@ def create_run_dirs(k6_script: Path, app: str, VUs: int) -> tuple[str, Path, Pat
 
 
 def write_prometheus_config(
-    config_path: Path,
-    app_port: int,
+    config_path: Path, app_port: int, test_config: dict | None
 ) -> None:
     print(f"Writing prometheus config to '{config_path}'")
     config_path.touch()
+
+    if test_config is None:
+        prometheus_target = f"host.docker.internal:{app_port}"
+    else:
+        prometheus_target = f"{test_config['SERVER_IP']}:{app_port}"
+        print(f"prometheus_target={prometheus_target}")
+
     config_path.write_text(
         f"""
 global:
@@ -129,7 +171,7 @@ scrape_configs:
   - job_name: "spring"
     metrics_path: /actuator/prometheus
     static_configs:
-      - targets: ["host.docker.internal:{app_port}"]
+      - targets: ["{prometheus_target}"]
 """.strip()
     )
 
@@ -315,15 +357,30 @@ def _get_metric_content(metric: Path) -> tuple[Any, Path]:
     return metric_content, k6_script
 
 
-def do_run(app: Literal["crud", "es-cqrs"], metric: Path):
+def do_run(app: Literal["crud", "es-cqrs"], metric: Path, config_file: Path | None):
+    config = None
+
+    if config_file is not None:
+        print("INFO: VM run detected (config_file provided")
+        config_file_text = config_file.read_text()
+        print(config_file_text)
+        config = {
+            line.split("=", 1)[0].strip(): line.split("=", 1)[1].strip()
+            for line in config_file_text.strip().splitlines()
+            if "=" in line and not line.startswith("#")
+        }
+
     if not docker_available():
         raise RuntimeError("Docker is required but not available")
 
     prom_container = None
     try:
-        start_app_with_docker_compose(app)
+        if config is not None:
+            create_remote_context(config)
 
-        host_url = resolve_host(app)
+        start_app_with_docker_compose(app, config)
+
+        host_url = resolve_host(app, config)
         app_port = urlparse(host_url).port
 
         metric_content, k6_script = _get_metric_content(metric)
@@ -377,7 +434,8 @@ def do_run(app: Literal["crud", "es-cqrs"], metric: Path):
     finally:
         if prom_container is not None:
             stop_and_remove_container(prom_container)
-        docker_compose_down()
+        with docker_remote(config):
+            docker_compose_down()
 
     print(f"\nDone in {test_end - test_start}s. Results in {run_dir.absolute()}")
 
@@ -390,9 +448,16 @@ def main() -> None:
         required=True,
         help="Path to the metric.json file which describes the metric.",
     )
+    parser.add_argument(
+        "--config", required=False, help="When running on a VM, must provide this file"
+    )
     args = parser.parse_args()
 
-    do_run(app=args.app, metric=Path(args.metric))
+    config_file = None
+    if args.config is not None:
+        config_file = Path(args.config)
+
+    do_run(app=args.app, metric=Path(args.metric), config_file=config_file)
 
 
 if __name__ == "__main__":

@@ -27,12 +27,12 @@
             "state": {
               "type": "markdown",
               "state": {
-                "file": "Advice/CloudInit.md",
+                "file": "Technical Design Log/2026-01-10 Run performance tests on a VM.md",
                 "mode": "source",
                 "source": false
               },
               "icon": "lucide-file",
-              "title": "CloudInit"
+              "title": "2026-01-10 Run performance tests on a VM"
             }
           }
         ],
@@ -186,10 +186,10 @@
   },
   "active": "ec0b2b006ded97be",
   "lastOpenFiles": [
-    "Technical Design Log/2026-01-10 Run performance tests on a VM.md",
     "Advice/CloudInit.md",
-    "Technical Design Log/2026-01-07 How i could measure flexibility.md",
     "Writing/Outline.md",
+    "Technical Design Log/2026-01-10 Run performance tests on a VM.md",
+    "Technical Design Log/2026-01-07 How i could measure flexibility.md",
     "Technologies/ArchUnit.md",
     "Technical Design Log/2025-12-12 ArchUnit.md",
     "Technical Design Log/2025-12-08 Resetting the Axon server.md",

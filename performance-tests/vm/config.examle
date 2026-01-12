@@ -1,5 +1,5 @@
 # Copy this file and rename to ".config"
+# Lines prefixed with "#" are treated as comments
+# Syntax: <key>=<value>
 
-OWN_IP=
 SERVER_IP=
-APP="crud" | "es-cqrs"

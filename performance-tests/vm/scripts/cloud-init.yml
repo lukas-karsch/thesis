@@ -42,7 +42,7 @@ runcmd:
   # 1. Install Docker
   - [ curl, -sSL, "https://get.docker.com", -o, "/tmp/get-docker.sh" ]
   - [ sh, "/tmp/get-docker.sh" ]
-  - [ usermod, -aG, docker, thesis ]
+  - sudo usermod -aG docker thesis
 
   # 2. Install Miniconda (Silent Install)
   - wget https://repo.anaconda.com/miniconda/Miniconda3-latest-Linux-x86_64.sh -O /tmp/miniconda.sh
@@ -59,7 +59,7 @@ runcmd:
   # 4. Create a specific Conda environment with Python 3.14
   - sudo -u thesis -i bash -c "/opt/miniconda/bin/conda create -y -n dev_env python=3.14"
 
-  # 5. Optional: Pre-install a library into that environment
+  # 5. install necessary packages
   - sudo -u thesis -i bash -c "/opt/miniconda/bin/conda install -n dev_env -y pandas numpy matplotlib requests"
 
   # Download Java 25
@@ -79,6 +79,7 @@ runcmd:
   # Git clone repo
   - git clone https://gitlab.mi.hdm-stuttgart.de/lk224/thesis.git /home/thesis/code
   - cd /home/thesis/code
+  - sudo chown -R thesis .
   - mvn clean install -DskipTests
 
   # Build docker images

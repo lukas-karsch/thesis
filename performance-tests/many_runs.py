@@ -16,6 +16,9 @@ def main() -> None:
     )
     parser.add_argument("--runs", type=int, required=True)
     parser.add_argument("--skip", required=False, choices=["crud", "es-cqrs"])
+    parser.add_argument(
+        "--config", required=False, help="When running on a VM, must provide this file"
+    )
     args = parser.parse_args()
 
     if args.skip == "crud":

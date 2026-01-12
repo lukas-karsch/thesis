@@ -38,4 +38,8 @@ docker context create sut-remote --docker "host=ssh://user@vm-sut-ip"
 docker context use sut-remote
 ```
 Default context (own machine) is `default`.
+ ```bash
+ cd /code 
+ docker compose up # will run on the remote machine if context is active
+ ```
  
