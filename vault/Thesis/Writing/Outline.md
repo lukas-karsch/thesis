@@ -80,6 +80,22 @@ Benchmarking via load testing. Time taken per request (Median, P95); CPU utiliza
 - explain choices 
 - show how i tried to avoid bias in technologies 
 - measurements with k6 
+**All technologies:**
+- SpringBoot
+	- Spring platform
+	- spring-boot-starter-web 
+	- integrations of dependencies using starters 
+- JPA with spring-boot-data-jpa
+- PostgreSQL
+- Axon Server
+- Axon Framework 
+	- reactor for reactive programming 
+- Docker 
+- Swagger 
+- JUnit, RestAssured, Mockito, ArchUnit 
+- Prometheus with actuator 
+- k6 
+- Spring devtools? 
 ## 6. Implementation
 ### 6.1 Contract tests
 ### 6.2 CRUD implementation
@@ -88,6 +104,7 @@ Benchmarking via load testing. Time taken per request (Median, P95); CPU utiliza
 	- Transactional methods 
 	- Entity graph 
 	- @Version? 
+	- [[CRUD ER Diagram]]
 - Audit log implementation
 ### 6.3 ES/CQRS implementation 
 - aggregates 

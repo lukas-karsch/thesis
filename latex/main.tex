@@ -8,6 +8,10 @@
 \usepackage[table]{xcolor}
 \usepackage[export]{adjustbox}
 
+% TODO
+% microtype is supposed to help with text breaking (overflow), but it gives an error:  pdfTeX error (font expansion): auto expansion is only possible with scalable fonts. <argument> ...shipout:D \box_use:N \l_shipout_box
+% \usepackage{microtype}
+
 \usepackage{color}
 
 \definecolor{pblue}{rgb}{0.13,0.13,1}
@@ -333,6 +337,7 @@ Using a \gls{rdm} does not mean that there should be no layers, the opposite is 
 \end{itemize}
 
 \subsection{CRUD architecture}
+\label{sec:crud-architecture}
 
 % TODO refine 
 
@@ -341,6 +346,15 @@ Using a \gls{rdm} does not mean that there should be no layers, the opposite is 
 The state of domain objects in a \acrshort{crud} architecture is often mapped to normalized tables on a relational database, though other storage mechanisms maybe used. The application acts on the current state of the data, with all actions (reads and writes) acting on the same data. % TODO cite 
 
 \acrshort{acid} (\acrlong{acid}) are an important feature of \acrshort{crud} applications. They can be guaranteed using transactions, ensuring that data stays consistent and operations are \glslink{atomicity}{atomic}. \parencite[10,11]{bernstein_principles_2009} % TODO more explanation: what is a transaction, commit, rollback, etc 
+
+Databases in CRUD systems are typically normalized. Normalization is a process of organizing data into separate tables, removing redundancies and creating relationships through "foreign keys". It is the best practice for relational databases. There are several normal forms that can be achieved, each form building on the previous one: to achieve the second normal form, the first normal form has to be achieved first. \parencite[203]{martin_managing_1983}
+
+\begin{itemize}
+    \item 1NF (First Normal Form): Each table cell contains a single (atomic) value, every record is unique
+    \item 2NF (Second Normal Form): Remove partial dependencies by requiring that all \emph{non-key} columns are fully dependent on the primary key
+    \item 3NF (Third Normal Form): Removes transitive dependencies by requiring that non-key columns depend \emph{only} on the primary key
+    \item Further Normal Forms (4NF, 5NF): Require a table can not be broken down into smaller tables without losing data
+\end{itemize}
 
 \subsection{CQRS Architecture}
 \label{sec:cqrs}
@@ -440,6 +454,7 @@ Relationships and business rules in this system are deliberately chosen complex,
 \end{itemize}
 
 \subsubsection{Contract Tests}
+\label{sec:contract-tests}
 
 To ensure both implementations adhere to the business rules, an extensive test suite was set up. While the internals of the implementations are vastly different architecturally and conceptually, they both have the same public \gls{api}. This makes it possible to run the same test suite on both apps by sending \gls{http} requests and verifying their responses. The test suite includes integration tests for all \gls{api} endpoint covering both regular and edge-case (error) scenarios to ensure that the \acrshort{crud} and \acrshort{es}-\acrshort{cqrs} application exhibit identical state transitions and error behaviors. \hyperref[sec:contract-test-implementation]{Section \ref{sec:contract-test-implementation}} outlines the implementation of those tests in detail.
 
@@ -451,12 +466,60 @@ To ensure both implementations adhere to the business rules, an extensive test s
 
 \subsection{Tech Stack}
 
+\subsubsection{SpringBoot}
+
+SpringBoot is an open-source, opinionated framework for developing enterprise Java applications. It is based on Spring Framework, which is a platform aiming to make Java development "quicker, easier, and safer for everybody" \parencite{noauthor_why_nodate}. Spring provides an Inversion of Control (IoC) container which can be used for dependency injection. \parencite[Chapter~1]{deinum_spring_2023} It offers support for many programming paradigms: reactive, event-driven, microservices and serverless. \parencite{noauthor_why_nodate}
+
+SpringBoot builds on top of the Spring platform by applying a "convention-over-configuration" approach, intended to minimize the need for configuration. In a 2023 survey by JetBrains, SpringBoot was the most popular choice of web framework. \parencite{noauthor_java_nodate}
+
+Spring Boot starters are specialized dependency descriptors designed to simplify dependency management by aggregating commonly used libraries into feature-defined packages. Rather than requiring developers to manually identify and maintain a list of individual group IDs, artifact IDs, and compatible version numbers for every necessary library, starters use transitive dependency resolution to pull in all required components under a single entry. To quickly bootstrap a web application, a developer can simply add the \javaname{spring-boot-starter-web} dependency to their Maven or Gradle build file. By requesting this specific functionality, Spring Boot automatically includes essential dependencies such as Spring MVC, Jackson for JSON processing, and an embedded Tomcat server, ensuring that all included libraries have been tested together for compatibility. This approach shifts the developer's focus from managing individual JAR files to simply defining the high-level capabilities the application requires, minimizing configuration overhead and reducing risk of version mismatches. \parencite[Chapter~1.1.2]{walls_spring_2016}
+
+\subsubsection{JPA}
+
+Instead of writing SQL to create the database schema, entities can be described using special Java classes which directly translate to an SQL schema. \acrshort{jpa} also allows querying the database for these entities in a type-safe way by providing a range of helpful query methods on JPA repositories, for example \texttt{findAll()} or \texttt{findById(UUID id)}. % TODO better explain; source
+
+\subsubsection{PostgreSQL}
+
+\subsubsection{Axon}
+
+% Axon Server; Axon Framework
+
+\subsubsection{Testing}
+
+JUnit is an open-source testing framework for Java. It offers a structured way of writing tests, driven by lifecycle methods like \texttt{beforeEach} or \texttt{afterAll}. Tests are annotated with \texttt{@Test}. They can also be parametrized and run repeatedly. Results can be asserted using assertion methods like \texttt{assertTrue()}. \parencite{noauthor_junit_nodate}
+
+REST Assured is a Java library that provides a highly fluent \acrshort{dsl} for testing and validating REST APIs in a readable, chainable style. It allows complex assertions to be written inline using \gls{groovy} expressions, making it easy to deeply verify JSON responses beyond simple field checks. \parencite{restassured-documentation}
+
+The below code example shows how one might use a \gls{groovy} expression to find and validate a path in the returned JSON object:
+
+\begin{lstlisting}
+RestAssured.when()
+    // omitted request 
+    .then()
+    .body(
+        "data.grades.find { it.combinedGrade == 0 }.credits", 
+        equalTo(0)
+    );
+\end{lstlisting}
+
+Here, the path \texttt{data.grades} of the returned JSON object is expected to be an array. The array is filtered using a \gls{gpath} with a closure to find the first entry where \texttt{combinedGrade} equals 0. Then, this entry's \texttt{credits} field is extracted and validated using the \texttt{equalTo(0)} matcher.
+
+% TODO Mockito, ArchUnit 
+
+\subsubsection{SpringBoot Actuator}
+
+% Prometheus 
+
+\subsubsection{Docker}
+
+\subsubsection{k6}
+
 \section{Implementation}
 
-\subsection{Contract Tests}
+\subsection{Contract Test Implementation}
 \label{sec:contract-test-implementation}
 
-The contract tests are implemented in a separate maven module called \texttt{test-{\allowbreak}suite}\footnote{\javaname{test-suite/src/test/java/karsch.lukas}}, where all business rules can be viewed. The test classes use the \texttt{JUnit 5} testing framework and \texttt{REST Assured} to send and assert \gls{http} requests. A basic example might look like this:
+The \hyperref[sec:contract-tests]{contract tests} are implemented in a separate maven module called \texttt{test-{\allowbreak}suite}\footnote{\javaname{test-suite/src/test/java/karsch.lukas}}. The test classes use the \texttt{JUnit 5} testing framework and \texttt{REST Assured} to send and assert \gls{http} requests. A basic example might look like this:
 
 \begin{lstlisting}
 %%@Test%%
@@ -472,24 +535,7 @@ void getLectureDetails_shouldReturn200() {
             .body("data.dates", hasSize(2));
 }
 \end{lstlisting}
-
-JUnit is an open-source testing framework for Java. It offers a structured way of writing tests, driven by lifecycle methods like \texttt{beforeEach} or \texttt{afterAll}. Tests are annotated with \texttt{@Test}. They can also be parametrized and run repeatedly. Results can be asserted using assertion methods like \texttt{assertTrue()}. \parencite{noauthor_junit_nodate}
-
-REST Assured is a Java library that provides a highly fluent \acrshort{dsl} for testing and validating REST APIs in a readable, chainable style. It allows complex assertions to be written inline using \gls{groovy} expressions, making it easy to deeply verify JSON responses beyond simple field checks. \parencite{restassured-documentation}
-
-The below code example shows how to use a complex expression to find and validate a path in the returned JSON object:
-
-\begin{lstlisting}
-RestAssured.when()
-// omitted request 
-.then()
-.body(
-    "data.grades.find { it.combinedGrade == 0 }.credits", 
-    equalTo(0)
-);
-\end{lstlisting}
-
-Here, the path \texttt{data.grades} of the returned JSON object is expected to be an array. The array is filtered using a \gls{gpath} with a closure to find the first entry where \texttt{combinedGrade} equals 0. Then, this entry's \texttt{credits} field is extracted and validated using the \texttt{equalTo(0)} matcher.
+\footnote{\javaname{test-suite/src/test/karsch.lukas.lectures.AbstractLecturesE2ETest}}
 
 The test classes in \texttt{test-suite} are all \texttt{abstract}, meaning they can not be run directly. Instead, they are intended to be subclassed by the modules implementing the concrete applications (\texttt{impl-crud} \& \texttt{impl-es-cqrs}). The subclasses must implement a set of abstract methods which are implementation specific, for example a method to reset the database in between each test, a method to set the application's time and methods to create seed data for tests.
 
@@ -524,11 +570,44 @@ This chapter presents the relevant aspects of the CRUD implementation, mainly fo
 
 \subsubsection{Relational Modeling}
 
+The CRUD implementation uses a \hyperref[sec:crud-architecture]{normalized database} in the Third Normal Form.
+
 \begin{figure}[h]
-    \includegraphics[width=\textwidth, inner]{../vault/Thesis/images/CRUD_ER_Diagram_2.png}
+    \includegraphics[width=\textwidth, inner]{../vault/Thesis/images/CRUD_ER_Diagram_3.png}
     \caption{Entity Relationship Diagram for the CRUD App}
     \label{fig:crud-er-diagram}
 \end{figure}
+
+Figure \ref{fig:crud-er-diagram} shows the Entity Relationship Diagram for the CRUD app. It includes nine entities and a value object for the app's relational database schema. Each box corresponds to an entity or value object, with the bold text being the name. Below the table's name, all attributes of the entity are listed with their type and name.
+
+Arrows represent an association. The numbers at the end of the arrows convey the multiplicity. An arrow pointing in only one direction stands for a unidirectional association, while an arrow pointing in both directions conveys a bidirectional association. For example, an arrow pointing between entity \texttt{A} and entity \texttt{B} like so: \texttt{1} $\longleftrightarrow$ \texttt{0..1} shows that one \texttt{A} can be associated with any number of \texttt{B}'s, and a \texttt{B} is always associated with exactly one \texttt{A}. % TODO kinda unreadable 
+
+Arrows with a filled diamond represent a composition. Compositions are used when an entity has a reference to a value object. This value object has no identity and is directly embedded into the entity. The only value object in figure \ref{fig:crud-er-diagram} is the \texttt{TimeSlotValueObject}.
+
+In the app's ER diagram, the \texttt{LectureEntity} serves as core of the schema, having several key associations. The 0..* $\longrightarrow$ 1 association to \texttt{CourseEntity} shows that many lectures can be created from a course and a lecture is always associated with a course. The 0..* $\longrightarrow $ 1 association to \texttt{ProfessorEntity} shows that a professor can hold many lectures (or none), and that a lecture is always associated with a professor. From the lecture's side, these relationships are called "Many to One" relationships.
+
+\texttt{LectureEntity} also has "One to Many" relationships to \texttt{LectureWaitlistEntryEntity}, \texttt{EnrollmentEntity} and \texttt{LectureAssessmentEntity}. \texttt{LectureWaitlistEntryEntity} is a table which stores students who are waitlisted for a lecture. It is effectively a join table (with one extra column to track when the student was waitlisted) and represents a Many to Many relationship between lectures and students. The same applies to \texttt{EnrollmentEntity} which is a table storing which students are enrolled to which lecture. \texttt{LectureAssessmentEntity} represents the fact that a lecture can have many assessments (which may be an exam, a paper or a project). Each assessment in turn has many \texttt{AssessmentGradeEntity}s associated with it. This table stores which student scored which grade on an assessment. % TODO fix spacing 
+
+The \texttt{AuditLogEntry} is also visible on the ER diagram, however it has no relationships. This table and the entire audit log implementation will be laid out in the following section.
+
+These entities are implemented using SpringBoot's \acrshort{jpa} integration. For example, an entity with a "One to Many" relationship can be implemented like this:
+
+\begin{lstlisting}
+%%@Entity%% 
+class LectureEntity {
+    %%@Id%% 
+    private UUID id; 
+
+    %%@OneToMany(fetch=FetchType.LAZY)%%
+    private List<EnrollmentEntity> enrollments; 
+}
+\end{lstlisting}
+
+\javaname{@Entity} tells \acrshort{jpa} that the class should be treated as a database entity. Among other things, this means that \acrshort{jpa} will create a database table matching the class structure, if that setting is enabled.
+
+Every entity is required to have a field with the \javaname{@Id} annotation which will be used as the primary key for the table.
+
+\javaname{@OneToMany} is used to establish a "One to Many" relationship. The collection can be accessed directly from the entity via \texttt{lecture.enrollments}, but \acrshort{jpa} creates a foreign key relationship between the two entities which is loaded lazily, when accessed or eagerly while loading the entity initially.
 
 \subsubsection{Audit Log implementation}
 
