@@ -1,2 +1,4 @@
 run-k6
 __pycache__
+
+prometheus-config.yml
