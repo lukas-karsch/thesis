@@ -27,12 +27,12 @@
             "state": {
               "type": "markdown",
               "state": {
-                "file": "Technologies/Prometheus.md",
+                "file": "Technical Design Log/2026-01-10 Run performance tests on a VM.md",
                 "mode": "source",
                 "source": false
               },
               "icon": "lucide-file",
-              "title": "Prometheus"
+              "title": "2026-01-10 Run performance tests on a VM"
             }
           }
         ],
@@ -186,6 +186,8 @@
   },
   "active": "ec0b2b006ded97be",
   "lastOpenFiles": [
+    "Technologies/Prometheus.md",
+    "Writing/Outline.md",
     "Technical Design Log/2025-12-19 Preparing for performance tests.md",
     "Technical Design Log/2026-01-07 How i could measure flexibility.md",
     "Technical Design Log/2026-01-03 Measurements.md",
@@ -193,7 +195,6 @@
     "Technical Design Log/2025-12-29 Where to measure.md",
     "Technical Design Log/2026-01-10 Run performance tests on a VM.md",
     "Advice/CloudInit.md",
-    "Writing/Outline.md",
     "Technologies/ArchUnit.md",
     "Technical Design Log/2025-12-12 ArchUnit.md",
     "Technical Design Log/2025-12-08 Resetting the Axon server.md",
@@ -211,7 +212,6 @@
     "Advice/Implementing CQRS in SpringBoot.md",
     "Advice/Axon Validation.md",
     "Advice/Designing Aggregates.md",
-    "Technical Design Log/2025-12-01 Using UUIDs instead of Long for IDs.md",
     "images/CRUD_ER_Diagram_3.png",
     "Documents/Expose Lukas Karsch Bachelorarbeit_02.pdf",
     "Documents/Hinweise_zur_Abschlussarbeit_Jordine_v1-2-0.pdf",

@@ -95,7 +95,8 @@ def create_remote_context(config: dict | None) -> None:
             "context",
             "create",
             "server-remote",
-            f'--docker "host=ssh://thesis@{server_ip}"',
+            "--docker",
+            f'"host=ssh://thesis@{server_ip}"',
         ]
     )
 
@@ -166,7 +167,8 @@ def write_prometheus_config(
         if platform.system() == "Windows":
             prometheus_target = f"host.docker.internal:{app_port}"
         else:
-            prometheus_target = f"{service_name}:{app_port}"
+            prometheus_target = f"{service_name}:{app_port}"  # TODO this doesnt work when starting prometheus without the docker compose file
+            # containers are not in the same network
     else:
         prometheus_target = f"{test_config['SERVER_IP']}:{app_port}"
         print(f"prometheus_target={prometheus_target}")
