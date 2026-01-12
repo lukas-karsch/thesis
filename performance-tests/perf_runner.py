@@ -359,7 +359,7 @@ def extract_metrics_to_csv(
     with output_csv.open("w", newline="") as f:
         writer = csv.DictWriter(
             f,
-            fieldnames=["metric", "method", "uri", "value", "app"],
+            fieldnames=["metric", "method", "uri", "value", "app", "virtual_users"],
         )
         writer.writeheader()
         writer.writerows(rows)

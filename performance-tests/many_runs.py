@@ -21,13 +21,17 @@ def main() -> None:
     )
     args = parser.parse_args()
 
+    config_file = None
+    if args.config is not None:
+        config_file = Path(args.config)
+
     if args.skip == "crud":
         print("Skipping CRUD app.")
     else:
         print(f"Testing CRUD app ({args.runs} runs)")
         for i in range(args.runs):
             print(f"Iteration {i+1}")
-            perf_runner.do_run("crud", args.metric)
+            perf_runner.do_run("crud", args.metric, config_file)
             print(f"Finished iteration {i+1}")
 
     if args.skip == "es-cqrs":
