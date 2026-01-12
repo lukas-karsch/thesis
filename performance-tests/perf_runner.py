@@ -89,6 +89,12 @@ def create_remote_context(config: dict | None) -> None:
     server_ip = config["SERVER_IP"]
 
     print(f"Try to create docker remote context for {server_ip}")
+
+    result = subprocess.run(["docker", "context", "ls"], capture_output=True, text=True)
+    if "server-remote" in result.stdout:
+        print("Context 'server-remote' already exists.")
+        return
+
     run_command(
         [
             "docker",
