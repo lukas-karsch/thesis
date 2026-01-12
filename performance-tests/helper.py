@@ -9,3 +9,12 @@ def run_command(cmd: list[str], check: bool = True) -> subprocess.CompletedProce
 def stop_and_remove_container(container_name: str) -> None:
     run_command(["docker", "stop", container_name])
     run_command(["docker", "rm", container_name])
+
+
+def docker_available() -> bool:
+    try:
+        run_command(["docker", "--version"])
+        return True
+    except Exception as exc:
+        print(exc)
+        return False

@@ -12,7 +12,7 @@ from urllib.parse import urlparse
 import requests
 
 import polling
-from helper import run_command, stop_and_remove_container
+from helper import run_command, stop_and_remove_container, docker_available
 
 # ============================================================================
 # Defaults / Configuration
@@ -70,15 +70,6 @@ PROMETHEUS_QUERIES = {
 # ============================================================================
 # Utility helpers
 # ============================================================================
-
-
-def docker_available() -> bool:
-    try:
-        run_command(["docker", "--version"])
-        return True
-    except Exception as exc:
-        print(exc)
-        return False
 
 
 def resolve_host(app: Literal["crud", "es-cqrs"]) -> str:
