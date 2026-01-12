@@ -42,4 +42,16 @@ Default context (own machine) is `default`.
  cd /code 
  docker compose up # will run on the remote machine if context is active
  ```
- 
+## Long running task with tmux 
+When starting many_runs, it takes a long time (several hours depending on configuration). Closing the terminal kills the task. 
+I can use `tmux` to start the task in a terminal session which is detached from my client. 
+```bash
+tmux
+# run command 
+# Detach with CTRL+B, let go and hit D 
+```
+Later, I can reattach using 
+```bash 
+tmux attach
+```
+
