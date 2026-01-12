@@ -37,3 +37,5 @@ Can use docker contexts https://docs.docker.com/engine/manage-resources/contexts
 docker context create sut-remote --docker "host=ssh://user@vm-sut-ip"
 docker context use sut-remote
 ```
+Default context (own machine) is `default`.
+ 

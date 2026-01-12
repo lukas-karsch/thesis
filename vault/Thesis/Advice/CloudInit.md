@@ -1,0 +1,1 @@
+CloudInit log file  :**`/var/log/cloud-init-output.log`**

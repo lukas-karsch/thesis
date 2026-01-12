@@ -42,7 +42,7 @@ runcmd:
   # 1. Install Docker
   - [ curl, -sSL, "https://get.docker.com", -o, "/tmp/get-docker.sh" ]
   - [ sh, "/tmp/get-docker.sh" ]
-  - [ usermod, -aG, docker, noble ]
+  - [ usermod, -aG, docker, thesis ]
 
   # 2. Install Miniconda (Silent Install)
   - wget https://repo.anaconda.com/miniconda/Miniconda3-latest-Linux-x86_64.sh -O /tmp/miniconda.sh
@@ -51,6 +51,10 @@ runcmd:
 
   # 3. Initialize Conda
   - sudo -u thesis -i bash -c "/opt/miniconda/bin/conda init bash"
+
+  # 3.1 Have to accept conda ToS
+  - sudo -u thesis -i bash -c "/opt/miniconda/bin/conda tos accept --override-channels --channel https://repo.anaconda.com/pkgs/main"
+  - sudo -u thesis -i bash -c "/opt/miniconda/bin/conda tos accept --override-channels --channel https://repo.anaconda.com/pkgs/r"
 
   # 4. Create a specific Conda environment with Python 3.14
   - sudo -u thesis -i bash -c "/opt/miniconda/bin/conda create -y -n dev_env python=3.14"
