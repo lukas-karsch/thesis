@@ -77,11 +77,11 @@ def resolve_host(app: Literal["crud", "es-cqrs"], config: dict | None) -> str:
     if app == "crud":
         if config is None:
             return f"http://localhost:{CRUD_PORT}"
-        return f'{config["SERVER_IP"]}:{CRUD_PORT}'
+        return f'http://{config["SERVER_IP"]}:{CRUD_PORT}'
     if app == "es-cqrs":
         if config is None:
             return f"http://localhost:{ES_CQRS_PORT}"
-        return f'{config["SERVER_IP"]}:{ES_CQRS_PORT}'
+        return f'http://{config["SERVER_IP"]}:{ES_CQRS_PORT}'
     raise ValueError(f"Unsupported app: {app}")
 
 
