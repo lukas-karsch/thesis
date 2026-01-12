@@ -369,6 +369,8 @@ def do_run(app: Literal["crud", "es-cqrs"], metric: Path, config_file: Path | No
             for line in config_file_text.strip().splitlines()
             if "=" in line and not line.startswith("#")
         }
+    else:
+        print("INFO: Local run")
 
     if not docker_available():
         raise RuntimeError("Docker is required but not available")
@@ -394,7 +396,7 @@ def do_run(app: Literal["crud", "es-cqrs"], metric: Path, config_file: Path | No
         run_id, run_dir, prom_dir = create_run_dirs(k6_script, app, VUs)
 
         prom_config = run_dir / "prometheus.yml"
-        write_prometheus_config(prom_config, app_port)
+        write_prometheus_config(prom_config, app_port, config)
 
         prom_container = start_prometheus_container(
             config_path=prom_config,
