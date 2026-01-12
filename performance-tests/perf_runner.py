@@ -113,10 +113,14 @@ def docker_remote(config: dict | None):
             run_command(["docker", "context", "use", "default"])
 
 
+def get_app_service(app: Literal["crud", "es-cqrs"]) -> str:
+    return "crud-app" if app == "crud" else "es-cqrs-app"
+
+
 def start_app_with_docker_compose(
     app: Literal["crud", "es-cqrs"], config: dict | None
 ) -> None:
-    app_service = "crud-app" if app == "crud" else "es-cqrs-app"
+    app_service = get_app_service(app)
 
     with docker_remote(config):
         run_command(["docker", "compose", "up", "-d", app_service])
@@ -151,13 +155,18 @@ def create_run_dirs(k6_script: Path, app: str, VUs: int) -> tuple[str, Path, Pat
 
 
 def write_prometheus_config(
-    config_path: Path, app_port: int, test_config: dict | None
+    config_path: Path, service_name: str, app_port: int, test_config: dict | None
 ) -> None:
     print(f"Writing prometheus config to '{config_path}'")
     config_path.touch()
 
+
     if test_config is None:
-        prometheus_target = f"host.docker.internal:{app_port}"
+        import platform
+        if platform.system() == "Windows":
+            prometheus_target = f"host.docker.internal:{app_port}"
+        else:
+            prometheus_target = f"{service_name}:{app_port}"
     else:
         prometheus_target = f"{test_config['SERVER_IP']}:{app_port}"
         print(f"prometheus_target={prometheus_target}")
@@ -387,7 +396,7 @@ def do_run(app: Literal["crud", "es-cqrs"], metric: Path, config_file: Path | No
 
         metric_content, k6_script = _get_metric_content(metric)
 
-        VUs = metric_content["VUs"]
+        VUs = metric_content.get("VUs")
         if VUs is None:
             raise ValueError(
                 "Configuration Error: No field 'VUs' configured in metric.json"
@@ -396,7 +405,7 @@ def do_run(app: Literal["crud", "es-cqrs"], metric: Path, config_file: Path | No
         run_id, run_dir, prom_dir = create_run_dirs(k6_script, app, VUs)
 
         prom_config = run_dir / "prometheus.yml"
-        write_prometheus_config(prom_config, app_port, config)
+        write_prometheus_config(prom_config, get_app_service(app), app_port, config)
 
         prom_container = start_prometheus_container(
             config_path=prom_config,
