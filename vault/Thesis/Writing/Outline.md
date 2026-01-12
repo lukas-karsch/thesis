@@ -96,6 +96,7 @@ Benchmarking via load testing. Time taken per request (Median, P95); CPU utiliza
 - Prometheus with actuator 
 - k6 
 - Spring devtools? 
+At the end, include a version matrix!! Pin all versions and list in a table 
 ## 6. Implementation
 ### 6.1 Contract tests
 ### 6.2 CRUD implementation

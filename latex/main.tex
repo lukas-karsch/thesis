@@ -480,9 +480,16 @@ Instead of writing SQL to create the database schema, entities can be described 
 
 \subsubsection{PostgreSQL}
 
-\subsubsection{Axon}
+PostgresQL is an open-source relational database which has been in active development for over 35 years. It is designed for a wide range of workloads and can handle many tasks thanks to its extensibility and large suite of extensions, such as the popular PostGIS extension for storing and querying geospatial data. \parencite{noauthor_postgis_nodate} As of January 2026, PostgreSQL 18 is the latest version. \parencite{postgresql_global_development_group_postgresql_2026}
 
-% Axon Server; Axon Framework
+\subsubsection{Axon}
+\label{sec:axon}
+
+Axon Framework is an open-source Java framework for building event-driven applications. Following the \acrshort{cqrs} and event-sourcing pattern, Commands, Events and Queries are the three core message types any Axon application is centered around. Commands are used to describe an intent to change the application's state. Events communicate a change that happened in the application. Queries are used to request information from the application.
+
+Axon also supports \acrlong{ddd} by providing tools to manage entities and domain logic. \parencite{axoniq_introduction_2025,axoniq_messaging_2025}
+
+Axon Server is a platform designed specifically for event-driven systems. It functions as both a high-performance Event Store and a dedicated Message Router for commands, queries, and events. By bundling these responsibilities into a single service, Axon Server replaces the need for separate infrastructures such as a relational database for events and a message broker like Kafka or RabbitMQ for communication. Axon Server is designed to seamlessly integrate with Axon Framework. When using the Axon Server Connector, the application automatically finds and connects to the Axon Server. It is then possible to use the Axon server without further configuration. \parencite{axoniq_introduction_2025-1,axoniq_axon_2025}
 
 \subsubsection{Testing}
 

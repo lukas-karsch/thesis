@@ -35,8 +35,7 @@
               "title": "2026-01-10 Run performance tests on a VM"
             }
           }
-        ],
-        "currentTab": 1
+        ]
       }
     ],
     "direction": "vertical"
@@ -184,8 +183,9 @@
       "bases:Create new base": false
     }
   },
-  "active": "ec0b2b006ded97be",
+  "active": "7006912a7208129b",
   "lastOpenFiles": [
+    "Technical Design Log/2026-01-10 Run performance tests on a VM.md",
     "Technologies/Prometheus.md",
     "Writing/Outline.md",
     "Technical Design Log/2025-12-19 Preparing for performance tests.md",
@@ -193,7 +193,6 @@
     "Technical Design Log/2026-01-03 Measurements.md",
     "Technical Design Log/2025-12-22 What can i benchmark.md",
     "Technical Design Log/2025-12-29 Where to measure.md",
-    "Technical Design Log/2026-01-10 Run performance tests on a VM.md",
     "Advice/CloudInit.md",
     "Technologies/ArchUnit.md",
     "Technical Design Log/2025-12-12 ArchUnit.md",
