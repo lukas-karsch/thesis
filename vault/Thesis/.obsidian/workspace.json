@@ -35,7 +35,8 @@
               "title": "2026-01-10 Run performance tests on a VM"
             }
           }
-        ]
+        ],
+        "currentTab": 1
       }
     ],
     "direction": "vertical"
@@ -183,7 +184,7 @@
       "bases:Create new base": false
     }
   },
-  "active": "7006912a7208129b",
+  "active": "ec0b2b006ded97be",
   "lastOpenFiles": [
     "Technical Design Log/2026-01-10 Run performance tests on a VM.md",
     "Technologies/Prometheus.md",

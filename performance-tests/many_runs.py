@@ -17,7 +17,9 @@ def main() -> None:
     parser.add_argument("--runs", type=int, required=True)
     parser.add_argument("--skip", required=False, choices=["crud", "es-cqrs"])
     parser.add_argument(
-        "--config", required=False, help="When running on a VM, must provide this file"
+        "--config",
+        required=False,
+        help="When trying to run on two VMs, must provide this file",
     )
     args = parser.parse_args()
 
@@ -40,7 +42,7 @@ def main() -> None:
         print(f"Testing ES-CQRS app (${args.runs} runs")
         for i in range(args.runs):
             print(f"Iteration {i+1}")
-            perf_runner.do_run("es-cqrs", args.metric)
+            perf_runner.do_run("es-cqrs", args.metric, config_file)
             print(f"Finished iteration {i+1}")
 
     metric_content = json.loads(Path(args.metric).read_text())

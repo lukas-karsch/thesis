@@ -378,14 +378,14 @@ def do_run(app: Literal["crud", "es-cqrs"], metric: Path, config_file: Path | No
     config = None
 
     if config_file is not None:
-        print("INFO: VM run detected (config_file provided")
+        print("INFO: VM run detected (config_file provided)")
         config_file_text = config_file.read_text()
-        print(config_file_text)
         config = {
             line.split("=", 1)[0].strip(): line.split("=", 1)[1].strip()
             for line in config_file_text.strip().splitlines()
             if "=" in line and not line.startswith("#")
         }
+        print(config)
     else:
         print("INFO: Local run")
 
