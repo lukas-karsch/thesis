@@ -13,12 +13,12 @@
             "state": {
               "type": "markdown",
               "state": {
-                "file": "Writing/Outline.md",
+                "file": "Technical Design Log/2025-11-25 Grade History (98d39a8f).md",
                 "mode": "source",
                 "source": false
               },
               "icon": "lucide-file",
-              "title": "Outline"
+              "title": "2025-11-25 Grade History (98d39a8f)"
             }
           },
           {
@@ -27,16 +27,15 @@
             "state": {
               "type": "markdown",
               "state": {
-                "file": "Technical Design Log/2026-01-10 Run performance tests on a VM.md",
+                "file": "Writing/Outline.md",
                 "mode": "source",
                 "source": false
               },
               "icon": "lucide-file",
-              "title": "2026-01-10 Run performance tests on a VM"
+              "title": "Outline"
             }
           }
-        ],
-        "currentTab": 1
+        ]
       }
     ],
     "direction": "vertical"
@@ -68,7 +67,7 @@
             "state": {
               "type": "search",
               "state": {
-                "query": "",
+                "query": "tag:#audit-log",
                 "matchingCase": false,
                 "explainSearch": false,
                 "collapseAll": false,
@@ -89,7 +88,8 @@
               "title": "Bookmarks"
             }
           }
-        ]
+        ],
+        "currentTab": 1
       }
     ],
     "direction": "horizontal",
@@ -184,11 +184,21 @@
       "bases:Create new base": false
     }
   },
-  "active": "ec0b2b006ded97be",
+  "active": "7006912a7208129b",
   "lastOpenFiles": [
+    "Technical Design Log/2025-11-16 Audit Log Problems (f48fc294).md",
+    "Technical Design Log/2025-11-25 Grade History (98d39a8f).md",
+    "Writing/Outline.md",
+    "Technical Design Log/2025-11-22 More audit log trouble (446ee903).md",
+    "Technical Design Log/2025-12-04 Audit Log is broken (again).md",
+    "TODOs.md",
+    "Technical Design Log/2025-11-24 Audit Log - include ID (7ccd99be).md",
+    "Technical Design Log/2026-01-13 Ballooning.md",
+    "Technical Design Log/2025-11-20 Audit Log not picking up time slot updates (2fcb2daf).md",
+    "Technical Design Log/2025-11-14 Audit Log (c5367a6b).md",
+    "Technical Design Log/2025-11-13 Defining additional requirements (9aa823f1, 1c08c5be).md",
     "Technical Design Log/2026-01-10 Run performance tests on a VM.md",
     "Technologies/Prometheus.md",
-    "Writing/Outline.md",
     "Technical Design Log/2025-12-19 Preparing for performance tests.md",
     "Technical Design Log/2026-01-07 How i could measure flexibility.md",
     "Technical Design Log/2026-01-03 Measurements.md",
@@ -199,19 +209,9 @@
     "Technical Design Log/2025-12-12 ArchUnit.md",
     "Technical Design Log/2025-12-08 Resetting the Axon server.md",
     "Technical Design Log/2026-01-07 What else to measure.md",
-    "Technical Design Log/2025-11-16 Audit Log Problems (f48fc294).md",
-    "Technical Design Log/2025-12-04 Audit Log is broken (again).md",
     "Technologies/k6.md",
     "Schedule.md",
     "Thesis - Landing Page.md",
-    "Technologies/AXON Subscription Queries.md",
-    "Advice/Spring @Controller vs. @RestController.md",
-    "Advice/Maven tips.md",
-    "Advice/Performance Metrics.md",
-    "Advice/Flyway.md",
-    "Advice/Implementing CQRS in SpringBoot.md",
-    "Advice/Axon Validation.md",
-    "Advice/Designing Aggregates.md",
     "images/CRUD_ER_Diagram_3.png",
     "Documents/Expose Lukas Karsch Bachelorarbeit_02.pdf",
     "Documents/Hinweise_zur_Abschlussarbeit_Jordine_v1-2-0.pdf",

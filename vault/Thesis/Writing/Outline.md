@@ -85,6 +85,7 @@ Benchmarking via load testing. Time taken per request (Median, P95); CPU utiliza
 	- Spring platform
 	- spring-boot-starter-web 
 	- integrations of dependencies using starters 
+	- Autowiring, IoC, dependency injection 
 - JPA with spring-boot-data-jpa
 - PostgreSQL
 - Axon Server
@@ -107,6 +108,10 @@ At the end, include a version matrix!! Pin all versions and list in a table
 	- @Version? 
 	- [[CRUD ER Diagram]]
 - Audit log implementation
+	- initial design [[2025-11-14 Audit Log (c5367a6b)]], based on Fowler 
+	- [[2025-11-16 Audit Log Problems (f48fc294)]] -> IdSerializationModule to NOT serialize relationships 
+	- show AuditEntityListener
+	- limitations here or later? (reconstructing state)
 ### 6.3 ES/CQRS implementation 
 - aggregates 
 - event modeling / data flows 

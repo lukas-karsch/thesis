@@ -488,7 +488,7 @@ SpringBoot is an open-source, opinionated framework for developing enterprise Ja
 SpringBoot builds on top of the Spring platform by applying a "convention-over-configuration" approach, intended to minimize the need for configuration. In a 2023 survey by JetBrains, SpringBoot was the most popular choice of web framework. \parencite{noauthor_java_nodate}
 
 Spring Boot starters are specialized dependency descriptors designed to simplify dependency management by aggregating commonly used libraries into feature-defined packages. Rather than requiring developers to manually identify and maintain a list of individual group IDs, artifact IDs, and compatible version numbers for every necessary library, starters use transitive dependency resolution to pull in all required components under a single entry. To quickly bootstrap a web application, a developer can simply add the \javaname{spring-boot-starter-web} dependency to their Maven or Gradle build file. By requesting this specific functionality, Spring Boot automatically includes essential dependencies such as Spring MVC, Jackson for JSON processing, and an embedded Tomcat server, ensuring that all included libraries have been tested together for compatibility. This approach shifts the developer's focus from managing individual JAR files to simply defining the high-level capabilities the application requires, minimizing configuration overhead and reducing risk of version mismatches. \parencite[Chapter~1.1.2]{walls_spring_2016}
-
+% TODO code example for IoC container / dependency injection 
 \subsubsection{JPA}
 
 \acrfull{jpa}, formerly Java Persistence \gls{api} is a Java specification which provides a mechanism for managing persistence and object-relational mapping (\acrshort{orm}). \glspl{orm} act as a brige between the relational world of SQL databases and the object-oriented world of Java.
@@ -637,14 +637,22 @@ class LectureEntity {
 }
 \end{lstlisting}
 
-\javaname{@Entity} tells \acrshort{jpa} that the class should be treated as a database entity. Among other things, this means that \acrshort{jpa} will create a database table matching the class structure, if that setting is enabled.
+The \javaname{@Entity} annotation informs \acrshort{jpa} that the class should be mapped to a database table. If the schema generation feature is enabled, \acrshort{jpa} automatically creates a table structure that mirrors the class definition. In production environments where this feature is typically disabled, developers must provide SQL scripts to manually define the expected structure. This is commonly achieved either by including a basic initialization script or by utilizing dedicated database migration tools such as Flyway or Liquibase to manage versioned schema changes.
 
-Every entity is required to have a field with the \javaname{@Id} annotation which will be used as the primary key for the table.
+Each entity must include a field annotated with \javaname{@Id}, which serves as the unique primary key for the corresponding database record.
 
-\javaname{@OneToMany} is used to establish a "One to Many" relationship. The collection can be accessed directly from the entity via \texttt{lecture.enrollments}, but \acrshort{jpa} creates a foreign key relationship between the two entities which is loaded lazily, when accessed or eagerly while loading the entity initially.
+The \javaname{@OneToMany} annotation defines a relational link between two entities. While the collection is accessed in Java as a standard list via \javaname{lecture.getEnrollments()}, \acrshort{jpa} manages this behind the scenes using a foreign key relationship. The \texttt{fetch} parameter determines when this data is retrieved: \texttt{LAZY} loading defers the database query until the collection is explicitly accessed in the code, whereas \texttt{EAGER} loading fetches the related entities immediately alongside the parent object.
 
 \subsubsection{Audit Log implementation}
 \label{sec:audit-log}
+
+Here, i talk about different ways to implement an audit log / change tracking. Simple manual logging, automated using a change tracker on JPA, database triggers or further technologies (complex change tracking mechanism).
+
+I explain why I made the choice to use a JPA entity listener. I describe the basic structure of the AuditLogEntry as introduced by Fowler. Then i show how it works: AuditableEntity superclass, listener which listens for changes and serializes them. Add how capturing business intent is possible by adding context; but that is also a secondary mechanism and prone to be forgotten by devs.
+
+Then, go into the details: how to serialize relationships (FK), especially nested (course <-> prerequisites, recursive danger).
+
+Maybe, here I can describe how simple and complex state reconstruction works / could work.
 
 \subsection{ES/CQRS implementation}
 

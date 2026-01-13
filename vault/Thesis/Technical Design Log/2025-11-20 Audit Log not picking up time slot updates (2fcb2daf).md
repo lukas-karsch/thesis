@@ -1,3 +1,4 @@
+#audit-log 
 The @PreUpdate method in my audit listener does NOT pick up changes made to the timeSlots() set. This is because the lectures table actually has no direct reference to the timeSlot table. 
 ## Possible solution
 Adding a `version` field to the lecture - that is automatically incremented when i make changes, and the changes should be picked up in the audit log.

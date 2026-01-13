@@ -1,3 +1,4 @@
+#audit-log 
 When fetching an object with @EntityGraph and loading associated collections, the nested objects do not get their own `snapshotJson` - `@PostLoad` is only called for the actual entity that was fetched, not for every entity that gets fetched using an EntityGraph eager collection loading.
 This means that updating a nested object when it was loaded from an associated entity delivers a faulty audit log. 
 ## Can this be fixed? 

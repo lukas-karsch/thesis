@@ -1,3 +1,4 @@
+#audit-log 
 ## Recursive serialization 
 When entities have relationships, the audit log serializes those aswell.
 With nested relationships, like on courses <-> prerequisites, this can lead to big problems
