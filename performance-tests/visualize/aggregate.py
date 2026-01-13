@@ -11,6 +11,9 @@ from visualize.helper import load_csv
 def _find_matching_metrics_csv(base_name: str, directory: Path) -> List[Path]:
     matching_files = []
 
+    if not directory.is_dir():
+        raise ValueError(f"Path {directory} is not a directory.")
+
     for subdir, dirs, files in os.walk(directory):
         for dir in dirs:
             dir_path = Path(dir)

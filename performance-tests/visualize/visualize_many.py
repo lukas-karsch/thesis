@@ -1,6 +1,7 @@
 import argparse
+from pathlib import Path
 
-from side_by_side_box_plot import visualize_aggregated_lineplot
+from side_by_side_box_plot import visualize_aggregated_lineplot, visualize_aggregated
 
 
 def main() -> None:
@@ -13,8 +14,10 @@ def main() -> None:
     )
     args = parser.parse_args()
 
-    # visualize_aggregated(args.base_name, args.dir)
-    visualize_aggregated_lineplot(args.base_name, args.dir)
+    visualize_aggregated(args.base_name, Path(args.dir))
+
+
+# visualize_aggregated_lineplot(args.base_name, Path(args.dir))
 
 
 if __name__ == "__main__":
