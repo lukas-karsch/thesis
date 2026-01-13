@@ -139,6 +139,12 @@
     description={Testcontainers are a way to declare infrastructure dependencies as code using Docker \parencite{testcontainers-homepage}}
 }
 
+\newglossaryentry{restassured}
+{
+    name={REST Assured},
+    description={A library for testing \acrshort{http} servers}
+}
+
 \newacronym{www}{WWW}{World Wide Web}
 
 \newacronym{hateoas}{HATEOAS}{Hypermedia as the engine of application state}
@@ -506,7 +512,7 @@ Axon Server is a platform designed specifically for event-driven systems. It fun
 
 \subsubsection{Testing}
 
-To ensure functionality of the applications, unit and integration tests were implemented using various testing libraries like JUnit as the testing platform, RestAssured for making and asserting \gls{http} calls, Mockito for unit testing and ArchUnit for architecture tests. This chapter describes all mentioned technologies.
+To ensure functionality of the applications, unit and integration tests were implemented using various testing libraries like JUnit as the testing platform, \gls{restassured} for making and asserting \gls{http} calls, Mockito for unit testing and ArchUnit for architecture tests. This chapter describes all mentioned technologies.
 
 JUnit is an open-source testing framework for Java. It offers a structured way of writing tests, driven by lifecycle methods like \texttt{beforeEach} or \texttt{afterAll}. Tests are annotated with \texttt{@Test}. They can also be parametrized and run repeatedly. Results can be asserted using assertion methods like \texttt{assertTrue()}. \parencite{noauthor_junit_nodate}
 
@@ -541,11 +547,11 @@ Here, the path \texttt{data.grades} of the returned JSON object is expected to b
 \subsection{Contract Test Implementation}
 \label{sec:contract-test-implementation}
 
-The \hyperref[sec:contract-tests]{contract tests} are implemented in a separate maven module called \texttt{test-{\allowbreak}suite}\footnote{\javaname{test-suite/src/test/java/karsch.lukas}}. The test classes use the \texttt{JUnit 5} testing framework and \texttt{REST Assured} to send and assert \gls{http} requests. A basic example might look like this:
+The \hyperref[sec:contract-tests]{contract tests} are implemented in a separate maven module called \texttt{test-{\allowbreak}suite}\footnote{\javaname{test-suite/src/test/java/karsch.lukas}}. The test classes use the \texttt{JUnit 5} testing framework and \texttt{REST Assured} to send and assert \gls{http} requests. A basic test might look like this:
 
 \begin{lstlisting}
-%%@Test%%
-void getLectureDetails_shouldReturn200() {
+@Test
+void getLectureDetails_shouldReturn200_returnTwoDates() {
     // First, create seed data
     var lectureSeedData = createLectureSeedData();
 
@@ -557,7 +563,13 @@ void getLectureDetails_shouldReturn200() {
             .body("data.dates", hasSize(2));
 }
 \end{lstlisting}
-\footnote{\javaname{test-suite/src/test/karsch.lukas.lectures.AbstractLecturesE2ETest}}
+\footnote{Adapted from \javaname{test-suite/src/test/karsch.lukas.lectures.AbstractLecturesE2ETest}}
+
+All contract tests follow a consistent pattern. First, they are annotated with \javaname{@DisplayName} to provide a descriptive, human-readable name. The test method itself is precisely named after the behavior it asserts. In the example above, the test verifies that the response status code is \javaname{200} and that the response body contains a field called \javaname{dates} consisting of an array of size two.
+
+Before making these assertions, each test creates "seed data". Seed data is prerequisite data that must exist on the system under test for the execution to be valid. For instance, a professor, a course, and a lecture must be created before the endpoint to \javaname{GET} that specific lecture can be tested. Tests that assert invariants, such as the business rule preventing lecture from having overlapping timeslots, typically set the system time via a Spring Boot Actuator endpoint first.
+
+Once the prerequisites are met, the request is executed and assertions are made using \gls{restassured}. The \texttt{given()} block sets up the request requirements like headers, parameters, or body content; the \texttt{when()} block defines the action, such as the HTTP method (GET, POST) and the endpoint URL; finally, the \texttt{then()} block is used to verify the response, allowing the developer to assert status codes and validate the data returned in the response body.
 
 The test classes in \texttt{test-suite} are all \texttt{abstract}, meaning they can not be run directly. Instead, they are intended to be subclassed by the modules implementing the concrete applications (\texttt{impl-crud} \& \texttt{impl-es-cqrs}). The subclasses must implement a set of abstract methods which are implementation specific, for example a method to reset the database in between each test, a method to set the application's time and methods to create seed data for tests.
 
@@ -588,7 +600,7 @@ public class CrudLecturesE2ETest extends AbstractLecturesE2ETest { }
 
 \subsection{CRUD implementation}
 
-This chapter presents the relevant aspects of the CRUD implementation, mainly focusing on relational modeling using \acrfull{jpa} and the audit log implementation.
+This chapter presents the relevant aspects of the CRUD implementation, mainly focusing on relational modeling using \acrshort{jpa} and the audit log implementation.
 
 \subsubsection{Relational Modeling}
 
@@ -610,7 +622,7 @@ In the app's ER diagram, the \texttt{LectureEntity} serves as core of the schema
 
 \texttt{LectureEntity} also has "One to Many" relationships to \texttt{LectureWaitlistEntryEntity}, \texttt{EnrollmentEntity} and \texttt{LectureAssessmentEntity}. \texttt{LectureWaitlistEntryEntity} is a table which stores students who are waitlisted for a lecture. It is effectively a join table (with one extra column to track when the student was waitlisted) and represents a Many to Many relationship between lectures and students. The same applies to \texttt{EnrollmentEntity} which is a table storing which students are enrolled to which lecture. \texttt{LectureAssessmentEntity} represents the fact that a lecture can have many assessments (which may be an exam, a paper or a project). Each assessment in turn has many \texttt{AssessmentGradeEntity}s associated with it. This table stores which student scored which grade on an assessment. % TODO fix spacing 
 
-The \texttt{AuditLogEntry} is also visible on the ER diagram, however it has no relationships. This table and the entire audit log implementation will be laid out in the following section.
+The \texttt{AuditLogEntry} is also visible on the ER diagram, however it has no relationships. This table and the entire audit log implementation will be laid out in the \hyperref[sec:audit-log]{following section}.
 
 These entities are implemented using SpringBoot's \acrshort{jpa} integration. For example, an entity with a "One to Many" relationship can be implemented like this:
 
@@ -632,6 +644,7 @@ Every entity is required to have a field with the \javaname{@Id} annotation whic
 \javaname{@OneToMany} is used to establish a "One to Many" relationship. The collection can be accessed directly from the entity via \texttt{lecture.enrollments}, but \acrshort{jpa} creates a foreign key relationship between the two entities which is loaded lazily, when accessed or eagerly while loading the entity initially.
 
 \subsubsection{Audit Log implementation}
+\label{sec:audit-log}
 
 \subsection{ES/CQRS implementation}
 
