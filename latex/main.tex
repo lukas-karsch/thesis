@@ -1,11 +1,11 @@
 %LTeX: enabled=false
 \documentclass[12pt,a4paper]{article}
+\usepackage{array}
 \usepackage[utf8]{inputenc}
 \usepackage[T1]{fontenc}
 \usepackage{graphicx}
 \usepackage[automake]{glossaries}
-\usepackage{array}
-\usepackage[table]{xcolor}
+\usepackage{xcolor}
 \usepackage[export]{adjustbox}
 
 % TODO
@@ -44,7 +44,7 @@
   and = {\&}
 }
 
-\usepackage{hyperref}
+\usepackage{hyperref} % must be loaded last! 
 
 % Adapted from Source - https://tex.stackexchange.com/a
 % Posted by Don Hosek
@@ -501,6 +501,10 @@ When using \acrshort{jpa} with SpringBoot by including the \javaname{spring-boot
 
 PostgresQL is an open-source relational database which has been in active development for over 35 years. It is designed for a wide range of workloads and can handle many tasks thanks to its extensibility and large suite of extensions, such as the popular PostGIS extension for storing and querying geospatial data. \parencite{noauthor_postgis_nodate} As of January 2026, PostgreSQL 18 is the latest version. \parencite{postgresql_global_development_group_postgresql_2026} % TODO write more; book source
 
+\subsubsection{Jackson}
+
+TODO!
+
 \subsubsection{Axon}
 \label{sec:axon}
 
@@ -646,13 +650,77 @@ The \javaname{@OneToMany} annotation defines a relational link between two entit
 \subsubsection{Audit Log implementation}
 \label{sec:audit-log}
 
-Here, i talk about different ways to implement an audit log / change tracking. Simple manual logging, automated using a change tracker on JPA, database triggers or further technologies (complex change tracking mechanism).
+There are several strategies to implement an audit log, each with its own trade-offs:
 
-I explain why I made the choice to use a JPA entity listener. I describe the basic structure of the AuditLogEntry as introduced by Fowler. Then I show how it works: AuditableEntity superclass, listener which listens for changes and serializes them. Add how capturing business intent is possible by adding context; but that is also a secondary mechanism and prone to be forgotten by devs.
+\begin{enumerate}
+    \item \textbf{Manual Logging}: Developers explicitly call a logging service in every service method that modifies data. While simple, this can lead to code duplication and is prone to human error, such as developers forgetting to add a log statement. A code example might look like this:
 
-Then, go into the details: how to serialize relationships (FK), especially nested (course <-> prerequisites, recursive danger).
+          \begin{lstlisting}
+public void updatePhoneNumber(User user, int newNumber) {
+    logChange(Date.now(), user, user.getPhoneNumber(), newNumber, "UserRequestedNumberChange");
+    user.setPhoneNumber(newNumber);
+}
 
-Maybe, here I can describe how simple and complex state reconstruction works / could work.
+void logChange(
+    Date date, User user, Object oldValue, Object newValue, String context
+) {
+    LogEntry logEntry = new LogEntry(date, user, oldValue, newValue);
+    logRepository.persist(logEntry);
+}
+\end{lstlisting}
+    \item \textbf{Database Triggers}: Database-level triggers can capture changes automatically. This offers high performance and guarantees that no change is missed, even if made outside the application. However, this approach ties the logic to a specific database and makes business logic harder to maintain and test, as it resides outside the codebase (needs reference).
+    \item  \textbf{Hibernate Envers}: A popular solution for JPA-based applications. It automatically versions entities. However, Envers typically creates a shadow table for every entity, which can be overkill if only specific high-level changes need to be tracked, and querying the history can be complex. (needs reference)
+    \item \textbf{JPA Entity Listeners}: Using the JPA specification's lifecycle events (\texttt{@PrePersist}, \texttt{@PreUpdate}, etc.) to intercept changes. This approach is database-independent and keeps the logic within the Java application, allowing access to Spring's security context. The security context makes it easy to access the current user, making it possible to attach them to the new audit log entry. (needs reference) \label{item:jpa-entity-listener}
+\end{enumerate}
+
+\paragraph{Chosen Implementation: JPA Entity Listener}\mbox{}\\
+
+The \acrshort{crud} implementation of the application utilizes approach \ref{item:jpa-entity-listener}, JPA entity listeners, which offer a good balance between automation and flexibility. This approach ensures that every change to an entity is captured without polluting the service layer with logging calls, while still allowing the application to enrich the log with application-level context. The current user is automatically added to the log entry by the entity listener, while service methods can attach additional context to an entity before it is persisted, if desired.
+
+\subparagraph{Data Model}\mbox{}\\
+
+The audit log is stored in a single database table, represented by the \texttt{AuditLogEntry} entity. This structure allows for easy querying of all system changes in chronological order. Table \ref{table:audit-log-entry} lists the fields contained by \texttt{AuditLogEntry}. This data model is adapted from \textcite{fowler_audit_2004}.
+
+\begin{table}[htp!]
+    \centering
+    \begin{tabular}{|l|p{4cm}|p{6cm}|}
+        \hline
+        \textbf{Field} & \textbf{Type, Possible Values} & \textbf{Explanation}                                  \\ \hline
+        entityName     & String                         & Identifies the type of the changed object.            \\ \hline
+        entityId       & UUID                           & Unique identifier of the specific changed object.     \\ \hline
+        timestamp      & LocalDateTime                  & The date and time when the change occurred.           \\ \hline
+        operation      & CREATE, UPDATE, DELETE         & The type of action performed on the entity.           \\ \hline
+        modifiedBy     & String                         & The user or system process that initiated the change. \\ \hline
+        oldValueJson   & TEXT (JSON String)             & The serialized state of the entity before the change. \\ \hline
+        newValueJson   & TEXT (JSON String)             & The serialized state of the entity after the change.  \\ \hline
+        contextJson    & TEXT (JSON String)             & Captures additional business intent or metadata.      \\ \hline
+    \end{tabular}
+    \caption{Audit Log Entry Structure}
+    \label{table:audit-log-entry}
+\end{table}
+
+\subparagraph{AuditableEntity and AuditEntityListener}\mbox{}\\
+
+To enable auditing, entities extend an abstract base class, \texttt{AuditableEntity} \footnote{\javaname{impl-crud/src/main/karsch.lukas.audit.AuditableEntity}}. This class marks the entity with the \javaname{@EntityListeners(AuditEntityListener.class)} annotation and provides a transient field, \texttt{snapshotJson}, used to store the state of the entity when it is loaded from the database.
+
+The core logic resides in \texttt{AuditEntityListener}\footnote{\javaname{impl-crud/src/main/karsch.lukas.audit.AuditEntityListener}}. It hooks into the JPA lifecycle:
+
+\begin{itemize}
+    \item \texttt{@PostLoad}: Immediately after an entity is fetched from the database, the listener serializes it to \acrshort{json} and stores the serialized \acrshort{json} string in the \texttt{snapshotJson} field. This serves as the "old value" for any subsequent updates.
+    \item \texttt{@PrePersist}: Before a newly created entity is saved, a log entry is created with the operation \texttt{CREATE}. The \texttt{newValueJson} is the current state; \texttt{oldValueJson} is null.
+    \item \texttt{@PreUpdate}: Before an existing entity is updated, the listener compares the current state with the \texttt{snapshotJson}. It creates an \texttt{UPDATE} entry using \texttt{snapshotJson} as the \texttt{oldValue} and the current state as the \texttt{newValue}.
+    \item \texttt{@PreRemove}: Before deletion, a \texttt{DELETE} entry is created, preserving the last known state. \texttt{snapshotJson} is saved as the \texttt{oldValue}, \texttt{newValue} is \texttt{null}
+\end{itemize}
+
+\paragraph{Serialization and Relationships}\mbox{}\\
+
+A major challenge in serializing JPA entities to \acrshort{json} for an audit log is handling relationships. A naive \acrshort{json} serialization would follow every relationship of the affected entity (e.g., \texttt{Lecture} $\rightarrow$ \texttt{Course}), potentially serializing huge entity graphs or even causing a \texttt{StackOverflowError} due to cyclic references. One example for such a problematic reference would be the self-reference of \texttt{CourseEntity}, which each course having a "One to Many" relationship to prerequisite courses.
+
+A custom Jackson module, \texttt{IdSerializationModule}, was implemented to deal with the problem of relationship serialization. This module overrides the default serialization for related entities. Instead of serializing the full nested object, it only writes the related object's ID. This results in a flat, lightweight \acrshort{json} structure that is readable, keeps all references reconstructible and is safe to store. % TODO explain how this was implemented in detail 
+
+\paragraph{Capturing Business Context}\mbox{}\\
+
+One downside of standard automated auditing is that it captures \emph{what} changed (e.g., lecture lifecycle changed from \texttt{IN\_PROGRESS} to \texttt{FINISHED}) but not necessarily \emph{why} (e.g., Lecture cancelled by professor due to illness). To make the CRUD application's audit log compliant to the requirement of traceability, it supports an \texttt{AuditContext}. Services can attach metadata to the current thread/transaction, which the \texttt{AuditEntityListener} retrieves and stores in the \texttt{contextJson} field.
 
 \subsection{ES/CQRS implementation}
 

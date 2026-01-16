@@ -88,6 +88,7 @@ Benchmarking via load testing. Time taken per request (Median, P95); CPU utiliza
 	- Autowiring, IoC, dependency injection 
 - JPA with spring-boot-data-jpa
 - PostgreSQL
+- Jackson
 - Axon Server
 - Axon Framework 
 	- reactor for reactive programming 

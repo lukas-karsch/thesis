@@ -11,7 +11,10 @@ import java.time.LocalDateTime;
 import java.util.UUID;
 
 @Entity
-@Table(name = "audit_log")
+@Table(
+        name = "audit_log",
+        indexes = @Index(name = "audit_log_entityName_entityId_idx", columnList = "entity_name,entity_id")
+)
 @Getter
 @Setter
 @ToString
@@ -21,8 +24,10 @@ public class AuditLogEntry {
     private Long id;
 
     @NotBlank
+    @Column(name = "entity_name")
     private String entityName;
 
+    @Column(name="entity_id")
     private UUID entityId;
 
     private String modifiedBy;
