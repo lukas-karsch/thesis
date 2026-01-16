@@ -136,3 +136,5 @@ At the end, include a version matrix!! Pin all versions and list in a table
 ### 8.2 Conclusion & Further work 
 - what could be missing from my implementations 
 - what could be missing from my measurements and test strategies? 
+## Further topics 
+- CAP theorem 

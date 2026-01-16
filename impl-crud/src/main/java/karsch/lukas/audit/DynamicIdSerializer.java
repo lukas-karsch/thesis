@@ -18,7 +18,7 @@ class DynamicIdSerializer extends JsonSerializer<Object> {
             try {
                 return k.getMethod("getId");
             } catch (NoSuchMethodException e) {
-                throw new RuntimeException("Type " + k.getName() + " missing expected getId() method.", e);
+                throw new RuntimeException("Type " + k.getName() + " missing expected getId() method. Create a getter for the field.", e);
             }
         });
     }

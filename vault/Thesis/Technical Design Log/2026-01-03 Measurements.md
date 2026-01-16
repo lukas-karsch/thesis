@@ -37,3 +37,4 @@ Questions / To do:
 ### Latency vs. load 
 Plot virtual users vs. latency 
 ![[plot_get_lectures_latency_vs_virtual_users.png]]
+#todo do this for 200, 500, 2000 VUs 

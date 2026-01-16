@@ -44,8 +44,6 @@ class CoursesService {
         courseEntity.setPrerequisites(prerequisites);
         courseEntity.setMinimumCreditsRequired(createCourseRequest.minimumCreditsRequired());
 
-        auditService.addAuditContext(courseEntity, "Test context!");
-
         coursesRepository.save(courseEntity);
 
         return courseEntity;
