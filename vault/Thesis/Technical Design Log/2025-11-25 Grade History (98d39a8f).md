@@ -9,7 +9,7 @@ try {
             .asInt();
  } //...
 ```
-This works well and is definitely enough for the case. But as soon as I need to inspect relationships / nested elements, it gets trickier. To save performance and avoid recursive serialization, I only store IDs of related objects. The problem here is getting those objects deserialized, to the exact state that they were in the specific point of time. 
+This works well and is definitely enough for that case. But as soon as I need to inspect relationships / nested elements, it gets trickier. To save performance and avoid recursive serialization, I only store IDs of related objects. The problem here is getting those objects deserialized, to the exact state that they were in the specific point of time. 
 
 I don't have to worry about this right now, but maybe I can create a business requirement that needs this. Then I could show how complex and time-consuming the algorithm is - while implementing and also at runtime.
 ## Algorithm 

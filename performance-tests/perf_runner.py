@@ -67,6 +67,15 @@ PROMETHEUS_QUERIES = {
     ),
 }
 
+PROMETHEUS_RANGE_QUERIES = {
+    "cpu_usage.json": "system_cpu_usage",  # or process_cpu_usage
+    # RAM Usage: Total used memory in bytes (Heap + Non-Heap)
+    "ram_usage_total_bytes.json": (
+        "sum(jvm_memory_used_bytes{area='heap'}) + sum(jvm_memory_used_bytes{area='nonheap'})"
+    ),
+    "ram_usage_heap_bytes.json": "sum(jvm_memory_used_bytes{area='heap'})",
+}
+
 
 # ============================================================================
 # Utility helpers
@@ -271,13 +280,20 @@ def query_prometheus(
     prom_dir: Path,
     window: str,
 ) -> None:
-    prom_url = f"http://localhost:{PROMETHEUS_PORT}/api/v1/query"
+    query_url = f"http://localhost:{PROMETHEUS_PORT}/api/v1/query"
 
     for filename, query in PROMETHEUS_QUERIES.items():
         rendered_query = query.format(w=window)
-        resp = requests.get(prom_url, params={"query": rendered_query})
+        resp = requests.get(query_url, params={"query": rendered_query})
         resp.raise_for_status()
         (prom_dir / filename).write_text(json.dumps(resp.json(), indent=2))
+
+    query_range_url = f"http://localhost:{PROMETHEUS_PORT}/api/v1/query_range"
+    for filename, range_query in PROMETHEUS_RANGE_QUERIES.items():
+        rendered_query = range_query.format(w=window)
+        res = requests.get(query_range_url, params={"query": rendered_query})
+        res.raise_for_status()
+        (prom_dir / filename).write_text(json.dumps(res.json(), indent=2))
 
 
 # ============================================================================

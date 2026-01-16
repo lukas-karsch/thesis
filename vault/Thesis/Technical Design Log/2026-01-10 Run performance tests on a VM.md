@@ -61,5 +61,5 @@ To transfer files from the VM to my local machine, I want to use a combination o
 cd performance-tests/
 zip -r run-k6.zip run-k6
 # on the local machine 
-scp thesis@vm_ip:code/performance-tests/run-k6.zip run-k6.zip
+scp -i "path/to/sshkey" thesis@vm_ip:code/performance-tests/run-k6.zip run-k6.zip
 ```
