@@ -308,9 +308,9 @@ def query_prometheus(
         res = requests.get(
             query_range_url,
             params={
-                "query": rendered_query.timestamp(),
+                "query": rendered_query,
                 "start": now_minus_window.timestamp(),
-                "end": now,
+                "end": now.timestamp(),
                 "step": "5s",
             },
         )
