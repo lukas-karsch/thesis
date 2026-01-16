@@ -290,7 +290,6 @@ def query_prometheus(
 
     query_range_url = f"http://localhost:{PROMETHEUS_PORT}/api/v1/query_range"
     for filename, range_query in PROMETHEUS_RANGE_QUERIES.items():
-        rendered_query = range_query.format(w=window)
         now = datetime.now(timezone.utc)
         if window.endswith("s"):
             now_minus_window = now - timedelta(seconds=int(window[:-1]))
@@ -308,7 +307,7 @@ def query_prometheus(
         res = requests.get(
             query_range_url,
             params={
-                "query": rendered_query,
+                "query": range_query,
                 "start": now_minus_window.timestamp(),
                 "end": now.timestamp(),
                 "step": "5s",

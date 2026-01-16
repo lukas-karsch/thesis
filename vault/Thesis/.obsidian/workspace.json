@@ -50,7 +50,7 @@
             }
           }
         ],
-        "currentTab": 2
+        "currentTab": 1
       }
     ],
     "direction": "vertical"
@@ -103,8 +103,7 @@
               "title": "Bookmarks"
             }
           }
-        ],
-        "currentTab": 1
+        ]
       }
     ],
     "direction": "horizontal",
@@ -199,8 +198,9 @@
       "bases:Create new base": false
     }
   },
-  "active": "74ab8048b843d855",
+  "active": "641269a03a67d523",
   "lastOpenFiles": [
+    "Technical Design Log/2026-01-10 Run performance tests on a VM.md",
     "Writing/Audit Log - Draft.md",
     "Writing/Outline.md",
     "Literature/Topics I should not miss.md",
@@ -213,7 +213,6 @@
     "Technical Design Log/2025-11-25 Grade History (98d39a8f).md",
     "Technical Design Log/2025-12-29 Where to measure.md",
     "Technical Design Log/2025-12-22 What can i benchmark.md",
-    "Technical Design Log/2026-01-10 Run performance tests on a VM.md",
     "Writing/CRUD ER Diagram.md",
     "TODOs.md",
     "Technical Design Log/2026-01-13 Ballooning.md",
