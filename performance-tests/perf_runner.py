@@ -5,7 +5,7 @@ import os.path
 import subprocess
 import time
 from contextlib import contextmanager
-from datetime import datetime
+from datetime import datetime, timezone, timedelta
 from pathlib import Path
 from typing import Literal, Any
 from urllib.parse import urlparse
@@ -291,7 +291,29 @@ def query_prometheus(
     query_range_url = f"http://localhost:{PROMETHEUS_PORT}/api/v1/query_range"
     for filename, range_query in PROMETHEUS_RANGE_QUERIES.items():
         rendered_query = range_query.format(w=window)
-        res = requests.get(query_range_url, params={"query": rendered_query})
+        now = datetime.now(timezone.utc)
+        if window.endswith("s"):
+            now_minus_window = now - timedelta(seconds=int(window[:-1]))
+        elif window.endswith("m"):
+            now_minus_window = now - timedelta(minutes=int(window[:-1]))
+        elif window.endswith("h"):
+            now_minus_window = now - timedelta(hours=int(window[:-1]))
+        elif window.endswith("d"):
+            now_minus_window = now - timedelta(days=int(window[:-1]))
+        else:
+            raise ValueError(
+                f"Window '{window}' not supported. Use seconds, minutes, hours or days"
+            )
+
+        res = requests.get(
+            query_range_url,
+            params={
+                "query": rendered_query.timestamp(),
+                "start": now_minus_window.timestamp(),
+                "end": now,
+                "step": "5s",
+            },
+        )
         res.raise_for_status()
         (prom_dir / filename).write_text(json.dumps(res.json(), indent=2))
 
