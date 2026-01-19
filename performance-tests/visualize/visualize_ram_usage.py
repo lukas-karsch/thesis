@@ -18,11 +18,21 @@ def main():
     crud_df = aggregated["crud"]
     es_df = aggregated["es-cqrs"]
 
+    ram_divisor = 1024 * 1024  # bytes to megabytes
+
     plt.figure()
-    plt.plot(crud_df["time_index"] * 5, crud_df["median_value"], label="CRUD")
-    plt.plot(es_df["time_index"] * 5, es_df["median_value"], label="ES CQRS")
+    plt.plot(
+        crud_df["time_index"] * 5,
+        crud_df["median_value"] / ram_divisor,
+        label="CRUD",
+    )
+    plt.plot(
+        es_df["time_index"] * 5,
+        es_df["median_value"] / ram_divisor,
+        label="ES CQRS",
+    )
     plt.xlabel("Time (seconds)")
-    plt.ylabel("RAM Usage")
+    plt.ylabel("RAM Usage (Megabytes)")
     plt.title("RAM Usage Over Time")
     plt.grid(True)
     plt.show()

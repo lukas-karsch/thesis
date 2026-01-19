@@ -47,8 +47,7 @@
               "title": "2026-01-10 Run performance tests on a VM"
             }
           }
-        ],
-        "currentTab": 2
+        ]
       }
     ],
     "direction": "vertical"
@@ -101,8 +100,7 @@
               "title": "Bookmarks"
             }
           }
-        ],
-        "currentTab": 1
+        ]
       }
     ],
     "direction": "horizontal",
@@ -197,8 +195,9 @@
       "bases:Create new base": false
     }
   },
-  "active": "d8fd32f7ba504d5e",
+  "active": "641269a03a67d523",
   "lastOpenFiles": [
+    "Technical Design Log/2026-01-10 Run performance tests on a VM.md",
     "Technical Design Log/2026-01-19 Latency vs. Load.md",
     "Writing/Outline.md",
     "Meetings/2026-01-07 Fragen fürs nächste Meeting.md",
@@ -207,7 +206,6 @@
     "Technologies/k6.md",
     "images/latency-vs-load-run-read-lectures.png",
     "latency-vs-load-run-read-lectures.png",
-    "Technical Design Log/2026-01-10 Run performance tests on a VM.md",
     "TODOs.md",
     "Literature/Topics I should not miss.md",
     "Technical Design Log/2026-01-07 What else to measure.md",

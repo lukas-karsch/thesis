@@ -17,10 +17,10 @@ def main():
     es_df = aggregated["es-cqrs"]
 
     plt.figure()
-    plt.plot(crud_df["time_index"] * 5, crud_df["median_value"], label="CRUD")
-    plt.plot(es_df["time_index"] * 5, es_df["median_value"], label="ES CQRS")
+    plt.plot(crud_df["time_index"] * 5, crud_df["median_value"] * 100, label="CRUD")
+    plt.plot(es_df["time_index"] * 5, es_df["median_value"] * 100, label="ES CQRS")
     plt.xlabel("Time (seconds)")
-    plt.ylabel("CPU Usage")
+    plt.ylabel("CPU Usage (%)")
     plt.title("CPU Usage Over Time")
     plt.grid(True)
     plt.show()
