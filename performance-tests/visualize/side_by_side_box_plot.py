@@ -94,6 +94,7 @@ def _lineplot_latency_vs_users(
     df: pd.DataFrame,
     *,
     log_x: bool = True,
+    log_y: bool = True,
     split_y_axis: bool = False,
 ) -> None:
     percentiles = {
@@ -145,12 +146,21 @@ def _lineplot_latency_vs_users(
 
         if log_x:
             ax_left.set_xscale("log")
-            ax_left.set_xticks(sorted(df["virtual_users"].unique()))
             ax_left.get_xaxis().set_major_formatter(ScalarFormatter())
+
+        ax_left.set_xticks(sorted(df["virtual_users"].unique()))
+
+        if log_y:
+            ax_left.set_yscale("log")
+            ax_left.get_yaxis().set_major_formatter(ScalarFormatter())
 
         if split_y_axis:
             ax_right.set_ylabel("ES-CQRS Latency (ms)")
             ax_left.set_ylabel("CRUD Latency (ms)")
+
+            if log_y:
+                ax_right.set_yscale("log")
+                ax_right.get_yaxis().set_major_formatter(ScalarFormatter())
         else:
             ax_left.set_ylabel("Latency (ms)")
 
@@ -190,7 +200,7 @@ def visualize_aggregated(aggregated: pd.DataFrame):
 
 
 def visualize_aggregated_lineplot(aggregated: pd.DataFrame):
-    _lineplot_latency_vs_users(aggregated, split_y_axis=True)
+    _lineplot_latency_vs_users(aggregated, split_y_axis=False)
 
 
 def main() -> None:

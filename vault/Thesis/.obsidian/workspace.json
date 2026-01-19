@@ -195,8 +195,9 @@
       "bases:Create new base": false
     }
   },
-  "active": "641269a03a67d523",
+  "active": "7006912a7208129b",
   "lastOpenFiles": [
+    "images/latency-vs-load-run-read-lectures__log_axis.png",
     "Technical Design Log/2026-01-10 Run performance tests on a VM.md",
     "Technical Design Log/2026-01-19 Latency vs. Load.md",
     "Writing/Outline.md",
