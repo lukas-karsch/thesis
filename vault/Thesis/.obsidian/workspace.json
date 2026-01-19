@@ -13,12 +13,12 @@
             "state": {
               "type": "markdown",
               "state": {
-                "file": "Technical Design Log/2026-01-19 Latency vs. Load.md",
+                "file": "Meetings/2026-01-07 Fragen fürs nächste Meeting.md",
                 "mode": "source",
                 "source": false
               },
               "icon": "lucide-file",
-              "title": "2026-01-19 Latency vs. Load"
+              "title": "2026-01-07 Fragen fürs nächste Meeting"
             }
           },
           {
@@ -27,10 +27,10 @@
             "state": {
               "type": "pdf",
               "state": {
-                "file": "Documents/Hinweise_zur_Abschlussarbeit_Jordine_v1-2-0.pdf"
+                "file": "Documents/HinweiseAbschlussarbeit_202306.pdf"
               },
               "icon": "lucide-file-text",
-              "title": "Hinweise_zur_Abschlussarbeit_Jordine_v1-2-0"
+              "title": "HinweiseAbschlussarbeit_202306"
             }
           },
           {
@@ -47,7 +47,8 @@
               "title": "2026-01-10 Run performance tests on a VM"
             }
           }
-        ]
+        ],
+        "currentTab": 1
       }
     ],
     "direction": "vertical"
@@ -195,15 +196,17 @@
       "bases:Create new base": false
     }
   },
-  "active": "7006912a7208129b",
+  "active": "74ab8048b843d855",
   "lastOpenFiles": [
+    "Documents/Hinweise_zur_Abschlussarbeit_Jordine_v1-2-0.pdf",
+    "Documents/HinweiseAbschlussarbeit_202306.pdf",
+    "Documents/Expose Lukas Karsch Bachelorarbeit_02.pdf",
+    "Meetings/2026-01-07 Fragen fürs nächste Meeting.md",
+    "Technical Design Log/2026-01-19 Latency vs. Load.md",
+    "images/latency-vs-load-run-read-lectures__split_y_axis.png",
     "images/latency-vs-load-run-read-lectures__log_axis.png",
     "Technical Design Log/2026-01-10 Run performance tests on a VM.md",
-    "Technical Design Log/2026-01-19 Latency vs. Load.md",
     "Writing/Outline.md",
-    "Meetings/2026-01-07 Fragen fürs nächste Meeting.md",
-    "Documents/Hinweise_zur_Abschlussarbeit_Jordine_v1-2-0.pdf",
-    "Documents/Expose Lukas Karsch Bachelorarbeit_02.pdf",
     "Technologies/k6.md",
     "images/latency-vs-load-run-read-lectures.png",
     "latency-vs-load-run-read-lectures.png",
@@ -234,8 +237,6 @@
     "images/plot_get_lectures_latency_vs_virtual_users.png",
     "images/plot_get_lectures_latency_vs_virtual_users",
     "images/plot_get_lectures_latency_comparison_50vu.png",
-    "images/Pasted image 20260103201102.png",
-    "images/plot_get_lectures_latency_comparison.png",
     "images/plot_get_lectures_latency_comparison",
     "Documents/BachelorarbeitVorlage.pdf",
     "Writing",

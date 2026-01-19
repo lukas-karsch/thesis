@@ -1,7 +1,7 @@
 ## Latex 
 - Zitationsstil? 
 	- aktuell: (Meyer 2006, p. 148)
-	- kennt sich mit IEEE und AP7 aus 
+	- Jordine kennt sich mit IEEE und AP7 aus 
 - Deckblatt? 
 	- gibt von der Hochschule vorgegeben 
 - Gibt es eine vorgefertigte ehrenwörtliche Erklärung? 
