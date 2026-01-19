@@ -68,7 +68,7 @@ PROMETHEUS_QUERIES = {
 }
 
 PROMETHEUS_RANGE_QUERIES = {
-    "cpu_usage.json": "system_cpu_usage",  # or process_cpu_usage
+    "cpu_usage.json": "process_cpu_usage",  # process_cpu_usage | system_cpu_usage
     # RAM Usage: Total used memory in bytes (Heap + Non-Heap)
     "ram_usage_total_bytes.json": (
         "sum(jvm_memory_used_bytes{area='heap'}) + sum(jvm_memory_used_bytes{area='nonheap'})"

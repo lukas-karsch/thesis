@@ -2,7 +2,7 @@ import argparse
 from pathlib import Path
 
 from side_by_side_box_plot import visualize_aggregated_lineplot
-from visualize.aggregate import aggregate
+from visualize.aggregate import aggregate_metrics_csv
 
 
 def main() -> None:
@@ -15,7 +15,7 @@ def main() -> None:
     )
     args = parser.parse_args()
 
-    aggregated = aggregate(args.base_name, Path(args.dir))
+    aggregated = aggregate_metrics_csv(args.base_name, Path(args.dir))
 
     # visualize_aggregated(aggregated)
 
