@@ -133,16 +133,28 @@
     description={A Groovy-based path language for navigating and querying nested object graphs (such as JSON or XML) using concise, expressive selectors and closures  \parencite{groovy-gpath}}
 }
 
-\newglossaryentry{testcontainer}
-{
-    name=Testcontainer,
-    description={Testcontainers are a way to declare infrastructure dependencies as code using Docker \parencite{testcontainers-homepage}}
-}
-
 \newglossaryentry{restassured}
 {
     name={REST Assured},
     description={A library for testing \acrshort{http} servers}
+}
+
+\newglossaryentry{dockerfile}
+{
+    name=Dockerfile,
+    description={A text document containing a series of instructions used to assemble a Docker image}
+}
+
+\newglossaryentry{docker}
+{
+    name=Docker,
+    description={Open platform for developing, shipping and running containerized applications}
+}
+
+\newglossaryentry{testcontainer}
+{
+    name=Testcontainer,
+    description={Testcontainers are a way to declare infrastructure dependencies as code using \gls{docker} \parencite{testcontainers-homepage}}
 }
 
 \newacronym{www}{WWW}{World Wide Web}
@@ -273,11 +285,11 @@
 
 \subsection{WWW, Web APIs, REST}
 
-The \acrfull{www} is a connected information network used to exchange data. Resources are can be accessed via \glspl{uri} which are transferred using formats like JSON or HTML via protocols like \gls{http}. HTTP is a stateless protocol based on a request-response structure. It supports standardized request types, such as \texttt{GET} and \texttt{POST}, which convey a semantic meaning \parencite{jacobs_architecture_2004}.
+The \acrfull{www} is a connected information network used to exchange data. Resources are can be accessed via \glspl{uri} which are transferred using formats like JSON or HTML via protocols like \gls{http}. \gls{http} is a stateless protocol based on a request-response structure. It supports standardized request types, such as \texttt{GET} and \texttt{POST}, which convey a semantic meaning \parencite{jacobs_architecture_2004}.
 
-Web APIs are interfaces that enable applications to communicate. They use HTTP as a network-based API \parencite[138]{fielding_architectural_2000}. Modern APIs typically follow \gls{rest} principles. REST stands for "Representational State Transfer" and describes an architectural style for distributed hypermedia systems \parencite[76]{fielding_architectural_2000}.
+Web APIs are interfaces that enable applications to communicate. They use \gls{http} as a network-based API \parencite[138]{fielding_architectural_2000}. Modern APIs typically follow \gls{rest} principles. REST stands for "Representational State Transfer" and describes an architectural style for distributed hypermedia systems \parencite[76]{fielding_architectural_2000}.
 
-REST APIs adhere to principles derived from a set of constraints imposed by the HTTP protocol, for example. One such constraint is "stateless communication": Communication between clients and the server must be \emph{stateless}, meaning the client must provide all the necessary information for the server to fully understand the request.
+REST APIs adhere to principles derived from a set of constraints imposed by the \gls{http} protocol, for example. One such constraint is "stateless communication": Communication between clients and the server must be \emph{stateless}, meaning the client must provide all the necessary information for the server to fully understand the request.
 
 Furthermore, every resource in REST applications must be addressable via a unique ID, which can then be used to derive a \acrshort{uri} to access the resource. Below are some examples for resources and \glspl{uri} which could be derived from them:
 
@@ -545,7 +557,7 @@ Here, the path \texttt{data.grades} of the returned JSON object is expected to b
 \subsubsection{SpringBoot Actuator}
 \label{sec:actuator}
 
-Spring Boot Actuator is a tool designed to help monitor and manage Spring Boot applications running in a production environment. It provides several built-in features that allow developers to check on the application's status, gather performance data, and track \gls{http} requests. Developers can interact with these features using either web-based HTTP links or \acrshort{jmx}, which is a standard Java management technology. By using Actuator, developers can quickly see if an application is running correctly without the need to write custom monitoring code.
+Spring Boot Actuator is a tool designed to help monitor and manage Spring Boot applications running in a production environment. It provides several built-in features that allow developers to check on the application's status, gather performance data, and track \gls{http} requests. Developers can interact with these features using either web-based \gls{http} links or \acrshort{jmx}, which is a standard Java management technology. By using Actuator, developers can quickly see if an application is running correctly without the need to write custom monitoring code.
 
 The most common way to use Actuator is through its "endpoints", which are specific web addresses that provide different types of information. For example, the health endpoint shows if the application and its connected services, like databases, are working, while the metrics endpoint displays detailed data on memory and CPU usage. Actuator also integrates with cloud platforms like Kubernetes to provide status updates for automated systems. Beyond the standard options, you can also create your own custom endpoints or connect the data to external monitoring software to visualize how your application is performing over time.
 
@@ -553,11 +565,19 @@ Actuator can be enabled in a Spring Boot project by including the \javaname{spri
 
 \subsubsection{Prometheus}
 
-Prometheus is an open-source systems monitoring toolkit originally built at SoundCloud that is now a project under the Cloud Native Computing Foundation. It is primarily used for collecting and storing multi-dimensional metrics as time-series data, meaning information is recorded with a timestamp and optional key-value pairs called labels. The system is designed for reliability and is capable of scraping data from instrumented jobs and web servers, storing it in a local time-series database, and triggering alerts based on predefined rules when specific thresholds are met. Through its powerful functional query language called "PromQL", developers can aggregate and visualize performance data. \parencite{noauthor_prometheus_2026,noauthor_overview_2026}
+Prometheus is an open-source systems monitoring toolkit originally built at SoundCloud that is now a project under the Cloud Native Computing Foundation. It is primarily used for collecting and storing multi-dimensional metrics as time-series data, meaning information is recorded with a timestamp and optional key-value pairs called labels. The system is designed for reliability and is capable of scraping data from instrumented jobs and web servers, storing it in a local time-series database, and triggering alerts based on predefined rules when specific thresholds are met. Through its powerful functional query language called "PromQL", developers can aggregate and visualize performance data. \parencite{noauthor_prometheus_2026,prometheus-overview-2026}
 
 To collect and export \hyperref[sec:actuator]{Actuator} metrics specifically for Prometheus, the \javaname{micrometer-registry-prometheus} dependency must be included in the classpath. \parencite{noauthor_micrometer_nodate} Access to the metrics is granted by including "prometheus" in the list of exposed web endpoints within the application's configuration properties. Once these components are in place, metrics are automatically formatted for consumption and can be scraped by a Prometheus server. \parencite{noauthor_metrics_nodate}
 
 \subsubsection{Docker}
+
+\gls{docker} is a platform utilized for the development and deployment of applications. It is designed to separate software from the underlying infrastructure, which allows for faster delivery and consistent environments.
+
+The capabilities of \gls{docker} are centered around the use of containers, which are lightweight and isolated environments. Each container is packaged with all necessary dependencies required for an application to run, ensuring it operates independently of the host system. High portability is maintained, as these workloads can be executed across different environments, such as local computers, data centers, or cloud providers. \parencite{what-is-docker}
+
+A \gls{dockerfile} is a text-based document that contains a series of instructions used to assemble a Docker image. Each command within this file results in the creation of a layer in the image, making the final template efficient and fast to rebuild. These images serve as read-only blueprints from which runnable instances, or containers, are created. \parencite{writing-a-dockerfile}
+
+Docker Compose is a tool employed for the definition and management of applications that consist of multiple containers. A single configuration file is used to specify the services, networks, and volumes required for the entire application stack. Through this tool, the lifecycle of complex applications is streamlined, enabling all associated services to be started, stopped, and coordinated with simplified commands. \parencite{what-is-docker-compose}
 
 \subsubsection{k6}
 
@@ -588,7 +608,7 @@ All contract tests follow a consistent pattern. First, they are annotated with \
 
 Before making these assertions, each test creates "seed data". Seed data is prerequisite data that must exist on the system under test for the execution to be valid. For instance, a professor, a course, and a lecture must be created before the endpoint to \javaname{GET} that specific lecture can be tested. Tests that assert invariants, such as the business rule preventing lecture from having overlapping timeslots, typically set the system time via a Spring Boot Actuator endpoint first.
 
-Once the prerequisites are met, the request is executed and assertions are made using \gls{restassured}. The \texttt{given()} block sets up the request requirements like headers, parameters, or body content; the \texttt{when()} block defines the action, such as the HTTP method (GET, POST) and the endpoint URL; finally, the \texttt{then()} block is used to verify the response, allowing the developer to assert status codes and validate the data returned in the response body.
+Once the prerequisites are met, the request is executed and assertions are made using \gls{restassured}. The \texttt{given()} block sets up the request requirements like headers, parameters, or body content; the \texttt{when()} block defines the action, such as the \gls{http} method (GET, POST) and the endpoint URL. Finally, the \texttt{then()} block is used to verify the response, allowing the developer to assert status codes and validate the data returned in the response body.
 
 The test classes in \texttt{test-suite} are all \texttt{abstract}, meaning they can not be run directly. Instead, they are intended to be subclassed by the modules implementing the concrete applications (\texttt{impl-crud} \& \texttt{impl-es-cqrs}). The subclasses must implement a set of abstract methods which are implementation specific, for example a method to reset the database in between each test, a method to set the application's time and methods to create seed data for tests.
 
