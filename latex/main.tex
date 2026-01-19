@@ -199,6 +199,8 @@
 
 \newacronym{jmx}{JMX}{Java Management Extensions}
 
+\newacronym{VU}{VU}{Virtual User}
+
 \begin{document}
 
 \title{How does an Event Sourcing architecture compare to CRUD systems with an independent audit log, when it comes to scalability, performance and traceability?}
@@ -580,6 +582,10 @@ A \gls{dockerfile} is a text-based document that contains a series of instructio
 Docker Compose is a tool employed for the definition and management of applications that consist of multiple containers. A single configuration file is used to specify the services, networks, and volumes required for the entire application stack. Through this tool, the lifecycle of complex applications is streamlined, enabling all associated services to be started, stopped, and coordinated with simplified commands. \parencite{what-is-docker-compose}
 
 \subsubsection{k6}
+
+Grafana k6 is an open-source performance testing tool designed to test a system's reliability and performance. It is used for simulating various traffic patterns, such as constant load, sudden stress spikes, or long-term soak tests, to identify slow response times or system failures during development and continuous integration. Metrics are collected during execution and can be visualized through platforms like Grafana or exported to various data backends for detailed reporting. \parencite{k6-overview}
+
+k6 allows tests to be written in JavaScript, making it accessible and easy to integrate into existing codebases. Every k6 test follows a common structure. The main component is a function that contains the core logic of the test. This function should be the default export of the JavaScript file. It is executed concurrently for each \acrshort{VU} (\acrlong{VU}), which act as independent execution threads to repeatedly apply the test logic. The test can be enhanced using k6's lifecycle functions, such as a setup function, which is executed only once and may be utilized to insert seed data into the system. The test execution can be configured using an "options" object, where VUs, the test duration and performance thresholds can be set. \parencite{k6-write-your-first-test}
 
 \section{Implementation}
 
