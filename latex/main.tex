@@ -183,6 +183,10 @@
 
 \newacronym{jpql}{JPQL}{Java Persistence Query Language}
 
+\newacronym{pojo}{POJO}{Plain Old Java Object}
+
+\newacronym{jmx}{JMX}{Java Management Extensions}
+
 \begin{document}
 
 \title{How does an Event Sourcing architecture compare to CRUD systems with an independent audit log, when it comes to scalability, performance and traceability?}
@@ -503,7 +507,7 @@ PostgresQL is an open-source relational database which has been in active develo
 
 \subsubsection{Jackson}
 
-TODO!
+Jackson is a high-performance, feature-rich \acrshort{json} processing library for Java. It is the default \acrshort{json} library used within the Spring Boot ecosystem. Its primary purpose is to provide a seamless bridge between Java objects and JSON data through three main processing models: the Streaming API for incremental parsing, the Tree Model for a flexible node-based representation, and the most commonly used Data Binding module. This data binding capability allows developers to automatically convert (\emph{marshal}) Java \glspl{pojo} into JSON and vice versa (\emph{unmarshal}) with minimal configuration. Beyond its speed and efficiency, Jackson is highly extensible, offering modules to handle complex Java types like Java 8 Date/Time and Optional classes. Jackson also supports various other data formats such as XML, YAML and CSV. \parencite{noauthor_jackson_nodate,fasterxml_jackson_2025}
 
 \subsubsection{Axon}
 \label{sec:axon}
@@ -540,7 +544,9 @@ Here, the path \texttt{data.grades} of the returned JSON object is expected to b
 
 \subsubsection{SpringBoot Actuator}
 
-% Prometheus 
+Spring Boot Actuator is a tool designed to help monitor and manage Spring Boot applications running in a production environment. It provides several built-in features that allow developers to check on the application's status, gather performance data, and track \gls{http} requests. You can interact with these features using either web-based HTTP links or \acrshort{jmx}, which is a standard Java management technology. By using Actuator, developers can quickly see if an application is running correctly without the need to write custom monitoring code.
+
+The most common way to use Actuator is through its "endpoints", which are specific web addresses that provide different types of information. For example, the health endpoint shows if the application and its connected services, like databases, are working, while the metrics endpoint displays detailed data on memory and CPU usage. Actuator also integrates with cloud platforms like Kubernetes to provide status updates for automated systems. Beyond the standard options, you can also create your own custom endpoints or connect the data to external monitoring software to visualize how your application is performing over time. \parencite{noauthor_production-ready_nodate}
 
 \subsubsection{Docker}
 
