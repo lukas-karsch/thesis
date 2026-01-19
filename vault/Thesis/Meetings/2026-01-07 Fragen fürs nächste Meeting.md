@@ -2,8 +2,9 @@
 - Zitationsstil? 
 	- aktuell: (Meyer 2006, p. 148)
 - Deckblatt? 
-- Wo ist die ehrenwörtliche Erklärung? 
-- Formatierung? Aktuell LaTeX standard ohne weitere Konfiguration 
+- Gibt es eine vorgefertigte ehrenwörtliche Erklärung? 
+- Formatierung? 
+	- -> Aktuell LaTeX standard ohne weitere Konfiguration 
 - Vorgabe für Länge des Theorieteils? 
 - Wie sollte der "Related Work" Teil aussehen? Ähnliche Arbeiten nennen und zusammenfassen? 
 - wie genau soll ich die Projekt requirements präsentieren? Also Business Regeln. UML Diagramm für Entities? Tabelle der Endpoint? Alle Entities erläutern? 
