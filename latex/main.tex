@@ -44,6 +44,14 @@
   and = {\&}
 }
 
+\usepackage{setspace}
+\usepackage{etoolbox}
+% 1.5 Zeilenabstand
+\onehalfspacing
+% außer für Listings 
+\BeforeBeginEnvironment{lstlisting}{\begin{singlespace}}
+\AfterEndEnvironment{lstlisting}{\end{singlespace}}
+
 \usepackage{hyperref} % must be loaded last! 
 
 % Adapted from Source - https://tex.stackexchange.com/a
@@ -266,6 +274,8 @@
 \tableofcontents
 
 \newpage
+% \begin{onehalfspace}
+% \setstretch{1.5}
 
 \listoffigures
 
@@ -791,4 +801,5 @@ Finally, I'm done!
 
 The full source code for this thesis, including both apps, performance tests and markdown notes, is available at: \url{https://gitlab.mi.hdm-stuttgart.de/lk224/thesis}
 
+% \end{onehalfspace}
 \end{document} % This is the end of the document
