@@ -1,5 +1,4 @@
 import argparse
-import os
 from pathlib import Path
 from typing import List
 
@@ -9,17 +8,21 @@ from visualize.helper import load_csv
 
 
 def _find_matching_metrics_csv(base_name: str, directory: Path) -> List[Path]:
-    matching_files = []
-
     if not directory.is_dir():
         raise ValueError(f"Path {directory} is not a directory.")
 
-    for subdir, dirs, files in os.walk(directory):
-        for dir in dirs:
-            dir_path = Path(dir)
-            metrics_path = directory / dir_path / Path("metrics.csv")
-            if dir_path.name.startswith(base_name) and metrics_path.is_file():
-                matching_files.append(metrics_path)
+    matching_files: List[Path] = []
+
+    # check current directory
+    if directory.name.startswith(base_name):
+        metrics_path = directory / "metrics.csv"
+        if metrics_path.is_file():
+            matching_files.append(metrics_path)
+
+    # recurse into subdirectories
+    for child in directory.iterdir():
+        if child.is_dir():
+            matching_files.extend(_find_matching_metrics_csv(base_name, child))
 
     return matching_files
 
