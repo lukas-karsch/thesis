@@ -8,6 +8,7 @@
 - Wie sollte der "Related Work" Teil aussehen? Ähnliche Arbeiten nennen und zusammenfassen? 
 - wie genau soll ich die Projekt requirements präsentieren? Also Business Regeln. UML Diagramm für Entities? Tabelle der Endpoint? Alle Entities erläutern? 
 - Zitieren von source code dokumentation? JUnit, Axon? WIe Quellen? 
+	- "Autor" von SpringBoot docs = SpringBoot, oder soll man da keinen Autor setzen? 
 - Glossary passt? (zeigen)
 	- vor oder nach dem content? 
 - Unter Code snippets per footnote verlinken? 
