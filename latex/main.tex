@@ -18,7 +18,7 @@
 \definecolor{pgreen}{rgb}{0,0.5,0}
 \definecolor{pred}{rgb}{0.9,0,0}
 \definecolor{pgrey}{rgb}{0.46,0.45,0.48}
-\definecolor{porange}{rgb}{1,0.5,0.1}
+\definecolor{porange}{rgb}{1,0.5,0.1} % Todo Change orange 
 
 \usepackage{listings}
 \lstset{language=Java,
@@ -35,6 +35,12 @@
   moredelim=[il][\textcolor{pgrey}]{\$\$},
   moredelim=[is][\textcolor{pgrey}]{\%\%}{\%\%}
 }
+
+\usepackage{caption}
+\DeclareCaptionFormat{listing}{
+  \rule{\linewidth}{0.2pt}\par\vskip1pt #1#2#3
+}
+\captionsetup[lstlisting]{format=listing, justification=centering, singlelinecheck=false}
 
 \usepackage[
   backend=biber,
@@ -274,10 +280,10 @@
 \tableofcontents
 
 \newpage
-% \begin{onehalfspace}
-% \setstretch{1.5}
 
 \listoffigures
+\listoftables
+\lstlistoflistings % TODO fix 
 
 \newpage
 
@@ -552,7 +558,7 @@ REST Assured is a Java library that provides a highly fluent \acrshort{dsl} for 
 
 The below code example shows how one might use a \gls{groovy} expression to find and validate a path in the returned JSON object:
 
-\begin{lstlisting}
+\begin{lstlisting}[caption={Validating JSON path using Rest Assured},captionpos=b]
 RestAssured.when()
     // omitted request 
     .then()
@@ -604,7 +610,7 @@ k6 allows tests to be written in JavaScript, making it accessible and easy to in
 
 The \hyperref[sec:contract-tests]{contract tests} are implemented in a separate maven module called \texttt{test-{\allowbreak}suite}\footnote{\javaname{test-suite/src/test/java/karsch.lukas}}. The test classes use the \texttt{JUnit 5} testing framework and \texttt{REST Assured} to send and assert \gls{http} requests. A basic test might look like this:
 
-\begin{lstlisting}
+\begin{lstlisting}[caption={Contract test example; adapted from \javaname{test-suite/src/test/karsch.lukas.lectures.AbstractLecturesE2ETest}}, captionpos=b]
 @Test
 void getLectureDetails_shouldReturn200_returnTwoDates() {
     // First, create seed data
@@ -618,7 +624,6 @@ void getLectureDetails_shouldReturn200_returnTwoDates() {
             .body("data.dates", hasSize(2));
 }
 \end{lstlisting}
-\footnote{Adapted from \javaname{test-suite/src/test/karsch.lukas.lectures.AbstractLecturesE2ETest}}
 
 All contract tests follow a consistent pattern. First, they are annotated with \javaname{@DisplayName} to provide a descriptive, human-readable name. The test method itself is precisely named after the behavior it asserts. In the example above, the test verifies that the response status code is \javaname{200} and that the response body contains a field called \javaname{dates} consisting of an array of size two.
 
@@ -630,7 +635,7 @@ The test classes in \texttt{test-suite} are all \texttt{abstract}, meaning they 
 
 Necessary infrastructure is spun up by the subclasses using \glspl{testcontainer}. \glspl{testcontainer} is a way to declare infrastructure dependencies as code and is an open-source library available for many programming languages. \parencite{testcontainers-homepage}
 
-\begin{lstlisting}
+\begin{lstlisting}[caption={\javaname{impl-crud/src/test/karsch.lukas.PostgresTestcontainerConfiguration}},captionpos=b]
 %%@TestConfiguration%%
 public class PostgresTestcontainerConfiguration {
     %%@Bean%%
@@ -642,16 +647,14 @@ public class PostgresTestcontainerConfiguration {
     }
 }
 \end{lstlisting}
-\footnote{\javaname{impl-crud/src/test/karsch.lukas.PostgresTestcontainerConfiguration}}
 
 The above code snippet starts a PostgreSQL container using the latest available image. \texttt{@ServiceConnection} makes sure the Spring application can connect to the container. This configuration can then be imported into the test class:
 
-\begin{lstlisting}
+\begin{lstlisting}[caption={\javaname{impl-crud/src/test/karsch.lukas.e2e.lectures.CrudLecturesE2ETest}},captionpos=b]
 %%@SpringBootTest%%
 %%@Import%%(PostgresTestcontainerConfiguration.class)
 public class CrudLecturesE2ETest extends AbstractLecturesE2ETest { }
 \end{lstlisting}
-\footnote{\javaname{impl-crud/src/test/karsch.lukas.e2e.lectures.CrudLecturesE2ETest}}
 
 \subsection{CRUD implementation}
 
@@ -681,7 +684,7 @@ The \texttt{AuditLogEntry} is also visible on the ER diagram, however it has no 
 
 These entities are implemented using SpringBoot's \acrshort{jpa} integration. For example, an entity with a "One to Many" relationship can be implemented like this:
 
-\begin{lstlisting}
+\begin{lstlisting}[caption={Simple JPA entity with a "One to Many" relationship},captionpos=b]
 %%@Entity%% 
 class LectureEntity {
     %%@Id%% 
@@ -706,7 +709,7 @@ There are several strategies to implement an audit log, each with its own trade-
 \begin{enumerate}
     \item \textbf{Manual Logging}: Developers explicitly call a logging service in every service method that modifies data. While simple, this can lead to code duplication and is prone to human error, such as developers forgetting to add a log statement. A code example might look like this:
 
-          \begin{lstlisting}
+          \begin{lstlisting}[caption={Code example for manual audit logging},captionpos=b]
 public void updatePhoneNumber(User user, int newNumber) {
     logChange(Date.now(), user, user.getPhoneNumber(), newNumber, "UserRequestedNumberChange");
     user.setPhoneNumber(newNumber);
@@ -801,5 +804,5 @@ Finally, I'm done!
 
 The full source code for this thesis, including both apps, performance tests and markdown notes, is available at: \url{https://gitlab.mi.hdm-stuttgart.de/lk224/thesis}
 
-% \end{onehalfspace}
+
 \end{document} % This is the end of the document
