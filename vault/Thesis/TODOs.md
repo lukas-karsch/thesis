@@ -17,6 +17,7 @@
 	    - clean up StatsService 
 	    - get rid of N+1 queries (especially StatsService)
 	    - examine default lock type, if i have any race conditions, @Version usage 
+	    - use Envers instead of my custom auditing solution? 
     - CQRS
 	    - try to use TEPs in my E2E tests
 	    - use @SequenceNumber aggregateVersion in repositories (https://github.com/idugalic/digital-restaurant/blob/master/drestaurant-apps/drestaurant-monolith-rest/src/main/kotlin/com/drestaurant/query/handler/RestaurantHandler.kt) ??

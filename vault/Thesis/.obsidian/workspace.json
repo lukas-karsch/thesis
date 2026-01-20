@@ -49,8 +49,7 @@
               "title": "2026-01-10 Run performance tests on a VM"
             }
           }
-        ],
-        "currentTab": 1
+        ]
       }
     ],
     "direction": "vertical"
@@ -198,11 +197,11 @@
       "bases:Create new base": false
     }
   },
-  "active": "641269a03a67d523",
+  "active": "7006912a7208129b",
   "lastOpenFiles": [
+    "Meetings/2026-01-07 Fragen fürs nächste Meeting.md",
     "Meetings/2026-02-04 Fragen fürs nächste Meeting.md",
     "TODOs.md",
-    "Meetings/2026-01-07 Fragen fürs nächste Meeting.md",
     "Technical Design Log/2026-01-10 Run performance tests on a VM.md",
     "Documents/HinweiseAbschlussarbeit_202306.pdf",
     "Documents/Hinweise_zur_Abschlussarbeit_Jordine_v1-2-0.pdf",
