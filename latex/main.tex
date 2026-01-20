@@ -44,7 +44,7 @@
 
 \usepackage[
   backend=biber,
-  style=authoryear, % or numeric, ieee, apa, ...
+  style=apa, % or authoryear, numeric, ieee, apa, ...
 ]{biblatex}
 \DefineBibliographyStrings{english}{
   and = {\&}
@@ -458,7 +458,7 @@ Because every action taken on the system is stored, a number of facilities can b
 
 An audit log (often called audit trail) is a chronological record which provides evidence of a sequence of activities on an entity. \parencite{committee_on_national_security_systems_national_2010} In information security, the audit log stores a record of system activities, enabling the reconstruction of events. \parencite{atis_committee_atis_2013} A trustworthy audit log in a system can guarantee the principle of traceability which states that actions can be tracked and traced back to the entity who is responsible for them. \parencite[266]{joint_task_force_interagency_working_group_security_2020}
 
-Traceability and auditing are legal requirements across various sectors, as they are derived from federal laws and regulations intended to protect the integrity and confidentiality of sensitive data. Organizations implement these mechanisms to stay compliant with mandates that require a verifiable, time-sequenced history of system activities to support oversight and forensic reviews. In the financial sector, for example, 17 CFR § 242.613 requires the establishment of a consolidated audit trail to track the complete lifecycle of securities orders, documenting every stage from origination and routing to final execution. \parencite{us_securities_and_exchange_commission_17_2012}
+Traceability and auditing are legal requirements across various sectors, as they are derived from federal laws and regulations intended to protect the integrity and confidentiality of sensitive data. Organizations implement these mechanisms to stay compliant with mandates that require a verifiable, time-sequenced history of system activities to support oversight and forensic reviews. In the U.S. financial sector, for example, 17 CFR § 242.613 requires the establishment of a consolidated audit trail to track the complete lifecycle of securities orders, documenting every stage from origination and routing to final execution. \parencite{us_securities_and_exchange_commission_17_2012}
 
 \textcite{fowler_audit_2004} describes an audit log as simple and effective way of storing temporal information. Changes are tracked by writing a record indicating \emph{what} changed \emph{when}. A basic implementation of an audit log can have many forms, for example a text file, database tables or \acrshort{xml} documents. Fowler also mentions that while the audit log is easy to write, it is harder to read and process. While occasional reads can be done by eye, complex processing and reconstruction of historical state can be resource-intensive.
 
@@ -505,10 +505,10 @@ Relationships and business rules in this system are deliberately chosen complex,
 
 \begin{itemize}
     \item Existence checks: any requests including references to entities will fail if the references entities do not exist.
-    \item Requests leading to conflicts, for example creating a lecture with overlapping time slots, will fail
-    \item When a student tries enrolling to a lecture which is already full, they will be put on a waitlist
-    \item When a student disenrolls from a lecture, the next eligible student (higher semesters are preferred) will be enrolled
-    \item Actions on a lecture can only be done during the appropriate lifecycle state (enrolling only when the lifecycle is "open for enrollment", grades can only be assigned when the lecture is "finished")
+    \item Requests leading to conflicts, for example creating a lecture with overlapping time slots, will fail.
+    \item When a student tries enrolling to a lecture which is already full, they will be put on a waitlist.
+    \item When a student disenrolls from a lecture, the next eligible student (higher semesters are preferred) will be enrolled.
+    \item Actions on a lecture can only be done during the appropriate lifecycle state (enrolling only when the lifecycle is "open for enrollment", grades can only be assigned when the lecture is "finished").
 \end{itemize}
 
 \subsubsection{Contract Tests}
@@ -526,9 +526,9 @@ To ensure both implementations adhere to the business rules, an extensive test s
 
 \subsubsection{SpringBoot}
 
-SpringBoot is an open-source, opinionated framework for developing enterprise Java applications. It is based on Spring Framework, which is a platform aiming to make Java development "quicker, easier, and safer for everybody" \parencite{noauthor_why_nodate}. Spring provides an Inversion of Control (IoC) container which can be used for dependency injection. \parencite[Chapter~1]{deinum_spring_2023} It offers support for several programming paradigms: reactive, event-driven, microservices and serverless. \parencite{noauthor_why_nodate}
+SpringBoot is an open-source, opinionated framework for developing enterprise Java applications. It is based on Spring Framework, which is a platform aiming to make Java development "quicker, easier, and safer for everybody" \parencite{broadcom_inc_why_nodate}. Spring provides an Inversion of Control (IoC) container which can be used for dependency injection. \parencite[Chapter~1]{deinum_spring_2023} It offers support for several programming paradigms: reactive, event-driven, microservices and serverless. \parencite{broadcom_inc_why_nodate}
 
-SpringBoot builds on top of the Spring platform by applying a "convention-over-configuration" approach, intended to minimize the need for configuration. In a 2023 survey by JetBrains, SpringBoot was the most popular choice of web framework. \parencite{noauthor_java_nodate}
+SpringBoot builds on top of the Spring platform by applying a "convention-over-configuration" approach, intended to minimize the need for configuration. In a 2023 survey by JetBrains, SpringBoot was the most popular choice of web framework. \parencite{jetbrains_java_2023}
 
 Spring Boot starters are specialized dependency descriptors designed to simplify dependency management by aggregating commonly used libraries into feature-defined packages. Rather than requiring developers to manually identify and maintain a list of individual group IDs, artifact IDs, and compatible version numbers for every necessary library, starters use transitive dependency resolution to pull in all required components under a single entry. To quickly bootstrap a web application, a developer can simply add the \javaname{spring-boot-starter-web} dependency to their Maven or Gradle build file. By requesting this specific functionality, Spring Boot automatically includes essential dependencies such as Spring MVC, Jackson for JSON processing, and an embedded Tomcat server, ensuring that all included libraries have been tested together for compatibility. This approach shifts the developer's focus from managing individual JAR files to simply defining the high-level capabilities the application requires, minimizing configuration overhead and reducing risk of version mismatches. \parencite[Chapter~1.1.2]{walls_spring_2016}
 % TODO code example for IoC container / dependency injection 
