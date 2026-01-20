@@ -5,20 +5,12 @@ import matplotlib.pyplot as plt
 import pandas as pd
 from matplotlib.ticker import ScalarFormatter
 
-from visualize.helper import load_csv
+from visualize.helper import load_csv, pretty_name
 
 APP_COLORS = {
     "crud": "#1f77b4",  # blue
     "es-cqrs": "#d62728",  # red
 }
-
-
-def pretty_name(app: str) -> str:
-    if app == "crud":
-        return "CRUD"
-    if app == "es-cqrs":
-        return "ES-CQRS"
-    raise ValueError(f"{app} is not supported.")
 
 
 def _boxplot_grouped_metrics(df: pd.DataFrame) -> None:
@@ -200,7 +192,7 @@ def visualize_aggregated(aggregated: pd.DataFrame):
 
 
 def visualize_aggregated_lineplot(aggregated: pd.DataFrame):
-    _lineplot_latency_vs_users(aggregated, split_y_axis=False)
+    _lineplot_latency_vs_users(aggregated, log_x=False, log_y=False)
 
 
 def main() -> None:

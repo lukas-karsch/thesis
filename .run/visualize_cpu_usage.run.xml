@@ -15,7 +15,8 @@
         <option name="ADD_SOURCE_ROOTS" value="true"/>
         <EXTENSION ID="PythonCoverageRunConfigurationExtension" runner="coverage.py"/>
         <option name="SCRIPT_NAME" value="$PROJECT_DIR$/performance-tests/visualize/visualize_cpu_usage.py"/>
-        <option name="PARAMETERS" value="--path &quot;../../Test Results/reads/run-read-lectures-500VUs/run-k6&quot;"/>
+        <option name="PARAMETERS"
+                value="--path &quot;../../Test Results/writes/create-courses-prerequisites-50VUs&quot;"/>
         <option name="SHOW_COMMAND_LINE" value="false"/>
         <option name="EMULATE_TERMINAL" value="false"/>
         <option name="MODULE_MODE" value="false"/>

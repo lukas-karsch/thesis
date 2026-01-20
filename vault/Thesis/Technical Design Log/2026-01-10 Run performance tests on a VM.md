@@ -54,6 +54,11 @@ Later, I can reattach using
 ```bash 
 tmux attach
 ```
+Once attached, I can kill the session:
+```bash
+# type CTRL+B
+:kill-session
+```
 ## Zip files 
 To transfer files from the VM to my local machine, I want to use a combination of zip and scp. 
 ```bash

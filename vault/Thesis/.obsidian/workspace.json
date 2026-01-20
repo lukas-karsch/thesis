@@ -22,15 +22,17 @@
             }
           },
           {
-            "id": "74ab8048b843d855",
+            "id": "a82652e482317595",
             "type": "leaf",
             "state": {
-              "type": "pdf",
+              "type": "markdown",
               "state": {
-                "file": "Documents/HinweiseAbschlussarbeit_202306.pdf"
+                "file": "2026-02-04 Fragen fürs nächste Meeting.md",
+                "mode": "source",
+                "source": false
               },
-              "icon": "lucide-file-text",
-              "title": "HinweiseAbschlussarbeit_202306"
+              "icon": "lucide-file",
+              "title": "2026-02-04 Fragen fürs nächste Meeting"
             }
           },
           {
@@ -48,7 +50,7 @@
             }
           }
         ],
-        "currentTab": 1
+        "currentTab": 2
       }
     ],
     "direction": "vertical"
@@ -196,12 +198,13 @@
       "bases:Create new base": false
     }
   },
-  "active": "74ab8048b843d855",
+  "active": "d8fd32f7ba504d5e",
   "lastOpenFiles": [
-    "Documents/Hinweise_zur_Abschlussarbeit_Jordine_v1-2-0.pdf",
-    "Documents/HinweiseAbschlussarbeit_202306.pdf",
-    "Documents/Expose Lukas Karsch Bachelorarbeit_02.pdf",
+    "2026-02-04 Fragen fürs nächste Meeting.md",
     "Meetings/2026-01-07 Fragen fürs nächste Meeting.md",
+    "Documents/HinweiseAbschlussarbeit_202306.pdf",
+    "Documents/Hinweise_zur_Abschlussarbeit_Jordine_v1-2-0.pdf",
+    "Documents/Expose Lukas Karsch Bachelorarbeit_02.pdf",
     "Technical Design Log/2026-01-19 Latency vs. Load.md",
     "images/latency-vs-load-run-read-lectures__split_y_axis.png",
     "images/latency-vs-load-run-read-lectures__log_axis.png",
@@ -243,7 +246,6 @@
     "images",
     "Meetings",
     "Untitled.canvas",
-    "Untitled.base",
-    "System Design"
+    "Untitled.base"
   ]
 }

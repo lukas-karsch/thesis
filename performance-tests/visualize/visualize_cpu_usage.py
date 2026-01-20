@@ -1,9 +1,11 @@
 import argparse
+import json
 from pathlib import Path
 
 import matplotlib.pyplot as plt
 
 from visualize.aggregate import aggregate_prometheus_metrics
+from visualize.helper import get_metric_json
 
 
 def main():
@@ -11,7 +13,19 @@ def main():
     parser.add_argument("--path", required=True)
     args = parser.parse_args()
 
-    aggregated = aggregate_prometheus_metrics("cpu_usage.json", Path(args.path))
+    base_path = Path(args.path)
+
+    aggregated = aggregate_prometheus_metrics("cpu_usage.json", base_path)
+
+    metric_path = get_metric_json(base_path)
+    metric_json = json.loads(metric_path.read_text())
+    VUs = metric_json.get("VUs")
+    if VUs is None:
+        raise ValueError("Malformed metric.json: 'VUs' field is missing.")
+    metric = {
+        "method": metric_json["metric"]["method"],
+        "uri": metric_json["metric"]["uri"],
+    }
 
     crud_df = aggregated["crud"]
     es_df = aggregated["es-cqrs"]
@@ -21,7 +35,11 @@ def main():
     plt.plot(es_df["time_index"] * 5, es_df["median_value"] * 100, label="ES CQRS")
     plt.xlabel("Time (seconds)")
     plt.ylabel("CPU Usage (%)")
-    plt.title("CPU Usage Over Time")
+    plt.suptitle(f"{metric["method"]} {metric["uri"]}: CPU Usage Over Time")
+    plt.title(metric_json["metadata"]["title"], fontsize=10)
+
+    plt.legend()
+
     plt.grid(True)
     plt.show()
 
