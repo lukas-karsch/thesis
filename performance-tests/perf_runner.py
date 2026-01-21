@@ -207,11 +207,9 @@ scrape_configs:
 # ============================================================================
 
 
-def start_prometheus_container(
-    config_path: Path,
-    run_date: str,
-) -> str:
-    container_name = f"prometheus-{run_date}"
+def start_prometheus_container(config_path: Path) -> str:
+    dt = datetime.now().isoformat()
+    container_name = f"prometheus-{dt}"
 
     run_command(
         [
@@ -452,10 +450,7 @@ def do_run(app: Literal["crud", "es-cqrs"], metric: Path, config_file: Path | No
         prom_config = run_dir / "prometheus.yml"
         write_prometheus_config(prom_config, get_app_service(app), app_port, config)
 
-        prom_container = start_prometheus_container(
-            config_path=prom_config,
-            run_date=run_id.split("-")[-1],
-        )
+        prom_container = start_prometheus_container(config_path=prom_config)
 
         test_start, test_end = run_k6(
             host_url=host_url,
