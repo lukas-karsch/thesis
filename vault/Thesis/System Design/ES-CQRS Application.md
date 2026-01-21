@@ -97,8 +97,8 @@ public class PrerequisiteInterceptor implements MessageDispatchInterceptor<Comma
 Create a lookup table that belongs to the command side and is immediately consistent. 
 [[2025-12-06 I discovered set based validation]]
 This lookup table can be injected into command handlers. 
-### Recommendation for your Thesis
-**Use Option 4 (Parameter Injection / Lookup table Check).**
+### Decision
+**Use Option 4 (Lookup table Check).**
 ### Projections 
 - save denormalized projections
 - one view = one table

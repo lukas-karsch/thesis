@@ -19,7 +19,6 @@ import org.axonframework.queryhandling.QueryExecutionException;
 import org.axonframework.queryhandling.QueryGateway;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.util.Assert;
 import org.springframework.web.bind.annotation.RestController;
 import reactor.core.publisher.Mono;
 
@@ -68,14 +67,14 @@ public class LecturesController implements ILecturesController {
         ) {
             Mono<EnrollmentStatusUpdate> enrollmentResult = subscription.initialResult()
                     .flatMap(initial -> {
-                        log.info("initial result: {}", initial);
+                        log.debug("initial result: {}", initial);
                         // If the initial state says they are already enrolled, return it immediately
                         if (initial != null && EnrollmentStatus.ENROLLED.equals(initial.status())) {
                             return Mono.just(initial);
                         }
                         // Otherwise, switch to waiting for updates
                         return subscription.updates().next().handle((u, s) -> {
-                            log.info("Update: {}", u);
+                            log.debug("Update: {}", u);
                             s.next(u);
                         });
                     });
@@ -121,8 +120,6 @@ public class LecturesController implements ILecturesController {
         );
 
         UUID result = commandGateway.sendAndWait(command);
-
-        Assert.isTrue(lectureId.equals(result), "lectureId and result are not equal. lectureId=" + lectureId + ", result=" + result);
 
         return new ResponseEntity<>(
                 new ApiResponse<>(HttpStatus.CREATED, lectureId), HttpStatus.CREATED

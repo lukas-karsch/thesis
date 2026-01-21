@@ -39,6 +39,6 @@ CPU und RAM usage: ausreichend?
 - Prozess CPU Auslastung messen, nicht System 
 
 Flexibilität
-- o reilly: Buch zur BEwertung von Architekturmetriken 
+- o reilly: Buch zur BEwertung von Architekturmetriken #todo 
 - bulding evolutionary architectures
 - https://www.thalia.de/shop/home/artikeldetails/A1064052964?ProvID=15326610&gad_source=1&gad_campaignid=23444783204&gbraid=0AAAAADwkCX76qejWp0TkqezH7a_teg-uh&gclid=CjwKCAiAybfLBhAjEiwAI0mBBkb8ACfYW27g6W88wwPaQvpvvkPjPZOi-F1W82Ushy4Fj3DlcleoeBoCYrcQAvD_BwE

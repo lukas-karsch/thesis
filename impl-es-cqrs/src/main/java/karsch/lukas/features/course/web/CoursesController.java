@@ -38,7 +38,7 @@ public class CoursesController implements ICoursesController {
     public ResponseEntity<ApiResponse<Set<CourseDTO>>> getCourses() {
         Future<List<CourseDTO>> future = queryGateway.query(new FindAllCoursesQuery(), ResponseTypes.multipleInstancesOf(CourseDTO.class));
         try {
-            List<CourseDTO> courses = future.get();
+            List<CourseDTO> courses = future.get(); // TODO replace with .join() (all reads)
             var response = new ApiResponse<>(HttpStatus.OK, Set.copyOf(courses));
             return new ResponseEntity<>(response, response.getHttpStatus());
         } catch (Exception e) {

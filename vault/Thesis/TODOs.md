@@ -7,7 +7,7 @@
     - Audit Logs #audit-log
         - "Evaluation and Use of Event Sourcing (BA)"
     - Performance measurement best practices #performance
-    - (maybe) schema evolution in ES #es #schema
+    - [[2026-01-07 Fragen fürs nächste Meeting]] -> Buch zu scalability 
     - CQRS #cqrs
     - -> check HdM library for some books
         - DDD full version?
