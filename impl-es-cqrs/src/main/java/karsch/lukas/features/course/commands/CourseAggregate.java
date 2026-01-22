@@ -9,7 +9,6 @@ import org.axonframework.eventsourcing.EventSourcingHandler;
 import org.axonframework.modelling.command.AggregateIdentifier;
 import org.axonframework.spring.stereotype.Aggregate;
 
-import java.util.Set;
 import java.util.UUID;
 
 import static org.axonframework.modelling.command.AggregateLifecycle.apply;
@@ -22,11 +21,6 @@ class CourseAggregate {
 
     @AggregateIdentifier
     private UUID courseId;
-    private String name;
-    private String description;
-    private int credits;
-    private Set<UUID> prerequisiteCourseIds;
-    private int minimumCreditsRequired;
 
     @CommandHandler
     public CourseAggregate(CreateCourseCommand cmd, ICourseValidator courseValidator) {
@@ -52,10 +46,5 @@ class CourseAggregate {
     @EventSourcingHandler
     public void on(CourseCreatedEvent event) {
         this.courseId = event.courseId();
-        this.name = event.name();
-        this.description = event.description();
-        this.credits = event.credits();
-        this.prerequisiteCourseIds = event.prerequisiteCourseIds();
-        this.minimumCreditsRequired = event.minimumCreditsRequired();
     }
 }
