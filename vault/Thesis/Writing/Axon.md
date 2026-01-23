@@ -54,7 +54,13 @@ Axon's `EventBus` is the infrastructure mechanism dispatching events to the subs
 
 Event handlers are methods annotated with `@EventHandler` which react to occurrences within the app by handling Axon's event messages. Each event handler specifies the types of events it is interested in. When no handler for a given event type exists in the application, the event is ignored. 
 ## Sagas 
+In Axon, Sagas are long-running, stateful event handlers which not just react to events, but instead manage and coordinate business transactions. For each transaction being managed, one instance of a Saga exists. A Saga, which is a class annotated with `@Saga` has a lifecycle that is started by a specific event when a method annotated with `@StartSaga` is executed. The lifecycle may be ended when a method annotated with `@EndSaga` is executed; or conditionally using `SagaLifecycle.end()`. A Saga usually has a clear starting point, but may have many different ways for it to end. Each event handling method in a Saga must additionally have the `@SagaEventHandler` annotation. 
 
+The way Sagas manage business transactions is by sending commands upon receiving events. They can be used when workflows across several aggregates should be implemented; or to handle long-running processes that may span over any amount of time. For example, the lifecycle of an order, from being processed, to being shipped and paid, is a process that usually takes multiple days. A use case like this is typically implemented using Sagas. 
+
+A Saga is associated with one or more association values, which are key-value pairs used to route events to the correct Saga instance. A `@StartSaga` method together with the `@SagaEventHandler(associationProperty="aggregateId")` automatically associates the Saga with that identifier. Additional associations can be made programmatically, by calling `SagaLifecycle.associateWith()`. Any matching events are then routed to the Saga. 
+
+For example, a Saga managing an order's lifecycle may be started by an `@OrderPlaced` event and associated with the `orderId`. It can then issue a `CreateInvoiceCommand` using an `invoiceId` generated inside of the event handler. It then associates itself with this ID to be notified of further events regarding this invoice, such as an `InvoicePaidEvent`. 
 
 - Projectors / Projections 
 - Subscription Query 

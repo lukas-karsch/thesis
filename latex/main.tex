@@ -12,7 +12,7 @@
 % microtype is supposed to help with text breaking (overflow), but it gives an error:  pdfTeX error (font expansion): auto expansion is only possible with scalable fonts. <argument> ...shipout:D \box_use:N \l_shipout_box
 % \usepackage{microtype}
 
-\hfuzz=5.1pt 
+\hfuzz=5.5pt 
 
 \usepackage{color}
 
@@ -636,20 +636,24 @@ Event handlers are methods annotated with \keyw{@EventHandler} which react to oc
 
 Axon's \keyw{@EventBus} is the infrastructure mechanism dispatching events to the subscribed event handlers. Event stores offer these functionalities and additionally persist and retrieve published events. \parencite{axoniq_event_2025-1}
 
-Event processors take care of the technical part aspects of event processing. Axon's \keyw{EventBus} implementations support both subscribing and tracking event processors. Subscribing event processors subscribe to a message source, which delivers (pushes) events to the processor. The event is then processed in the same thread that published the event. This makes subscribing event processors suitable for real-time updates of models. However, they can only be used to receive current events and do not support event replay. Additionally, as they run on the same thread, they can not be parallelized.
+Event processors take care of the technical part aspects of event processing. Axon's \keyw{EventBus} implementations support both subscribing and tracking event processors. \parencite{axoniq_event_2025-1} Subscribing event processors subscribe to a message source, which delivers (pushes) events to the processor. The event is then processed in the same thread that published the event. This makes subscribing event processors suitable for real-time updates of models. However, they can only be used to receive current events and do not support event replay. Additionally, as they run on the same thread, they can not be parallelized. \parencite{axoniq_subscribing_2025}
 
-Tracking event processors read (pull) events to be processed. They run decoupled from the publishing thread, making them parallelizable. These event processors use tracking tokens track their position in the event stream. Tracking tokens can be reset and events can be replayed and reprocessed. Tracking event processors are the default in Axon and recommended for most ES-CQRS use cases.
+Tracking event processors, which a type of streaming event processors, read (pull) events to be processed from an event source. They run decoupled from the publishing thread, making them parallelizable. These event processors use tracking tokens track their position in the event stream. Tracking tokens can be reset and events can be replayed and reprocessed. Tracking event processors are the default in Axon and recommended for most ES-CQRS use cases. \parencite{axoniq_streaming_2025}
 
 Subscribing event processors can be configured using SpringBoot's \javaname{application.properties} file or through Java configuration classes.
-
-% TODO explain tracking and subscirbing event processors 
 
 \subsubsection*{Sagas}
 \label{sec:sagas}
 
-TODO
+In Axon, Sagas are long-running, stateful event handlers which not just react to events, but instead manage and coordinate business transactions. For each transaction being managed, one instance of a Saga exists. A Saga, which is a class annotated with \keyw{@Saga} has a lifecycle that is started by a specific event when a method annotated with \keyw{@StartSaga} is executed. The lifecycle may be ended when a method annotated with \keyw{@EndSaga} is executed; or conditionally using `SagaLifecycle.end()`. A Saga usually has a clear starting point, but may have many different ways for it to end. Each event handling method in a Saga must additionally have the \keyw{@SagaEventHandler} annotation. \parencite{axoniq_saga_2025}
 
-% TODO Sagas,Show command and query gateway and illustrate example flow through an Axon application. 
+The way Sagas manage business transactions is by sending commands upon receiving events. They can be used when workflows across several aggregates should be implemented; or to handle long-running processes that may span over any amount of time. \parencite{axoniq_saga_2025} For example, the lifecycle of an order, from being processed, to being shipped and paid, is a process that usually takes multiple days. A use case like this is typically implemented using Sagas.
+
+A Saga is associated with one or more association values, which are key-value pairs used to route events to the correct Saga instance. A \keyw{@StartSaga} method together with the \keyw{@SagaEventHandler(associationProperty="aggregateId")} automatically associates the Saga with that identifier. Additional associations can be made programmatically, by calling `SagaLifecycle.associateWith()`. Any matching events are then routed to the Saga. \parencite{axoniq_saga_2025-1}
+
+For example, a Saga managing an order's lifecycle may be started by an \keyw{@OrderPlaced} event and associated with the \keyw{orderId}. It can then issue a \keyw{CreateInvoiceCommand} using an \keyw{invoiceId} generated inside of the event handler. It then associates itself with this ID to be notified of further events regarding this invoice, such as an \keyw{InvoicePaidEvent}.
+
+% TODO Show command and query gateway and illustrate example flow through an Axon application. 
 
 \subsection{Testing}
 \label{sec:testing}
