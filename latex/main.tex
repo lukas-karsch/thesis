@@ -575,6 +575,24 @@ Axon also supports \acrlong{ddd} by providing tools to manage entities and domai
 
 Axon Server is a platform designed specifically for event-driven systems. It functions as both a high-performance Event Store and a dedicated Message Router for commands, queries, and events. By bundling these responsibilities into a single service, Axon Server replaces the need for separate infrastructures such as a relational database for events and a message broker like Kafka or RabbitMQ for communication. Axon Server is designed to seamlessly integrate with Axon Framework. When using the Axon Server Connector, the application automatically finds and connects to the Axon Server. It is then possible to use the Axon server without further configuration. \parencite{axoniq_introduction_2025-1,axoniq_axon_2025} % TODO book source 
 
+\subsubsection*{Command dispatching}
+
+Command dispatching is the starting point for handling a command message in Axon. Axon handles commands by routing them to the appropriate command handler. The command dispatching infrastructure can be interacted with using the low-level \keyw{CommandBus} and a more convenient \keyw{CommandGateway} which is a wrapper around the \keyw{CommandBus}.
+
+\keyw{CommandBus} is the infrastructure mechanism responsible for finding and invoking the correct command handler. At most one handler is invoked for each command; if no handler is found, an exception is thrown.
+
+Using \keyw{CommandGateway} simplifies command dispatching by hiding the manual creation of \keyw{CommandMessages}. The gateway offers two main methods for synchronous and asynchronous patterns. The \keyw{send} method returns a \keyw{CompletableFuture}, which is an asynchronous mechanism in Java. If the thread needs to wait for the command result, the \keyw{sendAndWait} method can be used.
+
+In general, a handled command returns \keyw{null}, if handling was successful. Otherwise, a \keyw{CommandExecutionException} is propagated to the caller. While returning values from a command handler is not forbidden, it is used sparsely as it contradicts with CQRS semantics. One exception: command handlers which \emph{create} an aggregate typically return the aggregate identifier. \parencite{axoniq_command_2025,axoniq_infrastructure_2025}
+
+\subsubsection*{Query Handling}
+Before a query is handled, Axon dispatches it through its messaging infrastructure. Just like the command infrastructure, Axon offers a low-level \keyw{QueryBus} which requires manual query message creation and a more high-level \keyw{QueryGateway}.
+
+In contrast to command handling, multiple query handlers can be invoked for a given query. When dispatching a query, callers can decide whether they want a single result or results from all handlers. When no query handler is found, an exception is thrown.
+
+The \keyw{QueryGateway} includes different dispatching methods. For regular "point-to-point" queries, the \keyw{query} method can be used. Subscription queries are queries where callers expect an initial result and continuous updates as data changes. These queries work well with reactive programming. For large result sets, streaming queries should be used. The response returned by the query handler is split into chunks and streamed back to the caller.
+All query methods are asynchronous by nature and return Java's \keyw{CompletableFuture}. \parencite{axoniq_query_2025}
+
 % TODO Aggregates, Sagas, Command Handlers. Show command and query gateway and illustrate example flow through an Axon application. 
 
 \subsection{Testing}
@@ -847,7 +865,7 @@ Sagas are used to manage long-running business processes that span multiple aggr
 \subsection{Read Side}
 \label{sec:read-side}
 
-The read side listens to events asynchronously and builds read models, called "projections", which are views of the system. A component that listens for events and maintains projections is called a ``projector''. Projections are designed to answer specific questions about the system: each projector saves exactly the necessary information. This is achieved by using denormalized data models, a contrast to typical CRUD systems that follow normalization rules.
+The read side listens to events asynchronously and builds read models, called "projections", which are views of the system. A component that listens for events and maintains projections is called a "projector". Projections are designed to answer specific questions about the system: each projector saves exactly the necessary information. This is achieved by using denormalized data models, a contrast to typical CRUD systems that follow normalization rules.
 
 When the system is queried, the queries are routed to the read side. The read side can efficiently fetch data from the projections, usually without \texttt{JOINs}. This makes reads fast. It is important to keep in mind that projections are built asynchronously, meaning they are eventually consistent and may not always reflect the latest changes applied by the command side.
 

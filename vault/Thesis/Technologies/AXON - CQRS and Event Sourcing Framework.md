@@ -1,3 +1,4 @@
+#cqrs #es 
 Access the Axon Dashboard: http://localhost:8024/
 
 Serializer configuration: https://docs.axoniq.io/axon-framework-reference/4.11/serialization/
