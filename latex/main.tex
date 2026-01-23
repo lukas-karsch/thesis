@@ -1,5 +1,5 @@
 %LTeX: enabled=false
-\documentclass[11pt,a4paper]{article}
+\documentclass[11pt,a4paper]{report}
 \usepackage{array}
 \usepackage[utf8]{inputenc}
 \usepackage[T1]{fontenc}
@@ -76,6 +76,24 @@
     \texttt{ \tl_use:N \l_tmpa_tl }
     \group_end:
   }
+\ExplSyntaxOff
+
+\ExplSyntaxOn
+\NewDocumentCommand{\keyw}{O{.}m}
+ {
+  \texttt{ \cschulz_keyw:n { #2 } }
+ }
+
+\cs_new_protected:Nn \cschulz_keyw:n
+ {
+  \tl_map_inline:nn { #1 }
+   {
+    % if the current char is uppercase, add a discretionary hyphen
+    \str_if_eq:eeT { ##1 } { \str_uppercase:n { ##1 } } 
+     { \- }
+    ##1
+   }
+ }
 \ExplSyntaxOff
 
 \addbibresource{references.bib}
@@ -298,19 +316,19 @@ Hiermit versichere ich, Lukas Karsch, ehrenwörtlich, dass ich die vorliegende B
 \newpage
 \pagenumbering{arabic}
 
-\section{Introduction}
+\chapter{Introduction}
 
-\subsection{Motivation}
+\section{Motivation}
 
-\subsection{Research question(s)}
+\section{Research question(s)}
 
-\subsection{Goals and non goals}
+\section{Goals and non goals}
 
-\subsection{Structure of the paper}
+\section{Structure of the paper}
 
-\section{Basics}
+\chapter{Basics}
 
-\subsection{WWW, Web APIs, REST}
+\section{WWW, Web APIs, REST}
 
 The \acrfull{www} is a connected information network used to exchange data. Resources are can be accessed via \glspl{uri} which are transferred using formats like JSON or HTML via protocols like \gls{http}. \gls{http} is a stateless protocol based on a request-response structure. It supports standardized request types, such as \texttt{GET} and \texttt{POST}, which convey a semantic meaning \parencite{jacobs_architecture_2004}.
 
@@ -334,7 +352,7 @@ Resources are decoupled from their representations. Clients can request differen
 
 %s TODO explain CRUD here or somewhere else? 
 
-\subsection{Layered Architecture Foundations}
+\section{Layered Architecture Foundations}
 \label{sec:layered}
 
 Layered Architecture is the most common architecture pattern in enterprise applications. Applications following a layered architecture are divided into \emph{horizontal layers}, with each layer performing a specific role. A standard implementation consists of the following layers:
@@ -356,7 +374,7 @@ The data in layered applications is often times modeled in an \emph{anemic} way.
 
 % TODO figure
 
-\subsection{Domain Driven Design}
+\section{Domain Driven Design}
 \label{sec:ddd}
 
 \acrfull{ddd} is a different architectural approach for applications.  It differs from layered architecture primarily in the way the domain is modelled and the responsibilities of application services.
@@ -394,7 +412,7 @@ Using a \gls{rdm} does not mean that there should be no layers, the opposite is 
     \item The operation is stateless
 \end{itemize}
 
-\subsection{CRUD architecture}
+\section{CRUD architecture}
 \label{sec:crud-architecture}
 
 % TODO refine 
@@ -414,7 +432,7 @@ Databases in CRUD systems are typically normalized. Normalization is a process o
     \item Further Normal Forms (4NF, 5NF): Require a table can not be broken down into smaller tables without losing data
 \end{itemize}
 
-\subsection{CQRS Architecture}
+\section{CQRS Architecture}
 \label{sec:cqrs}
 
 \acrfull{cqrs} is an architectural pattern based on the fundamental idea that the models used to update information should be separate from the models used to read information. This approach originated as an extension of Bertrand Meyer’s \acrfull{cqs} principle, which states that a method should either perform an action (a command) or return data (a query), but never both. \parencite[148]{meyer_standard_2006}
@@ -434,14 +452,14 @@ Each read service independently updates its model by consuming notifications or 
 
 %s TODO figure 
 
-\subsection{(Eventual) Consistency}
+\section{(Eventual) Consistency}
 
 % TODO have to talk about "read your writes"? 
 % TODO maybe move above CRUD and CQRS 
 
 \textcite{gray_dangers_1996} explain that large-scale systems become unstable if they are held consistent at all times according to \acrshort{acid} principles. This is mostly due to the large amount of communication necessary to handle atomic transactions in distributed systems. To address these issues, modern distributed systems often adopt the \acrshort{base} (\acrlong{base}) model which explicitly trades off isolation and strong consistency for availability. Eventually consistent systems are allowed to exist in a so-called "soft state" which eventually converges through the use of synchronization mechanisms over time rather than being strongly consistent at all times. \parencite{braun_tackling_2021, vogels_eventually_2009} This creates an inconsistency window in which data is not consistent across the system. During this window, stale data may be read. \parencite{vogels_eventually_2009}
 
-\subsection{Event Sourcing and event-driven architectures}
+\section{Event Sourcing and event-driven architectures}
 \label{sec:event-sourcing}
 
 Event driven architecture is a design paradigm where systems communicate via the production and consumption of events. Events are records of changes in the system's domain. \parencite{michelson_event-driven_2006} This approach allows for a high degree of loose coupling, as the system publishing an event does not need to know about the recipient(s) or how they will react. These architectures offer excellent horizontal scalability and resilience, as individual system components can fail or be updated without bringing down the entire network. \parencite{fowler_event_2005}
@@ -452,9 +470,9 @@ The current state of any entity in such a system can be rebuilt by replaying the
 
 Because every action taken on the system is stored, a number of facilities can be built on top of the event log: Temporal queries can be made, which determine the exact state of the application at any point in time. The event log acts as an immutable audit trail, making Event Sourcing architectures highly valuable for systems like accounting applications. \parencite{fowler_event_2005}
 
-\subsection{Traceability and auditing in IT systems}
+\section{Traceability and auditing in IT systems}
 
-\subsubsection{Audit Logs}
+\subsection{Audit Logs}
 
 An audit log (often called audit trail) is a chronological record which provides evidence of a sequence of activities on an entity. \parencite{committee_on_national_security_systems_national_2010} In information security, the audit log stores a record of system activities, enabling the reconstruction of events. \parencite{atis_committee_atis_2013} A trustworthy audit log in a system can guarantee the principle of traceability which states that actions can be tracked and traced back to the entity who is responsible for them. \parencite[266]{joint_task_force_interagency_working_group_security_2020}
 
@@ -462,21 +480,21 @@ Traceability and auditing are legal requirements across various sectors, as they
 
 \textcite{fowler_audit_2004} describes an audit log as simple and effective way of storing temporal information. Changes are tracked by writing a record indicating \emph{what} changed \emph{when}. A basic implementation of an audit log can have many forms, for example a text file, database tables or \acrshort{xml} documents. Fowler also mentions that while the audit log is easy to write, it is harder to read and process. While occasional reads can be done by eye, complex processing and reconstruction of historical state can be resource-intensive.
 
-\subsubsection{Event Streams}
+\subsection{Event Streams}
 
-\subsubsection{Rebuilding state from an audit log and an event stream}
+\subsection{Rebuilding state from an audit log and an event stream}
 
-\subsection{Scalability of systems}
+\section{Scalability of systems}
 
-\section{Related Work}
+\chapter{Related Work}
 
-\section{Proposed Method}
+\chapter{Proposed Method}
 
 This thesis aims to provide a fair, quantitative comparison of \acrshort{crud} and \acrshort{cqrs} / \acrshort{es} architectures. To achieve this, the architectures should be applied not only to the same domain, but to the exact same requirements. The implementations can then be tested against the same \glspl{contract-test}.
 
 This chapter will first present the requirements for the actual application, then outline metrics and comparison methods.
 
-\subsection{Project requirements}
+\section{Project requirements}
 
 The applications will implement a course enrollment and grading system which might for example be used in universities. Core features include:
 
@@ -488,7 +506,7 @@ The applications will implement a course enrollment and grading system which mig
     \item Students can view their credits
 \end{itemize}
 
-\subsubsection{Entities}
+\subsection{Entities}
 \label{sec:entities}
 
 Two types of users exist in the domain: professors and students. Their personal information is not relevant for this thesis, which is why only their first and last name are stored for presentation reasons. The student additionally has a semester.
@@ -499,7 +517,7 @@ Courses are the "blueprints" for lectures. Lectures are the "implementation" of 
 
 A lecture can have several assessments. Each assessment has a type. The professor can enter grades for a student and an assessment. Grades are integers in the range of 0 to 100. Credits are awarded to a student as soon as they completed all assessments for a lecture with a passing grade (grade higher than 50).
 
-\subsubsection{Business rules}
+\subsection{Business rules}
 
 Relationships and business rules in this system are deliberately chosen complex, involving many relationships between \hyperref[sec:entities]{entities} and intricate validation rules. This approach was adopted in order to be able to make realistic assumptions about the research question by evaluating a project that closely resembles complex, real-world scenarios.
 
@@ -511,20 +529,20 @@ Relationships and business rules in this system are deliberately chosen complex,
     \item Actions on a lecture can only be done during the appropriate lifecycle state (enrolling only when the lifecycle is "open for enrollment", grades can only be assigned when the lecture is "finished").
 \end{itemize}
 
-\subsubsection{Contract Tests}
+\subsection{Contract Tests}
 \label{sec:contract-tests}
 
 To ensure both implementations adhere to the business rules, an extensive test suite was set up. While the internals of the implementations are vastly different architecturally and conceptually, they both have the same public \gls{api}. This makes it possible to run the same test suite on both apps by sending \gls{http} requests and verifying their responses. The test suite includes integration tests for all \gls{api} endpoint covering both regular and edge-case (error) scenarios to ensure that the \acrshort{crud} and \acrshort{es}-\acrshort{cqrs} application exhibit identical state transitions and error behaviors. \hyperref[sec:contract-test-implementation]{Section \ref{sec:contract-test-implementation}} outlines the implementation of those tests in detail.
 
-\subsection{Performance}
+\section{Performance}
 
-\subsection{Scalability or flexibility (TODO)}
+\section{Scalability or flexibility (TODO)}
 
-\subsection{Traceability}
+\section{Traceability}
 
-\subsection{Tech Stack}
+\section{Tech Stack}
 
-\subsubsection{SpringBoot}
+\subsection{SpringBoot}
 
 SpringBoot is an open-source, opinionated framework for developing enterprise Java applications. It is based on Spring Framework, which is a platform aiming to make Java development "quicker, easier, and safer for everybody" \parencite{broadcom_inc_why_2026}. At Spring Framework's core is the Inversion of Control (IoC) container. The objects managed by this container are referred to as \textit{Beans}. While the term originates from the JavaBeans specification, a standard for creating reusable software components, Spring extends this concept by taking full responsibility for the lifecycle and configuration of these objects \parencite[Chapter~1.1]{walls_spring_2016}. Instead of a developer manually instantiating classes using the \texttt{new} operator, the container "injects" required dependencies at runtime. This process is known as Dependency Injection. \parencite[Chapter~1]{deinum_spring_2023}. Spring offers support for several programming paradigms: reactive, event-driven, microservices and serverless. \parencite{broadcom_inc_why_2026}
 
@@ -532,7 +550,7 @@ SpringBoot builds on top of the Spring platform by applying a "convention-over-c
 
 Spring Boot starters are specialized dependency descriptors designed to simplify dependency management by aggregating commonly used libraries into feature-defined packages. Rather than requiring developers to manually identify and maintain a list of individual group IDs, artifact IDs, and compatible version numbers for every necessary library, starters use transitive dependency resolution to pull in all required components under a single entry. To quickly bootstrap a web application, a developer can simply add the \javaname{spring-boot-starter-web} dependency to their Maven or Gradle build file. By requesting this specific functionality, Spring Boot automatically includes essential dependencies such as Spring MVC, Jackson for JSON processing, and an embedded Tomcat server, ensuring that all included libraries have been tested together for compatibility. This approach shifts the developer's focus from managing individual JAR files to simply defining the high-level capabilities the application requires, minimizing configuration overhead and reducing risk of version mismatches. \parencite[Chapter~1.1.2]{walls_spring_2016}
 % TODO code example for IoC container / dependency injection 
-\subsubsection{JPA}
+\subsection{JPA}
 
 \acrfull{jpa}, formerly Java Persistence \gls{api} is a Java specification which provides a mechanism for managing persistence and object-relational mapping (\acrshort{orm}). \glspl{orm} act as a brige between the relational world of SQL databases and the object-oriented world of Java.
 
@@ -540,15 +558,15 @@ Instead of writing SQL to create the database schema, entities can be described 
 
 When using \acrshort{jpa} with SpringBoot by including the \javaname{spring-boot-starter-data-jpa} dependency, \emph{Hibernate} is used as implementation of the \acrshort{jpa} standard. \parencite[Chapter~1]{bauer_java_2016}
 
-\subsubsection{PostgreSQL}
+\subsection{PostgreSQL}
 
 PostgresQL is an open-source relational database which has been in active development for over 35 years. It is designed for a wide range of workloads and can handle many tasks thanks to its extensibility and large suite of extensions, such as the popular PostGIS extension for storing and querying geospatial data. \parencite{postgis_psc_postgis_2023} As of January 2026, PostgreSQL 18 is the latest version. \parencite{postgresql_global_development_group_postgresql_2026} % TODO write more; book source
 
-\subsubsection{Jackson}
+\subsection{Jackson}
 
 Jackson is a high-performance, feature-rich \acrshort{json} processing library for Java. It is the default \acrshort{json} library used within the Spring Boot ecosystem. Its primary purpose is to provide a seamless bridge between Java objects and JSON data through three main processing models: the Streaming API for incremental parsing, the Tree Model for a flexible node-based representation, and the most commonly used Data Binding module. This data binding capability allows developers to automatically convert (\emph{marshal}) Java \glspl{pojo} into JSON and vice versa (\emph{unmarshal}) with minimal configuration. Beyond its speed and efficiency, Jackson is highly extensible, offering modules to handle complex Java types like Java 8 Date/Time and Optional classes. Jackson also supports various other data formats such as XML, YAML and CSV. \parencite{oracle_jackson_nodate, fasterxml_jackson_2025}
 
-\subsubsection{Axon}
+\subsection{Axon}
 \label{sec:axon}
 
 Axon Framework is an open-source Java framework for building event-driven applications. Following the \acrshort{cqrs} and event-sourcing pattern, Commands, Events and Queries are the three core message types any Axon application is centered around. Commands are used to describe an intent to change the application's state. Events communicate a change that happened in the application. Queries are used to request information from the application.
@@ -557,9 +575,9 @@ Axon also supports \acrlong{ddd} by providing tools to manage entities and domai
 
 Axon Server is a platform designed specifically for event-driven systems. It functions as both a high-performance Event Store and a dedicated Message Router for commands, queries, and events. By bundling these responsibilities into a single service, Axon Server replaces the need for separate infrastructures such as a relational database for events and a message broker like Kafka or RabbitMQ for communication. Axon Server is designed to seamlessly integrate with Axon Framework. When using the Axon Server Connector, the application automatically finds and connects to the Axon Server. It is then possible to use the Axon server without further configuration. \parencite{axoniq_introduction_2025-1,axoniq_axon_2025} % TODO book source 
 
-% TODO show command and query gateway and illustrate example flow through an Axon application. 
+% TODO Aggregates, Sagas, Command Handlers. Show command and query gateway and illustrate example flow through an Axon application. 
 
-\subsubsection{Testing}
+\subsection{Testing}
 
 To ensure functionality of the applications, unit and integration tests were implemented using various testing libraries like JUnit as the testing platform, \gls{restassured} for making and asserting \gls{http} calls, Mockito for unit testing and ArchUnit for architecture tests. This chapter describes all mentioned technologies.
 
@@ -583,7 +601,7 @@ Here, the path \texttt{data.grades} of the returned JSON object is expected to b
 
 % TODO Mockito, ArchUnit 
 
-\subsubsection{SpringBoot Actuator}
+\subsection{SpringBoot Actuator}
 \label{sec:actuator}
 
 Spring Boot Actuator is a tool designed to help monitor and manage Spring Boot applications running in a production environment. It provides several built-in features that allow developers to check the status of the application, gather performance data, and track \gls{http} requests. These features can be accessed using either \gls{http} or \acrshort{jmx} (\acrlong{jmx}), which is a standard Java management technology. By using Actuator, developers can quickly see if an application is running correctly without the need to write custom monitoring code.
@@ -592,13 +610,13 @@ The most common way to use Actuator is through its "endpoints", which are specif
 
 Actuator can be enabled in a Spring Boot project by including the \javaname{spring-boot-starter-actuator} dependency. \parencite{broadcom_inc_production-ready_2026}
 
-\subsubsection{Prometheus}
+\subsection{Prometheus}
 
 Prometheus is an open-source systems monitoring toolkit that was originally developed at SoundCloud and is now a project of the Cloud Native Computing Foundation. It is primarily used for collecting and storing multidimensional metrics as time-series data, meaning information is recorded with a timestamp and optional key-value pairs called labels. The system is designed for reliability and is capable of scraping data from instrumented jobs and web servers, storing it in a local time-series database, and triggering alerts based on predefined rules when specific thresholds are met. Through its powerful functional query language, PromQL, developers can aggregate and visualize performance data. \parencite{prometheus_authors_prometheus_2026,prometheus-overview-2026}
 
 To collect and export \hyperref[sec:actuator]{Actuator} metrics specifically for Prometheus, the \javaname{micrometer-registry-prometheus} dependency must be included in the classpath. \parencite{vmware_inc_micrometer_nodate} Access to the metrics is granted by including "prometheus" in the list of exposed web endpoints within the application's configuration properties. Once these components are in place, the metrics are automatically formatted for consumption and can be scraped by a Prometheus server. \parencite{broadcom_inc_metrics_2026}
 
-\subsubsection{Docker}
+\subsection{Docker}
 
 \gls{docker} is a platform used for developing and deploying applications. It is designed to separate software from the underlying infrastructure, allowing for faster delivery and consistent environments.
 
@@ -608,15 +626,15 @@ A \gls{dockerfile} is a text-based document containing a series of instructions 
 
 Docker Compose is a tool used to define and manage applications consisting of multiple containers. A single configuration file is used to specify the services, networks, and volumes required for the entire application stack. The lifecycle of complex applications can be managed with this tool, enabling all associated services to be started, stopped, and coordinated with a single command. \parencite{what-is-docker-compose}
 
-\subsubsection{k6}
+\subsection{k6}
 
 Grafana k6 is an open-source performance testing tool designed to evaluate the reliability and performance of a system. It simulates various traffic patterns, such as constant load, sudden stress spikes, and long-term soak tests, to identify slow response times and system failures during development and continuous integration. Metrics are collected during execution and can be visualized through platforms like Grafana or exported to various data backends for detailed reporting. \parencite{k6-overview}
 
 k6 allows tests to be written in JavaScript, making it accessible and easy to integrate into existing codebases. Every k6 test follows a common structure. The main component is a function that contains the core logic of the test. This function should be the default export of the JavaScript file. It is executed concurrently for each \acrlong{VU} (\acrshort{VU}), which act as independent execution threads to repeatedly apply the test logic. The tests can be enhanced using k6's lifecycle functions, such as a setup function, which is executed only once and may be utilized to insert seed data into the system. The test execution can be configured using an "options" object, where VUs, test duration and performance thresholds can be set. \parencite{k6-write-your-first-test}
 
-\section{Implementation}
+\chapter{Implementation}
 
-\subsection{Contract Test Implementation}
+\section{Contract Test Implementation}
 \label{sec:contract-test-implementation}
 
 The \hyperref[sec:contract-tests]{contract tests} are implemented in a separate maven module called \texttt{test-{\allowbreak}suite}\footnote{\javaname{test-suite/src/test/java/karsch.lukas}}. The test classes use the \texttt{JUnit 5} testing framework and \texttt{REST Assured} to send and assert \gls{http} requests. A basic test might look like this:
@@ -667,13 +685,13 @@ The above code snippet starts a PostgreSQL container using the latest available 
 public class CrudLecturesE2ETest extends AbstractLecturesE2ETest { }
 \end{lstlisting}
 
-\subsection{CRUD implementation}
+\section{CRUD implementation}
 
 % TODO explain architecture / layout 
 
 This chapter presents the relevant aspects of the CRUD implementation, mainly focusing on relational modeling using \acrshort{jpa} and the audit log implementation.
 
-\subsubsection{Relational Modeling}
+\subsection{Relational Modeling}
 
 The CRUD implementation uses a \hyperref[sec:crud-architecture]{normalized database} in the Third Normal Form.
 
@@ -712,9 +730,9 @@ The \javaname{@Entity} annotation informs \acrshort{jpa} that the class should b
 
 Each entity must include a field annotated with \javaname{@Id}, which serves as the unique primary key for the corresponding database record.
 
-The \javaname{@OneToMany} annotation defines a relational link between two entities. While the collection is accessed in Java as a standard list via \javaname{lecture.getEnrollments()}, \acrshort{jpa} manages this behind the scenes using a foreign key relationship. The \texttt{fetch} parameter determines when this data is retrieved: \texttt{LAZY} loading defers the database query until the collection is explicitly accessed in the code, whereas \texttt{EAGER} loading fetches the related entities immediately alongside the parent object.
+The \keyw{@OneToMany} annotation defines a relational link between two entities. While the collection is accessed in Java as a standard list via \keyw{lecture.getEnrollments()}, \acrshort{jpa} manages this behind the scenes using a foreign key relationship. The \texttt{fetch} parameter determines when this data is retrieved: \texttt{LAZY} loading defers the database query until the collection is explicitly accessed in the code, whereas \texttt{EAGER} loading fetches the related entities immediately alongside the parent object.
 
-\subsubsection{Audit Log implementation}
+\subsection{Audit Log implementation}
 \label{sec:audit-log}
 
 There are several strategies to implement an audit log, each with its own trade-offs:
@@ -740,13 +758,13 @@ void logChange(
     \item \textbf{JPA Entity Listeners}: JPA's lifecycle events (\texttt{@PrePersist}, \texttt{@PreUpdate}, etc.) can be used to intercept changes. This approach is database-independent and keeps the logic within the Java application, allowing access to application internals like beans and Spring's security context. In full-grade applications built using Spring Security, the security context lets developers access the current user, making it possible to attach them to the new audit log entry. (needs reference) \label{item:jpa-entity-listener}
 \end{enumerate}
 
-\paragraph{Chosen Implementation: JPA Entity Listener}\mbox{}\\
+\subsubsection{Chosen Implementation: JPA Entity Listener}
 
 The \acrshort{crud} implementation of the application utilizes approach \ref{item:jpa-entity-listener}, JPA entity listeners, which offer a good balance between automation and flexibility. This approach ensures that every change to an entity is captured without polluting the service layer with logging calls, while still allowing the application to enrich the log with application-level context. The current user is automatically added to the log entry by the entity listener, while service methods can attach additional context to an entity before it is persisted, if desired.
 
-\subparagraph{Data Model}\mbox{}\\
+\paragraph{Data Model}
 
-The audit log is stored in a single database table, represented by the \texttt{AuditLogEntry} entity. This structure allows for easy querying of all system changes in chronological order. Table \ref{table:audit-log-entry} lists the fields contained by \texttt{AuditLogEntry}. This data model is adapted from \textcite{fowler_audit_2004}.
+The audit log is stored in a single database table, represented by the \keyw{AuditLogEntry} entity. This structure allows for easy querying of all system changes in chronological order. Table \ref{table:audit-log-entry} lists the fields contained by \keyw{AuditLogEntry}. This data model is adapted from \textcite{fowler_audit_2004}.
 
 \begin{table}[htp!]
     \centering
@@ -766,7 +784,7 @@ The audit log is stored in a single database table, represented by the \texttt{A
     \label{table:audit-log-entry}
 \end{table}
 
-\subparagraph{AuditableEntity and AuditEntityListener}\mbox{}\\
+\paragraph{AuditableEntity and AuditEntityListener}
 
 To enable auditing, entities extend an abstract base class, \texttt{AuditableEntity} \footnote{\javaname{impl-crud/src/main/karsch.lukas.audit.AuditableEntity}}. This class marks the entity with the \javaname{@EntityListeners(AuditEntityListener.class)} annotation and provides a transient field, \texttt{snapshotJson}, used to store the state of the entity when it is loaded from the database.
 
@@ -779,29 +797,117 @@ The core logic resides in \texttt{AuditEntityListener}\footnote{\javaname{impl-c
     \item \texttt{@PreRemove}: Before deletion, a \texttt{DELETE} entry is created, preserving the last known state. \texttt{snapshotJson} is saved as the \texttt{oldValue}, \texttt{newValue} is \texttt{null}
 \end{itemize}
 
-\paragraph{Serialization and Relationships}\mbox{}\\
+\subsubsection{Serialization and Relationships}
 
 A major challenge in serializing JPA entities to \acrshort{json} for an audit log is handling relationships. A naive \acrshort{json} serialization would follow every relationship of the affected entity (e.g., \texttt{Lecture} $\rightarrow$ \texttt{Course}), potentially serializing huge entity graphs or even causing a \texttt{StackOverflowError} due to cyclic references. One example for such a problematic reference would be the self-reference of \texttt{CourseEntity}, which each course having a "One to Many" relationship to prerequisite courses.
 
 A custom Jackson module, \texttt{IdSerializationModule}, was implemented to deal with the problem of relationship serialization. This module overrides the default serialization for related entities. Instead of serializing the full nested object, it only writes the related object's ID. This results in a flat, lightweight \acrshort{json} structure that is readable, keeps all references reconstructible and is safe to store. % TODO explain how this was implemented in detail 
 
-\paragraph{Capturing Business Context}\mbox{}\\
+\subsubsection{Capturing Business Context}
 
 One downside of standard automated auditing is that it captures \emph{what} changed (e.g., lecture lifecycle changed from \texttt{IN\_PROGRESS} to \texttt{FINISHED}) but not necessarily \emph{why} (e.g., Lecture cancelled by professor due to illness). To make the CRUD application's audit log compliant to the requirement of traceability, it supports an \texttt{AuditContext}. Services can attach metadata to the current thread/transaction, which the \texttt{AuditEntityListener} retrieves and stores in the \texttt{contextJson} field.
 
-\subsection{ES/CQRS implementation}
+\section{ES/CQRS implementation}
+\label{sec:es-cqrs-implementation}
 
-\subsection{Infrastructure}
+\subsection{Architecture Overview}
+\label{sec:architecture-overview}
 
-\subsection{Performance Tests}
+The architecture of the \texttt{impl-es-cqrs} application differs from the traditional layered architecture seen in the \texttt{impl-crud} application. While the CRUD implementation also has some vertical slicing, the ES-CQRS implementation is much more explicit about it. The code is organized into "features", each representing a vertical slice of the application's functionality (e.g., \texttt{course}, \texttt{enrollment}, \texttt{lectures}). Each feature is self-contained and includes its own command handlers, event sourcing handlers, query handlers, and its own web controller, if needed.
 
-\section{Results}
+A "feature slice" architecture is descriptive and able to communicate the features of a project at a glance. As clean architecture is not in the scope of this thesis, the separation into features with clear naming conventions for command and query components is sufficient, however introducing completely separate modules for the command and read sides would have increased the project structure's readability even more by clearly showing how command and read side have no access to each other.
 
-\section{Discussion}
+\subsection{The API Layer}
+\label{sec:the-api-layer}
 
-\subsection{Analysis of results}
+The \texttt{api} modules in each feature slice serves is shared between web controllers, command and read side, containing the public interface of the application. It defines the Commands, Events, and Queries that are dispatched and handled by the \texttt{impl-es-cqrs} application. This separation ensures that the internal implementation details of the \texttt{impl-es-cqrs} application are not exposed to its clients.
 
-\subsection{Conclusion \& Further work}
+\subsection{Command Side}
+\label{sec:command-side}
+
+The command side is responsible for handling state changes in the application. It is implemented using Axon's Aggregates, Command Handlers, and Sagas.
+
+\subsubsection{Aggregates and Set-Based Validation}
+\label{sec:aggregates-and-set-based-validation}
+
+Aggregates are the core components of the command side. They represent a consistency boundary for state changes. In this implementation, an example of an aggregate is the \keyw{CourseAggregate}. It handles the \keyw{CreateCourseCommand}, validates it, and if successful, emits a \keyw{CourseCreatedEvent}.
+
+A core aspect of the validation within the \keyw{CourseAggregate} is set-based validation. Before creating a course, the system must verify that all the specified prerequisite courses actually exist. This is handled by the \keyw{ICourseValidator}, which is injected into the aggregate's command handler. The validator uses an SQL lookup table that is maintained by the \keyw{CourseLookupProjector}. This ensures that the command is validated against a consistent view of the system's state. It is important to note that while projectors typically belong to the read side, "lookup projectors" in this application belong to the command side. They are independent to the read side and maintain their own view of the system. This view is not eventually consistent, but strongly consistent, making this approach suitable for command validation. A strongly consistent projection / lookup table is achieved through the use of \emph{subscribing event listeners}, which are executed immediately after an event has been applied.
+
+\subsubsection{External Command Handlers}
+\label{sec:external-command-handlers}
+
+Not all commands can be handled by a single aggregate. For instance, assigning a grade to a student for a specific lecture involves the \texttt{EnrollmentAggregate} and the \texttt{LectureAggregate}. In such cases, a dedicated command handler, \texttt{Enrollment{\allowbreak}Command{\allowbreak}Handler}, is used. This handler coordinates the interaction between the aggregates. It loads the \texttt{EnrollmentAggregate} from the event sourcing repository, validates the command (e.g., checking if the professor is allowed to assign a grade for the lecture), and then executes the command on the aggregate.
+
+\subsubsection{Sagas for Process Management}
+\label{sec:sagas-for-process-management}
+
+Sagas are used to manage long-running business processes that span multiple aggregates. The \texttt{AwardCreditsSaga} is a prime example. It is initiated when an \keyw{EnrollmentCreatedEvent} occurs. The saga then waits for a \keyw{LectureLifecycleAdvancedEvent} with the status \texttt{FINISHED}. Once this event is received, the saga sends an \keyw{AwardCreditsCommand} to the \keyw{EnrollmentAggregate}. The saga ends when it receives a \keyw{CreditsAwardedEvent}. This ensures that credits are only awarded after a lecture is finished and all assessments have been graded. It is interesting to note that while the CRUD application calculates awarded credits based on the current state of a lecture, in the ES-CQRS implementation, the fact that credits are awarded after finishing a lecture is explicit. Even when changing the Saga later on, credits which have already been awarded will not be revoked, unless additional, explicit logic is implemented (e.g. by applying a \keyw{CreditsRevokedEvent}). % TODO keep elaborating on traceability here, OR move it to the end / Fazit.
+
+\subsection{Read Side}
+\label{sec:read-side}
+
+The read side listens to events asynchronously and builds read models, called "projections", which are views of the system. A component that listens for events and maintains projections is called a ``projector''. Projections are designed to answer specific questions about the system: each projector saves exactly the necessary information. This is achieved by using denormalized data models, a contrast to typical CRUD systems that follow normalization rules.
+
+When the system is queried, the queries are routed to the read side. The read side can efficiently fetch data from the projections, usually without \texttt{JOINs}. This makes reads fast. It is important to keep in mind that projections are built asynchronously, meaning they are eventually consistent and may not always reflect the latest changes applied by the command side.
+
+In the context of the ES-CQRS implementation, a good example of a projector that stores denormalized data for efficient querying is the \keyw{LectureProjector}. It demonstrates the fact that each projector maintains its own view of the system. Projectors must not query the system using Axon's \keyw{QueryGateway} to get access to any data needed for the projection. One reason for that is the fact that when \emph{rebuilding} projections, a common use case in event sourcing, the projectors should be able to run in parallel. If projectors depend on each other, this can result in one projection attempting to query data from another projection that is not yet up to date. This is why the \keyw{LectureProjector} not only maintains a view of lectures, but also of courses, professors and students, which are then used when building the lecture's projection.
+
+The projector also illustrates how the projection's database entities are designed: they are built in the same way as the DTO which is returned from the query handler. Arrays and associated objects are not stored via foreign keys but are instead serialized to \acrshort{json}. This allows the retrieval of all the necessary data to respond to a query with a simple \texttt{SELECT} statement. The same concepts apply to all other projectors in the ES-CQRS implementation.
+
+\subsection{Synchronous Responses with Subscription Queries}
+\label{sec:synchronous-responses-with-subscription-queries}
+
+A common challenge in \acrshort{cqrs} and event-driven architectures is providing synchronous feedback to users. For example, when a student enrolls in a lecture, they expect an immediate response indicating whether they were successfully enrolled or placed on a waitlist. However, commands are usually handled asynchronously. In \acrshort{cqrs}, commands are also not intended to return data.
+
+To solve this, the \keyw{LecturesController} uses Axon's subscription queries. When an enrollment request is received, it sends the \keyw{EnrollStudentCommand} and simultaneously opens a subscription query (\keyw{EnrollmentStatusQuery}). This query waits for an \keyw{EnrollmentStatusUpdate} event. The read-side projector responsible for processing enrollments publishes this update after processing the respective \keyw{StudentEnrolledEvent} or \keyw{StudentWaitlistedEvent}. The controller blocks for a short period, waiting for this update to be published, and then returns the result to the user. This approach makes the user interface synchronous, while not contradicting with the asynchronous nature of \acrshort{cqrs} systems, as the command handling process is unchanged. While this approach provides the desired synchronous user experience, it has the downside of coupling the client to the event processing flow. In a typical scenario, one might use WebSockets or other client-side notification mechanisms to inform the user about the result of their action. However, for the context of this thesis, where the focus is on the backend implementation and contract testing, this solution is a pragmatic compromise. % TODO improve this section
+
+\subsection{Encapsulation and API Boundaries}
+\label{sec:encapsulation-and-api-boundaries}
+
+To enforce the separation of concerns and maintain a clean architecture, the internal components of the command and read sides are package-private. For example, the \keyw{CourseAggregate} and \keyw{CourseProjector} are not accessible from outside their respective feature packages. The public API of the application is exposed through the controllers, which only interact with the \keyw{CommandGateway} and \keyw{QueryGateway}. This ensures that all interactions with the system go through the proper channels and that internal implementations can be changed without affecting the clients.
+
+\subsection{Tracing Request Flow}
+\label{sec:tracing-request-flow}
+
+This section illustrates the flow of commands and queries through the system. Axon's \keyw{CommandGateway} and \keyw{QueryGateway} are used in controllers to decouple them from the internals of the application. The gateways create location transparency: a controller does not need to know where its commands and queries are being routed to. % TODO reference 
+
+\subsubsection{Command Request: CreateCourseCommand}
+\label{sec:command-request-createcoursecommand}
+
+%s TODO move first sentence somewhere else 
+\texttt{POST}, \texttt{PUT} or \texttt{PATCH} requests map to commands. Figure \ref{fig:es-cqrs-command-flow} illustrates the flow of a command through the system using the example of the \texttt{POST} \texttt{/courses} endpoint. Upon receiving a request, the controller constructs a \keyw{CreateCourseCommand} containing the request data and dispatches it through the \keyw{CommandGateway}. This gateway is responsible for routing the command to the appropriate destination, which in this case is the constructor of the \keyw{CourseAggregate}. This constructor is annotated with \keyw{@CommandHandler}. The command handler verifies that the command is allowed to be executed by performing validation logic. When creating courses, it has to be made sure that all prerequisite courses actually exist. This check is done using set-based validation. If the validation is successful, the aggregate triggers a state change by applying a \keyw{CourseCreatedEvent} via the \keyw{AggregateLifecycle.apply()} method. This action notifies the system of the change and persists the event by recording it in the event store.
+
+After being applied, Axon routes the event to all subscribed handlers. The \keyw{CourseAggregate}'s \keyw{@EventSourcingHandler} is executed, changing the aggregate's internal state. What is worth noting here is that in the case of \keyw{CourseAggregate}, only the \texttt{id} of the course is set as other properties of the event, like name or description of the newly created course, are not relevant to the command side. Any read-side projectors with \keyw{@EventHandlers} for the \keyw{CourseCreatedEvent} are also executed after the event is applied.
+
+\begin{figure}[h]
+    \includegraphics[width=\textwidth, inner]{images/es-cqrs-command-flow.png}
+    \caption{Sequence Diagram: Command Flow inside the ES-CQRS application}
+    \label{fig:es-cqrs-command-flow}
+\end{figure}
+
+\subsubsection{Query Request: FindAllCoursesQuery}
+\label{sec:query-request-findallcoursesquery}
+
+\texttt{GET} requests to web controllers map to queries. For instance, a \texttt{GET} request to \texttt{/courses} is received by the \keyw{CoursesController}. It creates a \keyw{FindAllCoursesQuery} instance and sends it to Axon's \keyw{QueryGateway}, which routes the query to the appropriate method annotated with \keyw{@QueryHandler} that handles \keyw{FindAllCoursesQuery}. The query handler method then uses its JPA repository to get all courses, maps them to a list of \keyw{CourseDTOs} and returns this list. Once the query is finished, the web controller reads the data and sends it back to the client.
+
+\begin{figure}[h]
+    \includegraphics[width=\textwidth, inner]{images/es-cqrs-query-flow.png}
+    \caption{Sequence Diagram: Query Flow inside the ES-CQRS application}
+    \label{fig:es-cqrs-query-flow}
+\end{figure}
+
+\section{Infrastructure}
+
+\section{Performance Tests}
+
+\chapter{Results}
+
+\chapter{Discussion}
+
+\section{Analysis of results}
+
+\section{Conclusion \& Further work}
 
 Finally, I'm done!
 
@@ -810,7 +916,7 @@ Finally, I'm done!
 
 \appendix
 
-\section{Source Code}
+\chapter{Source Code}
 
 The full source code for this thesis, including both apps, performance tests and markdown notes, is available at: \url{https://gitlab.mi.hdm-stuttgart.de/lk224/thesis}
 

@@ -22,49 +22,21 @@
             }
           },
           {
-            "id": "1ed2233e67cda37a",
-            "type": "leaf",
-            "state": {
-              "type": "markdown",
-              "state": {
-                "file": "Meetings/2026-01-07 Fragen fürs nächste Meeting.md",
-                "mode": "source",
-                "source": false
-              },
-              "icon": "lucide-file",
-              "title": "2026-01-07 Fragen fürs nächste Meeting"
-            }
-          },
-          {
-            "id": "a82652e482317595",
-            "type": "leaf",
-            "state": {
-              "type": "markdown",
-              "state": {
-                "file": "Technical Design Log/2025-11-26 Designing the ES-CQRS application (4daaf015).md",
-                "mode": "source",
-                "source": false
-              },
-              "icon": "lucide-file",
-              "title": "2025-11-26 Designing the ES-CQRS application (4daaf015)"
-            }
-          },
-          {
             "id": "d8fd32f7ba504d5e",
             "type": "leaf",
             "state": {
               "type": "markdown",
               "state": {
-                "file": "Writing/ES CQRS implementation.md",
+                "file": "Writing/ES-CQRS Request Flow.md",
                 "mode": "source",
                 "source": false
               },
               "icon": "lucide-file",
-              "title": "ES CQRS implementation"
+              "title": "ES-CQRS Request Flow"
             }
           }
         ],
-        "currentTab": 3
+        "currentTab": 1
       }
     ],
     "direction": "vertical"
@@ -212,17 +184,24 @@
       "bases:Create new base": false
     }
   },
-  "active": "d8fd32f7ba504d5e",
+  "active": "641269a03a67d523",
   "lastOpenFiles": [
-    "Meetings/2026-01-07 Fragen fürs nächste Meeting.md",
-    "TODOs.md",
+    "images/es-cqrs-query-flow.png",
+    "Writing/ES-CQRS-Command-Flow.md",
+    "Writing/ES-CQRS Request Flow.md",
+    "images/es-cqrs-command-flow.png",
     "Writing/ES CQRS implementation.md",
+    "Writing/mermaid-diagram-2026-01-21-152057.png",
+    "TODOs.md",
+    "Meetings/2026-01-07 Fragen fürs nächste Meeting.md",
+    "Documents/HinweiseAbschlussarbeit_202306.pdf",
+    "Documents/BachelorarbeitVorlage.pdf",
+    "Technical Design Log/2025-12-06 I discovered set based validation.md",
     "Technical Design Log/2025-11-26 Designing the ES-CQRS application (4daaf015).md",
     "System Design/ES-CQRS Application.md",
     "System Design/API Design.md",
     "Technical Design Log/2026-01-10 Run performance tests on a VM.md",
     "Meetings/2026-02-04 Fragen fürs nächste Meeting.md",
-    "Documents/HinweiseAbschlussarbeit_202306.pdf",
     "Documents/Hinweise_zur_Abschlussarbeit_Jordine_v1-2-0.pdf",
     "Documents/Expose Lukas Karsch Bachelorarbeit_02.pdf",
     "Technical Design Log/2026-01-19 Latency vs. Load.md",
@@ -243,19 +222,12 @@
     "Technical Design Log/2025-11-14 Audit Log (c5367a6b).md",
     "Technical Design Log/2025-11-25 Grade History (98d39a8f).md",
     "Technical Design Log/2025-12-29 Where to measure.md",
-    "Technical Design Log/2025-12-22 What can i benchmark.md",
-    "Writing/CRUD ER Diagram.md",
-    "Technical Design Log/2026-01-13 Ballooning.md",
-    "Technical Design Log/2025-11-22 More audit log trouble (446ee903).md",
     "images/CRUD_ER_Diagram_3.png",
     "images/CRUD_ER_Diagram_1.png",
     "images/CRUD_ER_Diagram_2.png",
     "images/CRUD_ER_Diagram.png",
-    "images/plot_get_lectures_latency_vs_virtual_users.png",
     "images/plot_get_lectures_latency_vs_virtual_users",
-    "images/plot_get_lectures_latency_comparison_50vu.png",
     "images/plot_get_lectures_latency_comparison",
-    "Documents/BachelorarbeitVorlage.pdf",
     "Writing",
     "images",
     "Meetings",

@@ -1,16 +1,12 @@
 - **Literature**
-    - DDD #DDD
-        - [[Domain-Driven Design Quickly, A Summary of Eric Evans' Domain-Driven Design]]
     - ES #es
         - Projections!
         - lesen "Evaluation and Use of Event Sourcing" (Bachelorarbeit)
     - Audit Logs #audit-log
         - "Evaluation and Use of Event Sourcing (BA)"
     - Performance measurement best practices #performance
-    - [[2026-01-07 Fragen fürs nächste Meeting]] -> Buch zu scalability 
-    - CQRS #cqrs
-    - -> check HdM library for some books
-        - DDD full version?
+    - [[2026-01-07 Fragen fürs nächste Meeting]] -> Buch zu scalability finden, Annahmen bzgl des Zusammenhangs von CPU / RAM usage und scalability 
+    - Evolutionary Architectures lesen 
 - **Code**
     - CRUD
 	    - check if indexes are set up correctly 
@@ -29,7 +25,6 @@
 		- is it clean that the lookup tables are injected into every command side? -> should they also keep their own projections? but they would have to be subscribing anyways.. so maybe it doesnt matter because its a "smell" either way 
 		- make sure event handlers are idempotent 
 		- add @Version to projection entities; retry on OptimisticLockException 
-	- visualize CPU and RAM usage in a graph 
 - look at axon transaction manager? 
 	- what is it  
 	- for what can it be used / how is it used 
