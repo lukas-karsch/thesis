@@ -13,12 +13,12 @@
             "state": {
               "type": "markdown",
               "state": {
-                "file": "Writing/Axon.md",
+                "file": "Technical Design Log/2025-12-06 I discovered set based validation.md",
                 "mode": "source",
                 "source": false
               },
               "icon": "lucide-file",
-              "title": "Axon"
+              "title": "2025-12-06 I discovered set based validation"
             }
           },
           {
@@ -81,7 +81,7 @@
             "state": {
               "type": "search",
               "state": {
-                "query": "tag:#es",
+                "query": "set based",
                 "matchingCase": false,
                 "explainSearch": false,
                 "collapseAll": false,
@@ -197,10 +197,10 @@
       "bases:Create new base": false
     }
   },
-  "active": "7006912a7208129b",
+  "active": "641269a03a67d523",
   "lastOpenFiles": [
-    "Technologies/AXON - CQRS and Event Sourcing Framework.md",
     "Writing/Axon.md",
+    "Technologies/AXON - CQRS and Event Sourcing Framework.md",
     "Writing/Outline.md",
     "Schedule.md",
     "TODOs.md",

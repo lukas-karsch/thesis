@@ -45,9 +45,17 @@ By default, Axon uses event-sourced aggregates. This means that aggregates are n
 Aggregates must not hold direct object references to other aggregates, as this would violate aggregate boundaries and transactional consistency. If an association to another aggregate is required, only its identifier may be stored.
 
 Axon also supports multi-entity aggregates. In this model, an aggregate may contain child entities that participate in command handling. Such entities are registered using `@AggregateMember`, and each entity must define a unique identifier annotated with `@EntityId`. Based on this identifier, Axon is able to route commands to the correct entity instance within the aggregate.
+## External Command Handlers 
+Often, command handling functions are placed directly inside the aggregate. However, this is not required and in some cases it may not be desirable or possible to directly route a command to an aggregate. Thus, any object can be used as a command handler by including methods annotated with `@CommandHandler`. One instance of this command handling object will be responsible for handling _all_ commands of the command types it declares in its methods. 
 
-- Command Handlers 
-- Sagas 
+In these external command handlers, aggregates can be loaded manually from Axon's repositories using the aggregate's ID. Afterwards, the `execute` function can be used to execute commands on the loaded aggregate. 
+## Events
+Axon's `EventBus` is the infrastructure mechanism dispatching events to the subscribed event handlers. Event stores offer these functionalities and additionally persist and retrieve published events. 
+
+Event handlers are methods annotated with `@EventHandler` which react to occurrences within the app by handling Axon's event messages. Each event handler specifies the types of events it is interested in. When no handler for a given event type exists in the application, the event is ignored. 
+## Sagas 
+
+
 - Projectors / Projections 
 - Subscription Query 
 - Example flow? Or is the concrete flow enough? 
