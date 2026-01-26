@@ -1,5 +1,5 @@
 import http from 'k6/http';
-import {sleep} from "k6";
+import {group, sleep} from "k6";
 import {assertResponseIs201, checkResponseIs200} from "../../helper/assert.js";
 import {getVUS} from "../../helper/env.js";
 
@@ -168,8 +168,10 @@ export default function (data) {
     // Pick a random student
     const pickedStudent = studentIds[Math.floor(Math.random() * studentIds.length)]
     // Fetch lectures for this student
-    const res = http.get(`${TARGET_HOST}/lectures?studentId=${pickedStudent}`);
-    checkResponseIs200(res);
+    group("Read lectures for a student", () => {
+        const res = http.get(`${TARGET_HOST}/lectures?studentId=${pickedStudent}`);
+        checkResponseIs200(res);
+    });
 }
 
 const setTime = (newTime) => {

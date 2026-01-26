@@ -1,7 +1,8 @@
 import http from 'k6/http';
-import {check} from 'k6';
+import {group} from 'k6';
 import {getUuidForVu} from "../../helper/uuids.js";
 import {getVUS} from "../../helper/env.js";
+import {checkResponseIs201} from "../../helper/assert.js";
 
 const TARGET_HOST = __ENV.HOST || 'http://localhost:8080';
 
@@ -45,9 +46,8 @@ export default function () {
         },
     };
 
-    const res = http.post(url, payload, params);
-
-    check(res, {
-        'is status 201': (r) => r.status === 201,
-    });
+    group("Create courses without prerequisites", () => {
+        const res = http.post(url, payload, params);
+        checkResponseIs201(res);
+    })
 }

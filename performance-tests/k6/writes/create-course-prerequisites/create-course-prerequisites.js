@@ -1,4 +1,5 @@
 import http from 'k6/http';
+import {group} from "k6";
 import {getUuidForVu} from "../../helper/uuids.js";
 import {checkResponseIs201} from "../../helper/assert.js";
 import {getVUS} from "../../helper/env.js";
@@ -102,7 +103,8 @@ export default function (data) {
         },
     };
 
-    const res = http.post(url, payload, params);
-
-    checkResponseIs201(res);
+    group("Create new courses with prerequisites", () => {
+        const res = http.post(url, payload, params);
+        checkResponseIs201(res);
+    });
 }

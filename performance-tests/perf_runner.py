@@ -208,7 +208,7 @@ scrape_configs:
 
 
 def start_prometheus_container(config_path: Path) -> str:
-    dt = datetime.now().isoformat()
+    dt = datetime.now().isoformat().replace(":", "_")
     container_name = f"prometheus-{dt}"
 
     run_command(
@@ -348,7 +348,7 @@ def write_metadata(
     )
 
 
-def extract_metrics_to_csv(
+def extract_server_metrics_to_csv(
     metric_definition_path: Path, prom_dir: Path, output_csv: Path, app: str
 ) -> None:
     """
@@ -363,7 +363,7 @@ def extract_metrics_to_csv(
     rows: list[dict[str, str]] = []
 
     for prom_file in prom_dir.glob("*.json"):
-        metric_name = prom_file.stem  # e.g. latency_avg, latency_p95
+        metric_name = prom_file.stem
         content = json.loads(prom_file.read_text())
 
         results = content.get("data", {}).get("result", [])
@@ -400,6 +400,71 @@ def extract_metrics_to_csv(
         writer.writerows(rows)
 
     print(f"📄 Extracted metrics written to {output_csv}")
+
+
+def extract_k6_summary_to_csv(
+    summary_path: Path, metric_definition_path: Path, output_csv: Path, app: str
+) -> None:
+    """
+    Extracts group_duration metrics from k6-summary.json and appends/writes
+    them to CSV in the same format as the Prometheus extractor.
+    """
+    if not summary_path.exists():
+        print(f"⚠️ k6 summary file {summary_path} not found.")
+        return
+
+    # 1. Load configuration and summary
+    metric_def = json.loads(metric_definition_path.read_text())
+    summary = json.loads(summary_path.read_text())
+
+    vus = metric_def.get("VUs", "unknown")
+    target_method = metric_def["metric"]["method"]
+
+    # 2. Extract metrics from the 'metrics' object
+    # We focus on 'group_duration' as requested in your snippet
+    group_metrics = summary.get("metrics", {}).get("group_duration", {})
+    if not group_metrics:
+        print("⚠️ No group_duration metrics found in summary.")
+        return
+
+    rows = []
+
+    # k6 summary group_duration contains keys like 'avg', 'p(90)', 'p(95)', etc.
+    # We map these to the 'metric' column to match your Prometheus format.
+    for stat_name, value in group_metrics.items():
+        # Skip non-numeric metadata if any exists
+        if not isinstance(value, (int, float)):
+            continue
+
+        # lookup table to rename metrics, so that they match the prometheus metrics
+        # careful: no p99 here, but only p90
+        k6_stat_name_to_metric_stat_name = {
+            "med": "latency_p50",
+            "p(95)": "latency_p95",
+            "p(90)": "latency_p90",
+            "avg": "latency_avg",
+        }
+
+        rows.append(
+            {
+                "app": app,
+                "metric": k6_stat_name_to_metric_stat_name.get(stat_name, stat_name),
+                "method": target_method,
+                "uri": metric_def["metric"].get("uri", "all_groups"),
+                "value": value / 1000,  # turn into seconds
+                "virtual_users": vus,
+            }
+        )
+
+    # 3. Write to CSV (Matching your existing schema)
+    fieldnames = ["metric", "method", "uri", "value", "app", "virtual_users"]
+
+    with output_csv.open("w", newline="") as f:
+        writer = csv.DictWriter(f, fieldnames=fieldnames)
+        writer.writeheader()
+        writer.writerows(rows)
+
+    print(f"📄 k6 summary metrics written to {output_csv}")
 
 
 def _get_metric_content(metric: Path) -> tuple[Any, Path]:
@@ -464,10 +529,17 @@ def do_run(app: Literal["crud", "es-cqrs"], metric: Path, config_file: Path | No
             window=PROMETHEUS_LATENCY_WINDOW,
         )
 
-        extract_metrics_to_csv(
+        extract_server_metrics_to_csv(
             metric_definition_path=Path(metric),
             prom_dir=prom_dir,
-            output_csv=run_dir / "metrics.csv",
+            output_csv=run_dir / "server_metrics.csv",
+            app=app,
+        )
+
+        extract_k6_summary_to_csv(
+            metric_definition_path=Path(metric),
+            summary_path=run_dir / "k6-summary.json",
+            output_csv=run_dir / "client_metrics.csv",
             app=app,
         )
 
