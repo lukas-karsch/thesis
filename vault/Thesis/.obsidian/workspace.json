@@ -13,12 +13,12 @@
             "state": {
               "type": "markdown",
               "state": {
-                "file": "Writing/Axon.md",
+                "file": "TODOs.md",
                 "mode": "source",
                 "source": false
               },
               "icon": "lucide-file",
-              "title": "Axon"
+              "title": "TODOs"
             }
           }
         ]
@@ -171,10 +171,16 @@
   },
   "active": "7006912a7208129b",
   "lastOpenFiles": [
+    "Technologies/k6.md",
+    "Technologies/JMH - Performance Testing.md",
+    "Technologies/Event Sourcing.md",
+    "Technologies/AXON Subscription Queries.md",
+    "Technologies/Axon Unit Of Work.md",
+    "Meetings/2026-02-04 Fragen fürs nächste Meeting.md",
+    "Writing/Axon.md",
     "Technical Design Log/2025-12-06 I discovered set based validation.md",
     "Writing/ES-CQRS Request Flow.md",
     "Technologies/AXON - CQRS and Event Sourcing Framework.md",
-    "Writing/Axon.md",
     "Writing/Outline.md",
     "Schedule.md",
     "TODOs.md",
@@ -190,13 +196,11 @@
     "System Design/ES-CQRS Application.md",
     "System Design/API Design.md",
     "Technical Design Log/2026-01-10 Run performance tests on a VM.md",
-    "Meetings/2026-02-04 Fragen fürs nächste Meeting.md",
     "Documents/Hinweise_zur_Abschlussarbeit_Jordine_v1-2-0.pdf",
     "Documents/Expose Lukas Karsch Bachelorarbeit_02.pdf",
     "Technical Design Log/2026-01-19 Latency vs. Load.md",
     "images/latency-vs-load-run-read-lectures__split_y_axis.png",
     "images/latency-vs-load-run-read-lectures__log_axis.png",
-    "Technologies/k6.md",
     "images/latency-vs-load-run-read-lectures.png",
     "latency-vs-load-run-read-lectures.png",
     "Literature/Topics I should not miss.md",
@@ -204,10 +208,6 @@
     "Writing/Audit Log - Draft.md",
     "Technical Design Log/2026-01-03 Measurements.md",
     "Thesis - Landing Page.md",
-    "Technical Design Log/2025-11-16 Audit Log Problems (f48fc294).md",
-    "Technical Design Log/2025-11-10 Using DTOs (f1872c82).md",
-    "Technical Design Log/2025-11-14 Audit Log (c5367a6b).md",
-    "Technical Design Log/2025-11-25 Grade History (98d39a8f).md",
     "images/CRUD_ER_Diagram_3.png",
     "images/CRUD_ER_Diagram_1.png",
     "images/CRUD_ER_Diagram_2.png",

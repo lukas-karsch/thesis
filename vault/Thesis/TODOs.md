@@ -30,7 +30,7 @@
 	- for what can it be used / how is it used 
 	- compare to [[Axon Unit Of Work]]
 - multiple aggregates invariants: read https://discuss.axoniq.io/t/need-advice-on-our-first-saga-use-case/2230/2
-- [[LLMs bei der Bachelorarbeit (Infoveranstaltung)]] MindMap abholen 
+- https://de.wikipedia.org/wiki/Wilcoxon-Mann-Whitney-Test
 ## Before Finishing
 - Check README
 - Clone repo in blank folder, check everything works

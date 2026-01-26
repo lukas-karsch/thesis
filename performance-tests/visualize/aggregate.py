@@ -40,6 +40,7 @@ def aggregate_metrics_csv(base_name: str, directory: Path) -> pd.DataFrame:
         raise ValueError(
             f"No matching metric files found for base_name={base_name}; directory={directory}"
         )
+    print(f"Found {len(matching_metric_files)} matching CSV files")
     return pd.concat([load_csv(f) for f in matching_metric_files], ignore_index=True)
 
 
