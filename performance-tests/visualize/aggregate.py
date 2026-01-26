@@ -2,16 +2,21 @@ import argparse
 import json
 from collections import defaultdict
 from pathlib import Path
-from typing import List
+from typing import List, Literal
 
 import pandas as pd
 
 from visualize.helper import load_csv
 
 
-def _find_matching_metrics_csv(base_name: str, directory: Path) -> List[Path]:
+def _find_matching_metrics_csv(
+    base_name: str, directory: Path, file: Literal["server", "client"]
+) -> List[Path]:
     folders = _find_matching_folders(base_name, directory)
-    return [(Path(folder) / "metrics.csv") for folder in folders]
+
+    filename = "server_metrics.csv" if file == "server" else "client_metrics.csv"
+
+    return [(Path(folder) / filename) for folder in folders]
 
 
 def _find_matching_folders(base_name: str, directory: Path) -> List[Path]:
@@ -34,8 +39,10 @@ def _find_matching_folders(base_name: str, directory: Path) -> List[Path]:
     return matching_folders
 
 
-def aggregate_metrics_csv(base_name: str, directory: Path) -> pd.DataFrame:
-    matching_metric_files = _find_matching_metrics_csv(base_name, directory)
+def aggregate_metrics_csv(
+    base_name: str, directory: Path, file: Literal["server", "client"]
+) -> pd.DataFrame:
+    matching_metric_files = _find_matching_metrics_csv(base_name, directory, file)
     if len(matching_metric_files) == 0:
         raise ValueError(
             f"No matching metric files found for base_name={base_name}; directory={directory}"

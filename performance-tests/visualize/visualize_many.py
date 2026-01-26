@@ -1,7 +1,7 @@
 import argparse
 from pathlib import Path
 
-from side_by_side_box_plot import visualize_aggregated_lineplot
+from side_by_side_box_plot import visualize_aggregated
 from visualize.aggregate import aggregate_metrics_csv
 
 
@@ -15,11 +15,13 @@ def main() -> None:
     )
     args = parser.parse_args()
 
-    aggregated = aggregate_metrics_csv(args.base_name, Path(args.dir))
+    aggregated_server = aggregate_metrics_csv(args.base_name, Path(args.dir), "server")
+    visualize_aggregated(aggregated_server)
+    # visualize_aggregated_lineplot(aggregated_server)
 
-    # visualize_aggregated(aggregated)
-
-    visualize_aggregated_lineplot(aggregated)
+    aggregated_client = aggregate_metrics_csv(args.base_name, Path(args.dir), "client")
+    visualize_aggregated(aggregated_client)
+    # visualize_aggregated_lineplot(aggregated_client)
 
 
 if __name__ == "__main__":
