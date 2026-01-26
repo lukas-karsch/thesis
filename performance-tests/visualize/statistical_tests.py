@@ -34,11 +34,11 @@ def analyze_performance(data: pd.DataFrame):
             {
                 "Metric": metric,
                 "Users": users,
-                "CRUD Mean (ms)": round(m_crud, 2),
+                "CRUD Mean (ms)": round(m_crud * 1000, 2),
                 "CRUD CI +/-": round(get_ci(crud), 2),
-                "CQRS Mean (ms)": round(m_cqrs, 2),
+                "CQRS Mean (ms)": round(m_cqrs * 1000, 2),
                 "CQRS CI +/-": round(get_ci(cqrs), 2),
-                "Speedup": f"{round(speedup, 1)}x",
+                "Speedup": f"{round(speedup)}x",
                 "p-value": f"{p_val:.4e}",
                 "Significant": p_val < 0.05,
             }

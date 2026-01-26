@@ -7,6 +7,7 @@
 \usepackage[automake]{glossaries}
 \usepackage{xcolor}
 \usepackage[export]{adjustbox}
+\usepackage{booktabs}
 
 % TODO
 % microtype is supposed to help with text breaking (overflow), but it gives an error:  pdfTeX error (font expansion): auto expansion is only possible with scalable fonts. <argument> ...shipout:D \box_use:N \l_shipout_box
@@ -967,7 +968,7 @@ After being applied, Axon routes the event to all subscribed handlers. The \keyw
 \subsubsection{Query Request: FindAllCoursesQuery}
 \label{sec:query-request-findallcoursesquery}
 
-Figure \ref{fig:es-cqrs-query-flow} illustrates the flow of a query through the application using the \texttt{GET} \texttt{/courses} request as an example. The request is received by \keyw{CoursesController}. It creates a \keyw{FindAllCoursesQuery} instance and sends it to Axon's \keyw{QueryGateway}, which routes the query to the appropriate method annotated with \keyw{@QueryHandler} that handles \keyw{FindAllCoursesQuery}. The query handler method then uses its JPA repository to get all courses, maps them to a list of \keyw{CourseDTOs} and returns this list. Once the query is finished, the web controller reads the data and sends it back to the client.
+Figure \ref{fig:es-cqrs-query-flow} illustrates the flow of a query through the application using the \texttt{GET} \texttt{/courses} request as an example. The request is received by \keyw{CoursesController}. It creates a \keyw{FindAllCoursesQuery} instance and sends it to Axon's \keyw{QueryGateway}, which routes the query to the appropriate \keyw{@QueryHandler} method responsible for \keyw{FindAllCoursesQuery}. The query handler method then accesses its JPA repository to get all courses, maps them to a list of \keyw{CourseDTOs} and returns this list. The \keyw{QueryGateway} hands this result over to the web controller which reads the data and sends it back to the client.
 
 \begin{figure}[h]
     \includegraphics[width=\textwidth, inner]{images/es-cqrs-query-flow.png}
@@ -980,6 +981,8 @@ Figure \ref{fig:es-cqrs-query-flow} illustrates the flow of a query through the 
 \section{Performance Tests}
 
 \chapter{Results}
+
+\input{tables/latency_get-lectures_500VU}
 
 \chapter{Discussion}
 

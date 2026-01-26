@@ -1,0 +1,19 @@
+\begin{table}[!ht]
+    \centering
+    \resizebox{\columnwidth}{!}{
+        \begin{tabular}{lcrrcrrccl}
+            \toprule
+                            &                & \multicolumn{2}{c}{\textbf{CRUD (ms)}} &                   & \multicolumn{2}{c}{\textbf{ES-CQRS (ms)}} &               &                   &                                                           \\
+            \cmidrule{3-4} \cmidrule{6-7}
+            \textbf{Metric} & \textbf{Users} & \textbf{Mean}                          & \textbf{CI $\pm$} &                                           & \textbf{Mean} & \textbf{CI $\pm$} & \textbf{Speedup} & \textbf{$p$-value}     & \textbf{Sig.} \\
+            \midrule
+            Avg             & 500            & 0.84                                   & 0.00              &                                           & 1.47          & 0.00              & 573x             & $3.02 \times 10^{-11}$ & Yes           \\
+            Median          & 500            & 0.91                                   & 0.00              &                                           & 1.25          & 0.00              & 728x             & $3.02 \times 10^{-11}$ & Yes           \\
+            P95             & 500            & 2.15                                   & 0.01              &                                           & 2.85          & 0.00              & 754x             & $3.02 \times 10^{-11}$ & Yes           \\
+            P99             & 500            & 2.92                                   & 0.03              &                                           & 5.08          & 0.00              & 575x             & $3.02 \times 10^{-11}$ & Yes           \\
+            \bottomrule
+        \end{tabular}
+    }
+    \caption{Statistical comparison of latency for GET /lectures (500 Virtual Users) over 30 iterations.}
+    \label{tab:statistical-tests-500VU}
+\end{table}
