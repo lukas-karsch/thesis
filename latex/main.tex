@@ -404,7 +404,7 @@ This domain model is built from a \emph{ubiquitous language} which is a language
 
 The software must always reflect the way that the domain is talked about. Changes to the domain and the ubiquitous language must result in an immediate change to the domain model.
 
-When modeling the domain model, the aim should not be to create a perfect replica of the real world. While it should carefully be chosen, the domain model artificial and forms a selective abstraction which should be chosen for its utility. \parencite[12, 13]{evans_domain-driven_2004}
+When modeling the domain model, the aim should not be to create a perfect replica of the real world. While it should carefully be chosen, the domain model is artificial and forms a selective abstraction which should be chosen for its utility. \parencite[12, 13]{evans_domain-driven_2004}
 
 While \hyperref[sec:layered]{Layered Architecture} organizes code into technical tiers and is typically built on \glspl{adm}, often resulting in the \emph{big ball of mud} antipattern \parencite[V]{richards_software_2015}, \acrshort{ddd} demands a \gls{rdm} where objects incorporate both data and the behavior or rules that govern that data. The code is structured semantically into bounded context and modules which are chosen to tell the "story" of a system rather than its technicalities. \parencite[80]{evans_domain-driven_2004}
 
@@ -481,26 +481,31 @@ Each read service independently updates its model by consuming notifications or 
 
 Event driven architecture is a design paradigm where systems communicate via the production and consumption of events. Events are records of changes in the system's domain. \parencite{michelson_event-driven_2006} This approach allows for a high degree of loose coupling, as the system publishing an event does not need to know about the recipient(s) or how they will react. These architectures offer excellent horizontal scalability and resilience, as individual system components can fail or be updated without bringing down the entire network. \parencite{fowler_event_2005}
 
-Event Sourcing is an architectural pattern within the landscape of event driven architectures. Event-sourced systems ensure that \emph{all} changes to a system's state are captured and stored as an ordered sequence of domain events. \parencite{fowler_event_2005} Unlike traditional persistence models that overwrite data and store only the most recent state, event sourcing maintains an immutable record of every action taken over time. These events are persisted in an append-only event store, which serves as the principal source of truth from which the current system state can be derived. \parencite{fowler_what_2017,lima_improving_2021} % TODO bessere quelle finden
+Event Sourcing is an architectural pattern within the landscape of event driven architectures. Event-sourced systems ensure that all changes to a system's state are captured and stored as an ordered sequence of domain events. Unlike traditional persistence models that overwrite data and store only the most recent state, event sourcing maintains an immutable record of every action taken over time. These events are persisted in an append-only event store, which serves as the principal source of truth from which the current system state can be derived. \parencite[457,458]{kleppmann_designing_2017}
 
-The current state of any entity in such a system can be rebuilt by replaying the history of events from the log, starting from an initial blank state. \parencite{fowler_event_2005} To address the performance costs of replaying thousands of events for every request, developers implement projections or materialized views, which are read-only, often denormalized versions of the data optimized for specific queries. \parencite{malyi_developing_2024} This separation of concerns is frequently managed by pairing event sourcing with the \hyperref[sec:cqrs]{\acrlong{cqrs} (\acrshort{cqrs})} pattern, which physically divides the data structures used for reading from those used for writing state changes. \parencite[50]{young_cqrs_2010} % TODO Snapshots erklären; Projection = "ephemeral", kann leicht neu gebaut werden 
-
-Because every action taken on the system is stored, a number of facilities can be built on top of the event log: Temporal queries can be made, which determine the exact state of the application at any point in time. The event log acts as an immutable audit trail, making Event Sourcing architectures highly valuable for systems like accounting applications. \parencite{fowler_event_2005}
+The current state of any entity in such a system can be rebuilt by replaying the history of events from the log, starting from an initial blank state. \parencite{fowler_event_2005} To address the performance costs of replaying thousands of events for every request, developers implement projections or materialized views, which are read-only, often denormalized versions of the data optimized for specific queries. \parencites{malyi_developing_2024}[461,462]{kleppmann_designing_2017} This separation of concerns is frequently managed by pairing event sourcing with the \hyperref[sec:cqrs]{\acrlong{cqrs} (\acrshort{cqrs})} pattern, which physically divides the data structures used for reading from those used for writing state changes. \parencite[50]{young_cqrs_2010} % TODO Snapshots erklären; Projection = "ephemeral", kann leicht neu gebaut werden 
 
 \section{Traceability and auditing in IT systems}
 
+Traceability and auditing are legal requirements across various sectors, as they are derived from federal laws and regulations intended to protect the integrity and confidentiality of sensitive data. Organizations implement these mechanisms to stay compliant with mandates that require a verifiable, time-sequenced history of system activities to support oversight and forensic reviews. In the U.S. financial sector, for example, 17 CFR § 242.613 requires the establishment of a consolidated audit trail to track the complete lifecycle of securities orders, documenting every stage from origination and routing to final execution. \parencite{us_securities_and_exchange_commission_17_2012}
+
 \subsection{Audit Logs}
+\label{sec:audit-log}
 
 An audit log (often called audit trail) is a chronological record which provides evidence of a sequence of activities on an entity. \parencite{committee_on_national_security_systems_national_2010} In information security, the audit log stores a record of system activities, enabling the reconstruction of events. \parencite{atis_committee_atis_2013} A trustworthy audit log in a system can guarantee the principle of traceability which states that actions can be tracked and traced back to the entity who is responsible for them. \parencite[266]{joint_task_force_interagency_working_group_security_2020}
 
-Traceability and auditing are legal requirements across various sectors, as they are derived from federal laws and regulations intended to protect the integrity and confidentiality of sensitive data. Organizations implement these mechanisms to stay compliant with mandates that require a verifiable, time-sequenced history of system activities to support oversight and forensic reviews. In the U.S. financial sector, for example, 17 CFR § 242.613 requires the establishment of a consolidated audit trail to track the complete lifecycle of securities orders, documenting every stage from origination and routing to final execution. \parencite{us_securities_and_exchange_commission_17_2012}
-
 \textcite{fowler_audit_2004} describes an audit log as simple and effective way of storing temporal information. Changes are tracked by writing a record indicating \emph{what} changed \emph{when}. A basic implementation of an audit log can have many forms, for example a text file, database tables or \acrshort{xml} documents. Fowler also mentions that while the audit log is easy to write, it is harder to read and process. While occasional reads can be done by eye, complex processing and reconstruction of historical state can be resource-intensive.
 
-\subsection{Event Streams}
+\subsection{Event Streams as a Basis for Traceability}
+
+While \hyperref[sec:audit-log]{traditional audit logs} are often implemented as secondary systems that capture state changes, event-driven architectures, such as those utilizing Event Sourcing, turn an event stream into the primary source of truth. In this context, an event stream is not just a diagnostic tool but an exact, chronological sequence of intent-driven records.
+
+As established in \autoref{sec:event-sourcing}, every state change is captured as a discrete event. Because these events are immutable and append-only, they provide a natural foundation for the principle of traceability. Unlike traditional "state-based" auditing, where the system might only record that a value changed from $A$ to $B$, an event stream captures the specific domain context. Tthe \emph{intent} behind a change is semantically conveyed through the event type. For example, while a traditional audit log might simply record a status update to \texttt{CLOSED}, an event-sourced system distinguishes between an \texttt{AccountDeletedByUser} event and an \texttt{AccountTerminatedForInactivity} event. This inherent metadata provides an exhaustive audit trail without the need for additional logging logic.
+
+\textcite{fowler_event_2005} notes that because the event log is complete, the system can perform \emph{Temporal Queries}, effectively "time-traveling" to reconstruct the exact state of the system at any historical checkpoint. This makes event streams particularly robust for forensic reviews and regulatory compliance, as they eliminate the "information loss" associated with traditional database overwrites. In the context of the legal requirements discussed in the previous section, the event stream serves as a sequence of actions that satisfies the need for a verifiable, time-sequenced history.
 
 \subsection{Rebuilding state from an audit log and an event stream}
-
+% TODO remove this section?
 \section{Scalability of systems}
 
 \chapter{Related Work}
@@ -549,7 +554,7 @@ Relationships and business rules in this system are deliberately chosen complex,
 \subsection{Contract Tests}
 \label{sec:contract-tests}
 
-To ensure both implementations adhere to the business rules, an extensive test suite was set up. While the internals of the implementations are vastly different architecturally and conceptually, they both have the same public \gls{api}. This makes it possible to run the same test suite on both apps by sending \gls{http} requests and verifying their responses. The test suite includes integration tests for all \gls{api} endpoint covering both regular and edge-case (error) scenarios to ensure that the \acrshort{crud} and \acrshort{es}-\acrshort{cqrs} application exhibit identical state transitions and error behaviors. \hyperref[sec:contract-test-implementation]{Section \ref{sec:contract-test-implementation}} outlines the implementation of those tests in detail.
+To ensure both implementations adhere to the business rules, an extensive test suite was set up. While the internals of the implementations are vastly different architecturally and conceptually, they both have the same public \gls{api}. This makes it possible to run the same test suite on both apps by sending \gls{http} requests and verifying their responses. The test suite includes integration tests for all \gls{api} endpoint covering both regular and edge-case (error) scenarios to ensure that the \acrshort{crud} and \acrshort{es}-\acrshort{cqrs} application exhibit identical state transitions and error behaviors. \hyperref[sec:contract-test-implementation]{\autoref{sec:contract-test-implementation}} outlines the implementation of those tests in detail.
 
 \section{Performance}
 
@@ -791,7 +796,7 @@ In the app's ER diagram, the \keyw{LectureEntity} serves as core of the schema, 
 
 \keyw{LectureEntity} also has "One to Many" relationships to \keyw{LectureWaitlistEntryEntity}, \keyw{EnrollmentEntity} and \keyw{LectureAssessmentEntity}. \keyw{LectureWaitlistEntryEntity} is a table which stores students who are waitlisted for a lecture. It is effectively a join table (with one extra column to track when the student was waitlisted) and represents a Many to Many relationship between lectures and students. The same applies to \keyw{EnrollmentEntity} which is a table storing which students are enrolled to which lecture. \keyw{LectureAssessmentEntity} represents the fact that a lecture can have many assessments (which may be an exam, a paper or a project). Each assessment in turn has many \keyw{AssessmentGradeEntity}s associated with it. This table stores which student scored which grade on an assessment. % TODO fix spacing 
 
-The \keyw{AuditLogEntry} is also visible on the ER diagram, however it has no relationships. This table and the entire audit log implementation will be laid out in the \hyperref[sec:audit-log]{following section}.
+The \keyw{AuditLogEntry} is also visible on the ER diagram, however it has no relationships. This table and the entire audit log implementation will be laid out in the \hyperref[sec:audit-log-implementation]{following section}.
 
 These entities are implemented using SpringBoot's \acrshort{jpa} integration. For example, an entity with a "One to Many" relationship can be implemented like this:
 
@@ -813,7 +818,7 @@ Each entity must include a field annotated with \javaname{@Id}, which serves as 
 The \keyw{@OneToMany} annotation defines a relational link between two entities. While the collection is accessed in Java as a standard list via \keyw{lecture.getEnrollments()}, \acrshort{jpa} manages this behind the scenes using a foreign key relationship. The \texttt{fetch} parameter determines when this data is retrieved: \texttt{LAZY} loading defers the database query until the collection is explicitly accessed in the code, whereas \texttt{EAGER} loading fetches the related entities immediately alongside the parent object.
 
 \subsection{Audit Log implementation}
-\label{sec:audit-log}
+\label{sec:audit-log-implementation}
 
 There are several strategies to implement an audit log, each with its own trade-offs:
 

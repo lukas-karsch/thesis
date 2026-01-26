@@ -10,7 +10,9 @@ What would that include?
    -> increase VUs 
 4. **Historical State:**
    Event replay not scalable without Snapshots -> have to configure and include that in the thesis 
-Careful: Audit Log implementation might skew results. Projections are async -> reading is fast, but may be stale 
+Careful: 
+- Audit Log implementation might skew results
+- Projections are async -> reading is fast, but may be stale 
 ## Flexibility
 What i was thinking first: create a metric which scores ease of development, changes to existing code, any introduced dependencies or coupling (less is better), time to implement. 
 -> wanted to score this in numbers so it gets more comparable 
@@ -22,4 +24,4 @@ GEMINI suggestion:
     - _ES:_ Requires a new projection or "upcasting." (new event schema)
 - **Temporal Query Capability:** Flexibility often means the ability to answer new questions about the past.
     - _Metric:_ Can the system answer a question today that it wasn't designed to answer yesterday? (e.g., "What was the average grade on a specific date?").
-- **Coupling Metric (Afferent/Efferent):** Use static analysis tools to count dependencies between modules. This is less subjective than "ease of development.
+- **Coupling Metric (Afferent/Efferent):** Use static analysis tools to count dependencies between modules. This is less subjective than "ease of development" 

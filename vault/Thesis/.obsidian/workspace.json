@@ -13,15 +13,30 @@
             "state": {
               "type": "markdown",
               "state": {
-                "file": "TODOs.md",
+                "file": "Technologies/JMH - Performance Testing.md",
                 "mode": "source",
                 "source": false
               },
               "icon": "lucide-file",
-              "title": "TODOs"
+              "title": "JMH - Performance Testing"
+            }
+          },
+          {
+            "id": "c69b8fa78c332291",
+            "type": "leaf",
+            "state": {
+              "type": "markdown",
+              "state": {
+                "file": "Technical Design Log/2026-01-26 Scalability and performance.md",
+                "mode": "source",
+                "source": false
+              },
+              "icon": "lucide-file",
+              "title": "2026-01-26 Scalability and performance"
             }
           }
-        ]
+        ],
+        "currentTab": 1
       }
     ],
     "direction": "vertical"
@@ -53,7 +68,7 @@
             "state": {
               "type": "search",
               "state": {
-                "query": "set based",
+                "query": "performance",
                 "matchingCase": false,
                 "explainSearch": false,
                 "collapseAll": false,
@@ -169,10 +184,23 @@
       "bases:Create new base": false
     }
   },
-  "active": "7006912a7208129b",
+  "active": "c69b8fa78c332291",
   "lastOpenFiles": [
-    "Technologies/k6.md",
+    "Technical Design Log/2026-01-07 How i could measure flexibility.md",
+    "Technical Design Log/2026-01-26 Scalability and performance.md",
     "Technologies/JMH - Performance Testing.md",
+    "Technical Design Log/2026-01-26 Flexibility.md",
+    "Technical Design Log/2026-01-19 Latency vs. Load.md",
+    "Technical Design Log/2026-01-13 Ballooning.md",
+    "Technical Design Log/2026-01-10 Run performance tests on a VM.md",
+    "Technical Design Log/2025-12-08 Resetting the Axon server.md",
+    "Technical Design Log/2025-11-22 Disenrolling is not working properly (cfd57883).md",
+    "Writing/Method - Performance.md",
+    "Writing/Outline.md",
+    "Thesis - Landing Page.md",
+    "Schedule.md",
+    "TODOs.md",
+    "Technologies/k6.md",
     "Technologies/Event Sourcing.md",
     "Technologies/AXON Subscription Queries.md",
     "Technologies/Axon Unit Of Work.md",
@@ -181,9 +209,6 @@
     "Technical Design Log/2025-12-06 I discovered set based validation.md",
     "Writing/ES-CQRS Request Flow.md",
     "Technologies/AXON - CQRS and Event Sourcing Framework.md",
-    "Writing/Outline.md",
-    "Schedule.md",
-    "TODOs.md",
     "images/es-cqrs-query-flow.png",
     "Writing/ES-CQRS-Command-Flow.md",
     "images/es-cqrs-command-flow.png",
@@ -192,22 +217,12 @@
     "Meetings/2026-01-07 Fragen fürs nächste Meeting.md",
     "Documents/HinweiseAbschlussarbeit_202306.pdf",
     "Documents/BachelorarbeitVorlage.pdf",
-    "Technical Design Log/2025-11-26 Designing the ES-CQRS application (4daaf015).md",
-    "System Design/ES-CQRS Application.md",
-    "System Design/API Design.md",
-    "Technical Design Log/2026-01-10 Run performance tests on a VM.md",
     "Documents/Hinweise_zur_Abschlussarbeit_Jordine_v1-2-0.pdf",
     "Documents/Expose Lukas Karsch Bachelorarbeit_02.pdf",
-    "Technical Design Log/2026-01-19 Latency vs. Load.md",
     "images/latency-vs-load-run-read-lectures__split_y_axis.png",
     "images/latency-vs-load-run-read-lectures__log_axis.png",
     "images/latency-vs-load-run-read-lectures.png",
     "latency-vs-load-run-read-lectures.png",
-    "Literature/Topics I should not miss.md",
-    "Technical Design Log/2026-01-07 What else to measure.md",
-    "Writing/Audit Log - Draft.md",
-    "Technical Design Log/2026-01-03 Measurements.md",
-    "Thesis - Landing Page.md",
     "images/CRUD_ER_Diagram_3.png",
     "images/CRUD_ER_Diagram_1.png",
     "images/CRUD_ER_Diagram_2.png",

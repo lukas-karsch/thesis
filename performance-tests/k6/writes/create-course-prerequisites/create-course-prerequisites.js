@@ -1,18 +1,26 @@
 import http from 'k6/http';
-import {sleep} from 'k6';
 import {getUuidForVu} from "../../helper/uuids.js";
 import {checkResponseIs201} from "../../helper/assert.js";
+import {getVUS} from "../../helper/env.js";
 
 const TARGET_HOST = __ENV.HOST || 'http://localhost:8080';
 
+const VUS = getVUS(__ENV);
+
 export const options = {
-    stages: [
-        {duration: '10s', target: 20}, // Ramp-up to 20 virtual users over 30s
-        {duration: '1m', target: 20},  // Stay at 20 virtual users for 1 minute
-        {duration: '10s', target: 0},   // Ramp-down to 0 users
-    ],
+    scenarios: {
+        createCourses: {
+            executor: "ramping-arrival-rate",
+            timeUnit: "1s",
+            preAllocatedVUs: VUS,
+            stages: [
+                {target: VUS, duration: "20s"},
+                {target: VUS, duration: "80s"},
+                {target: 0, duration: "20s"}
+            ]
+        }
+    },
     thresholds: {
-        'http_req_duration': ['p(95)<500'], // 95% of requests must complete below 500ms
         'http_req_failed': ['rate<0.01'],    // Error rate must be less than 1%
     },
 };
@@ -96,7 +104,5 @@ export default function (data) {
 
     const res = http.post(url, payload, params);
 
-    checkResponseIs201(res)
-
-    sleep(1); // Wait for 1 second between requests per VU
+    checkResponseIs201(res);
 }

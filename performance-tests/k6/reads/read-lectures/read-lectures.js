@@ -8,11 +8,18 @@ const TARGET_HOST = __ENV.HOST || 'http://localhost:8080';
 const VUS = getVUS(__ENV);
 
 export const options = {
-    stages: [
-        {duration: '10s', target: VUS},
-        {duration: '1m', target: VUS},
-        {duration: '10s', target: 0},
-    ],
+    scenarios: {
+        getLectures: {
+            executor: "ramping-arrival-rate",
+            timeUnit: "1s",
+            preAllocatedVUs: VUS,
+            stages: [
+                {target: VUS, duration: "20s"},
+                {target: VUS, duration: "80s"},
+                {target: 0, duration: "20s"}
+            ]
+        }
+    },
     thresholds: {
         // 'http_req_duration': ['p(95)<500'], // 95% of requests must complete below 500ms
         'http_req_failed': ['rate<0.01'],    // Error rate must be less than 1%
@@ -163,8 +170,6 @@ export default function (data) {
     // Fetch lectures for this student
     const res = http.get(`${TARGET_HOST}/lectures?studentId=${pickedStudent}`);
     checkResponseIs200(res);
-
-    sleep(1);
 }
 
 const setTime = (newTime) => {

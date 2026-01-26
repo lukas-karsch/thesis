@@ -3,6 +3,7 @@ from pathlib import Path
 
 import matplotlib.pyplot as plt
 import pandas as pd
+import seaborn as sns
 from matplotlib.ticker import ScalarFormatter
 
 from visualize.helper import load_csv, pretty_name
@@ -123,13 +124,16 @@ def _lineplot_latency_vs_users(
 
                 metric_df = metric_df.sort_values("virtual_users")
 
-                ax.plot(
-                    metric_df["virtual_users"],
-                    metric_df["value_ms"],
-                    marker="o",
+                sns.lineplot(
+                    data=metric_df,
+                    x="virtual_users",
+                    y="value_ms",
+                    markers=True,
                     linestyle="--" if metric == "latency_p99" else "-",
                     color=APP_COLORS[app],
                     label=f"{pretty_name(app)} {label}",
+                    errorbar="sd",
+                    ax=ax,
                 )
 
         # ---- axis config ----
@@ -192,7 +196,7 @@ def visualize_aggregated(aggregated: pd.DataFrame):
 
 
 def visualize_aggregated_lineplot(aggregated: pd.DataFrame):
-    _lineplot_latency_vs_users(aggregated, log_x=False, log_y=False)
+    _lineplot_latency_vs_users(aggregated, log_x=True, log_y=True)
 
 
 def main() -> None:

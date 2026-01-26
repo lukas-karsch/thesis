@@ -30,6 +30,15 @@ def analyze_performance(data: pd.DataFrame):
         # Speedup Ratio (How many times faster is CQRS?)
         speedup = m_crud / m_cqrs
 
+        def _get_significance(p) -> str:
+            if p <= 0.001:
+                return "***"
+            elif p <= 0.01:
+                return "**"
+            elif p <= 0.05:
+                return "*"
+            return "n.s."
+
         results.append(
             {
                 "Metric": metric,
@@ -39,8 +48,7 @@ def analyze_performance(data: pd.DataFrame):
                 "CQRS Mean (ms)": round(m_cqrs * 1000, 2),
                 "CQRS CI +/-": round(get_ci(cqrs), 2),
                 "Speedup": f"{round(speedup)}x",
-                "p-value": f"{p_val:.4e}",
-                "Significant": p_val < 0.05,
+                "Significance": _get_significance(p_val),
             }
         )
 
