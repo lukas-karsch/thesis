@@ -9,7 +9,7 @@
 ## SLA and SLO 
 Service level agreement / service level objective 
 
-should i define those for my service (e.g. no endpoint should have a P99 latency of > 100ms)?
+should i define those for my service (e.g. no endpoint should have a P99 latency of < 100ms)?
 then i can accurately judge which system "breaks" SLAs under which load 
 ## How to measure 
 - Book says to measure on the client so that the "queue" on the server is included in measurements

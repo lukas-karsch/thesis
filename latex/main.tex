@@ -4,7 +4,7 @@
 \usepackage[utf8]{inputenc}
 \usepackage[T1]{fontenc}
 \usepackage{graphicx}
-\usepackage[automake]{glossaries}
+\usepackage[automake, acronym]{glossaries}
 \usepackage{xcolor}
 \usepackage[export]{adjustbox}
 \usepackage{booktabs}
@@ -206,6 +206,27 @@
     description={Testcontainers are a way to declare infrastructure dependencies as code using \gls{docker} \parencite{testcontainers-homepage}}
 }
 
+\newglossaryentry{percentile}
+{
+    name=Percentile,
+    text=percentile,
+    description={A statistical measure indicating the value below which a given percentage of observations in a group of data falls. For example, the $n$-th percentile is the threshold where $n$ percent of requests are faster than that specific value}
+}
+
+\newglossaryentry{median}
+{
+    name={Median (P50)},
+    text=median,
+    description={The middle value in a sorted list of response times, representing the "typical" delay experienced by users. It ensures that exactly half of the requests are served faster than this threshold and half are slower}
+}
+
+\newglossaryentry{tail-latency}
+{
+    name={Tail Latency},
+    text={tail latency},
+    description={The response times observed at high percentiles (such as P95, P99, or P99.9), representing the slowest requests in a distribution. These "outliers" are critical to monitor because they often affect the most data-intensive operations or represent the worst-case user experience}
+}
+
 \newacronym{www}{WWW}{World Wide Web}
 
 \newacronym{hateoas}{HATEOAS}{Hypermedia as the engine of application state}
@@ -249,6 +270,14 @@
 \newacronym{jmx}{JMX}{Java Management Extensions}
 
 \newacronym{VU}{VU}{Virtual User}
+
+\newacronym{rps}{RPS}{Requests Per Second}
+
+\newacronym[plural=SLOs,firstplural={Service Level Objectives (SLOs)}]{slo}{SLO}{Service Level Objective}
+
+\newacronym[plural=SLAs,firstplural={Service Level Agreements (SLAs)}]{sla}{SLA}{Service Level Agreement}
+
+\newacronym{vm}{VM}{Virtual Machine}
 
 \begin{document}
 
@@ -310,12 +339,12 @@
 %LTeX: language=de-DE
 \section*{Ehrenwörtliche Erklärung}
 
-Hiermit versichere ich, Lukas Karsch, ehrenwörtlich, dass ich die vorliegende Bachelorarbeit mit dem Titel: "How does an Event Sourcing architecture compare to CRUD systems with an independent audit log, when it comes to scalability, performance and traceability?" selbstständig und ohne fremde Hilfe verfasst und keine anderen als die angegebenen Hilfsmittel benutzt habe. Die Stellen der Arbeit, die dem Wortlaut oder dem Sinn nach anderen Werken entnommen wurden, sind in jedem Fall unter Angabe der Quelle kenntlich gemacht. Ebenso sind alle Stellen, die mit Hilfe eines KI-basierten Schreibwerkzeugs erstellt oder überarbeitet wurden, kenntlich gemacht. Die Arbeit ist noch nicht veröffentlicht oder in anderer Form als Prüfungsleistung vorgelegt worden.“ Ich habe die Bedeutung der ehrenwörtlichen Versicherung und die prüfungsrechtlichen Folgen (§ 24 Abs. 2 Bachelor-SPO) einer unrichtigen oder unvollständigen ehrenwörtlichen Versicherung zur Kenntnis genommen.
+Hiermit versichere ich, Lukas Karsch, ehrenwörtlich, dass ich die vorliegende Bachelorarbeit mit dem Titel: "How does an Event Sourcing architecture compare to CRUD systems with an independent audit log, when it comes to scalability, performance and traceability?" selbstständig und ohne fremde Hilfe verfasst und keine anderen als die angegebenen Hilfsmittel benutzt habe. Die Stellen der Arbeit, die dem Wortlaut oder dem Sinn nach anderen Werken entnommen wurden, sind in jedem Fall unter Angabe der Quelle kenntlich gemacht. Ebenso sind alle Stellen, die mit Hilfe eines KI-basierten Schreibwerkzeugs erstellt oder überarbeitet wurden, kenntlich gemacht. Die Arbeit ist noch nicht veröffentlicht oder in anderer Form als Prüfungsleistung vorgelegt worden. Ich habe die Bedeutung der ehrenwörtlichen Versicherung und die prüfungsrechtlichen Folgen (§ 24 Abs. 2 Bachelor-SPO) einer unrichtigen oder unvollständigen ehrenwörtlichen Versicherung zur Kenntnis genommen.
 
-\vspace{1.8cm} % Space for the actual signature
+\vspace{1.8cm} % Space for signature
 
 \noindent\rule{7cm}{0.4pt} \\
-\noindent \small{Lukas Karsch}
+\noindent \small{Lukas Karsch, 02.03.2026}
 
 %LTeX: language=en-US
 
@@ -338,6 +367,18 @@ Hiermit versichere ich, Lukas Karsch, ehrenwörtlich, dass ich die vorliegende B
 \section{Motivation}
 
 \section{Research question(s)}
+
+This thesis provides a quantitative and qualitative comparison between Event Sourcing and traditional CRUD architectures. The primary research question is: \textbf{"How does an Event Sourcing architecture compare to CRUD systems with an independent audit log regarding scalability, performance, and traceability?"}
+
+To provide a comprehensive answer, the following three sub-questions are addressed:
+
+\begin{enumerate}
+    \item \textbf{Performance and Scalability:} How do \acrshort{crud} and \acrshort{es}-\acrshort{cqrs} implementations perform under increasing load, and what are the resulting implications for system scalability and resource efficiency? \label{rs-performance-scalability}
+    \item \textbf{Architectural Complexity and Maintainability:} What are the fundamental structural differences between the two approaches, and how do these impact the long-term flexibility and evolution of the codebase? \label{rs-architecture}
+    \item \textbf{Historical Traceability:} To what extent can \acrshort{crud} and \acrshort{es}-\acrshort{cqrs} systems accurately and efficiently reconstruct historical states to satisfy business intent and compliance requirements? \label{rs-traceability}
+\end{enumerate}
+
+The individual findings from these sub-questions are synthesized in the conclusion to provide a holistic answer to the primary research question.
 
 \section{Goals and non goals}
 
@@ -543,26 +584,94 @@ A lecture can have several assessments. Each assessment has a type. The professo
 
 Relationships and business rules in this system are deliberately chosen complex, involving many relationships between \hyperref[sec:entities]{entities} and intricate validation rules. This approach was adopted in order to be able to make realistic assumptions about the research question by evaluating a project that closely resembles complex, real-world scenarios.
 
+The following list presents a selection of business rules which were implemented.
+
 \begin{itemize}
     \item Existence checks: any requests including references to entities will fail if the references entities do not exist.
     \item Requests leading to conflicts, for example creating a lecture with overlapping time slots, will fail.
     \item When a student tries enrolling to a lecture which is already full, they will be put on a waitlist.
     \item When a student disenrolls from a lecture, the next eligible student (higher semesters are preferred) will be enrolled.
-    \item Actions on a lecture can only be done during the appropriate lifecycle state (enrolling only when the lifecycle is "open for enrollment", grades can only be assigned when the lecture is "finished").
+    \item Actions on a lecture can only be performed during the appropriate lifecycle state (enrolling only when the lifecycle is "open for enrollment", grades can only be assigned when the lecture is "finished").
 \end{itemize}
 
 \subsection{Contract Tests}
 \label{sec:contract-tests}
 
-To ensure both implementations adhere to the business rules, an extensive test suite was set up. While the internals of the implementations are vastly different architecturally and conceptually, they both have the same public \gls{api}. This makes it possible to run the same test suite on both apps by sending \gls{http} requests and verifying their responses. The test suite includes integration tests for all \gls{api} endpoint covering both regular and edge-case (error) scenarios to ensure that the \acrshort{crud} and \acrshort{es}-\acrshort{cqrs} application exhibit identical state transitions and error behaviors. \hyperref[sec:contract-test-implementation]{\autoref{sec:contract-test-implementation}} outlines the implementation of those tests in detail.
+To ensure both implementations adhere to the business rules, an extensive test suite was set up. While the internals of the implementations are vastly different architecturally and conceptually, they both have the same public \gls{api}. This makes it possible to run the same test suite on both apps by sending \gls{http} requests and verifying their responses. The test suite includes integration tests for all \gls{api} endpoint covering both regular and edge-case (error) scenarios to ensure that the \acrshort{crud} and \acrshort{es}-\acrshort{cqrs} application exhibit identical state transitions and error behaviors. \hyperref[sec:contract-test-implementation]{Section \ref*{sec:contract-test-implementation}} outlines the implementation of those tests in detail.
 
 \section{Performance}
 
-\section{Scalability or flexibility (TODO)}
+\hyperref[rs-performance-scalability]{Research question 1} evaluates and compares the performance characteristics of both architectural patterns. To achieve this, load tests are executed on selected endpoints. The theoretical foundations of load testing, the environmental constraints, and the data collection methodology are described in this section.
+
+\subsection{Theoretical Load Testing Foundations}
+\label{sec:load-test-theory}
+
+To provide accurate performance metrics, load testing is performed on both implementations based on the methodology defined by \textcite[10-17]{kleppmann_designing_2017}. Load is characterized using "load parameters," which vary depending on the system's nature. For this study, the primary load parameter is the number of concurrent requests to the web server. \parencite[11]{kleppmann_designing_2017}
+
+The tests measure \textbf{\acrfull{rps}} and client-side response times. \textcite[15,16]{kleppmann_designing_2017} emphasizes the importance of client-side measurement to account for "queueing delays." As server-side processing is limited by hardware resources (e.g., CPU cores), requests may be stalled before processing begins. Server-side metrics often exclude this wait time, leading to an overly optimistic view of performance. Consequently, the load-generating client must utilize an "open model," sending requests without waiting for previous ones to complete, to simulate realistic concurrent user behavior.
+
+This thesis adopts the approach of keeping system resources constant while measuring performance fluctuations under varying load intensities. \parencite[13]{kleppmann_designing_2017}
+
+To evaluate results, the arithmetic mean is avoided as it obscures the experience of typical users and the impact of outliers. Instead, this thesis uses \glspl{percentile}. The \gls{median} (P50) serves as the metric for "typical" response time. However, to capture the experience of users facing significant delays—often caused by data-intensive operations—it is critical to measure "\glspl{tail-latency}" via the P95 percentile. High percentiles identify the performance of outliers which, despite being a numerical minority, often represent the most valuable or complex operations. \parencite[14-16]{kleppmann_designing_2017}
+
+\subsection{Service Level Objectives}
+\label{sec:slo}
+
+While \glspl{sla} are agreements with users regarding uptime and performance, \glspl{slo} are the technical targets used by engineers to meet those requirements. \parencite{beyer_site_2016} This thesis attempts to define realistic \acrshortpl{slo} to establish a "breaking point" for each architecture.
+
+Following \textcite[135]{nielsen_usability_1993}, a response time of 100ms is the threshold for human perception of "instant" feedback. This serves as the baseline for the following targets:
+
+\begin{itemize}
+    \item \textbf{Latency \acrshort{slo}}: All endpoints must maintain a client-side P95 latency of $\le$100ms to ensure the system feels "instant" for 95\% of requests. \label{slo-latency}
+    \item \textbf{Freshness \acrshort{slo}}: In the Event Sourcing implementation, the asynchronous nature of projections introduces a lag. All writes must be reflected in the PostgreSQL read-model within $\le$100ms to ensure eventual consistency remains imperceptible. This \acrshort{slo} applies only to the ES-CQRS implementation. \label{slo-freshness}
+    \item \textbf{Reliability \acrshort{slo}}: Both implementations must maintain a failure rate of <0.1\% under stress. \label{slo-reliability}
+\end{itemize}
+
+\subsection{Comparability and Environment}
+
+The test environment and scenarios are defined as code to ensure reproducibility. Tests are executed in an isolated environment with fixed hardware allocations as specified in \autoref{table:hardware-specs}.
+
+\begin{table}[htp!]
+    \centering
+    \begin{tabular}{ll} \toprule
+        Component  & Spec                \\ \midrule
+        CPU        & [INSERT CPU MODEL]  \\
+        RAM        & 32GB DDR4           \\
+        Hard Drive & 1,000GB SanDisk SSD \\
+        \bottomrule
+    \end{tabular}
+    \caption{Hardware specifications for the performance evaluation machine}
+    \label{table:hardware-specs}
+\end{table}
+
+The physical host provisions two \glspl{vm}: the "client VM" for load generation and the "server VM" for the application and its dependencies (PostgreSQL and Axon Server). While hosting both on one physical machine makes network latency negligible, the "queueing delay" remains measurable at the client level, allowing for the identification of request queues building up on the server, indicating bottlenecks.
+
+\subsection{Test Execution}
+\label{sec:test-execution-method}
+
+The tool \hyperref[sec:k6]{k6} is used to generate load. The client follows an "open model" via k6's arrival-rate executors to decouple request rate from response times, as discussed in \autoref{sec:load-test-theory}.
+
+Each test follows a specific pattern:
+\begin{itemize}
+    \item \textbf{Ramp-up}: Linear increase from 0 to the target \acrshort{rps} over 20 seconds.
+    \item \textbf{Steady State}: Constant target \acrshort{rps} for 80 seconds.
+    \item \textbf{Ramp-down}: Linear decrease to 0 \acrshort{rps} over 20 seconds.
+\end{itemize}
+
+A \emph{test configuration} (the combination of a script and target \acrshort{rps}) is executed 30 times. Between runs, the application and dependencies (PostgreSQL/Axon Server) are restarted to ensure independent results. Client-side metrics are captured in \acrshort{json} format, while server-side resource consumption (CPU \& RAM usage) is collected via \hyperref[sec:actuator]{Spring Boot Actuator}.
+
+\subsection{Visualizing Results}
+
+Data is visualized using box plots and line graphs. Box plots are used to show the distribution of latencies, while line graphs illustrate performance changes as \acrshort{rps} increases. Per scientific standards, error bars are used to represent the variability of the measurements across the 30 test runs.
+
+\section{Scalability or flexibility (to decide)}
 
 \section{Traceability}
 
-\section{Tech Stack}
+\section{Technologies}
+\label{sec:technologies}
+
+This section describes all technologies used for the implementation and evaluation of the two applications. % TODO dependency matrix in appendix 
 
 \subsection{SpringBoot}
 
@@ -582,7 +691,7 @@ When using \acrshort{jpa} with SpringBoot by including the \javaname{spring-boot
 
 \subsection{PostgreSQL}
 
-PostgreSQL \footnote{\href{https://www.postgresql.org/}{PostgreSQL}} is an open-source relational database which has been in active development for over 35 years. It is designed for a wide range of workloads and can handle many tasks thanks to its extensibility and large suite of extensions, such as the popular PostGIS extension for storing and querying geospatial data. \parencite{postgis_psc_postgis_2023} As of January 2026, PostgreSQL 18 is the latest version. \parencite{postgresql_global_development_group_postgresql_2026} % TODO write more; book source
+PostgreSQL \footnote{\href{https://www.postgresql.org/}{PostgreSQL}} is an open-source relational database system which has been in active development for over 35 years. Thanks to its reliability, robustness and performance, it has a strong earned reputation. \parencite{postgresql_global_development_group_postgresql_2026} PostgreSQL is designed for a wide range of workloads and can handle many tasks thanks to its extensibility and large suite of extensions, such as the popular PostGIS extension for storing and querying geospatial data. \parencite{postgis_psc_postgis_2023}
 
 \subsection{Jackson}
 
@@ -634,6 +743,10 @@ Axon also supports multi-entity aggregates. In this model, an aggregate may cont
 Often, command handling functions are placed directly inside the aggregate. However, this is not required and in some cases it may not be desirable or possible to directly route a command to an aggregate. Thus, any object can be used as a command handler by including methods annotated with \keyw{@CommandHandler}. One instance of this command handling object will be responsible for handling \emph{all} commands of the command types it declares in its methods.
 
 In these external command handlers, aggregates can be loaded manually from Axon's repositories using the aggregate's ID. Afterward, the \keyw{execute} function can be used to execute commands on the loaded aggregate. \parencite{axoniq_command_2025-1}
+
+\subsubsection*{Set-based validation}
+
+TO DO $\rightarrow$  move section from implementation to here
 
 \subsubsection*{Events}
 \label{sec:axon-events}
@@ -712,6 +825,7 @@ A \gls{dockerfile} is a text-based document containing a series of instructions 
 Docker Compose is a tool used to define and manage applications consisting of multiple containers. A single configuration file is used to specify the services, networks, and volumes required for the entire application stack. The lifecycle of complex applications can be managed with this tool, enabling all associated services to be started, stopped, and coordinated with a single command. \parencite{what-is-docker-compose}
 
 \subsection{k6}
+\label{sec:k6}
 
 Grafana k6 \footnote{\href{https://grafana.com/docs/k6/latest/}{Grafana k6}} is an open-source performance testing tool designed to evaluate the reliability and performance of a system. It simulates various traffic patterns, such as constant load, sudden stress spikes, and long-term soak tests, to identify slow response times and system failures during development and continuous integration. Metrics are collected during execution and can be visualized through platforms like Grafana or exported to various data backends for detailed reporting. \parencite{k6-overview}
 

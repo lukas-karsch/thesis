@@ -134,6 +134,8 @@ At the end, include a version matrix!! Pin all versions and list in a table
 - show trade-offs between approaches 
 - who might benefit from which approach? 
 - assess flexibility 
+Relevant: 
+- [[2026-01-28 PERFORMANCE MUST DO]]
 ### 8.2 Conclusion & Further work 
 - what could be missing from my implementations 
 - what could be missing from my measurements and test strategies? 

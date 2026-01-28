@@ -13,12 +13,12 @@
             "state": {
               "type": "markdown",
               "state": {
-                "file": "Technical Design Log/2026-01-10 Run performance tests on a VM.md",
+                "file": "Writing/Method - Performance.md",
                 "mode": "source",
                 "source": false
               },
               "icon": "lucide-file",
-              "title": "2026-01-10 Run performance tests on a VM"
+              "title": "Method - Performance"
             }
           },
           {
@@ -27,12 +27,26 @@
             "state": {
               "type": "markdown",
               "state": {
-                "file": "TODOs.md",
+                "file": "Writing/Outline.md",
                 "mode": "source",
                 "source": false
               },
               "icon": "lucide-file",
-              "title": "TODOs"
+              "title": "Outline"
+            }
+          },
+          {
+            "id": "d3d27c2226ff0059",
+            "type": "leaf",
+            "state": {
+              "type": "markdown",
+              "state": {
+                "file": "Technical Design Log/2026-01-28 PERFORMANCE MUST DO.md",
+                "mode": "source",
+                "source": false
+              },
+              "icon": "lucide-file",
+              "title": "2026-01-28 PERFORMANCE MUST DO"
             }
           },
           {
@@ -102,12 +116,12 @@
               "title": "Bookmarks"
             }
           }
-        ],
-        "currentTab": 1
+        ]
       }
     ],
     "direction": "horizontal",
-    "width": 357.5
+    "width": 357.5,
+    "collapsed": true
   },
   "right": {
     "id": "920b3393cd6238af",
@@ -200,15 +214,17 @@
   },
   "active": "7006912a7208129b",
   "lastOpenFiles": [
-    "Writing/Method - Performance.md",
-    "Technical Design Log/2026-01-26 Scalability and performance.md",
-    "TODOs.md",
-    "Writing/ES-CQRS-Command-Flow.md",
+    "Technical Design Log/2026-01-28 PERFORMANCE MUST DO.md",
     "Writing/Outline.md",
+    "Writing/Method - Performance.md",
+    "TODOs.md",
+    "Writing/Interpret results - performance.md",
+    "Technical Design Log/2026-01-10 Run performance tests on a VM.md",
+    "Technical Design Log/2026-01-26 Scalability and performance.md",
+    "Writing/ES-CQRS-Command-Flow.md",
     "Technical Design Log/2026-01-26 Flexibility.md",
     "Technical Design Log/2025-12-19 Preparing for performance tests.md",
     "Technical Design Log/2026-01-03 Measurements.md",
-    "Technical Design Log/2026-01-10 Run performance tests on a VM.md",
     "Technical Design Log/2025-11-09 Testing the API (2f6e551d).md",
     "Technical Design Log/2026-01-19 Latency vs. Load.md",
     "Technologies/JMH - Performance Testing.md",
@@ -226,8 +242,6 @@
     "Technologies/Axon Unit Of Work.md",
     "Meetings/2026-02-04 Fragen fürs nächste Meeting.md",
     "Writing/Axon.md",
-    "Technical Design Log/2025-12-06 I discovered set based validation.md",
-    "Writing/ES-CQRS Request Flow.md",
     "images/es-cqrs-query-flow.png",
     "images/es-cqrs-command-flow.png",
     "Writing/mermaid-diagram-2026-01-21-152057.png",
