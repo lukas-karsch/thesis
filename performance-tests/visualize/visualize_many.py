@@ -16,12 +16,16 @@ def main() -> None:
     args = parser.parse_args()
 
     aggregated_server = aggregate_metrics_csv(args.base_name, Path(args.dir), "server")
-    visualize_aggregated(aggregated_server)
-    # visualize_aggregated_lineplot(aggregated_server)
+    visualize_aggregated(aggregated_server, log_y=True)
+    # visualize_aggregated_lineplot(
+    #     aggregated_server, log_y=True, additional_title="(Server)"
+    # )
 
     aggregated_client = aggregate_metrics_csv(args.base_name, Path(args.dir), "client")
     visualize_aggregated(aggregated_client)
-    # visualize_aggregated_lineplot(aggregated_client)
+    # visualize_aggregated_lineplot(
+    #     aggregated_client, log_y=True, additional_title="(Client)"
+    # )
 
 
 if __name__ == "__main__":

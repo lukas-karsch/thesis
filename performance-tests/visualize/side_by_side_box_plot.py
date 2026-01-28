@@ -14,7 +14,7 @@ APP_COLORS = {
 }
 
 
-def _boxplot_grouped_metrics(df: pd.DataFrame) -> None:
+def _boxplot_grouped_metrics(df: pd.DataFrame, log_y: bool = False) -> None:
     for uri in sorted(df["uri"].unique()):
         uri_df = df[df["uri"] == uri]
 
@@ -48,6 +48,10 @@ def _boxplot_grouped_metrics(df: pd.DataFrame) -> None:
             pos += gap  # add space after each metric group
 
         fig, ax = plt.subplots()
+
+        if log_y:
+            ax.set_yscale("log")
+            ax.get_yaxis().set_major_formatter(ScalarFormatter())
 
         boxplot = ax.boxplot(
             data,
@@ -88,30 +92,20 @@ def _lineplot_latency_vs_users(
     *,
     log_x: bool = True,
     log_y: bool = True,
-    split_y_axis: bool = False,
+    additional_title: str = "",
 ) -> None:
     percentiles = {
         "latency_p50": "p50",
-        "latency_p99": "p99",
+        "latency_p95": "p95",
     }
 
     for uri in sorted(df["uri"].unique()):
         uri_df = df[df["uri"] == uri]
 
-        fig, ax_left = plt.subplots()
-        ax_right = None
-
-        if split_y_axis:
-            ax_right = ax_left.twinx()
-
-        axes_by_app = {
-            "crud": ax_left,
-            "es-cqrs": ax_right if split_y_axis else ax_left,
-        }
+        fig, ax = plt.subplots()
 
         for app in ["crud", "es-cqrs"]:
             app_df = uri_df[uri_df["app"] == app]
-            ax = axes_by_app[app]
 
             if ax is None:
                 continue
@@ -129,7 +123,7 @@ def _lineplot_latency_vs_users(
                     x="virtual_users",
                     y="value_ms",
                     markers=True,
-                    linestyle="--" if metric == "latency_p99" else "-",
+                    linestyle="--" if metric == "latency_p95" else "-",
                     color=APP_COLORS[app],
                     label=f"{pretty_name(app)} {label}",
                     errorbar="sd",
@@ -138,42 +132,47 @@ def _lineplot_latency_vs_users(
 
         # ---- axis config ----
 
-        ax_left.set_xlabel("Virtual users")
+        ax.set_xlabel("Requests per second (RPS)")
 
         if log_x:
-            ax_left.set_xscale("log")
-            ax_left.get_xaxis().set_major_formatter(ScalarFormatter())
+            ax.set_xscale("log")
+            ax.get_xaxis().set_major_formatter(ScalarFormatter())
 
-        ax_left.set_xticks(sorted(df["virtual_users"].unique()))
+        ax.set_xticks(sorted(df["virtual_users"].unique()))
 
         if log_y:
-            ax_left.set_yscale("log")
-            ax_left.get_yaxis().set_major_formatter(ScalarFormatter())
+            ax.set_yscale("log")
+            ax.get_yaxis().set_major_formatter(ScalarFormatter())
 
-        if split_y_axis:
-            ax_right.set_ylabel("ES-CQRS Latency (ms)")
-            ax_left.set_ylabel("CRUD Latency (ms)")
+        ax.set_ylabel("Latency (ms)")
 
-            if log_y:
-                ax_right.set_yscale("log")
-                ax_right.get_yaxis().set_major_formatter(ScalarFormatter())
-        else:
-            ax_left.set_ylabel("Latency (ms)")
+        ax.set_title(
+            f"Latency vs load — {df['method'].iloc[0]} {uri} {additional_title}"
+        )
 
-        ax_left.set_title(f"Latency vs load — {df['method'].iloc[0]} {uri}")
-
-        ax_left.grid(True, linestyle="--", alpha=0.6)
+        ax.grid(True, linestyle="--", alpha=0.6)
 
         # ---- legend handling ----
         handles = []
         labels = []
 
-        for ax in {ax_left, ax_right} - {None}:
-            h, l = ax.get_legend_handles_labels()
-            handles.extend(h)
-            labels.extend(l)
+        h, l = ax.get_legend_handles_labels()
+        handles.extend(h)
+        labels.extend(l)
 
-        ax_left.legend(handles, labels)
+        ax.legend(handles, labels, loc="upper left")
+
+        ax.axhline(100, ls="--", color="gray", alpha=0.5)
+        ax.text(
+            0.01,
+            100,
+            "SLO: 100ms latency",
+            color="gray",
+            ha="left",
+            va="bottom",
+            fontsize="x-small",
+            transform=ax.get_yaxis_transform(),
+        )
 
         plt.tight_layout()
         plt.show()
@@ -191,12 +190,19 @@ def visualize_one_csv_each(crud_csv: Path, es_cqrs_csv: Path):
     _boxplot_grouped_metrics(df)
 
 
-def visualize_aggregated(aggregated: pd.DataFrame):
-    _boxplot_grouped_metrics(aggregated)
+def visualize_aggregated(aggregated: pd.DataFrame, log_y: bool = False):
+    _boxplot_grouped_metrics(aggregated, log_y=log_y)
 
 
-def visualize_aggregated_lineplot(aggregated: pd.DataFrame):
-    _lineplot_latency_vs_users(aggregated, log_x=True, log_y=True)
+def visualize_aggregated_lineplot(
+    aggregated: pd.DataFrame,
+    log_x: bool = True,
+    log_y: bool = True,
+    additional_title: str = "",
+):
+    _lineplot_latency_vs_users(
+        aggregated, log_x=log_x, log_y=log_y, additional_title=additional_title
+    )
 
 
 def main() -> None:

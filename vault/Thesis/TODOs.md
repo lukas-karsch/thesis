@@ -31,6 +31,11 @@
 	- compare to [[Axon Unit Of Work]]
 - multiple aggregates invariants: read https://discuss.axoniq.io/t/need-advice-on-our-first-saga-use-case/2230/2
 - https://de.wikipedia.org/wiki/Wilcoxon-Mann-Whitney-Test
+- **Writing**
+	- Define sub-research questions 
+	- 1. for performance (scalability based on the book, assumptions)
+	- 2. flexibility (code and architecture analysis)
+	- 3. for traceability 
 ## Before Finishing
 - Check README
 - Clone repo in blank folder, check everything works

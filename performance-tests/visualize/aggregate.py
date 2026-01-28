@@ -27,9 +27,7 @@ def _find_matching_folders(base_name: str, directory: Path) -> List[Path]:
 
     # check current directory
     if directory.name.startswith(base_name):
-        metrics_path = directory / "metrics.csv"
-        if metrics_path.is_file():
-            matching_folders.append(directory)
+        matching_folders.append(directory)
 
     # recurse into subdirectories
     for child in directory.iterdir():
