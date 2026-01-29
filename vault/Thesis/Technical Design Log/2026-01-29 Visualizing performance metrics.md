@@ -26,7 +26,7 @@ I found the following metrics
 		  Sum of cyclomatic complexity of **all methods** → overall logic complexity.
 - **Dependencies** 
 	- Cyclic dependencies 
-	- efferent coupling. number of classes this class depends on directly (dpy) or transitively (dpy*)
+	- efferent coupling. number of classes this class depends on directly (dcy) or transitively (dcy*)
 	- afferent coupling: number of classes depending on this class directly (dpt) or transitively (dpt*)
 	- package dependencies: PDcy, PDpt measure dependencies that cross package boundaries 
 - **Martin (Robert C. Martin)**
@@ -85,6 +85,7 @@ I found the following metrics
 	- x and y axis are the packages 
 	- color of a cell = sum of PDcy 
 	- illustrates coupling between packages 
+	- **Requires true relationship data, nut just numbers for each package.**
 - Boxplot showing transitive dependencies  
 	- x axis = app 
 	- y axis = Dcy* 
