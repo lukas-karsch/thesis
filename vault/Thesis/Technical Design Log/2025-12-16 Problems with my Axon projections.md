@@ -19,5 +19,5 @@
 - normalized tables would also enable atomic inserts... but i chose denormalization on purpose 
 	- e.g. lost update when updating a serialized list of entities 
 - every projection needs to keep track of events it cares about! 
-
+  ```
 https://chatgpt.com/c/6941703b-85c0-8329-8a25-c83b59c8092b
