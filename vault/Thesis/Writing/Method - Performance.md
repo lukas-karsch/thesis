@@ -43,7 +43,7 @@
 	- in this case: requests per second 
 - designing data intensive applications, page 11 
 - we answer question 1 on page 13:
-	- "When you increase a load parameter and keep the system resources (CPU, memory, network bandwidth, etc.) unchanged, how is the performance of your system  affected?"
+	- "When you increase a load parameter and keep the system resources (CPU, memory, network bandwidth, etc.) unchanged, how is the performance of your system affected?"
 - measure distribution as percentiles 
 - tail latencies are important - explain why 
 ## What I will write 

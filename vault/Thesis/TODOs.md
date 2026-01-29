@@ -25,6 +25,7 @@
 		- is it clean that the lookup tables are injected into every command side? -> should they also keep their own projections? but they would have to be subscribing anyways.. so maybe it doesnt matter because its a "smell" either way 
 		- make sure event handlers are idempotent 
 		- add @Version to projection entities; retry on OptimisticLockException 
+		- **Write performance test for time to consistency**
 - look at axon transaction manager? 
 	- what is it  
 	- for what can it be used / how is it used 
@@ -32,10 +33,7 @@
 - multiple aggregates invariants: read https://discuss.axoniq.io/t/need-advice-on-our-first-saga-use-case/2230/2
 - https://de.wikipedia.org/wiki/Wilcoxon-Mann-Whitney-Test
 - **Writing**
-	- Define sub-research questions 
-	- 1. for performance (scalability based on the book, assumptions)
-	- 2. flexibility (code and architecture analysis)
-	- 3. for traceability 
+	- Write method on flexibility [[Method - Flexibility]]
 ## Before Finishing
 - Check README
 - Clone repo in blank folder, check everything works

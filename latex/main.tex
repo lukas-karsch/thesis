@@ -185,7 +185,7 @@
 \newglossaryentry{restassured}
 {
     name={REST Assured},
-    description={A library for testing \acrshort{http} servers}
+    description={A library for testing HTTP servers}
 }
 
 \newglossaryentry{dockerfile}
@@ -203,7 +203,7 @@
 \newglossaryentry{testcontainer}
 {
     name=Testcontainer,
-    description={Testcontainers are a way to declare infrastructure dependencies as code using \gls{docker} \parencite{testcontainers-homepage}}
+    description={Testcontainers are a way to declare infrastructure dependencies as code using Docker \parencite{testcontainers-homepage}}
 }
 
 \newglossaryentry{percentile}
@@ -217,7 +217,7 @@
 {
     name={Median (P50)},
     text=median,
-    description={The middle value in a sorted list of response times, representing the "typical" delay experienced by users. It ensures that exactly half of the requests are served faster than this threshold and half are slower}
+    description={The middle value in a sorted list of response times, representing the "typical" delay experienced by users. It indicates that exactly 50\% of requests are served faster than this threshold; the other 50\% are slower}
 }
 
 \newglossaryentry{tail-latency}
@@ -366,9 +366,9 @@ Hiermit versichere ich, Lukas Karsch, ehrenwörtlich, dass ich die vorliegende B
 
 \section{Motivation}
 
-\section{Research question(s)}
+\section{Research questions}
 
-This thesis provides a quantitative and qualitative comparison between Event Sourcing and traditional CRUD architectures. The primary research question is: \textbf{"How does an Event Sourcing architecture compare to CRUD systems with an independent audit log regarding scalability, performance, and traceability?"}
+This thesis provides a quantitative and qualitative comparison between Event Sourcing and traditional CRUD architectures. The primary research question is: \textbf{"How does an Event Sourcing architecture compare to CRUD systems with an independent audit log regarding scalability, performance, and traceability?"} % TODO probably wrong 
 
 To provide a comprehensive answer, the following three sub-questions are addressed:
 
@@ -378,7 +378,7 @@ To provide a comprehensive answer, the following three sub-questions are address
     \item \textbf{Historical Traceability:} To what extent can \acrshort{crud} and \acrshort{es}-\acrshort{cqrs} systems accurately and efficiently reconstruct historical states to satisfy business intent and compliance requirements? \label{rs-traceability}
 \end{enumerate}
 
-The individual findings from these sub-questions are synthesized in the conclusion to provide a holistic answer to the primary research question.
+The individual findings from these sub-questions are combined in the conclusion to provide a holistic answer to the primary research question.
 
 \section{Goals and non goals}
 
@@ -388,7 +388,7 @@ The individual findings from these sub-questions are synthesized in the conclusi
 
 \section{WWW, Web APIs, REST}
 
-The \acrfull{www} is a connected information network used to exchange data. Resources are can be accessed via \glspl{uri} which are transferred using formats like JSON or HTML via protocols like \gls{http}. \gls{http} is a stateless protocol based on a request-response structure. It supports standardized request types, such as \texttt{GET} and \texttt{POST}, which convey a semantic meaning \parencite{jacobs_architecture_2004}.
+The \acrfull{www} is a connected information network used to exchange data. Resources are can be accessed via \glspl{uri} which are transferred using formats like \acrshort{json} or \acrshort{html} via protocols like \gls{http}. \gls{http} is a stateless protocol based on a request-response structure. It supports standardized request types, such as \texttt{GET} and \texttt{POST}, which convey a semantic meaning \parencite{jacobs_architecture_2004}.
 
 Web APIs are interfaces that enable applications to communicate. They use \gls{http} as a network-based API \parencite[138]{fielding_architectural_2000}. Modern APIs typically follow \gls{rest} principles. REST stands for "Representational State Transfer" and describes an architectural style for distributed hypermedia systems \parencite[76]{fielding_architectural_2000}.
 
@@ -404,7 +404,7 @@ Furthermore, every resource in REST applications must be addressable via a uniqu
 
 The "\acrfull{hateoas}" principle states that resources should be linked to each other. Clients should be able to control the application by following a series of links provided by the server \parencite{tilkov_brief_2007}.
 
-Every resource must support the same interface, usually HTTP methods (GET, POST, PUT, etc.) where operations on the resource correspond to one method of the interface. For example, a POST operation on a customer might map to the \texttt{createCustomer()} operation on a service.
+Every resource must support the same interface, usually \gls{http} methods (GET, POST, PUT, etc.) where operations on the resource correspond to one method of the interface. For example, a POST operation on a customer might map to the \texttt{createCustomer()} operation on a service.
 
 Resources are decoupled from their representations. Clients can request different representations of a resource, depending on their needs \parencite{tilkov_brief_2007}: a web browser might request \acrshort{html}, while another server or application might request \acrshort{xml} or \acrshort{json}.
 
@@ -416,10 +416,10 @@ Resources are decoupled from their representations. Clients can request differen
 Layered Architecture is the most common architecture pattern in enterprise applications. Applications following a layered architecture are divided into \emph{horizontal layers}, with each layer performing a specific role. A standard implementation consists of the following layers:
 
 \begin{itemize}
-    \item Presentation: Handles requests and displays data in a user interface or by turning it into representations (e.g. JSON)
-    \item Business: Encapsulates business logic
-    \item Persistence: Persists data by interacting with the underlying persistence technologies (e.g. SQL databases)
-    \item Database
+    \item Presentation: Handles requests and displays data in a user interface or by turning it into representations (e.g. \acrshort{json}).
+    \item Business: Encapsulates business logic.
+    \item Persistence: Persists data by interacting with the underlying persistence technologies (e.g. SQL databases).
+    \item Database: Manages the physical storage, retrieval, and integrity of the application's data records.
 \end{itemize}
 
 A key concept in this design is layers of isolation, where layers are "closed", meaning a request must pass through the layer directly below it to reach the next, ensuring that changes in one layer do not affect others.
@@ -555,7 +555,7 @@ As established in \autoref{sec:event-sourcing}, every state change is captured a
 
 This thesis aims to provide a fair, quantitative comparison of \acrshort{crud} and \acrshort{cqrs} / \acrshort{es} architectures. To achieve this, the architectures should be applied not only to the same domain, but to the exact same requirements. The implementations can then be tested against the same \glspl{contract-test}.
 
-This chapter will first present the requirements for the actual application, then outline metrics and comparison methods.
+This chapter will first present the requirements and the domain for the actual application, then outline metrics and comparison methods.
 
 \section{Project requirements}
 
@@ -681,15 +681,18 @@ SpringBoot builds on top of the Spring platform by applying a "convention-over-c
 
 Spring Boot starters are specialized dependency descriptors designed to simplify dependency management by aggregating commonly used libraries into feature-defined packages. Rather than requiring developers to manually identify and maintain a list of individual group IDs, artifact IDs, and compatible version numbers for every necessary library, starters use transitive dependency resolution to pull in all required components under a single entry. To quickly bootstrap a web application, a developer can simply add the \javaname{spring-boot-starter-web} dependency to their Maven or Gradle build file. By requesting this specific functionality, Spring Boot automatically includes essential dependencies such as Spring MVC, Jackson for JSON processing, and an embedded Tomcat server, ensuring that all included libraries have been tested together for compatibility. This approach shifts the developer's focus from managing individual JAR files to simply defining the high-level capabilities the application requires, minimizing configuration overhead and reducing risk of version mismatches. \parencite[Chapter~1.1.2]{walls_spring_2016}
 % TODO code example for IoC container / dependency injection 
-\subsection{JPA}
 
-\acrfull{jpa} \footnote{\href{https://jakarta.ee/specifications/persistence/}{JPA}}, formerly Java Persistence \gls{api} is a Java specification which provides a mechanism for managing persistence and object-relational mapping (\acrshort{orm}). \glspl{orm} act as a brige between the relational world of SQL databases and the object-oriented world of Java.
+\subsection{JPA}
+\label{sec:jpa}
+
+\acrfull{jpa} \footnote{\href{https://jakarta.ee/specifications/persistence/}{JPA}}, formerly Java Persistence \gls{api} is a Java specification which provides a mechanism for managing persistence and object-relational mapping (\acrshort{orm}). \glspl{orm} act as a bridge between the relational world of SQL databases and the object-oriented world of Java.
 
 Instead of writing SQL to create the database schema, entities can be described using special Java classes (defined by annotations or \acrshort{xml} configurations) which can be mapped to an SQL schema. \acrshort{jpa} allows querying the database for these entities in a type-safe way by providing a range of helpful query methods on JPA repositories, for example \texttt{findAll()} or \texttt{findById(UUID id)}. This removes the need to write "low-level", database-specific SQL for basic \acrshort{crud} operations. Complex data retrieval is also possible with \acrshort{jpa} using the \acrfull{jpql}, which is an object-oriented, database-agnostic query language.
 
 When using \acrshort{jpa} with SpringBoot by including the \javaname{spring-boot-starter-data-jpa} dependency, \emph{Hibernate} \footnote{\href{https://hibernate.org/orm/}{Hibernate}} is used as implementation of the \acrshort{jpa} standard. \parencite[Chapter~1]{bauer_java_2016}
 
 \subsection{PostgreSQL}
+\label{sec:postgresql}
 
 PostgreSQL \footnote{\href{https://www.postgresql.org/}{PostgreSQL}} is an open-source relational database system which has been in active development for over 35 years. Thanks to its reliability, robustness and performance, it has a strong earned reputation. \parencite{postgresql_global_development_group_postgresql_2026} PostgreSQL is designed for a wide range of workloads and can handle many tasks thanks to its extensibility and large suite of extensions, such as the popular PostGIS extension for storing and querying geospatial data. \parencite{postgis_psc_postgis_2023}
 
@@ -770,7 +773,7 @@ The way Sagas manage business transactions is by sending commands upon receiving
 
 A Saga is associated with one or more association values, which are key-value pairs used to route events to the correct Saga instance. A \keyw{@StartSaga} method together with the \keyw{@SagaEventHandler(associationProperty="aggregateId")} automatically associates the Saga with that identifier. Additional associations can be made programmatically, by calling `SagaLifecycle.associateWith()`. Any matching events are then routed to the Saga. \parencite{axoniq_saga_2025-1}
 
-For example, a Saga managing an order's lifecycle may be started by an \keyw{@OrderPlaced} event and associated with the \keyw{orderId}. It can then issue a \keyw{CreateInvoiceCommand} using an \keyw{invoiceId} generated inside of the event handler. It then associates itself with this ID to be notified of further events regarding this invoice, such as an \keyw{InvoicePaidEvent}.
+For example, a Saga managing an order's lifecycle may be started by an \keyw{@OrderPlaced} event and associated with the \keyw{orderId}. It can then issue a \keyw{CreateInvoiceCommand} using an \keyw{invoiceId} generated inside the event handler. The Saga then associates itself with this ID to be notified of further events regarding this invoice, such as an \keyw{InvoicePaidEvent}.
 
 % TODO Show command and query gateway and illustrate example flow through an Axon application. 
 
@@ -838,8 +841,9 @@ k6 allows tests to be written in JavaScript, making it accessible and easy to in
 
 The \hyperref[sec:contract-tests]{contract tests} are implemented in a separate maven module called \texttt{test-{\allowbreak}suite}\footnote{\javaname{test-suite/src/test/java/karsch.lukas}}. The test classes use the \texttt{JUnit 5} testing framework and \texttt{REST Assured} to send and assert \gls{http} requests. A basic test might look like this:
 
-\begin{lstlisting}[caption={Contract test example; adapted from \javaname{test-suite/src/test/karsch.lukas.lectures.AbstractLecturesE2ETest}}, captionpos=b]
-@Test
+\begin{lstlisting}[caption={Contract test example; adapted from \javaname{test-suite/src/test/karsch.lukas.lectures.AbstractLecturesE2ETest}}, captionpos=b, label=lst:e2e-test]
+%%@DisplayName%%("GET /lectures should return 200 and include 2 dates")
+%%@Test%%
 void getLectureDetails_shouldReturn200_returnTwoDates() {
     // First, create seed data
     var lectureSeedData = createLectureSeedData();
@@ -853,7 +857,7 @@ void getLectureDetails_shouldReturn200_returnTwoDates() {
 }
 \end{lstlisting}
 
-All contract tests follow a consistent pattern. First, they are annotated with \javaname{@DisplayName} to provide a descriptive, human-readable name. The test method itself is precisely named after the behavior it asserts. In the example above, the test verifies that the response status code is \javaname{200} and that the response body contains a field called \javaname{dates} consisting of an array of size two.
+All contract tests follow a consistent pattern as shown in \autoref{lst:e2e-test}. First, a test method is annotated with \javaname{@DisplayName} to provide a descriptive, human-readable name. The test method itself is precisely named after the behavior it asserts. In the example above, the test verifies that the response status code is \javaname{200} and that the response body contains a field called \javaname{dates} consisting of an array of size two.
 
 Before making these assertions, each test creates "seed data". Seed data is prerequisite data that must exist on the system under test for the execution to be valid. For instance, a professor, a course, and a lecture must be created before the endpoint to \javaname{GET} that specific lecture can be tested. Tests that assert invariants, such as the business rule preventing lecture from having overlapping timeslots, typically set the system time via a Spring Boot Actuator endpoint first.
 
@@ -863,7 +867,7 @@ The test classes in \texttt{test-suite} are all \texttt{abstract}, meaning they 
 
 Necessary infrastructure is spun up by the subclasses using \glspl{testcontainer}. \glspl{testcontainer} is a way to declare infrastructure dependencies as code and is an open-source library available for many programming languages. \parencite{testcontainers-homepage}
 
-\begin{lstlisting}[caption={\javaname{impl-crud/src/test/karsch.lukas.}\keyw{PostgresTestcontainerConfiguration}},captionpos=b]
+\begin{lstlisting}[caption={\javaname{impl-crud/src/test/karsch.lukas.}\keyw{PostgresTestcontainerConfiguration}},captionpos=b, label=lst:testcontainer-configuration]
 %%@TestConfiguration%%
 public class PostgresTestcontainerConfiguration {
     %%@Bean%%
@@ -876,9 +880,9 @@ public class PostgresTestcontainerConfiguration {
 }
 \end{lstlisting}
 
-The above code snippet starts a PostgreSQL container using the latest available image. \texttt{@ServiceConnection} makes sure the Spring application can connect to the container. This configuration can then be imported into the test class:
+\autoref{lst:testcontainer-configuration} starts a \hyperref[sec:postgresql]{PostgreSQL} container using the latest available image. \texttt{@ServiceConnection} makes sure the Spring application can connect to the container. This configuration can then be imported as shown in \autoref{lst:import-testcontainer}.
 
-\begin{lstlisting}[caption={\javaname{impl-crud/src/test/karsch.lukas.e2e.lectures.CrudLecturesE2ETest}},captionpos=b]
+\begin{lstlisting}[caption={\javaname{impl-crud/src/test/karsch.lukas.e2e.lectures.CrudLecturesE2ETest}},captionpos=b, label=lst:import-testcontainer]
 %%@SpringBootTest%%
 %%@Import%%(PostgresTestcontainerConfiguration.class)
 public class CrudLecturesE2ETest extends AbstractLecturesE2ETest { }
@@ -888,7 +892,7 @@ public class CrudLecturesE2ETest extends AbstractLecturesE2ETest { }
 
 % TODO explain architecture / layout 
 
-This section presents the relevant aspects of the CRUD implementation\footnote{\javaname{impl-crud/src/main/java/karsch.lukas}}, mainly focusing on relational modeling using \acrshort{jpa} and the audit log implementation.
+This section presents the relevant aspects of the CRUD implementation\footnote{\javaname{impl-crud/src/main/java/karsch.lukas}}, mainly focusing on relational modeling using \hyperref[sec:jpa]{\acrshort{jpa}} and the audit log implementation.
 
 \subsection{Relational Modeling}
 
