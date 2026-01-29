@@ -6,10 +6,24 @@ I found the following metrics
 	- DIT (Depth of inheritance tree)
 	- RFC (Response for a class)
 - **Complexity** 
-	- **v(G) (Cyclomatic Complexity):** The number of independent paths through a method. In CRUD, your "Services" might have high $v(G)$ due to complex `if/else` logic. In ES, $v(G)$ is often lower because logic is distributed into many small "Command Handlers" or "Projectors."
-	- **CogC (Cognitive Complexity):** How hard the code is for a human to read.
-	- **iv(G) (Design Complexity):** How much a method’s complexity contributes to the complexity of its callers.
-	- **ev(G) (Essential Complexity):** A measure of "structuredness." A value of **1** means the code is perfectly structured; higher values indicate "spaghetti code" logic.
+	- **Methods**
+		- **v(G) (Cyclomatic Complexity):** The number of independent paths through a method. In CRUD, your "Services" might have high $v(G)$ due to complex `if/else` logic. In ES, $v(G)$ is often lower because logic is distributed into many small "Command Handlers" or "Projectors."
+		- **CogC (Cognitive Complexity):** How hard the code is for a human to read.
+		- **iv(G) (Design Complexity):** How much a method’s complexity contributes to the complexity of its callers.
+		- **ev(G) (Essential Complexity):** A measure of "structuredness." A value of **1** means the code is perfectly structured; higher values indicate "spaghetti code" logic.
+	- **Classes** 
+		- OCavg: Average Operation Complexity. 
+		  Average cyclomatic complexity per method.
+		- OCmax: Maximum Operation Complexity
+		  the most complex single method in a class 
+		- WMC: **Weighted Methods per Class**
+		  WMC = sum of the complexities of all methods in a class (usually cyclomatic complexity per method)
+		  WMC high = class does too much 
+	- **Packages**
+		- - **v(G)avg** → _Average cyclomatic complexity per method_ 
+		  Shows how complex methods are **on average**.
+		- **v(G)tot** → _Total cyclomatic complexity of the system_  
+		  Sum of cyclomatic complexity of **all methods** → overall logic complexity.
 - **Dependencies** 
 	- Cyclic dependencies 
 	- efferent coupling. number of classes this class depends on directly (dpy) or transitively (dpy*)
@@ -40,9 +54,12 @@ I found the following metrics
 ## Visualizing 
 ### Chidamber Kemerer:
 - Spider plot 
+	- `Mean-c-k-metrics.png`
 - Stacked bar chart for "package complexity"
+	- requires grouping by package 
 - Scatter plot: show every class in a scatter plot; x=CBO, y=WMC
-  helps identify "god classes" with high CBO and high WMC
+  helps identify "god classes" with high CBO and high WMC 
+	- `c-k-WMC_vs_CBO.png`
 ### Complexity 
 - CDF (cumulative distribution function) plot 
   xAxis = metric value (v(G))
