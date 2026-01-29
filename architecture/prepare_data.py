@@ -5,7 +5,7 @@ import pandas as pd
 
 def get_dataframe(
     path: Path,
-    application: str,
+    application: str | None = None,
     decimal: str = ",",
     fillna: bool = True,
     skiprows: int = 1,
@@ -15,8 +15,9 @@ def get_dataframe(
 
     df = pd.read_csv(path, decimal=decimal, skiprows=skiprows)
     if fillna:
-        df.fillna(0)
+        df.fillna(0, inplace=True)
 
-    df["Application"] = application
+    if application is not None:
+        df["Application"] = application
 
     return df

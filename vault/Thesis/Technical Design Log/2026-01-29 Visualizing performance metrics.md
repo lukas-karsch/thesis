@@ -37,7 +37,7 @@ I found the following metrics
 	- **D (Distance from Main Sequence):** Calculated as $D = |A + I - 1|$. This is your most important "Flexibility" metric.
 	    - **$D \approx 0$**: The package is in "The Main Sequence." It is either stable and abstract, or unstable and concrete.
 	    - **$D \approx 1$**: The package is in the "Zone of Pain" (highly stable/concrete, hard to change) or the "Zone of Uselessness" (highly abstract/unstable).
-- MOOD (Metrics for object-oriented design)
+- **MOOD (Metrics for object-oriented design)**
 	- "big picture"
 	- metrics for a whole project 
 	- AHF: attribute hiding factor - shows how many fields are private 

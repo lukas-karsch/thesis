@@ -48,7 +48,6 @@ def radar_factory(num_vars, frame="circle"):
 
         def _close_line(self, line):
             x, y = line.get_data()
-            # FIXME: markers at x[0], y[0] get doubled-up
             if x[0] != x[-1]:
                 x = np.concatenate((x, [x[0]]))
                 y = np.concatenate((y, [y[0]]))
@@ -91,7 +90,6 @@ def radar_factory(num_vars, frame="circle"):
                 spine.set_transform(
                     Affine2D().scale(0.5).translate(0.5, 0.5) + self.transAxes
                 )
-
                 return {"polar": spine}
             else:
                 raise ValueError("unknown value for 'frame': %s" % frame)
