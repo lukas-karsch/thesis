@@ -27,8 +27,8 @@ import java.util.*;
 
 import static org.axonframework.modelling.command.AggregateLifecycle.apply;
 
-@Aggregate
 @Slf4j
+@Aggregate(snapshotTriggerDefinition = "snapshotTriggerDefinition")
 public class LectureAggregate {
     public static final String PROCESSING_GROUP = "lecture_commands";
 

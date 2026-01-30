@@ -2,6 +2,7 @@ package karsch.lukas.features.student.command;
 
 import karsch.lukas.features.student.api.CreateStudentCommand;
 import karsch.lukas.features.student.api.StudentCreatedEvent;
+import lombok.NoArgsConstructor;
 import org.axonframework.commandhandling.CommandHandler;
 import org.axonframework.eventsourcing.EventSourcingHandler;
 import org.axonframework.modelling.command.AggregateIdentifier;
@@ -11,7 +12,8 @@ import java.util.UUID;
 
 import static org.axonframework.modelling.command.AggregateLifecycle.apply;
 
-@Aggregate
+@NoArgsConstructor
+@Aggregate(snapshotTriggerDefinition = "snapshotTriggerDefinition")
 public class StudentAggregate {
 
     public static final String PROCESSING_GROUP = "student_commands";
@@ -28,9 +30,6 @@ public class StudentAggregate {
                 command.lastName(),
                 command.semester()
         ));
-    }
-
-    protected StudentAggregate() {
     }
 
     @EventSourcingHandler

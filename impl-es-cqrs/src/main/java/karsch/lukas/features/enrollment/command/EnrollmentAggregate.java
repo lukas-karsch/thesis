@@ -17,8 +17,8 @@ import java.util.UUID;
 
 import static org.axonframework.modelling.command.AggregateLifecycle.apply;
 
-@Aggregate
 @Slf4j
+@Aggregate(snapshotTriggerDefinition = "snapshotTriggerDefinition")
 public class EnrollmentAggregate {
 
     public static final String PROCESSING_GROUP = "enrollment_commands";

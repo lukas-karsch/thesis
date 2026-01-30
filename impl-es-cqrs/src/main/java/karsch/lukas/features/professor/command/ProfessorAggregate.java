@@ -13,7 +13,7 @@ import java.util.UUID;
 
 import static org.axonframework.modelling.command.AggregateLifecycle.apply;
 
-@Aggregate
+@Aggregate(snapshotTriggerDefinition = "snapshotTriggerDefinition")
 @NoArgsConstructor
 @Slf4j
 class ProfessorAggregate {
