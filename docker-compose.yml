@@ -25,6 +25,8 @@ services:
       - AXONIQ_AXONSERVER_DEVMODE_ENABLED=true
       - AXONIQ_AXONSERVER_HOSTNAME=axon-server
       - AXONIQ_AXONSERVER_STANDALONE=true # make sure a node and default context exists
+      - AXONIQ_AXONSERVER_EVENT_SEGMENT_SIZE=4 MB # default is 256 MB
+      - AXONIQ_AXONSERVER_SNAPSHOT_SEGMENT_SIZE=4 MB # default is 256 MB
     healthcheck:
       test: [ "CMD-SHELL", "wget -qO- http://localhost:8024/actuator/health | grep -q '\"status\":\"UP\"'" ]
       interval: 5s

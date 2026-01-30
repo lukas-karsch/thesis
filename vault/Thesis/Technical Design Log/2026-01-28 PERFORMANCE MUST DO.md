@@ -14,3 +14,6 @@ Current active connections: `hikaricp_connections_active` (Gauge)
 `hikaricp_connections_max` = 10
 
 `tomcat_threads_current_threads`
+
+database size using my own `database.size.metrics`
+Event store size using Axon Server's actuator. 
