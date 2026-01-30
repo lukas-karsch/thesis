@@ -15,7 +15,7 @@ public class PostgresTestcontainerConfiguration {
     @RestartScope
     PostgreSQLContainer<?> postgreSQLContainer() {
         return new PostgreSQLContainer<>(
-                DockerImageName.parse("postgres:latest")
+                DockerImageName.parse("postgres:18-alpine")
         );
     }
 }

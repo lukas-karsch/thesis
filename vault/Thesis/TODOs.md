@@ -35,6 +35,8 @@
 - https://de.wikipedia.org/wiki/Wilcoxon-Mann-Whitney-Test
 - **Writing**
 	- Write method on flexibility [[Method - Flexibility]]
+	- https://github.com/Witiko/markdown/issues/448
+	- Add back the indentation for paragraphs 
 ## Before Finishing
 - Check README
 - Clone repo in blank folder, check everything works
@@ -43,4 +45,4 @@
 - Demonstrate how to start docker 
 - Demonstrate how to start test run with testcontainers 
 - Make sure external links all exist (e.g. to Docker, Axon, etc)
-- Push to GitHub aswell and add the link to latex 
+- Push to GitHub aswell and add the link to latex file

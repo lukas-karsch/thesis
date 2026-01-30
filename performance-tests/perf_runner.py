@@ -65,6 +65,12 @@ PROMETHEUS_QUERIES = {
         "  )"
         ")"
     ),
+    # hikari connection acquire time (P95)
+    # "hikari_connection_acquire_time_p95.json": (
+    #     "histogram_quantile(0.95,"
+    #     "    rate(hikaricp_connections_acquire_seconds_bucket[1m])"
+    #     ")"
+    # ),
 }
 
 PROMETHEUS_RANGE_QUERIES = {
@@ -74,6 +80,9 @@ PROMETHEUS_RANGE_QUERIES = {
         "sum(jvm_memory_used_bytes{area='heap'}) + sum(jvm_memory_used_bytes{area='nonheap'})"
     ),
     "ram_usage_heap_bytes.json": "sum(jvm_memory_used_bytes{area='heap'})",
+    "tomcat_threads_current_threads.json": "tomcat_threads_current_threads",
+    "hikaricp_connections_max.json": "hikaricp_connections_max",
+    "hikaricp_connections_active.json": "hikaricp_connections_active",
 }
 
 
@@ -413,15 +422,12 @@ def extract_k6_summary_to_csv(
         print(f"⚠️ k6 summary file {summary_path} not found.")
         return
 
-    # 1. Load configuration and summary
     metric_def = json.loads(metric_definition_path.read_text())
     summary = json.loads(summary_path.read_text())
 
     vus = metric_def.get("VUs", "unknown")
     target_method = metric_def["metric"]["method"]
 
-    # 2. Extract metrics from the 'metrics' object
-    # We focus on 'group_duration' as requested in your snippet
     group_metrics = summary.get("metrics", {}).get("group_duration", {})
     if not group_metrics:
         print("⚠️ No group_duration metrics found in summary.")
@@ -429,19 +435,17 @@ def extract_k6_summary_to_csv(
 
     rows = []
 
-    # k6 summary group_duration contains keys like 'avg', 'p(90)', 'p(95)', etc.
-    # We map these to the 'metric' column to match your Prometheus format.
     for stat_name, value in group_metrics.items():
         # Skip non-numeric metadata if any exists
         if not isinstance(value, (int, float)):
             continue
 
         # lookup table to rename metrics, so that they match the prometheus metrics
-        # careful: no p99 here, but only p90
         k6_stat_name_to_metric_stat_name = {
             "med": "latency_p50",
             "p(95)": "latency_p95",
             "p(90)": "latency_p90",
+            "p(99)": "latency_p99",
             "avg": "latency_avg",
         }
 
@@ -456,7 +460,6 @@ def extract_k6_summary_to_csv(
             }
         )
 
-    # 3. Write to CSV (Matching your existing schema)
     fieldnames = ["metric", "method", "uri", "value", "app", "virtual_users"]
 
     with output_csv.open("w", newline="") as f:

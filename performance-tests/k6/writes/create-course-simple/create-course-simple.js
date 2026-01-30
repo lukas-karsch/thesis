@@ -24,6 +24,7 @@ export const options = {
     thresholds: {
         'http_req_failed': ['rate<0.01'],    // Error rate must be less than 1%
     },
+    summaryTrendStats: ["med", "p(99)", "p(95)", "avg"],
 };
 
 const uuids = {}

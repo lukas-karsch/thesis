@@ -7,13 +7,19 @@
 \usepackage[automake, acronym]{glossaries}
 \usepackage{xcolor}
 \usepackage[export]{adjustbox}
+\usepackage{tabularx}
 \usepackage{booktabs}
+\usepackage{float} 
+
+\floatstyle{ruled}
+\newfloat{listing}{tbp}{lol}
+\floatname{listing}{Listing}
 
 % TODO
 % microtype is supposed to help with text breaking (overflow), but it gives an error:  pdfTeX error (font expansion): auto expansion is only possible with scalable fonts. <argument> ...shipout:D \box_use:N \l_shipout_box
 % \usepackage{microtype}
 
-\hfuzz=5.5pt 
+\hfuzz=5.6pt 
 
 \usepackage{color}
 
@@ -40,6 +46,8 @@
 }
 
 \usepackage{caption}
+\captionsetup{font=small}
+
 \DeclareCaptionFormat{listing}{
   \rule{\linewidth}{0.2pt}\par\vskip1pt #1#2#3
 }
@@ -47,7 +55,7 @@
 
 \usepackage[
   backend=biber,
-  style=apa, % or authoryear, numeric, ieee, apa, ...
+  style=ieee, % or authoryear, numeric, ieee, apa, ...
 ]{biblatex}
 \DefineBibliographyStrings{english}{
   and = {\&}
@@ -632,14 +640,16 @@ Following \textcite[135]{nielsen_usability_1993}, a response time of 100ms is th
 The test environment and scenarios are defined as code to ensure reproducibility. Tests are executed in an isolated environment with fixed hardware allocations as specified in \autoref{table:hardware-specs}.
 
 \begin{table}[htp!]
+    \small
     \centering
-    \begin{tabular}{ll} \toprule
-        Component  & Spec                \\ \midrule
-        CPU        & [INSERT CPU MODEL]  \\
-        RAM        & 32GB DDR4           \\
-        Hard Drive & 1,000GB SanDisk SSD \\
+    \begin{tabularx}{\linewidth}{lX}
+        \toprule
+        \textbf{Component} & \textbf{Specification}                                                      \\ \midrule
+        CPU                & 13th Gen Intel(R) Core(TM) i7-13700H. 14 Cores, 20 total threads. Max. 5GHz \\
+        RAM                & 32GB DDR4                                                                   \\
+        Hard Drive         & SanDisk Plus SSD 1TB 2.5" SATA 6GB/s                                        \\
         \bottomrule
-    \end{tabular}
+    \end{tabularx}
     \caption{Hardware specifications for the performance evaluation machine}
     \label{table:hardware-specs}
 \end{table}
@@ -767,11 +777,11 @@ Subscribing event processors can be configured using SpringBoot's \javaname{appl
 \subsubsection*{Sagas}
 \label{sec:sagas}
 
-In Axon, Sagas are long-running, stateful event handlers which not just react to events, but instead manage and coordinate business transactions. For each transaction being managed, one instance of a Saga exists. A Saga, which is a class annotated with \keyw{@Saga} has a lifecycle that is started by a specific event when a method annotated with \keyw{@StartSaga} is executed. The lifecycle may be ended when a method annotated with \keyw{@EndSaga} is executed; or conditionally using `SagaLifecycle.end()`. A Saga usually has a clear starting point, but may have many different ways for it to end. Each event handling method in a Saga must additionally have the \keyw{@SagaEventHandler} annotation. \parencite{axoniq_saga_2025}
+In Axon, Sagas are long-running, stateful event handlers which not just react to events, but instead manage and coordinate business transactions. For each transaction being managed, one instance of a Saga exists. A Saga, which is a class annotated with \keyw{@Saga} has a lifecycle that is started by a specific event when a method annotated with \keyw{@StartSaga} is executed. The lifecycle may be ended when a method annotated with \keyw{@EndSaga} is executed; or conditionally using \keyw{SagaLifecycle.end()}. A Saga usually has a clear starting point, but may have many different ways for it to end. Each event handling method in a Saga must additionally have the \keyw{@SagaEventHandler} annotation. \parencite{axoniq_saga_2025}
 
 The way Sagas manage business transactions is by sending commands upon receiving events. They can be used when workflows across several aggregates should be implemented; or to handle long-running processes that may span over any amount of time. \parencite{axoniq_saga_2025} For example, the lifecycle of an order, from being processed, to being shipped and paid, is a process that usually takes multiple days. A use case like this is typically implemented using Sagas.
 
-A Saga is associated with one or more association values, which are key-value pairs used to route events to the correct Saga instance. A \keyw{@StartSaga} method together with the \keyw{@SagaEventHandler(associationProperty="aggregateId")} automatically associates the Saga with that identifier. Additional associations can be made programmatically, by calling `SagaLifecycle.associateWith()`. Any matching events are then routed to the Saga. \parencite{axoniq_saga_2025-1}
+A Saga is associated with one or more association values, which are key-value pairs used to route events to the correct Saga instance. A \keyw{@StartSaga} method together with the \keyw{@SagaEventHandler(associationProperty="aggregateId")} automatically associates the Saga with that identifier. Additional associations can be made programmatically, by calling \keyw{SagaLifecycle.associateWith()}. Any matching events are then routed to the Saga. \parencite{axoniq_saga_2025-1}
 
 For example, a Saga managing an order's lifecycle may be started by an \keyw{@OrderPlaced} event and associated with the \keyw{orderId}. It can then issue a \keyw{CreateInvoiceCommand} using an \keyw{invoiceId} generated inside the event handler. The Saga then associates itself with this ID to be notified of further events regarding this invoice, such as an \keyw{InvoicePaidEvent}.
 
@@ -841,7 +851,7 @@ k6 allows tests to be written in JavaScript, making it accessible and easy to in
 
 The \hyperref[sec:contract-tests]{contract tests} are implemented in a separate maven module called \texttt{test-{\allowbreak}suite}\footnote{\javaname{test-suite/src/test/java/karsch.lukas}}. The test classes use the \texttt{JUnit 5} testing framework and \texttt{REST Assured} to send and assert \gls{http} requests. A basic test might look like this:
 
-\begin{lstlisting}[caption={Contract test example; adapted from \javaname{test-suite/src/test/karsch.lukas.lectures.AbstractLecturesE2ETest}}, captionpos=b, label=lst:e2e-test]
+\begin{lstlisting}
 %%@DisplayName%%("GET /lectures should return 200 and include 2 dates")
 %%@Test%%
 void getLectureDetails_shouldReturn200_returnTwoDates() {
@@ -856,6 +866,8 @@ void getLectureDetails_shouldReturn200_returnTwoDates() {
             .body("data.dates", hasSize(2));
 }
 \end{lstlisting}
+\captionof{lstlisting}[Contract test example]{Contract test example; adapted from \javaname{test-suite/src/test/karsch.lukas.lectures.AbstractLecturesE2ETest}}
+\label{lst:e2e-test}
 
 All contract tests follow a consistent pattern as shown in \autoref{lst:e2e-test}. First, a test method is annotated with \javaname{@DisplayName} to provide a descriptive, human-readable name. The test method itself is precisely named after the behavior it asserts. In the example above, the test verifies that the response status code is \javaname{200} and that the response body contains a field called \javaname{dates} consisting of an array of size two.
 
@@ -867,7 +879,7 @@ The test classes in \texttt{test-suite} are all \texttt{abstract}, meaning they 
 
 Necessary infrastructure is spun up by the subclasses using \glspl{testcontainer}. \glspl{testcontainer} is a way to declare infrastructure dependencies as code and is an open-source library available for many programming languages. \parencite{testcontainers-homepage}
 
-\begin{lstlisting}[caption={\javaname{impl-crud/src/test/karsch.lukas.}\keyw{PostgresTestcontainerConfiguration}},captionpos=b, label=lst:testcontainer-configuration]
+\begin{lstlisting}
 %%@TestConfiguration%%
 public class PostgresTestcontainerConfiguration {
     %%@Bean%%
@@ -879,14 +891,18 @@ public class PostgresTestcontainerConfiguration {
     }
 }
 \end{lstlisting}
+\captionof{lstlisting}[\keyw{PostgresTestcontainerConfiguration}]{\javaname{impl-crud/src/test/karsch.lukas.}\keyw{PostgresTestcontainerConfiguration}}
+\label{lst:testcontainer-configuration}
 
 \autoref{lst:testcontainer-configuration} starts a \hyperref[sec:postgresql]{PostgreSQL} container using the latest available image. \texttt{@ServiceConnection} makes sure the Spring application can connect to the container. This configuration can then be imported as shown in \autoref{lst:import-testcontainer}.
 
-\begin{lstlisting}[caption={\javaname{impl-crud/src/test/karsch.lukas.e2e.lectures.CrudLecturesE2ETest}},captionpos=b, label=lst:import-testcontainer]
+\begin{lstlisting}
 %%@SpringBootTest%%
 %%@Import%%(PostgresTestcontainerConfiguration.class)
 public class CrudLecturesE2ETest extends AbstractLecturesE2ETest { }
 \end{lstlisting}
+\captionof{lstlisting}[\keyw{CrudLecturesE2ETest}]{\javaname{impl-crud/src/test/karsch.lukas.e2e.lectures.CrudLecturesE2ETest}}
+\label{lst:import-testcontainer}
 
 \section{CRUD implementation}
 
@@ -970,19 +986,20 @@ The \acrshort{crud} implementation of the application utilizes approach \ref{ite
 The audit log is stored in a single database table, represented by the \keyw{AuditLogEntry} entity. This structure allows for easy querying of all system changes in chronological order. Table \ref{table:audit-log-entry} lists the fields contained by \keyw{AuditLogEntry}. This data model is adapted from \textcite{fowler_audit_2004}.
 
 \begin{table}[htp!]
+    \small
     \centering
-    \begin{tabular}{|l|p{4cm}|p{6cm}|}
-        \hline
-        \textbf{Field} & \textbf{Type, Possible Values} & \textbf{Explanation}                                  \\ \hline
-        entityName     & String                         & Identifies the type of the changed object.            \\ \hline
-        entityId       & UUID                           & Unique identifier of the specific changed object.     \\ \hline
-        timestamp      & LocalDateTime                  & The date and time when the change occurred.           \\ \hline
-        operation      & CREATE, UPDATE, DELETE         & The type of action performed on the entity.           \\ \hline
-        modifiedBy     & String                         & The user or system process that initiated the change. \\ \hline
-        oldValueJson   & TEXT (JSON String)             & The serialized state of the entity before the change. \\ \hline
-        newValueJson   & TEXT (JSON String)             & The serialized state of the entity after the change.  \\ \hline
-        contextJson    & TEXT (JSON String)             & Captures additional business intent or metadata.      \\ \hline
-    \end{tabular}
+    \begin{tabularx}{\linewidth}{lp{4cm}X}
+        \toprule
+        \textbf{Field} & \textbf{Type, Possible Values} & \textbf{Explanation}                                  \\ \midrule
+        entityName     & String                         & Identifies the type of the changed object.            \\ \addlinespace
+        entityId       & UUID                           & Unique identifier of the specific changed object.     \\ \addlinespace
+        timestamp      & LocalDateTime                  & The date and time when the change occurred.           \\ \addlinespace
+        operation      & CREATE, UPDATE, DELETE         & The type of action performed on the entity.           \\ \addlinespace
+        modifiedBy     & String                         & The user or system process that initiated the change. \\ \addlinespace
+        oldValueJson   & TEXT (JSON String)             & The serialized state of the entity before the change. \\ \addlinespace
+        newValueJson   & TEXT (JSON String)             & The serialized state of the entity after the change.  \\ \addlinespace
+        contextJson    & TEXT (JSON String)             & Captures additional business intent or metadata.      \\
+    \end{tabularx}
     \caption{Audit Log Entry Structure}
     \label{table:audit-log-entry}
 \end{table}
@@ -1082,7 +1099,7 @@ Figure \ref{fig:es-cqrs-command-flow} illustrates the flow of a command through 
 
 After being applied, Axon routes the event to all subscribed handlers. The \keyw{CourseAggregate}'s \keyw{@EventSourcingHandler} is executed, changing the aggregate's internal state. What is worth noting here is that in the case of \keyw{CourseAggregate}, only the \texttt{id} of the course is set as other properties of the event, like name or description of the newly created course, are not relevant to the command side. Any read-side projectors with \keyw{@EventHandlers} for the \keyw{CourseCreatedEvent} are also executed after the event is applied.
 
-\begin{figure}[h]
+\begin{figure}[H]
     \includegraphics[width=\textwidth, inner]{images/es-cqrs-command-flow.png}
     \caption{Sequence Diagram: Command Flow inside the ES-CQRS application}
     \label{fig:es-cqrs-command-flow}
@@ -1091,15 +1108,49 @@ After being applied, Axon routes the event to all subscribed handlers. The \keyw
 \subsubsection{Query Request: FindAllCoursesQuery}
 \label{sec:query-request-findallcoursesquery}
 
-Figure \ref{fig:es-cqrs-query-flow} illustrates the flow of a query through the application using the \texttt{GET} \texttt{/courses} request as an example. The request is received by \keyw{CoursesController}. It creates a \keyw{FindAllCoursesQuery} instance and sends it to Axon's \keyw{QueryGateway}, which routes the query to the appropriate \keyw{@QueryHandler} method responsible for \keyw{FindAllCoursesQuery}. The query handler method then accesses its JPA repository to get all courses, maps them to a list of \keyw{CourseDTOs} and returns this list. The \keyw{QueryGateway} hands this result over to the web controller which reads the data and sends it back to the client.
+\hyperref[fig:es-cqrs-query-flow]{Figure \ref*{fig:es-cqrs-query-flow}} illustrates the flow of a query through the application using the \texttt{GET} \texttt{/courses} request as an example. The request is received by \keyw{CoursesController}. It creates a \keyw{FindAllCoursesQuery} instance and sends it to Axon's \keyw{QueryGateway}, which routes the query to the appropriate \keyw{@QueryHandler} method responsible for \keyw{FindAllCoursesQuery}. The query handler method then accesses its JPA repository to get all courses, maps them to a list of \keyw{CourseDTOs} and returns this list. The \keyw{QueryGateway} hands this result over to the web controller which reads the data and sends it back to the client.
 
-\begin{figure}[h]
+\begin{figure}[H]
     \includegraphics[width=\textwidth, inner]{images/es-cqrs-query-flow.png}
     \caption{Sequence Diagram: Query Flow inside the ES-CQRS application}
     \label{fig:es-cqrs-query-flow}
 \end{figure}
 
 \section{Infrastructure}
+\label{sec:infrastructure}
+
+The project's infrastructure is designed for consistency and reproducibility across development and testing environments. It is composed of a containerized environment for running the applications and their dependencies, an automated \gls{vm} provisioning setup for performance testing, as well as an integration testing strategy using Testcontainers, described in \autoref{sec:contract-test-implementation}.
+
+\subsection{Containerized Services}
+\label{sec:containerized-services}
+
+The core of the infrastructure is defined in a \gls{docker} compose file at the root of the project, which orchestrates the deployment of the two primary applications and their external dependencies: a \hyperref[sec:postgresql]{PostgreSQL} database, used by both applications, and an \hyperref[sec:axon]{Axon Server} instance, used by the ES-CQRS application.
+
+A \keyw{postgres:18-alpine} container provides the relational database used by both applications. The database schema, user, and credentials are configured through environment variables. A volume is used to persist data across container restarts.
+
+An \keyw{axoniq/axonserver} container provides the necessary infrastructure for the Event Sourcing and CQRS implementation, handling event storage and message routing. It is configured to run in development mode.
+
+The CRUD and ES-CQRS applications are containerized using \keyw{Dockerfile}s. Both use \keyw{amazoncorretto:25} as the base image, and the compiled Java application (\keyw{.jar} file) is copied into the container and executed.
+
+Configuration details, such as database connection strings and server hostnames, are externalized from the \keyw{application.properties} files. They are injected into the application containers at runtime as environment variables via the \keyw{docker-compose.yml} file, allowing for flexible configuration without modifying the application code.
+
+\subsection{Local Development and Integration Testing}
+\label{sec:local-development-and-integration-testing}
+
+For local development and integration testing, the project uses the \glspl{testcontainer} library. This approach allows developers to programmatically define and manage the lifecycle of throwaway Docker containers for dependencies like PostgreSQL and Axon Server directly from the test code. (TODO duplicate?)
+
+By integrating with Spring Boot's \glspl{testcontainer} support, running the application or its tests automatically starts the required containers. This eliminates the need to manually install and manage these services on their local machines, ensuring a consistent and isolated testing environment. The configuration for this is found in the test resources, where a special JDBC URL prefix signals Spring Boot to manage the database container.
+
+\subsection{VM Provisioning for Performance Testing}
+\label{sec:vm-provisioning}
+
+To ensure a stable and isolated environment for performance benchmarks, a dedicated VM setup is used. The process of creating and provisioning these \acrshortpl{vm} on a Proxmox host is fully automated.
+
+A shell script, \keyw{create-vm.sh}, orchestrates the creation of a VM template from an Ubuntu 24.04 cloud image. Cloud images are pre-configured, lightweight variants of operating systems. This script works in conjunction with a \keyw{cloud-init.yml} configuration file that handles the provisioning of the VM upon its first boot.
+
+During the provisioning process, a number of steps are executed. First, it is made sure that the system is up-to-date by installing any available software updates. Next, a `thesis` user is created for which the environment is configured. Afterward, the script installs all necessary software, including \gls{docker}, git, Conda, Python, k6, Maven, and Java 25. Once all necessary software is installed, the project's git repository is cloned and a Maven build is triggered. Finally, the \gls{docker} images are built. After these steps are completed, the provisioned \acrshort{vm} is ready to run the applications and load tests.
+
+Instead of starting the \acrshort{vm} directly, the script shuts the \acrshort{vm} down and converts it into a Proxmox template, which can be re-created efficiently.
 
 \section{Performance Tests}
 
