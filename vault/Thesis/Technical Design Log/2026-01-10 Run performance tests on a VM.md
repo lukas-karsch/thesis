@@ -21,7 +21,7 @@ For performance testing, standard virtualization overhead can skew results. Use 
    RAM: 12288MiB (12GB)
    Disk: 32 GB
    BIOS: UEFI
-> UPDATE: no manual setup, use scripts and clout-init [[#Script setup]]
+> UPDATE: no manual setup, use scripts and cloud-init [[#Script setup]]
 ## Script setup 
 1. Script creates template:
 	1. Create VM
@@ -68,3 +68,18 @@ zip -r run-k6.zip run-k6
 # on the local machine 
 scp -i "path/to/sshkey" thesis@vm_ip:code/performance-tests/run-k6.zip run-k6.zip
 ```
+## Troubleshooting 
+If something isnt working...
+
+Docker permission denied: 
+``` bash
+sudo usermod -aG docker $USER`
+sudo reboot 
+```
+^RUN ON BOTH MACHINES !
+
+Need to add ssh key to hop from one VM to the other 
+1. on Orchestrator, run "ssh-keygen"
+2. copy id_ed2519.pub 
+3. Go to server 
+4. `nano authorized_keys` > paste 
