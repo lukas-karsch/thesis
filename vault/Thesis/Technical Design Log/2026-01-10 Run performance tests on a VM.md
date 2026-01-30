@@ -59,27 +59,3 @@ Once attached, I can kill the session:
 # type CTRL+B
 :kill-session
 ```
-## Zip files 
-To transfer files from the VM to my local machine, I want to use a combination of zip and scp. 
-```bash
-# on the VM
-cd performance-tests/
-zip -r run-k6.zip run-k6
-# on the local machine 
-scp -i "path/to/sshkey" thesis@vm_ip:code/performance-tests/run-k6.zip run-k6.zip
-```
-## Troubleshooting 
-If something isnt working...
-
-Docker permission denied: 
-``` bash
-sudo usermod -aG docker $USER`
-sudo reboot 
-```
-^RUN ON BOTH MACHINES !
-
-Need to add ssh key to hop from one VM to the other 
-1. on Orchestrator, run "ssh-keygen"
-2. copy id_ed2519.pub 
-3. Go to server 
-4. `nano authorized_keys` > paste 
