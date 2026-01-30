@@ -25,6 +25,11 @@ def main() -> None:
     if args.config is not None:
         config_file = Path(args.config)
 
+        if not config_file.exists():
+            raise ValueError(
+                f"MISSING CONFIG FILE! You specified a config file at '{config_file} which does not exist."
+            )
+
     apps: List[Literal["crud", "es-cqrs"]] = ["crud", "es-cqrs"]
     for app in apps:
         if args.skip == app:

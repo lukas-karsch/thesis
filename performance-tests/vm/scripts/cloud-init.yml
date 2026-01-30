@@ -64,9 +64,10 @@ runcmd:
   - sudo -u thesis -i bash -c "/opt/miniconda/bin/conda install -n dev_env -y pandas numpy matplotlib requests"
 
   # Download Java 25
-  - wget https://github.com/adoptium/temurin25-binaries/releases/latest/download/OpenJDK25U-jdk_x64_linux_hotspot.tar.gz -O /tmp/jdk25.tar.gz
+  - echo "Downloading jdk25 from https://github.com/adoptium/temurin25-binaries/releases/download/jdk-25.0.2%2B10/OpenJDK25U-jdk_x64_linux_hotspot_25.0.2_10.tar.gz"
+  - wget -q https://github.com/adoptium/temurin25-binaries/releases/download/jdk-25.0.2%2B10/OpenJDK25U-jdk_x64_linux_hotspot_25.0.2_10.tar.gz -O /tmp/jdk-25.tar.gz
   - mkdir -p /opt/jdk25
-  - tar -xzf /tmp/jdk25.tar.gz -C /opt/jdk25 --strip-components=1
+  - tar -xzf /tmp/jdk-25.tar.gz -C /opt/jdk25 --strip-components=1
 
   # Set environment variables system-wide
   - echo 'export JAVA_HOME=/opt/jdk25' >> /etc/profile.d/java.sh
@@ -74,16 +75,20 @@ runcmd:
   - chmod +x /etc/profile.d/java.sh
 
   # Make it available for current session
+  - echo "!!! EXPORT JAVA_HOME"
   - export JAVA_HOME=/opt/jdk25
   - export PATH=$JAVA_HOME/bin:$PATH
 
   # Git clone repo
+  - echo "!!! GIT CLONE"
   - git clone https://gitlab.mi.hdm-stuttgart.de/lk224/thesis.git /home/thesis/code
   - cd /home/thesis/code
   - sudo chown -R thesis .
+  - echo "!!! MVN CLEAN INSTALL"
   - mvn clean install -DskipTests
 
   # Build docker images
+  - echo "!!!Build docker images"
   - cd impl-crud
   - docker build -t lkarsch/impl-crud-docker .
   - cd ..
