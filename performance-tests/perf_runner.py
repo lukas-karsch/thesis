@@ -24,7 +24,7 @@ ES_CQRS_PORT = 8081
 
 PROMETHEUS_IMAGE = "prom/prometheus"
 PROMETHEUS_PORT = 9090
-PROMETHEUS_SCRAPE_INTERVAL_SECONDS = 3
+PROMETHEUS_SCRAPE_INTERVAL_SECONDS = 2
 PROMETHEUS_READY_RETRIES = 5
 PROMETHEUS_READY_SLEEP_SECONDS = 2
 
@@ -197,6 +197,21 @@ def write_prometheus_config(
         prometheus_target = f"{test_config['SERVER_IP']}:{app_port}"
         print(f"prometheus_target={prometheus_target}")
 
+    if service_name == "es-cqrs-app":
+        if test_config is None:  # TODO this only works on Windows (see above)
+            axonserver_prometheus_endpoint = "host.docker.internal:8024"
+        else:
+            axonserver_prometheus_endpoint = f"{test_config['SERVER_IP']}:8024"
+
+        additional_scrape_config = f"""
+  - job_name: "axonserver"
+    metrics_path: /actuator/prometheus
+    static_configs:
+      - targets: ["{axonserver_prometheus_endpoint}"]
+"""
+    else:
+        additional_scrape_config = ""
+
     config_path.write_text(
         f"""
 global:
@@ -207,8 +222,11 @@ scrape_configs:
     metrics_path: /actuator/prometheus
     static_configs:
       - targets: ["{prometheus_target}"]
+{additional_scrape_config}
 """.strip()
     )
+
+    print(config_path.read_text())
 
 
 # ============================================================================
@@ -288,6 +306,25 @@ def query_prometheus(
     window: str,
 ) -> None:
     query_url = f"http://localhost:{PROMETHEUS_PORT}/api/v1/query"
+
+    def _get_axon_storage_size():
+        axon_storage_size_query = "axon_storage_size"
+        resp = requests.get(query_url, params={"query": axon_storage_size_query})
+        resp.raise_for_status()
+        (prom_dir / "axon_storage_size_bytes.json").write_text(
+            json.dumps(resp.json(), indent=2)
+        )
+
+    def _get_pg_size():
+        pgsize_query = "database_size_bytes"
+        resp = requests.get(query_url, params={"query": pgsize_query})
+        resp.raise_for_status()
+        (prom_dir / "postgres_size_bytes.json").write_text(
+            json.dumps(resp.json(), indent=2)
+        )
+
+    _get_axon_storage_size()
+    _get_pg_size()
 
     for filename, query in PROMETHEUS_QUERIES.items():
         rendered_query = query.format(w=window)

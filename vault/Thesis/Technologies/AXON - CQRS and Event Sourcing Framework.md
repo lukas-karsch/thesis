@@ -23,4 +23,5 @@ Access event payloads, commands etc. Available at `localhost:8024` or at the tes
 - Creating aggregates from another aggregate: https://docs.axoniq.io/axon-framework-reference/4.11/axon-framework-commands/modeling/aggregate-creation-from-another-aggregate/
   i could use this to create lectures from courses etc 
 - Demo project https://github.com/idugalic/digital-restaurant
+- Axon Server Metrics https://docs.axoniq.io/axon-server-reference/development/axon-server/administration/monitoring/axon-server-metrics/#_event_store_metrics
 

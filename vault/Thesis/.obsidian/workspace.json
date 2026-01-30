@@ -13,12 +13,12 @@
             "state": {
               "type": "markdown",
               "state": {
-                "file": "Writing/Outline.md",
+                "file": "Technical Design Log/2026-01-28 PERFORMANCE MUST DO.md",
                 "mode": "source",
                 "source": false
               },
               "icon": "lucide-file",
-              "title": "Outline"
+              "title": "2026-01-28 PERFORMANCE MUST DO"
             }
           },
           {
@@ -41,12 +41,26 @@
             "state": {
               "type": "markdown",
               "state": {
-                "file": "Advice/VMs.md",
+                "file": "Technical Design Log/2026-01-28 PERFORMANCE MUST DO.md",
                 "mode": "source",
                 "source": false
               },
               "icon": "lucide-file",
-              "title": "VMs"
+              "title": "2026-01-28 PERFORMANCE MUST DO"
+            }
+          },
+          {
+            "id": "c68ed677d5722e44",
+            "type": "leaf",
+            "state": {
+              "type": "markdown",
+              "state": {
+                "file": "Technologies/AXON - CQRS and Event Sourcing Framework.md",
+                "mode": "source",
+                "source": false
+              },
+              "icon": "lucide-file",
+              "title": "AXON - CQRS and Event Sourcing Framework"
             }
           }
         ],
@@ -82,7 +96,7 @@
             "state": {
               "type": "search",
               "state": {
-                "query": "prometheu",
+                "query": "snapshot",
                 "matchingCase": false,
                 "explainSearch": false,
                 "collapseAll": false,
@@ -103,7 +117,8 @@
               "title": "Bookmarks"
             }
           }
-        ]
+        ],
+        "currentTab": 1
       }
     ],
     "direction": "horizontal",
@@ -200,32 +215,32 @@
   },
   "active": "8ab61ceef1b21e78",
   "lastOpenFiles": [
+    "TODOs.md",
+    "Advice/VMs.md",
+    "Technologies/AXON - CQRS and Event Sourcing Framework.md",
+    "Writing/Axon.md",
+    "Technical Design Log/2026-01-07 What else to measure.md",
+    "Technical Design Log/2026-01-26 Scalability and performance.md",
+    "Technical Design Log/2026-01-28 PERFORMANCE MUST DO.md",
+    "Technical Design Log/2026-01-29 Visualizing performance metrics.md",
+    "Technologies/Testcontainers.md",
+    "Writing/Outline.md",
     "Technical Design Log/2025-12-29 Where to measure.md",
     "Technical Design Log/2026-01-10 Run performance tests on a VM.md",
-    "Writing/Outline.md",
-    "Technical Design Log/2026-01-28 PERFORMANCE MUST DO.md",
     "Technical Design Log/2026-01-07 How i could measure flexibility.md",
-    "Advice/VMs.md",
     "Advice/Performance Metrics.md",
     "Technical Design Log/2025-12-19 Preparing for performance tests.md",
     "Technical Design Log/2025-12-22 What can i benchmark.md",
     "Technical Design Log/2026-01-03 Measurements.md",
     "Technical Design Log/2026-01-13 Ballooning.md",
-    "Technical Design Log/2026-01-07 What else to measure.md",
     "Technologies/Prometheus.md",
-    "Technical Design Log/2026-01-29 Visualizing performance metrics.md",
     "Writing/Implementation - Infrastructure.md",
-    "TODOs.md",
     "System Design/Hardware Specs.md",
     "System Design/ES-CQRS Application.md",
     "Technical Design Log/2026-01-26 Flexibility.md",
     "Writing/Method - Flexibility.md",
     "Writing/Method - Performance.md",
     "Technical Design Log/2025-12-16 Problems with my Axon projections.md",
-    "Writing/Axon.md",
-    "Advice/Spring @Controller vs. @RestController.md",
-    "Advice/JPA.md",
-    "Advice/LLMs bei der Bachelorarbeit (Infoveranstaltung).md",
     "images/Pasted image 20260126165908.png",
     "images/Pasted image 20260126165850.png",
     "images/es-cqrs-query-flow.png",

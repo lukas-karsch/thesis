@@ -668,11 +668,39 @@ Each test follows a specific pattern:
     \item \textbf{Ramp-down}: Linear decrease to 0 \acrshort{rps} over 20 seconds.
 \end{itemize}
 
-A \emph{test configuration} (the combination of a script and target \acrshort{rps}) is executed 30 times. Between runs, the application and dependencies (PostgreSQL/Axon Server) are restarted to ensure independent results. Client-side metrics are captured in \acrshort{json} format, while server-side resource consumption (CPU \& RAM usage) is collected via \hyperref[sec:actuator]{Spring Boot Actuator}.
+A \emph{test configuration} (the combination of a script and target \acrshort{rps}) is executed at least 25 times. Between runs, the application and its dependencies (PostgreSQL/Axon Server) are restarted to ensure independent results. Client-side metrics are captured in \acrshort{json} format, while server-side resource consumption (CPU \& RAM usage) is collected via \hyperref[sec:actuator]{Spring Boot Actuator}.
+
+\subsection{Collected Metrics}
+\label{sec:collected-metrics}
+
+All metrics collected during load testing are listed in \autoref{table:collected-metrics}. The column "Metric" shows the name of the metric that will be used from now on. "Location" describes where the metric is being recorded. As described in \autoref{sec:load-test-theory}, not just the average latency is measured, but \glspl{percentile} are used to accurately report the number of users experiencing the respective latency.
+
+While internal metrics, like CPU usage, RAM usage, the number of database connections (hikari\_connections) and the number of Tomcat worker threads do not directly indicate user-perceived performance, they can give an indicator about bottlenecks inside the applications.
+
+\begin{table}[htp!]
+    \small
+    \centering
+    \begin{tabularx}{\linewidth}{lXl}
+        \toprule
+        \textbf{Metric}     & \textbf{Description}                         & \textbf{Location} \\ \midrule
+        latency\_avg        & Average (arithmetic mean) latency            & Server, Client    \\
+        latency\_p50        & 50th \gls{percentile} Latency (\gls{median}) & Server, Client    \\
+        latency\_p95        & 95th \gls{percentile} Latency                & Server, Client    \\
+        latency\_p99        & 99th \gls{percentile} Latency                & Server, Client    \\
+        cpu\_usage          & CPU usage of the Server process              & Server            \\
+        ram\_usage\_heap    & Usage of Heap memory                         & Server            \\
+        ram\_usage\_total   & Usage of total memory                        & Server            \\
+        hikari\_connections & Number of Data Source connections            & Server            \\
+        tomcat\_threads     & Number of Tomcat worker threads              & Server            \\
+        \bottomrule
+    \end{tabularx}
+    \caption{All metrics collected during load testing}
+    \label{table:collected-metrics}
+\end{table}
 
 \subsection{Visualizing Results}
 
-Data is visualized using box plots and line graphs. Box plots are used to show the distribution of latencies, while line graphs illustrate performance changes as \acrshort{rps} increases. Per scientific standards, error bars are used to represent the variability of the measurements across the 30 test runs.
+Data is visualized using box plots and line graphs. Box plots are used to show the distribution of latencies, while line graphs illustrate performance changes as \acrshort{rps} increases. Per scientific standards, error bars are used to represent the variability of the measurements across the test runs.
 
 \section{Scalability or flexibility (to decide)}
 

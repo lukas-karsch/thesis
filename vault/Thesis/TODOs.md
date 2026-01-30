@@ -27,6 +27,7 @@
 			- [[2025-12-16 Problems with my Axon projections]]
 		- add @Version to projection entities; retry on OptimisticLockException 
 		- **Write performance test for time to consistency**
+		- Add snapshotting!!! 
 - look at axon transaction manager? 
 	- what is it  
 	- for what can it be used / how is it used 
@@ -37,6 +38,11 @@
 	- Write method on flexibility [[Method - Flexibility]]
 	- https://github.com/Witiko/markdown/issues/448
 	- Add back the indentation for paragraphs 
+## Urgent
+- CONFIGURE SNAPSHOTTING
+- **Pull new changes on VMs**
+- re-build maven and docker 
+- restart tests!!! 
 ## Before Finishing
 - Check README
 - Clone repo in blank folder, check everything works

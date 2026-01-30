@@ -64,7 +64,7 @@ http, (stateless) communication, the term "API", REST principles, CRUD
 - show tradeoff when using an identical API -> have to use sendAndWait to be synchronous 
 ### 5.2 Performance measurement 
 -> meant to answer the "performance" part of my research question 
-Benchmarking via load testing. Time taken per request (Median, P95); CPU utilization, database IO; Database size for a fixed number of operations ... 
+Benchmarking via load testing. Time taken per request (Median, P95); CPU utilization, database IO; Database size for a fixed number of operations? 
 ### 5.3 Scalability or flexibility (TODO)
 -> meant to answer the "scalability" part of my research question 
 - measure db size, IO; suggest ways to scale 
@@ -138,6 +138,8 @@ Relevant:
 - [[2026-01-28 PERFORMANCE MUST DO]]
 ### 8.2 Conclusion & Further work 
 - what could be missing from my implementations 
+	- e.g. using Futures, async work; springboot configuation like thread pools, db connection pools, tuning heap memory
+	- caching 
 - what could be missing from my measurements and test strategies? 
 ## Further topics 
 - CAP theorem 
