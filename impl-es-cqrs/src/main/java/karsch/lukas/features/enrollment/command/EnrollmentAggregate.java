@@ -4,6 +4,7 @@ import karsch.lukas.features.enrollment.api.*;
 import karsch.lukas.features.enrollment.exception.MissingGradeException;
 import karsch.lukas.features.lectures.api.CreateEnrollmentCommand;
 import karsch.lukas.time.TimeSlotService;
+import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import org.axonframework.commandhandling.CommandHandler;
 import org.axonframework.eventhandling.EventHandler;
@@ -19,6 +20,7 @@ import static org.axonframework.modelling.command.AggregateLifecycle.apply;
 
 @Slf4j
 @Aggregate(snapshotTriggerDefinition = "snapshotTriggerDefinition")
+@Getter
 public class EnrollmentAggregate {
 
     public static final String PROCESSING_GROUP = "enrollment_commands";
@@ -27,8 +29,6 @@ public class EnrollmentAggregate {
     private UUID id;
 
     private UUID studentId;
-
-    private UUID lectureId;
 
     private UUID courseId;
 
@@ -39,8 +39,6 @@ public class EnrollmentAggregate {
 
     private boolean areCreditsAwarded = false;
 
-    private boolean hasPassed = false;
-
     @CommandHandler
     public EnrollmentAggregate(CreateEnrollmentCommand command) {
         apply(new EnrollmentCreatedEvent(command.enrollmentId(), command.studentId(), command.lectureId(), command.courseId()));
@@ -50,7 +48,14 @@ public class EnrollmentAggregate {
     }
 
     public void handle(AssignGradeCommand command, TimeSlotService timeSlotService) {
-        apply(new GradeAssignedEvent(this.id, command.assessmentId(), command.grade(), command.professorId(), this.studentId, timeSlotService.getCurrentTime()));
+        apply(new GradeAssignedEvent(
+                this.id,
+                command.assessmentId(),
+                command.grade(),
+                command.professorId(),
+                this.studentId,
+                timeSlotService.getCurrentTime())
+        );
     }
 
     public void handle(UpdateGradeCommand command, TimeSlotService timeSlotService) {
@@ -58,7 +63,14 @@ public class EnrollmentAggregate {
             throw new MissingGradeException(command.assessmentId(), command.studentId());
         }
 
-        apply(new GradeUpdatedEvent(this.id, command.assessmentId(), command.grade(), command.professorId(), this.studentId, timeSlotService.getCurrentTime()));
+        apply(new GradeUpdatedEvent(
+                this.id,
+                command.assessmentId(),
+                command.grade(),
+                command.professorId(),
+                this.studentId,
+                timeSlotService.getCurrentTime())
+        );
     }
 
     @CommandHandler
@@ -78,7 +90,6 @@ public class EnrollmentAggregate {
     public void on(EnrollmentCreatedEvent event) {
         this.id = event.enrollmentId();
         this.studentId = event.studentId();
-        this.lectureId = event.lectureId();
         this.courseId = event.courseId();
     }
 
@@ -95,7 +106,6 @@ public class EnrollmentAggregate {
     @EventHandler
     public void on(CreditsAwardedEvent event) {
         this.areCreditsAwarded = true;
-        this.hasPassed = event.hasPassed();
     }
 
 }

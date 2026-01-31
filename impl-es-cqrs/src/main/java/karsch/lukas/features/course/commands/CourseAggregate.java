@@ -3,6 +3,7 @@ package karsch.lukas.features.course.commands;
 import karsch.lukas.features.course.api.CourseCreatedEvent;
 import karsch.lukas.features.course.api.CreateCourseCommand;
 import karsch.lukas.features.course.exceptions.MissingCoursesException;
+import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import org.axonframework.commandhandling.CommandHandler;
 import org.axonframework.eventsourcing.EventSourcingHandler;
@@ -15,6 +16,7 @@ import static org.axonframework.modelling.command.AggregateLifecycle.apply;
 
 @Slf4j
 @Aggregate(snapshotTriggerDefinition = "snapshotTriggerDefinition")
+@Getter
 class CourseAggregate {
 
     static final String PROCESSING_GROUP = "course_commands";

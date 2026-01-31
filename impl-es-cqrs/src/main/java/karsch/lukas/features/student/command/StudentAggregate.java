@@ -13,7 +13,7 @@ import java.util.UUID;
 import static org.axonframework.modelling.command.AggregateLifecycle.apply;
 
 @NoArgsConstructor
-@Aggregate(snapshotTriggerDefinition = "snapshotTriggerDefinition")
+@Aggregate
 public class StudentAggregate {
 
     public static final String PROCESSING_GROUP = "student_commands";

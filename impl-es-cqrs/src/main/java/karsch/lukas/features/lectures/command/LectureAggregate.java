@@ -15,6 +15,7 @@ import karsch.lukas.lecture.TimeSlot;
 import karsch.lukas.time.DateTimeProvider;
 import karsch.lukas.time.TimeSlotComparator;
 import karsch.lukas.time.TimeSlotService;
+import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import org.axonframework.commandhandling.CommandHandler;
 import org.axonframework.eventsourcing.EventSourcingHandler;
@@ -29,6 +30,7 @@ import static org.axonframework.modelling.command.AggregateLifecycle.apply;
 
 @Slf4j
 @Aggregate(snapshotTriggerDefinition = "snapshotTriggerDefinition")
+@Getter
 public class LectureAggregate {
     public static final String PROCESSING_GROUP = "lecture_commands";
 
@@ -39,7 +41,7 @@ public class LectureAggregate {
 
     private int maximumStudents;
 
-    private SortedSet<TimeSlot> timeSlots;
+    private Set<TimeSlot> timeSlots;
 
     private List<UUID> enrolledStudents;
 
@@ -136,7 +138,9 @@ public class LectureAggregate {
             throw new DomainException("New timeSlots contained duplicates");
         }
 
-        if (timeSlotService.areConflictingTimeSlots(this.timeSlots, newSlots)) {
+        var sortedTimeSlots = new TreeSet<>(new TimeSlotComparator());
+        sortedTimeSlots.addAll(this.timeSlots);
+        if (timeSlotService.areConflictingTimeSlots(sortedTimeSlots, newSlots)) {
             throw new DomainException("New time slots are conflicting with existing ones");
         }
 
@@ -162,7 +166,9 @@ public class LectureAggregate {
             throw new DomainException("Student " + command.studentId() + " doesn't exist.");
         }
 
-        if (timeSlotValidator.overlapsWithOtherLectures(this.timeSlots, command.studentId())) {
+        var sortedTimeSlots = new TreeSet<>(new TimeSlotComparator());
+        sortedTimeSlots.addAll(this.timeSlots);
+        if (timeSlotValidator.overlapsWithOtherLectures(sortedTimeSlots, command.studentId())) {
             throw new DomainException("Can not enroll in lectures with overlapping timeslots.");
         }
 
@@ -231,7 +237,7 @@ public class LectureAggregate {
         this.id = lectureCreatedEvent.lectureId();
         this.courseId = lectureCreatedEvent.courseId();
         this.maximumStudents = lectureCreatedEvent.maximumStudents();
-        this.timeSlots = new TreeSet<>(new TimeSlotComparator());
+        this.timeSlots = new HashSet<>();
         timeSlots.addAll(lectureCreatedEvent.dates());
         this.enrolledStudents = new ArrayList<>();
         this.waitlistedStudents = new ArrayList<>();

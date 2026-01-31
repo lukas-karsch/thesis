@@ -19,7 +19,7 @@ public class DatabaseMetricsConfig {
     @Bean
     public MeterBinder databaseSizeBinder(DataSource dataSource) {
         return registry -> Gauge.builder("database.size.bytes", dataSource, ds -> {
-            log.info("Executing databaseSizeBinder");
+            log.debug("Executing databaseSizeBinder");
             try (Connection conn = ds.getConnection();
                  Statement stmt = conn.createStatement();
                  ResultSet rs = stmt.executeQuery("SELECT pg_database_size(current_database())")) {
