@@ -1,10 +1,7 @@
 package karsch.lukas.stats;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.persistence.EntityManager;
-import karsch.lukas.audit.AuditLogEntry;
-import karsch.lukas.audit.AuditService;
+import karsch.lukas.audit.CustomRevisionEntity;
 import karsch.lukas.courses.CourseEntity;
 import karsch.lukas.lecture.LectureStatus;
 import karsch.lukas.lectures.*;
@@ -13,11 +10,17 @@ import karsch.lukas.users.StudentNotFoundException;
 import karsch.lukas.users.StudentRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.hibernate.envers.AuditReader;
+import org.hibernate.envers.AuditReaderFactory;
+import org.hibernate.envers.query.AuditEntity;
+import org.hibernate.envers.query.AuditQuery;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
+import java.time.Instant;
 import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -31,8 +34,6 @@ public class StatsService {
      * The threshold below which a lecture will be marked as failed
      */
     public static final int FAIL_THRESHOLD = 50;
-
-    private final AuditService auditService;
 
     private final StudentRepository studentRepository;
     private final AssessmentGradeRepository assessmentGradeRepository;
@@ -194,7 +195,9 @@ public class StatsService {
         return Math.round(totalGrades / totalWeight);
     }
 
-    public GradeHistoryResponse getGradeHistoryForAssessment(UUID studentId, UUID lectureAssessmentId, LocalDateTime startDate, LocalDateTime endDate) {
+    public GradeHistoryResponse getGradeHistoryForAssessment(
+            UUID studentId, UUID lectureAssessmentId, LocalDateTime startDate, LocalDateTime endDate
+    ) {
         var assessment = lectureAssessmentRepository.findById(lectureAssessmentId)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
 
@@ -203,37 +206,43 @@ public class StatsService {
                 assessment
         ).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
 
-        var auditLogEntries = auditService.getByEntityId(grade.getClass(), grade.getId(), startDate, endDate);
-        log.debug("Found {} auditLogEntries for grade {}: {}", auditLogEntries.size(), grade.getId(), auditLogEntries);
+        AuditReader reader = AuditReaderFactory.get(entityManager);
 
-        final ObjectMapper mapper = new ObjectMapper();
-        var gradeChanges = auditLogEntries.stream()
-                .map(entry -> new GradeChangeDTO(
-                        assessment.getId(),
-                        extractGradeFromAuditEntry(entry, mapper),
-                        entry.getTimestamp())
-                )
+        AuditQuery query = reader.createQuery()
+                .forRevisionsOfEntity(AssessmentGradeEntity.class, false, true)
+                .add(AuditEntity.id().eq(grade.getId())); // match by entity ID
+
+        if (startDate != null) {
+            query.add(AuditEntity.revisionProperty("timestamp").gt(
+                    startDate.atZone(ZoneId.systemDefault()).toInstant().toEpochMilli())
+            );
+        }
+        if (endDate != null) {
+            query.add(AuditEntity.revisionProperty("timestamp").le(
+                    endDate.atZone(ZoneId.systemDefault()).toInstant().toEpochMilli())
+            );
+        }
+
+        List<Object[]> results = query.getResultList();
+
+        var gradeChanges = results.stream()
+                .map(result -> {
+                    AssessmentGradeEntity entity = (AssessmentGradeEntity) result[0];
+                    CustomRevisionEntity revision = (CustomRevisionEntity) result[1];
+
+                    return new GradeChangeDTO(
+                            lectureAssessmentId,
+                            entity.getGrade(),
+                            LocalDateTime.ofInstant(Instant.ofEpochMilli(revision.getTimestamp()), ZoneId.systemDefault())
+                    );
+                })
+                .sorted((g1, g2) -> g2.changedAt().compareTo(g1.changedAt()))
                 .toList();
 
         return new GradeHistoryResponse(
                 studentId,
-                lectureAssessmentId,
+                assessment.getLecture().getId(),
                 gradeChanges
         );
-    }
-
-    private int extractGradeFromAuditEntry(AuditLogEntry auditLogEntry, ObjectMapper mapper) {
-        String newJson = auditLogEntry.getNewValueJson();
-        if (newJson == null) {
-            throw new RuntimeException("newJson is null null on audit log entry " + auditLogEntry.getId());
-        }
-        try {
-            return mapper
-                    .readTree(newJson)
-                    .get("grade")
-                    .asInt();
-        } catch (JsonProcessingException e) {
-            throw new RuntimeException(e);
-        }
     }
 }

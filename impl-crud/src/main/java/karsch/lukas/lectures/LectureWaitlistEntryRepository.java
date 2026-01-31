@@ -10,6 +10,6 @@ import java.util.UUID;
 public interface LectureWaitlistEntryRepository extends JpaRepository<LectureWaitlistEntryEntity, Long> {
     List<LectureWaitlistEntryEntity> findAllByStudentId(UUID studentId);
 
-    List<LectureWaitlistEntryEntity> findByLectureOrderByCreatedDateAsc(LectureEntity lecture);
+    List<LectureWaitlistEntryEntity> findByLectureOrderByCreatedAtAsc(LectureEntity lecture);
 
 }

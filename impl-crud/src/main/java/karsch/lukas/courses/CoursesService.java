@@ -1,7 +1,6 @@
 package karsch.lukas.courses;
 
 import jakarta.transaction.Transactional;
-import karsch.lukas.audit.AuditService;
 import karsch.lukas.course.CourseDTO;
 import karsch.lukas.course.CreateCourseRequest;
 import lombok.RequiredArgsConstructor;
@@ -18,7 +17,6 @@ class CoursesService {
     private final CoursesRepository coursesRepository;
 
     private final CourseDtoMapper courseDtoMapper;
-    private final AuditService auditService;
 
     Set<CourseDTO> getAllCourses() {
         var findAll = coursesRepository.findAllDetailed();

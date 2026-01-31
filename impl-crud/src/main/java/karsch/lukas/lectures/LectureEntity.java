@@ -14,10 +14,8 @@ import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
 import org.hibernate.annotations.SortComparator;
-import org.springframework.data.annotation.CreatedDate;
-import org.springframework.data.annotation.LastModifiedDate;
+import org.hibernate.envers.Audited;
 
-import java.time.LocalDateTime;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -27,6 +25,7 @@ import java.util.stream.Collectors;
 @Setter
 @ToString(exclude = {"waitlist", "enrollments", "assessments"})
 @EqualsAndHashCode(onlyExplicitlyIncluded = true, callSuper = false)
+@Audited
 public class LectureEntity extends AuditableEntity {
     @Id
     @GeneratedUuidV7
@@ -53,7 +52,7 @@ public class LectureEntity extends AuditableEntity {
     private LectureStatus lectureStatus = LectureStatus.DRAFT;
 
     @OneToMany(mappedBy = "lecture", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
-    @OrderBy("createdDate ASC")
+    @OrderBy("createdAt ASC")
     private List<LectureWaitlistEntryEntity> waitlist = new ArrayList<>();
 
     @OneToMany(mappedBy = "lecture", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
@@ -64,12 +63,6 @@ public class LectureEntity extends AuditableEntity {
 
     @Version
     private Long version;
-
-    @CreatedDate
-    private LocalDateTime createdAt;
-
-    @LastModifiedDate
-    private LocalDateTime updatedAt;
 
     @Transient
     public List<StudentEntity> getWaitlistedStudents() {

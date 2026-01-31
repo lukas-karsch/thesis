@@ -1,23 +1,38 @@
 package karsch.lukas.audit;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
+import jakarta.persistence.Column;
 import jakarta.persistence.EntityListeners;
 import jakarta.persistence.MappedSuperclass;
-import jakarta.persistence.Transient;
 import lombok.Getter;
 import lombok.Setter;
+import org.springframework.data.annotation.CreatedBy;
+import org.springframework.data.annotation.CreatedDate;
+import org.springframework.data.annotation.LastModifiedBy;
+import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
+import java.time.LocalDateTime;
+
 /**
- * Base class for entities. Subclasses are monitored for changes and persisted to an audit log before any change. References
- * to other entities are references via the "id" field, they are not serialized.
+ * Base class for entities.
  */
 @MappedSuperclass
-@EntityListeners({AuditEntityListener.class, AuditingEntityListener.class})
+@EntityListeners(AuditingEntityListener.class)
+@Getter
+@Setter
 public abstract class AuditableEntity {
-    @Transient
-    @JsonIgnore
-    @Getter
-    @Setter
-    private String snapshotJson;
+
+    @CreatedBy
+    @Column(updatable = false)
+    private String createdBy;
+
+    @LastModifiedBy
+    private String lastUpdatedBy;
+
+    @CreatedDate
+    @Column(updatable = false)
+    private LocalDateTime createdAt;
+
+    @LastModifiedDate
+    private LocalDateTime updatedAt;
 }

@@ -18,11 +18,11 @@ class LectureWaitlistEntryComparatorTest {
 
         var e1 = new LectureWaitlistEntryEntity();
         e1.setStudent(student1);
-        e1.setCreatedDate(LocalDateTime.of(2025, 1, 1, 12, 0));
+        e1.setCreatedAt(LocalDateTime.of(2025, 1, 1, 12, 0));
 
         var e2 = new LectureWaitlistEntryEntity();
         e2.setStudent(student2);
-        e2.setCreatedDate(LocalDateTime.of(2025, 1, 1, 12, 0));
+        e2.setCreatedAt(LocalDateTime.of(2025, 1, 1, 12, 0));
 
         var underTest = new LectureWaitlistEntryComparator();
 
@@ -41,11 +41,11 @@ class LectureWaitlistEntryComparatorTest {
 
         var e1 = new LectureWaitlistEntryEntity(); // this one should win because it was created earlier
         e1.setStudent(student1);
-        e1.setCreatedDate(LocalDateTime.of(2025, 1, 1, 12, 0));
+        e1.setCreatedAt(LocalDateTime.of(2025, 1, 1, 12, 0));
 
         var e2 = new LectureWaitlistEntryEntity();
         e2.setStudent(student2);
-        e2.setCreatedDate(LocalDateTime.of(2025, 2, 1, 12, 0));
+        e2.setCreatedAt(LocalDateTime.of(2025, 2, 1, 12, 0));
 
         var underTest = new LectureWaitlistEntryComparator();
 

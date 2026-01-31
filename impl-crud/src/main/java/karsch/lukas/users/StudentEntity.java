@@ -8,6 +8,7 @@ import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
+import org.hibernate.envers.Audited;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -19,6 +20,7 @@ import java.util.UUID;
 @Setter
 @ToString
 @EqualsAndHashCode(callSuper = false, onlyExplicitlyIncluded = true)
+@Audited
 public class StudentEntity extends AuditableEntity {
     @Id
     @GeneratedUuidV7

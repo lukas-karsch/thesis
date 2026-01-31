@@ -5,14 +5,13 @@ import karsch.lukas.audit.AuditableEntity;
 import karsch.lukas.users.StudentEntity;
 import lombok.Getter;
 import lombok.Setter;
-import org.springframework.data.annotation.CreatedDate;
-
-import java.time.LocalDateTime;
+import org.hibernate.envers.Audited;
 
 @Entity
 @Table(name = "lecture_waitlist")
 @Getter
 @Setter
+@Audited
 public class LectureWaitlistEntryEntity extends AuditableEntity {
 
     @Id
@@ -27,16 +26,4 @@ public class LectureWaitlistEntryEntity extends AuditableEntity {
     @JoinColumn(name = "student_id", nullable = false)
     private StudentEntity student;
 
-    @CreatedDate
-    private LocalDateTime createdDate;
-
-    @Override
-    public String toString() {
-        return "LectureWaitlistEntryEntity{" +
-                "id=" + id +
-                ", lecture=" + lecture.getId() +
-                ", student=" + student.getId() +
-                ", createdDate=" + createdDate +
-                '}';
-    }
 }

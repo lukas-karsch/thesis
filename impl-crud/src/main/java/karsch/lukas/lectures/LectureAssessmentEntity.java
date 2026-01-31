@@ -9,10 +9,8 @@ import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
-import org.springframework.data.annotation.CreatedDate;
-import org.springframework.data.annotation.LastModifiedDate;
+import org.hibernate.envers.Audited;
 
-import java.time.LocalDateTime;
 import java.util.UUID;
 
 @Entity
@@ -21,6 +19,7 @@ import java.util.UUID;
 @Setter
 @ToString
 @EqualsAndHashCode(onlyExplicitlyIncluded = true, callSuper = false)
+@Audited
 public class LectureAssessmentEntity extends AuditableEntity {
     @Id
     @GeneratedUuidV7
@@ -39,9 +38,4 @@ public class LectureAssessmentEntity extends AuditableEntity {
     @Column(nullable = false)
     private float weight;
 
-    @CreatedDate
-    private LocalDateTime createdAt;
-
-    @LastModifiedDate
-    private LocalDateTime updatedAt;
 }

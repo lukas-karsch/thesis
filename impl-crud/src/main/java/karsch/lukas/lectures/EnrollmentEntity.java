@@ -6,6 +6,7 @@ import karsch.lukas.users.StudentEntity;
 import karsch.lukas.uuid.GeneratedUuidV7;
 import lombok.Getter;
 import lombok.Setter;
+import org.hibernate.envers.Audited;
 import org.springframework.data.annotation.CreatedDate;
 
 import java.time.LocalDateTime;
@@ -15,6 +16,7 @@ import java.util.UUID;
 @Table(name = "enrollments")
 @Getter
 @Setter
+@Audited
 public class EnrollmentEntity extends AuditableEntity {
 
     @Id
@@ -30,6 +32,7 @@ public class EnrollmentEntity extends AuditableEntity {
     private LectureEntity lecture;
 
     @CreatedDate
+    @Column(updatable = false)
     private LocalDateTime enrollmentDate;
 
     @Override

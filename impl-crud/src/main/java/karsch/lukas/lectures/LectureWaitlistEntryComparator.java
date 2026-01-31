@@ -16,6 +16,6 @@ public class LectureWaitlistEntryComparator implements Comparator<LectureWaitlis
         }
 
         // the "smaller" (earlier) date should win the comparison
-        return e2.getCreatedDate().compareTo(e1.getCreatedDate());
+        return e2.getCreatedAt().compareTo(e1.getCreatedAt());
     }
 }

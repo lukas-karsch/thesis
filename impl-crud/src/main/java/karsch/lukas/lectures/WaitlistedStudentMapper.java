@@ -15,7 +15,7 @@ public class WaitlistedStudentMapper implements Mapper<LectureWaitlistEntryEntit
     public WaitlistedStudentDTO map(LectureWaitlistEntryEntity waitlistEntry) {
         return new WaitlistedStudentDTO(
                 studentMapper.map(waitlistEntry.getStudent()),
-                waitlistEntry.getCreatedDate()
+                waitlistEntry.getCreatedAt()
         );
     }
 }

@@ -6,10 +6,8 @@ import karsch.lukas.uuid.GeneratedUuidV7;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
-import org.springframework.data.annotation.CreatedDate;
-import org.springframework.data.annotation.LastModifiedDate;
+import org.hibernate.envers.Audited;
 
-import java.time.LocalDateTime;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.UUID;
@@ -19,6 +17,7 @@ import java.util.UUID;
 @Getter
 @Setter
 @EqualsAndHashCode(onlyExplicitlyIncluded = true, callSuper = false)
+@Audited
 public class CourseEntity extends AuditableEntity {
 
     @Id
@@ -45,11 +44,5 @@ public class CourseEntity extends AuditableEntity {
             inverseJoinColumns = @JoinColumn(name = "prerequisite_id")
     )
     private Set<CourseEntity> prerequisites = new HashSet<>();
-
-    @CreatedDate
-    private LocalDateTime createdAt;
-
-    @LastModifiedDate
-    private LocalDateTime updatedAt;
 
 }

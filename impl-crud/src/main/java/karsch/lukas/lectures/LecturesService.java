@@ -238,7 +238,7 @@ class LecturesService {
         var lecture = lecturesRepository.findById(lectureId)
                 .orElseThrow(() -> new LectureNotFoundException(lectureId));
 
-        var waitlistEntries = lectureWaitlistEntryRepository.findByLectureOrderByCreatedDateAsc(lecture);
+        var waitlistEntries = lectureWaitlistEntryRepository.findByLectureOrderByCreatedAtAsc(lecture);
 
         return new WaitlistDTO(
                 waitlistedStudentMapper.mapToList(waitlistEntries),

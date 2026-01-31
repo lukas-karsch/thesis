@@ -11,6 +11,7 @@ import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
+import org.hibernate.envers.Audited;
 
 import java.util.Set;
 import java.util.UUID;
@@ -21,6 +22,7 @@ import java.util.UUID;
 @Setter
 @ToString
 @EqualsAndHashCode(callSuper = false, onlyExplicitlyIncluded = true)
+@Audited
 public class ProfessorEntity extends AuditableEntity {
     @Id
     @GeneratedUuidV7

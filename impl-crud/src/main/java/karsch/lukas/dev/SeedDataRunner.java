@@ -51,6 +51,11 @@ public class SeedDataRunner implements CommandLineRunner {
                 )
         );
 
+        if (coursesRepository.count() > 0) {
+            log.info("Database is not empty, seeding will be skipped.");
+            return;
+        }
+
         log.info("Seeding data...");
 
         var students = createStudents();
