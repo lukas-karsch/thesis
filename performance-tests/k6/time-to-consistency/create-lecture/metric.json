@@ -1,0 +1,11 @@
+{
+  "metric": {
+    "method": "POST",
+    "uri": "/lectures/create"
+  },
+  "file": "create-lecture.js",
+  "metadata": {
+    "title": "Time to consistency for POST /lectures/create"
+  },
+  "VUs": 50
+}

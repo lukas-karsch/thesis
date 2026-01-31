@@ -646,7 +646,7 @@ The test environment and scenarios are defined as code to ensure reproducibility
         \toprule
         \textbf{Component} & \textbf{Specification}                                                      \\ \midrule
         CPU                & 13th Gen Intel(R) Core(TM) i7-13700H. 14 Cores, 20 total threads. Max. 5GHz \\
-        RAM                & 32GB DDR4                                                                   \\
+        RAM                & 32GB DDR4 (2x16GB), 3200 MT/s                                               \\
         Hard Drive         & SanDisk Plus SSD 1TB 2.5" SATA 6GB/s                                        \\
         \bottomrule
     \end{tabularx}
@@ -673,25 +673,43 @@ A \emph{test configuration} (the combination of a script and target \acrshort{rp
 \subsection{Collected Metrics}
 \label{sec:collected-metrics}
 
-All metrics collected during load testing are listed in \autoref{table:collected-metrics}. The column "Metric" shows the name of the metric that will be used from now on. "Location" describes where the metric is being recorded. As described in \autoref{sec:load-test-theory}, not just the average latency is measured, but \glspl{percentile} are used to accurately report the number of users experiencing the respective latency.
+All metrics collected during load testing are listed in \autoref{table:collected-metrics}. The column "Metric" shows the name that will be used to refer to this metric from now on. "Location" describes where the metric is being recorded.
 
-While internal metrics, like CPU usage, RAM usage, the number of database connections (hikari\_connections) and the number of Tomcat worker threads do not directly indicate user-perceived performance, they can give an indicator about bottlenecks inside the applications.
+As described in \autoref{sec:load-test-theory}, not just the average latency is measured, but \glspl{percentile} are used to accurately report the number of users experiencing the respective latency.
+
+While internal metrics, like CPU usage, RAM usage, the number of database connections ($hikari\_connections$) and the number of Tomcat worker threads are not measures for user-perceived performance, they can give an indicator about bottlenecks inside the applications.
+
+Even though latencies are measured on both the client and the server, the client latency will be used primarily when visualizing results, as it is the latency users perceive when interacting with the applications. The server latency is recorded because it can help identify queueing delays by exposing differences in server and client latencies which exceed a factor of 1.1x.
+
+$axon\_storage\_size$ is only recorded for the ES-CQRS application. $postgres\_size$ can be recorded for both applications. The CRUD implementation stores its entities and audit log in PostgreSQL, while the ES-CQRS implementation uses PostgreSQL as a secondary data store where denormalized projections and lookup tables live. These metrics are relevant when assessing a system's long-term performance, scalability and maintainability.
 
 \begin{table}[htp!]
     \small
     \centering
     \begin{tabularx}{\linewidth}{lXl}
         \toprule
-        \textbf{Metric}     & \textbf{Description}                         & \textbf{Location} \\ \midrule
-        latency\_avg        & Average (arithmetic mean) latency            & Server, Client    \\
-        latency\_p50        & 50th \gls{percentile} Latency (\gls{median}) & Server, Client    \\
-        latency\_p95        & 95th \gls{percentile} Latency                & Server, Client    \\
-        latency\_p99        & 99th \gls{percentile} Latency                & Server, Client    \\
-        cpu\_usage          & CPU usage of the Server process              & Server            \\
-        ram\_usage\_heap    & Usage of Heap memory                         & Server            \\
-        ram\_usage\_total   & Usage of total memory                        & Server            \\
-        hikari\_connections & Number of Data Source connections            & Server            \\
-        tomcat\_threads     & Number of Tomcat worker threads              & Server            \\
+        \textbf{Metric}       & \textbf{Description}                                 & \textbf{Location} \\ \midrule
+        $latency\_avg$        & Average (arithmetic mean) latency                    & Server, Client    \\
+        \addlinespace
+        $latency\_p50$        & 50th \gls{percentile} Latency (\gls{median})         & Server, Client    \\
+        \addlinespace
+        $latency\_p95$        & 95th \gls{percentile} Latency                        & Server, Client    \\
+        \addlinespace
+        $latency\_p99$        & 99th \gls{percentile} Latency                        & Server, Client    \\
+        \addlinespace
+        $cpu\_usage$          & CPU usage of the Server process                      & Server            \\
+        \addlinespace
+        $ram\_usage\_heap$    & Usage of Heap memory                                 & Server            \\
+        \addlinespace
+        $ram\_usage\_total$   & Usage of total memory                                & Server            \\
+        \addlinespace
+        $hikari\_connections$ & Number of Data Source connections                    & Server            \\
+        \addlinespace
+        $tomcat\_threads$     & Number of Tomcat worker threads                      & Server            \\
+        \addlinespace
+        $postgres\_size$      & Size of PostgreSQL database                          & Server            \\
+        \addlinespace
+        axon\_storage\_size   & Size of Axon storage, incl. Event and Snapshot store & Axon Server       \\
         \bottomrule
     \end{tabularx}
     \caption{All metrics collected during load testing}
@@ -702,7 +720,17 @@ While internal metrics, like CPU usage, RAM usage, the number of database connec
 
 Data is visualized using box plots and line graphs. Box plots are used to show the distribution of latencies, while line graphs illustrate performance changes as \acrshort{rps} increases. Per scientific standards, error bars are used to represent the variability of the measurements across the test runs.
 
-\section{Scalability or flexibility (to decide)}
+\subsection{Performance Implications (TODO)}
+
+The results collected during load testing show how the applications perform under varying load and different situations. Writes and reads are both tested using endpoints which require a varying degree of invariant checking or entity JOINS.
+
+This section will describe the implications of the collected results on the predicted scalability of systems. To do so, literature is analyzed which describes the correlation between performance, resource usage and scalability. We analyze how quickly a system reaches its bottlenecks and in which cases which system is better scalable.
+
+Scalability also depends on the architecture of a software. For example, an application designed to separate reads and writes allows to separate the application into microservices more easily than a monolith. This view on scalability will be described further when presenting the results of architectural metrics.
+
+\section{Flexibility - Architectural Metrics (TODO)}
+
+This section describes various architectural metrics which are established in literature and used to assess the flexibility and quality of a software architecture.
 
 \section{Traceability}
 
@@ -1181,6 +1209,33 @@ During the provisioning process, a number of steps are executed. First, it is ma
 Instead of starting the \acrshort{vm} directly, the script shuts the \acrshort{vm} down and converts it into a Proxmox template, which can be re-created efficiently.
 
 \section{Performance Tests}
+
+This section describes the implementation of load tests.
+
+\subsection{k6 Tests}
+
+Using k6, several test scripts were written. Show structure and example for one script: seed data in setup function, options (ramping arrival rate, open model!), export default function.
+
+\subsection{Load Test Lifecycle}
+
+k6 script alone is not enough: it can perform test on a running application, but thats it. To run the test and collect metrics, in between runs restart the app and dependencies, lifecycle needs to be managed.
+
+Elements:
+
+\begin{itemize}
+    \item perf\_runner.py. Docker remote context, start docker compose, start Prometheus. After finishing test execution, collect metrics and postprocess (link to next subsection) This can maybe be described using a diagram?
+    \item which relies on metric.json definition
+    \item many\_runs.py to orchestrate a big amount of runs
+    \item then finally, shell scripts executing the many\_runs.py many times, in between adjusting configuration of VUs (RPS)
+\end{itemize}
+
+\subsection{Post Processing Test Results}
+
+Collected Prometheus metrics are (partly) post-processed and aggregated. For example, turn client and server latency metrics into aggregated CSV files which contain $latency\_avg$, $latency\_p50$ etc.
+
+\subsection{Testing "Freshness": Time to Consistency (TODO)}
+
+This is a "special" case of test because after trying to create, we want to find out how quickly that change is reflected in the read model. Implementation is still to do.
 
 \chapter{Results}
 

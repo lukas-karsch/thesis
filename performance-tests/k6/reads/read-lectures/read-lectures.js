@@ -2,6 +2,7 @@ import http from 'k6/http';
 import {group, sleep} from "k6";
 import {assertResponseIs201, checkResponseIs200} from "../../helper/assert.js";
 import {getVUS} from "../../helper/env.js";
+import {getOffsetDate, setTime} from "../../helper/time.js"
 
 const TARGET_HOST = __ENV.HOST || 'http://localhost:8080';
 
@@ -82,7 +83,7 @@ export function setup() {
         "hour": 10,
         "minutes": 0,
         "seconds": 0
-    });
+    }, http, TARGET_HOST);
 
     //
     // CREATE LECTURES
@@ -174,26 +175,3 @@ export default function (data) {
         checkResponseIs200(res);
     });
 }
-
-const setTime = (newTime) => {
-    const res = http.post(`${TARGET_HOST}/actuator/date-time`, JSON.stringify(newTime), {
-        headers: {
-            "Content-Type": "application/json"
-        }
-    });
-    assertResponseIs201(res)
-}
-
-/**
- * Helper to shift a date by a specific number of days.
- * Automatically handles month-end (e.g., Dec 31 -> Jan 1).
- */
-const getOffsetDate = (baseDateStr, dayOffset) => {
-    const date = new Date(baseDateStr);
-
-    // Increment the day by the index
-    date.setDate(date.getDate() + dayOffset);
-
-    // Returns YYYY-MM-DD
-    return date.toISOString().split('T')[0];
-};

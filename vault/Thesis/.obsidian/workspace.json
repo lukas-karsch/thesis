@@ -4,67 +4,53 @@
     "type": "split",
     "children": [
       {
-        "id": "13cf22d972eda8f8",
+        "id": "67eb1f11eeb98e7d",
         "type": "tabs",
         "children": [
           {
-            "id": "8e59a6056e6a7de2",
+            "id": "93d33e3918725cb3",
             "type": "leaf",
             "state": {
               "type": "markdown",
               "state": {
-                "file": "Technical Design Log/2026-01-28 PERFORMANCE MUST DO.md",
+                "file": "Writing/Method - Performance.md",
                 "mode": "source",
                 "source": false
               },
               "icon": "lucide-file",
-              "title": "2026-01-28 PERFORMANCE MUST DO"
+              "title": "Method - Performance"
             }
           },
           {
-            "id": "b247a4758c33eeb0",
+            "id": "a00dd4c0e12bcd0a",
             "type": "leaf",
             "state": {
               "type": "markdown",
               "state": {
-                "file": "Technical Design Log/2026-01-10 Run performance tests on a VM.md",
+                "file": "Technical Design Log/2026-01-31 Big performance issue exposed.md",
                 "mode": "source",
                 "source": false
               },
               "icon": "lucide-file",
-              "title": "2026-01-10 Run performance tests on a VM"
+              "title": "2026-01-31 Big performance issue exposed"
             }
           },
           {
-            "id": "8ab61ceef1b21e78",
+            "id": "c4513c06be836b5b",
             "type": "leaf",
             "state": {
               "type": "markdown",
               "state": {
-                "file": "Technical Design Log/2026-01-30 Axon Event Store Segment Size.md",
+                "file": "Advice/VMs.md",
                 "mode": "source",
                 "source": false
               },
               "icon": "lucide-file",
-              "title": "2026-01-30 Axon Event Store Segment Size"
-            }
-          },
-          {
-            "id": "c68ed677d5722e44",
-            "type": "leaf",
-            "state": {
-              "type": "markdown",
-              "state": {
-                "file": "Technologies/AXON - CQRS and Event Sourcing Framework.md",
-                "mode": "source",
-                "source": false
-              },
-              "icon": "lucide-file",
-              "title": "AXON - CQRS and Event Sourcing Framework"
+              "title": "VMs"
             }
           }
         ],
-        "currentTab": 2
+        "currentTab": 1
       }
     ],
     "direction": "vertical"
@@ -96,7 +82,7 @@
             "state": {
               "type": "search",
               "state": {
-                "query": "snapshot",
+                "query": "prometheu",
                 "matchingCase": false,
                 "explainSearch": false,
                 "collapseAll": false,
@@ -212,34 +198,34 @@
       "bases:Create new base": false
     }
   },
-  "active": "8ab61ceef1b21e78",
+  "active": "a00dd4c0e12bcd0a",
   "lastOpenFiles": [
-    "Technical Design Log/2026-01-28 PERFORMANCE MUST DO.md",
+    "Technologies/Prometheus.md",
+    "Technical Design Log/2026-01-31 Big performance issue exposed.md",
+    "Writing/Metrics.md",
+    "TODOs.md",
+    "Technologies/Docker.md",
+    "Advice/VMs.md",
+    "Writing/Method - Performance.md",
+    "Writing/Method - Flexibility.md",
+    "Technical Design Log/2026-01-10 Run performance tests on a VM.md",
+    "Technical Design Log/2025-12-19 Preparing for performance tests.md",
     "Technical Design Log/2026-01-30 Axon Event Store Segment Size.md",
+    "Technical Design Log/2026-01-28 PERFORMANCE MUST DO.md",
     "Technologies/AXON - CQRS and Event Sourcing Framework.md",
     "Technical Design Log/2026-01-29 Visualizing performance metrics.md",
-    "TODOs.md",
-    "Advice/VMs.md",
     "Writing/Axon.md",
     "Technical Design Log/2026-01-07 What else to measure.md",
     "Technical Design Log/2026-01-26 Scalability and performance.md",
     "Technologies/Testcontainers.md",
     "Writing/Outline.md",
     "Technical Design Log/2025-12-29 Where to measure.md",
-    "Technical Design Log/2026-01-10 Run performance tests on a VM.md",
     "Technical Design Log/2026-01-07 How i could measure flexibility.md",
     "Advice/Performance Metrics.md",
-    "Technical Design Log/2025-12-19 Preparing for performance tests.md",
     "Technical Design Log/2025-12-22 What can i benchmark.md",
     "Technical Design Log/2026-01-03 Measurements.md",
     "Technical Design Log/2026-01-13 Ballooning.md",
-    "Technologies/Prometheus.md",
     "Writing/Implementation - Infrastructure.md",
-    "System Design/Hardware Specs.md",
-    "System Design/ES-CQRS Application.md",
-    "Technical Design Log/2026-01-26 Flexibility.md",
-    "Writing/Method - Flexibility.md",
-    "Writing/Method - Performance.md",
     "images/Pasted image 20260126165908.png",
     "images/Pasted image 20260126165850.png",
     "images/es-cqrs-query-flow.png",

@@ -38,6 +38,12 @@ sudo reboot
 2. copy `id_ed2519.pub` 
 3. Go to server 
 4. `nano ~/.ssh/authorized_keys` > paste 
+
+**Can not delete file / folder**
+May occur when running maven 
+```bash
+sudo chown -R thesis .
+```
 ## Links 
 - [[2026-01-10 Run performance tests on a VM]]
 - [[2026-01-28 PERFORMANCE MUST DO]]

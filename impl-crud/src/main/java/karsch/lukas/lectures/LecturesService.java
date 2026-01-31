@@ -210,13 +210,13 @@ class LecturesService {
         lecture.setProfessor(professor);
         lecture.setMaximumStudents(createLectureRequest.maximumStudents());
 
+        if (timeSlotService.containsOverlappingTimeslots(createLectureRequest.dates())) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Overlapping or duplicate time slots are not allowed");
+        }
+
         final List<TimeSlotValueObject> timeSlots = createLectureRequest.dates().stream()
                 .map(t -> new TimeSlotValueObject(t.date(), t.startTime(), t.endTime()))
                 .toList();
-
-        if (timeSlotService.containsOverlappingTimeslots(timeSlots, timeSlotMapper)) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Overlapping or duplicate time slots are not allowed");
-        }
 
         lecture.getTimeSlots().addAll(timeSlots);
 

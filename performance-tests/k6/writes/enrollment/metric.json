@@ -1,0 +1,11 @@
+{
+  "metric": {
+    "method": "POST",
+    "uri": "/lectures/{lectureId}/enroll"
+  },
+  "file": "enroll-to-lecture.js",
+  "metadata": {
+    "title": "Latency for lecture enrollment"
+  },
+  "VUs": 25
+}

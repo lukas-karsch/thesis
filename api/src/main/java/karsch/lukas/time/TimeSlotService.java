@@ -101,7 +101,7 @@ public class TimeSlotService {
     }
 
     public boolean containsOverlappingTimeslots(Collection<TimeSlot> timeSlots) {
-        if (timeSlots.isEmpty()) {
+        if (timeSlots.isEmpty() || timeSlots.size() == 1) {
             return false;
         }
 

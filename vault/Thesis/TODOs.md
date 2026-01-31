@@ -37,12 +37,9 @@
 - **Writing**
 	- Write method on flexibility [[Method - Flexibility]]
 	- https://github.com/Witiko/markdown/issues/448
-	- Add back the indentation for paragraphs 
+	- Unify naming of load vs performance testing
 ## Urgent
-- CONFIGURE SNAPSHOTTING
-- **Pull new changes on VMs**
-- re-build maven and docker 
-- restart tests!!! 
+- ...
 ## Before Finishing
 - Check README
 - Clone repo in blank folder, check everything works
