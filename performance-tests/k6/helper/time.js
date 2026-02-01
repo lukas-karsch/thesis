@@ -7,10 +7,8 @@ import {assertResponseIs201} from "./assert.js";
 export const getOffsetDate = (baseDateStr, dayOffset) => {
     const date = new Date(baseDateStr);
 
-    // Increment the day by the index
-    date.setDate(date.getDate() + dayOffset);
+    date.setUTCDate(date.getUTCDate() + dayOffset);
 
-    // Returns YYYY-MM-DD
     return date.toISOString().split('T')[0];
 };
 

@@ -2,12 +2,13 @@ import http from 'k6/http';
 import {check, group, sleep} from "k6";
 import {assertResponseIs201} from "../../helper/assert.js";
 import {getVUS} from "../../helper/env.js";
+import {getOffsetDate} from "../../helper/time.js";
 
 const TARGET_HOST = __ENV.HOST || 'http://localhost:8080';
 const VUS = getVUS(__ENV);
 
-// Max iterations a single VU is expected to perform. Used to calculate the amount of data to create.
-const MAX_ITER_PER_VU = 200;
+const maxVUs = VUS;
+const MAX_ITER_PER_VU = (80 * VUS + 20 * VUS) / maxVUs; // calculated from stages below.
 
 export const options = {
     scenarios: {
@@ -15,7 +16,7 @@ export const options = {
             executor: "ramping-arrival-rate",
             timeUnit: "1s",
             preAllocatedVUs: VUS,
-            maxVUs: VUS,
+            maxVUs,
             stages: [
                 {target: VUS, duration: "20s"},
                 {target: VUS, duration: "80s"},
@@ -166,10 +167,4 @@ const setTime = (newTime) => {
         headers: {"Content-Type": "application/json"}
     });
     assertResponseIs201(res);
-};
-
-const getOffsetDate = (baseDateStr, dayOffset) => {
-    const date = new Date(baseDateStr);
-    date.setDate(date.getDate() + dayOffset);
-    return date.toISOString().split('T')[0]; // Returns YYYY-MM-DD
 };

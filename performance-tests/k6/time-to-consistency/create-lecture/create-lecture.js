@@ -1,6 +1,6 @@
 import http from 'k6/http';
 import {sleep} from "k6"
-import {Rate, Trend} from "k6/metrics";
+import {Rate} from "k6/metrics";
 import {getVUS} from "../../helper/env.js";
 import {setTime} from "../../helper/time.js";
 import {assertResponseIs201} from "../../helper/assert.js";
@@ -9,8 +9,7 @@ const TARGET_HOST = __ENV.HOST || 'http://localhost:8080';
 
 const VUS = getVUS(__ENV);
 
-const timeToConsistency = new Trend("time_to_consistency_ms");
-const missingUpdateRate = new Rate("missing_update_rate");
+const readIsVisible = new Rate("read_visible_rate"); // described missing update within 100ms (defined by Freshness SLO)
 
 export const options = {
     scenarios: {
@@ -18,12 +17,18 @@ export const options = {
             executor: "ramping-arrival-rate",
             timeUnit: "1s",
             preAllocatedVUs: VUS,
+            maxVUs: Math.floor(VUS * 1.5),
             stages: [
                 {target: VUS, duration: "20s"},
                 {target: VUS, duration: "80s"},
                 {target: 0, duration: "20s"}
             ]
         }
+    },
+    thresholds: {
+        // add dummy thresholds so the two endpoints show up separately in the resulting JSON
+        'http_req_duration{endpoint:/lectures/create}': ['avg>0'],
+        'http_req_duration{endpoint:/lectures/{lectureId}}': ['avg>0'],
     },
     summaryTrendStats: ["med", "p(99)", "p(95)", "avg"],
 };
@@ -101,6 +106,9 @@ export default function (data) {
             'Content-Type': 'application/json',
             'customAuth': `professor_${professorId}`
         },
+        tags: {
+            endpoint: "/lectures/create"
+        }
     };
 
     const payload = JSON.stringify({
@@ -117,20 +125,15 @@ export default function (data) {
     assertResponseIs201(res);
     const lectureId = res.json().data;
 
-    const pollingStartTime = Date.now()
-    let timePassed = 0
-    let sleepDuration = 0.05;
-    while (timePassed < 5_000) { // Poll for 5 seconds max
-        const pollingResponse = http.get(`${TARGET_HOST}/lectures/${lectureId}`);
-        if (pollingResponse.status === 200) {
-            timeToConsistency.add(timePassed);
-            missingUpdateRate.add(false);
-            return;
+    sleep(0.1)
+    const pollingResponse = http.get(`${TARGET_HOST}/lectures/${lectureId}`, {
+        tags: {
+            endpoint: "/lectures/{lectureId}"
         }
-        missingUpdateRate.add(true);
-        sleep(sleepDuration)
-        sleepDuration *= 1.5
-        timePassed = Date.now() - pollingStartTime;
+    });
+    if (pollingResponse.status === 200) {
+        readIsVisible.add(true);
+    } else {
+        readIsVisible.add(false);
     }
-    timeToConsistency.add(5_000);
 }
