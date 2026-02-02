@@ -2,10 +2,12 @@
 - Evans, Domain Driven Design 
 - Betts et al: **_Exploring CQRS and Event Sourcing_. Microsoft patterns & practices.** This is a practical guide that discusses the transition from CRUD to CQRS
 - Fowler, Event sourcing
+- Young, CQRS documents 
 
 **RS 1 - performance and scalability**
 - Kleppman, 2017, data intensive systems 
-	- Focus on chapter 11 (stream processing). Performance implications of log structured storage vs. B-Trees (db index)
+	- Chapter 1: scalability, performance, approaches for coping with load 
+	- Chapter 11 (stream processing). Performance implications of log structured storage vs. B-Trees (db index)
 - Jogalekar et al, Evaluating the scalability of distributed systems
 	- provides a formal mathematical framework for defining "Scalability" in your thesis, moving it from a buzzword to a measurable metric ($P = \lambda / T$).
 - Singh, 2025 presents a performance comparison between DDD and CQRS. Yes, DDD is not "classical" CRUD architecture, but clearly the migration to separate read and write paths yielded a performance increase 
@@ -29,7 +31,7 @@
 "To answer your question effectively:
 1. **Use Source** **and** to establish your baseline comparison: ES tends to increase **Code Volume/Class Count** but decrease **Cyclomatic Complexity** and **Coupling**.
 2. **Use Source****,****, and** to define the specific metrics (CK, MOOD, Martin's) you will analyze and the statistical methods (Regression) appropriate for them.
-3. **Use Source** **and** to explain the architectural implications of your stats—e.g., why lower coupling in ES leads to better long-term flexibility despite higher initial boilerplate code."
+3. Explain the architectural implications of your stats—e.g., why lower coupling in ES leads to better long-term flexibility despite higher initial boilerplate code."
 
 **RS 3 - traceability** 
 - Gantz, 2014: Basics of IT Audit 

@@ -11,3 +11,5 @@ Worked like a charm. Added `@Audited` to all my entities. Used the opportunity t
 Made sure Envers and JPA know about my custom system time. 
 
 All tests on impl-crud pass. Only took 60 minutes... Shouldve done that way earlier, would have saved hours of work spent implementing a terrible custom audit log 
+
+After making this change, the CRUD application sped up immensely in the "read lectures" test

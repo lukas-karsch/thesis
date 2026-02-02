@@ -1,4 +1,4 @@
-I found the following metrics 
+I found the following metrics for static analysis 
 - **Chidamber Kemerer**
 	- WMC (Weighted methods per class)
 	- CBO (Coupling between objects)

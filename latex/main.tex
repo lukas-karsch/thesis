@@ -302,6 +302,8 @@
 
 \newacronym{scp}{SCP}{Secure Copy}
 
+\newacronym[text={research question}]{rs}{RS}{Research Question}
+
 \begin{document}
 
 \title{How does an Event Sourcing architecture compare to CRUD systems with an independent audit log, when it comes to scalability, performance and traceability?}
@@ -402,7 +404,7 @@ To provide a comprehensive answer, the following three sub-questions are address
     \item \textbf{Historical Traceability:} To what extent can \acrshort{crud} and \acrshort{es}-\acrshort{cqrs} systems accurately and efficiently reconstruct historical states to satisfy business intent and compliance requirements? \label{rs-traceability}
 \end{enumerate}
 
-The individual findings from these sub-questions are combined in the conclusion to provide a holistic answer to the primary research question.
+The individual findings from these \glspl{rs} are combined in the conclusion to provide a holistic answer to the primary research question.
 
 \section{Goals and non goals (TODO)}
 \label{sec:goals}
@@ -585,6 +587,10 @@ An audit log (often called audit trail) is a chronological record which provides
 
 \textcite{fowler_audit_2004} describes an audit log as simple and effective way of storing temporal information. Changes are tracked by writing a record indicating \emph{what} changed \emph{when}. A basic implementation of an audit log can have many forms, for example a text file, database tables or \acrshort{xml} documents. Fowler also mentions that while the audit log is easy to write, it is harder to read and process. While occasional reads can be done by eye, complex processing and reconstruction of historical state can be resource-intensive.
 
+In distributed environments or complex application architectures, the implementation of an audit log often introduces the "dual-write" problem. This occurs when an application is responsible for updating the primary database (the current state) and simultaneously emitting a record to a separate audit log or messaging system. As \textcite[452,453]{kleppmann_designing_2017} notes, ensuring atomicity across these two distinct writes is technically challenging. If the primary database update succeeds, but the audit log write fails, or vice versa, the two systems will diverge, leading to a loss of data integrity where the audit trail no longer reflects the "real" state of the system.
+
+This separation highlights, that in traditional \acrshort{crud} systems, the audit log is simply a secondary source of truth. As it relies on application- or database-level logic, it is nothing more but a passive observer, relying on notifications from the primary process.
+
 \subsection{Event Streams as a Basis for Traceability}
 
 While \hyperref[sec:audit-log]{traditional audit logs} are often implemented as secondary systems that capture state changes, event-driven architectures, such as those utilizing Event Sourcing, turn an event stream into the primary source of truth. In this context, an event stream is not just a diagnostic tool but an exact, chronological sequence of intent-driven records.
@@ -615,13 +621,54 @@ Then address write and read scalability; and differences in ES and CRUD architec
 
 ES-CQRS with snapshots as strategy for scaling huge event streams (quicker reconstruction of state); but increased storage size. Data is often duplicated across projections.
 
-\chapter{Related Work}
+\chapter{Related Work (TODO)}
+
+After the theoretical foundations of the thesis are covered, this chapter presents work related to the \acrlongpl{rs}. As there are 3 sub-questions to address, this chapter is divided into three sections.
+
+\section{RS1 - Performance and Scalability}
+
+\begin{itemize}
+    \item Kleppman, 2017, data intensive systems
+          - Chapter 1: scalability, performance, approaches for coping with load
+          - Chapter 11 (stream processing). Performance implications of log structured storage vs. B-Trees (db index)
+    \item Jogalekar et al, 2000. "Evaluating the scalability of distributed systems" provides a formal mathematical framework for defining "Scalability" ($P = \lambda / T$).
+    \item Singh, 2025 presents a performance comparison between DDD and CQRS. While DDD is not a traditional CRUD architecture, clearly the migration to separate read and write paths gave a performance increase
+    \item Jayaraman et al, 2024 "Implementing Command Query Responsibility Segregation (CQRS) in Large-Scale Systems"
+          includes a performance benchmark (p. 58ff)
+\end{itemize}
+
+\section{RS2 - architectural complexity, maintainability, flexibility}
+
+\begin{itemize}
+    \item Singh, 2025 "Using CQRS and Event Sourcing in the Architecture of Complex Software Solutions"
+          - specific results on code metrics: the transition to CQRS/ES increased the total number of classes (from 47 to 213) but decreased the overall cyclomatic complexity (from 534 to 522)
+          - highlights that individual modules become simpler despite higher number of classes
+    \item "Object Oriented Coupling based Test Case Prioritization":
+          - statistical approach (linear regression, hypothesis testing) to correlate OO metrics with software quality
+          - Defines and analyzes the CK Metrics Suite (WMC, DIT, NOC, CBO, RFC, LCOM). It establishes empirical correlations, such as Coupling Between Objects (CBO) having the strongest negative impact on quality
+    \item  Comparative Study of the Software Metrics for the complexity and Maintainability of Software Development: can act as "dictionary" for all the code metrics
+\end{itemize}
+
+\section{RS3 - traceability}
+
+\begin{itemize}
+    \item Maybe Gantz, 2014: Basics of IT Audit
+    \item Vamshikrishna Monagari: "Demystifying Event-Driven Microservices in Cloud-Native  FinTech Applications"
+          - contains many quantitative results, e.g.40\% lower latency for ES applications; 95\% reduction in compliance audit preparation time; reduced time for root cause analysis.
+          - Paper seems to be problematic as I could not find some of the mentioned results in the references
+\end{itemize}
+
+Maybe include sources talking about GDPR and the \emph{problems} with a non-erasable event log, and some solutions mitigating the problem? $\rightarrow$ "right to be forgotten". This is not a goal of this thesis but related.
 
 \chapter{Proposed Method}
 
-This thesis aims to provide a fair, quantitative comparison of \acrshort{crud} and \acrshort{cqrs} / \acrshort{es} architectures. To achieve this, the architectures should be applied not only to the same domain, but to the exact same requirements. The implementations can then be tested against the same \glspl{contract-test}.
+This thesis aims to provide a fair, quantitative comparison of \acrshort{crud} and \acrshort{cqrs} / \acrshort{es} architectures regarding all three research questions. To achieve this, the architectures should be applied not only to the same domain, but to the exact same requirements. The implementations can then be tested against the same \glspl{contract-test} to ensure their interfaces and behavior is identical.
 
-This chapter will first present the requirements and the domain for the actual application, then outline metrics and comparison methods.
+This chapter will first present the requirements and the domain for the actual application, then outline the proposed method used to answer each research question. \acrshort{rs} 1, concerning itself with performance and scalability evaluation, necessitates describing load testing foundations and implications of performance on scalability of a system.
+
+Scalability is also a function of architectural flexibility, which is addressed by \acrshort{rs} 2. This flexibility will be quantified using code quality metrics based on static analysis, which are also presented.
+
+Finally, traceability, the core of \acrshort{rs} 3, is defined and the method to evaluate it will be described. (TODO...)
 
 \section{Project requirements}
 
@@ -635,6 +682,8 @@ The applications will implement a course enrollment and grading system which mig
     \item Students can view their credits
 \end{itemize}
 
+TODO here: create a more precise feature / business rule matrix; consolidate with \autoref{sec:business-rules}.
+
 \subsection{Entities}
 \label{sec:entities}
 
@@ -644,9 +693,10 @@ Professors can create courses. Courses have a name, a description, an amount of 
 
 Courses are the "blueprints" for lectures. Lectures are the "implementation" of a course for a semester. Each lecture created from a course yields the course's amount of credits and has the requirements specified by the course. Lectures have a lifecycle: they can be in draft state, open for enrollment, in progress, finished or archived. A lecture has a list of time slots and a maximum amount of students that can enroll.
 
-A lecture can have several assessments. Each assessment has a type. The professor can enter grades for a student and an assessment. Grades are integers in the range of 0 to 100. Credits are awarded to a student as soon as they completed all assessments for a lecture with a passing grade (grade higher than 50).
+A lecture can have several assessments. Each assessment has a type. The professor can enter grades for a student and an assessment. Grades are integers in the range of 0 to 100. Credits are awarded to a student as soon as they completed all assessments for a lecture with a passing grade (grade higher than 50) and once a lecture's status is set to finished.
 
 \subsection{Business rules}
+\label{sec:business-rules}
 
 Relationships and business rules in this system are deliberately chosen complex, involving many relationships between \hyperref[sec:entities]{entities} and intricate validation rules. This approach was adopted in order to be able to make realistic assumptions about the research question by evaluating a project that closely resembles complex, real-world scenarios.
 
@@ -667,7 +717,7 @@ To ensure both implementations adhere to the business rules, an extensive test s
 
 \section{Performance}
 
-\hyperref[rs-performance-scalability]{Research question 1} evaluates and compares the performance characteristics of both architectural patterns. To achieve this, load tests are executed on selected endpoints. The theoretical foundations of load testing, the environmental constraints, and the data collection methodology are described in this section.
+To answer \hyperref[rs-performance-scalability]{\acrshort{rs} 1}, the performance characteristics of both architectural patterns will be evaluated and compared. To achieve this, load tests are executed on selected endpoints. The theoretical foundations of load testing, the environmental constraints, and the data collection methodology are described in this section.
 
 \subsection{Theoretical Load Testing Foundations}
 \label{sec:load-test-theory}
@@ -793,17 +843,71 @@ This subsection lists every load testing scenario and explains why its results a
 \begin{itemize}
     \item Create Courses Simple
     \item Create Courses with Prerequisites
-    \item Get lectures
-    \item Enrollment
-    \item Create lecture and read (time to consistency)
-    \item More?
+    \item Get lectures a student is enrolled in
+    \item Enrollment to a lecture
+    \item Create lecture and then read (time to consistency)
+    \item read grade history (simple time-travel query)
+    \item more complex time travel query (TODO)
 \end{itemize}
 
 \section{Flexibility - Architectural Metrics (TODO)}
 
-This section describes various architectural metrics which are established in literature and used to assess the flexibility and quality of a software architecture.
+This section describes various architectural metrics which are established in literature and used to assess the flexibility and quality of a software architecture. It serves as a basis to answer \hyperref[rs-architecture]{\acrshort{rs} 2}.
 
-\section{Traceability}
+\section{Traceability (TODO)}
+
+This section describes how traceability will be compared; it serves as a basis to answer \hyperref[rs-traceability]{\acrshort{rs} 3}. The method uses established static analysis methods to compare the two architectures. Describe how the results will be visualized and what they may indicate. Maybe talk about schema evolution.
+
+\textbf{Metrics:}
+
+\begin{itemize}
+    \item Martin Metrics, focusing on coupling and instability
+    \item MOOD Metrics evaluate the quality of object-oriented designs: method and attribute hiding factor, etc
+    \item Complexity metrics, e.g. cyclomatic complexity
+    \item Dependency metrics: afferent, efferent; abstractness
+\end{itemize}
+
+\textbf{Literature:}
+
+\begin{itemize}
+    \item Richards and Ford, "Fundamentals of software architecture: an engineering approach"
+    \item Chawla and Kauer, "Comparative Study of the Software Metrics for the complexity and Maintainability of Software Development"
+    \item Deshpande et al., "Object Oriented Design Metrics for Software Defect Prediction: An Empirical Study"
+    \item Singh, "Object Oriented Coupling based Test Case Prioritization"
+    \item Overeem et al., "An empirical characterization of event sourced systems and their schema evolution — Lessons from industry"
+\end{itemize}
+
+\subsection{Accuracy of reconstruction}
+
+We define qualitative criteria for comparison:
+
+\begin{itemize}
+    \item Source of Truth Integrity: How the system guarantees that the history matches the current state. Especially in distributed systems (dual-write problem)
+    \item ntent Preservation: The ability to distinguish between different business reasons for the same data change (e.g., "Refund" vs. "Fee")
+    \item Schema Resiliency: How the history survives changes to the database structure or business rules.
+\end{itemize}
+
+Attempt to define "business metrics":
+
+\begin{itemize}
+    \item How ES helps with root cause analysis / time to reproduce and debug bugs in production
+    \item Required time and work to prepare for security audits
+\end{itemize}
+
+\subsection{Efficiency}
+
+\begin{itemize}
+    \item Project already employs load testing
+    \item load test time-travel queries on both applications, assuming equal scenarios, equal amount of data etc. then compare performance
+    \item Define use cases for time-travel queries:
+          \begin{itemize}
+              \item grade history (this endpoint already exists).  is rather simple as only the state of one entity is needed
+              \item Another, more complex question. Should be a use-case where a broader part of the application's historic state needs to be reconstructed. e.g. which lectures was a student enrolled in at point $T$
+          \end{itemize}
+    \item measure CPU and RAM usage during reconstruction
+    \item assumption: fetching data from audit log tables may be more efficient, because date filters can be used on indexed tables
+    \item ES system has to play ALL events. (Snapshots can not be used when replaying events, they are only used when rehydrating aggregates. -> this part probably belongs in result)
+\end{itemize}
 
 \section{Technologies}
 \label{sec:technologies}
@@ -1109,59 +1213,16 @@ void logChange(
     \item \textbf{Database Triggers or Stored Procedures} can capture changes automatically and directly on the database. This guarantees that no change is missed, even if made outside the application. \textcite[515]{ingram_design_2009} mentions that database triggers run on a "per-record" basis, meaning the logic is run for each changed record individually. This may lead to degraded performance during batch operations, which is why stored procedures should be preferred over triggers for auditing concerns. It is also worth noting that this approach ties the auditing logic to a specific database, making it less portable.
     \item  \textbf{Hibernate Envers} is an auditing solution for JPA-based applications which automatically versions entities by using the concept of revisions. Envers creates an auditing table for each entity which stores historical data, whenever a transaction is committed. \parencite{hibernate_envers_nodate}
     \item \textbf{JPA Entity Listeners}: JPA's lifecycle events (\texttt{@PrePersist}, \texttt{@PreUpdate}, etc.) can be used to intercept changes. This approach is database-independent and keeps the logic within the Java application, allowing access to application internals like beans and Spring's security context. In full-grade applications built using Spring Security, the security context lets developers access the current user, making it possible to attach them to the new audit log entry. (needs reference) \label{item:jpa-entity-listener}
+    \item TODO: talk about CDC (change data capture) here or in \autoref{sec:audit-log}
 \end{enumerate}
 
-\subsection{Chosen Implementation: JPA Entity Listener (TODO)}
+\subsection{Chosen Implementation: Hibernate Envers (TODO)}
 
-This is wrong; chosen implementation is Hibernate Envers. Change this section.
+This section describes Hibernate Envers in detail; how it was implemented into the CRUD app, how it captures context, etc.
 
-The \acrshort{crud} implementation of the application utilizes approach \ref{item:jpa-entity-listener}, JPA entity listeners, which offer a good balance between automation and flexibility. This approach ensures that every change to an entity is captured without polluting the service layer with logging calls, while still allowing the application to enrich the log with application-level context. The current user is automatically added to the log entry by the entity listener, while service methods can attach additional context to an entity before it is persisted, if desired.
+\subsubsection{Reconstructing historic state (TODO)}
 
-\subsubsection*{Data Model}
-
-The audit log is stored in a single database table, represented by the \keyw{AuditLogEntry} entity. This structure allows for easy querying of all system changes in chronological order. Table \ref{table:audit-log-entry} lists the fields contained by \keyw{AuditLogEntry}. This data model is adapted from \textcite{fowler_audit_2004}.
-
-\begin{table}[htp!]
-    \small
-    \centering
-    \begin{tabularx}{\linewidth}{lp{4cm}X}
-        \toprule
-        \textbf{Field} & \textbf{Type, Possible Values} & \textbf{Explanation}                                  \\ \midrule
-        entityName     & String                         & Identifies the type of the changed object.            \\ \addlinespace
-        entityId       & UUID                           & Unique identifier of the specific changed object.     \\ \addlinespace
-        timestamp      & LocalDateTime                  & The date and time when the change occurred.           \\ \addlinespace
-        operation      & CREATE, UPDATE, DELETE         & The type of action performed on the entity.           \\ \addlinespace
-        modifiedBy     & String                         & The user or system process that initiated the change. \\ \addlinespace
-        oldValueJson   & TEXT (JSON String)             & The serialized state of the entity before the change. \\ \addlinespace
-        newValueJson   & TEXT (JSON String)             & The serialized state of the entity after the change.  \\ \addlinespace
-        contextJson    & TEXT (JSON String)             & Captures additional business intent or metadata.      \\
-    \end{tabularx}
-    \caption{Audit Log Entry Structure}
-    \label{table:audit-log-entry}
-\end{table}
-
-\subsubsection*{AuditableEntity and AuditEntityListener}
-
-To enable auditing, entities extend an abstract base class, \texttt{AuditableEntity} \footnote{\javaname{impl-crud/src/main/java/karsch.lukas.audit.AuditableEntity}}. This class marks the entity with the \javaname{@EntityListeners(AuditEntityListener.class)} annotation and provides a transient field, \texttt{snapshotJson}, used to store the state of the entity when it is loaded from the database.
-
-The core logic resides in \texttt{AuditEntityListener}\footnote{\javaname{impl-crud/src/main/java/karsch.lukas.audit.AuditEntityListener}}. It hooks into the JPA lifecycle:
-
-\begin{itemize}
-    \item \texttt{@PostLoad}: Immediately after an entity is fetched from the database, the listener serializes it to \acrshort{json} and stores the serialized \acrshort{json} string in the \texttt{snapshotJson} field. This serves as the "old value" for any subsequent updates.
-    \item \texttt{@PrePersist}: Before a newly created entity is saved, a log entry is created with the operation \texttt{CREATE}. The \texttt{newValueJson} is the current state; \texttt{oldValueJson} is null.
-    \item \texttt{@PreUpdate}: Before an existing entity is updated, the listener compares the current state with the \texttt{snapshotJson}. It creates an \texttt{UPDATE} entry using \texttt{snapshotJson} as the \texttt{oldValue} and the current state as the \texttt{newValue}.
-    \item \texttt{@PreRemove}: Before deletion, a \texttt{DELETE} entry is created, preserving the last known state. \texttt{snapshotJson} is saved as the \texttt{oldValue}, \texttt{newValue} is \texttt{null}
-\end{itemize}
-
-\subsubsection{Serialization and Relationships}
-
-A major challenge in serializing JPA entities to \acrshort{json} for an audit log is handling relationships. A naive \acrshort{json} serialization would follow every relationship of the affected entity (e.g., \texttt{Lecture} $\rightarrow$ \texttt{Course}), potentially serializing huge entity graphs or even causing a \texttt{StackOverflowError} due to cyclic references. One example for such a problematic reference would be the self-reference of \texttt{CourseEntity}, which each course having a "One to Many" relationship to prerequisite courses.
-
-A custom Jackson module, \texttt{IdSerializationModule}\footnote{\javaname{impl-crud/src/main/java/karsch.lukas.audit.IdSerializationModule}}, was implemented to deal with the problem of relationship serialization. This module overrides the default serialization for related entities. Instead of serializing the full nested object, it only writes the related object's ID. This results in a flat, lightweight \acrshort{json} structure that is readable, keeps all references reconstructible and is safe to store. % TODO explain how this was implemented in detail 
-
-\subsubsection{Capturing Business Context}
-
-One downside of standard automated auditing is that it captures \emph{what} changed (e.g., lecture lifecycle changed from \texttt{IN\_PROGRESS} to \texttt{FINISHED}) but not necessarily \emph{why} (e.g., Lecture cancelled by professor due to illness). To make the CRUD application's audit log compliant to the requirement of traceability, it supports an \texttt{AuditContext}. Services can attach metadata to the current thread/transaction, which the \texttt{AuditEntityListener} retrieves and stores in the \texttt{contextJson} field.
+Show how Envers can be queried for historic state (see \javaname{impl-crud/src/main/java/karsch.lukas.stats.StatsService}).
 
 \section{ES/CQRS implementation}
 \label{sec:es-cqrs-implementation}
@@ -1395,5 +1456,23 @@ To track the success rate of this request, the script introduces a custom Rate m
 
 The full source code for this thesis, including both apps, performance tests and markdown notes, is available at: \url{https://gitlab.mi.hdm-stuttgart.de/lk224/thesis}
 
+\chapter{Resources}
+
+\begin{table}[htp!]
+    \small
+    \centering
+    \begin{tabularx}{\linewidth}{Xl}
+        \toprule
+        \textbf{Technology}                                                                              & \textbf{Version} \\ \midrule
+        Java                                                                                             & 25               \\
+        JUnit                                                                                            & 5.11.0           \\
+        AssertJ                                                                                          & 3.27.6           \\
+        Axon Framework                                                                                   & 4.11.3           \\
+        Testcontainers Java Library, incl. child dependencies: PostgreSQL testcontainer \& JUnit support & 1.19.7           \\
+        \bottomrule
+    \end{tabularx}
+    \caption{Version matrix for all technologies used throughout the work}
+    \label{table:version-matrix}
+\end{table}
 
 \end{document} % This is the end of the document

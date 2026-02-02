@@ -1,7 +1,13 @@
-> How does an Event Sourcing architecture compare to CRUD systems with an independent audit log, when it comes to scalability, performance and traceability?
+> How does an Event Sourcing architecture compare to CRUD systems with an independent audit log regarding performance, scalability, flexibility and traceability?
+
+Three sub-questions: 
+- **Performance and Scalability:** How do CRUD and ES-CQRS implementations perform under increasing load, and what are the resulting implications for system scalability and resource efficiency? 
+- **Architectural Complexity and Flexibility:** What are the fundamental structural differences between the two approaches, and how do these impact the long-term flexibility and evolution of the codebase? 
+- **Historical Traceability:** To what extent can CRUD and ES-CQRS systems accurately and efficiently reconstruct historical states to satisfy business intent and compliance requirements? 
 ## Links
 - [GitLab Repository](https://gitlab.mi.hdm-stuttgart.de/lk224/thesis)
 - [Gemini](https://gemini.google.com/gem/2aaacb9c5388)
 ## Dates
 Start on 01.12.2025
+Meeting [[2026-02-04 Fragen fürs nächste Meeting]]
 End on 02.03.2026

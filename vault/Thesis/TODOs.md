@@ -8,12 +8,17 @@
     - [[2026-01-07 Fragen fürs nächste Meeting]] -> Buch zu scalability finden, Annahmen bzgl des Zusammenhangs von CPU / RAM usage und scalability 
     - Evolutionary Architectures lesen 
 - **Code**
+	- Change the API:
+		- make GET /lectures return ALL lectures 
+		- create GET /lectures-for-student
     - CRUD
 	    - check if indexes are set up correctly 
 	    - clean up StatsService 
 	    - get rid of N+1 queries (especially StatsService)
+		    - LecturesService.getLecturesForStudent() has N+1 query 
 	    - examine default lock type, if i have any race conditions, @Version usage 
-	    - use Envers instead of my custom auditing solution? 
+	    - Audit log
+		    - allow capturing additional context 
     - CQRS
 	    - try to use TEPs in my E2E tests
 	    - use @SequenceNumber aggregateVersion in repositories (https://github.com/idugalic/digital-restaurant/blob/master/drestaurant-apps/drestaurant-monolith-rest/src/main/kotlin/com/drestaurant/query/handler/RestaurantHandler.kt) ??
@@ -26,14 +31,14 @@
 		- make sure event handlers are idempotent 
 			- [[2025-12-16 Problems with my Axon projections]]
 		- add @Version to projection entities; retry on OptimisticLockException 
-		- **Write performance test for time to consistency**
-		- Add snapshotting!!! 
-- look at axon transaction manager? 
-	- what is it  
-	- for what can it be used / how is it used 
-	- compare to [[Axon Unit Of Work]]
-- multiple aggregates invariants: read https://discuss.axoniq.io/t/need-advice-on-our-first-saga-use-case/2230/2
-- https://de.wikipedia.org/wiki/Wilcoxon-Mann-Whitney-Test
+	- **Tests**
+		- Performance test for recreating historic state 
+		- Introduce a more complex / arbitrary historic query? 
+		- Enroll student to more courses in "read-lectures"
+		- "get grades" load test 
+		- another really complex load test (most JOINs i can find)
+		- historical reconstruction load test 
+- Statistical significance: https://de.wikipedia.org/wiki/Wilcoxon-Mann-Whitney-Test
 - **Writing**
 	- Write method on flexibility [[Method - Flexibility]]
 	- https://github.com/Witiko/markdown/issues/448
@@ -41,6 +46,10 @@
 	- Mention that, when trying to audit _read_ operations, event sourcing is not sufficient. 
 ## Urgent
 - Write _something_ for every remaining section 
+- Collect run results for read-lectures, 5000 RPS 
+- **Run tests**
+	- time-to-consistency
+	- enrolling
 ## Before Finishing
 - Check README
 - Clone repo in blank folder, check everything works

@@ -1,4 +1,4 @@
-Below names for the metrics: 
+Below are names for the metrics: 
 $latency\_avg$
 $latency\_p50$
 $latency\_p95$

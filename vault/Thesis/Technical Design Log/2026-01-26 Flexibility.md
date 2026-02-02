@@ -20,4 +20,4 @@ Looks like there are some metrics in literature which propose metrics to "measur
 ## Abstractness and Instability Calculator
 https://github.com/xsreality/abstractness-instability-calculator
 ## Links 
-- [[2026-01-29 Visualizing performance metrics]]
+- [[2026-01-29 Visualizing flexibility metrics]]

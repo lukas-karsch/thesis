@@ -14,7 +14,9 @@ APP_COLORS = {
 }
 
 
-def _boxplot_grouped_metrics(df: pd.DataFrame, log_y: bool = False) -> None:
+def _boxplot_grouped_metrics(
+    df: pd.DataFrame, log_y: bool = False, additional_title: str = ""
+) -> None:
     for uri in sorted(df["uri"].unique()):
         uri_df = df[df["uri"] == uri]
 
@@ -69,7 +71,7 @@ def _boxplot_grouped_metrics(df: pd.DataFrame, log_y: bool = False) -> None:
         ax.set_xticklabels(labels, rotation=45, ha="right")
 
         ax.set_ylabel("Latency (ms)")
-        ax.set_title(f"Latency comparison — {df["method"][0]} {uri}")
+        ax.set_title(f"Latency comparison — {df["method"][0]} {uri} {additional_title}")
 
         ax.grid(axis="y", linestyle="--", alpha=0.6)
 
@@ -93,6 +95,7 @@ def _lineplot_latency_vs_users(
     log_x: bool = True,
     log_y: bool = True,
     additional_title: str = "",
+    show_slo: bool = False,
 ) -> None:
     percentiles = {
         "latency_p50": "p50",
@@ -160,19 +163,20 @@ def _lineplot_latency_vs_users(
         handles.extend(h)
         labels.extend(l)
 
-        ax.legend(handles, labels, loc="upper left")
+        ax.legend(handles, labels, loc="upper right")
 
-        ax.axhline(100, ls="--", color="gray", alpha=0.5)
-        ax.text(
-            0.01,
-            100,
-            "SLO: 100ms latency",
-            color="gray",
-            ha="left",
-            va="bottom",
-            fontsize="x-small",
-            transform=ax.get_yaxis_transform(),
-        )
+        if show_slo:
+            ax.axhline(100, ls="--", color="gray", alpha=0.5)
+            ax.text(
+                0.01,
+                100,
+                "SLO: 100ms latency",
+                color="gray",
+                ha="left",
+                va="bottom",
+                fontsize="x-small",
+                transform=ax.get_yaxis_transform(),
+            )
 
         plt.tight_layout()
         plt.show()
@@ -190,8 +194,10 @@ def visualize_one_csv_each(crud_csv: Path, es_cqrs_csv: Path):
     _boxplot_grouped_metrics(df)
 
 
-def visualize_aggregated(aggregated: pd.DataFrame, log_y: bool = False):
-    _boxplot_grouped_metrics(aggregated, log_y=log_y)
+def visualize_aggregated(
+    aggregated: pd.DataFrame, log_y: bool = False, additional_title: str = ""
+):
+    _boxplot_grouped_metrics(aggregated, log_y=log_y, additional_title=additional_title)
 
 
 def visualize_aggregated_lineplot(
