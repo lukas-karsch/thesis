@@ -38,6 +38,7 @@
 	- Write method on flexibility [[Method - Flexibility]]
 	- https://github.com/Witiko/markdown/issues/448
 	- Unify naming of load vs performance testing
+	- Mention that, when trying to audit _read_ operations, event sourcing is not sufficient. 
 ## Urgent
 - Write _something_ for every remaining section 
 ## Before Finishing

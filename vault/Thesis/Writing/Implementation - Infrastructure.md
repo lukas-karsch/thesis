@@ -11,14 +11,6 @@
 - /impl-es-cqrs/Dockerfile
 - /impl-es-cqrs/src/main/resources/application.properties # specifically the configuration regarding Axon server 
 ## Draft
-```xml
-<Instructions>
-	<language>english</language>
-	<style>formal, simple, precise</style>
-	<additional>Read all relevant files from the top of this file. Use the notes at the top of this file.</additional>
-</Instructions>
-```
-
 The project's infrastructure is designed for consistency and reproducibility across development and testing environments. It is composed of a containerized environment for running the applications and their dependencies, an automated virtual machine (VM) provisioning setup for performance testing, as well as an integration testing strategy using Testcontainers, described in section (TODO).
 ### Containerized Services
 The core of the infrastructure is defined in a `docker-compose.yml` file at the root of the project, which orchestrates the deployment of the two primary applications and their external dependencies: a PostgreSQL database, used by both applications, and an Axon Server instance, used by the ES-CQRS application.

@@ -11,10 +11,6 @@
 \usepackage{booktabs}
 \usepackage{float} 
 
-\floatstyle{ruled}
-\newfloat{listing}{tbp}{lol}
-\floatname{listing}{Listing}
-
 % TODO
 % microtype is supposed to help with text breaking (overflow), but it gives an error:  pdfTeX error (font expansion): auto expansion is only possible with scalable fonts. <argument> ...shipout:D \box_use:N \l_shipout_box
 % \usepackage{microtype}
@@ -365,7 +361,7 @@
 \pagenumbering{roman}
 %LTeX: language=de-DE
 \section*{Ehrenwörtliche Erklärung}
-
+%LTeX: enabled=false
 Hiermit versichere ich, Lukas Karsch, ehrenwörtlich, dass ich die vorliegende Bachelorarbeit mit dem Titel: "How does an Event Sourcing architecture compare to CRUD systems with an independent audit log, when it comes to scalability, performance and traceability?" selbstständig und ohne fremde Hilfe verfasst und keine anderen als die angegebenen Hilfsmittel benutzt habe. Die Stellen der Arbeit, die dem Wortlaut oder dem Sinn nach anderen Werken entnommen wurden, sind in jedem Fall unter Angabe der Quelle kenntlich gemacht. Ebenso sind alle Stellen, die mit Hilfe eines KI-basierten Schreibwerkzeugs erstellt oder überarbeitet wurden, kenntlich gemacht. Die Arbeit ist noch nicht veröffentlicht oder in anderer Form als Prüfungsleistung vorgelegt worden. Ich habe die Bedeutung der ehrenwörtlichen Versicherung und die prüfungsrechtlichen Folgen (§ 24 Abs. 2 Bachelor-SPO) einer unrichtigen oder unvollständigen ehrenwörtlichen Versicherung zur Kenntnis genommen.
 
 \vspace{1.8cm} % Space for signature
@@ -373,6 +369,7 @@ Hiermit versichere ich, Lukas Karsch, ehrenwörtlich, dass ich die vorliegende B
 \noindent\rule{7cm}{0.4pt} \\
 \noindent \small{Lukas Karsch, 02.03.2026}
 
+%LTeX: enabled=true
 %LTeX: language=en-US
 
 \newpage
@@ -389,29 +386,51 @@ Hiermit versichere ich, Lukas Karsch, ehrenwörtlich, dass ich die vorliegende B
 \newpage
 \pagenumbering{arabic}
 
-\chapter{Introduction}
+\chapter{Introduction (TODO)}
 
-\section{Motivation}
+\section{Motivation (TODO)}
 
 \section{Research questions}
 
-This thesis provides a quantitative and qualitative comparison between Event Sourcing and traditional CRUD architectures. The primary research question is: \textbf{"How does an Event Sourcing architecture compare to CRUD systems with an independent audit log regarding scalability, performance, and traceability?"} % TODO probably wrong 
+This thesis provides a quantitative and qualitative comparison between Event Sourcing and traditional CRUD architectures. The primary research question is: \textbf{"How does an Event Sourcing architecture compare to CRUD systems with an independent audit log regarding performance, scalability, flexibility and traceability?"} % TODO probably wrong 
 
 To provide a comprehensive answer, the following three sub-questions are addressed:
 
 \begin{enumerate}
     \item \textbf{Performance and Scalability:} How do \acrshort{crud} and \acrshort{es}-\acrshort{cqrs} implementations perform under increasing load, and what are the resulting implications for system scalability and resource efficiency? \label{rs-performance-scalability}
-    \item \textbf{Architectural Complexity and Maintainability:} What are the fundamental structural differences between the two approaches, and how do these impact the long-term flexibility and evolution of the codebase? \label{rs-architecture}
+    \item \textbf{Architectural Complexity and Flexibility:} What are the fundamental structural differences between the two approaches, and how do these impact the long-term flexibility and evolution of the codebase? \label{rs-architecture}
     \item \textbf{Historical Traceability:} To what extent can \acrshort{crud} and \acrshort{es}-\acrshort{cqrs} systems accurately and efficiently reconstruct historical states to satisfy business intent and compliance requirements? \label{rs-traceability}
 \end{enumerate}
 
 The individual findings from these sub-questions are combined in the conclusion to provide a holistic answer to the primary research question.
 
-\section{Goals and non goals}
+\section{Goals and non goals (TODO)}
+\label{sec:goals}
 
-\section{Structure of the paper}
+This section describes the goals and non-goals of the thesis.
+
+Goals:
+
+\begin{itemize}
+    \item Create two implementations adhering to an identical interface
+    \item Provide quantitative measurements of performance, architectural flexibility and traceability
+    \item Implement both applications "the best they can be": according to principles and best practices for both architectures
+    \item Use out-of-the box configurations to provide the performance comparisons
+\end{itemize}
+
+Non-goals:
+
+\begin{itemize}
+    \item Perfectly implement DDD semantics
+    \item Tune applications to get the best performance
+    \item Implement mechanics to support schema evolution
+\end{itemize}
+
+\section{Structure of the paper (TODO)}
 
 \chapter{Basics}
+
+To provide a comprehensive framework for the technical implementation discussed in this thesis, this chapter outlines the foundations of modern web architecture, domain-driven design, and the mechanisms facilitating consistency and auditing in event-driven systems.
 
 \section{WWW, Web APIs, REST}
 
@@ -455,9 +474,9 @@ In a layered application, data flows downwards during request handling and upwar
 
 The database responds with raw data, which is turned into a \acrlong{dao} (\acrshort{dao}) by the persistence layer. The business layer uses this data to execute rules and make decisions. The result will be returned to the presentation layer which can then wrap the response and return it to the caller. \parencite{richards_software_2015}
 
-The data in layered applications is often times modeled in an \emph{anemic} way. In an \gls{adm}, business entities are treated as only data. They are objects which contain no business logic, only getters and setters. Business logic is entirely contained in the business (or "service") layer. \textcite{anemic-fowler-2003} describes this as an object-oriented \emph{antipattern}. % TODO explain why (this is procedural style, not actually object oriented)
+The data in layered applications is often times modeled in an \emph{anemic} way. In an \gls{adm}, business entities are treated as only data. They are objects which contain no business logic, only getters and setters. Business logic is entirely contained in the business (or "service") layer. \textcite{anemic-fowler-2003} describes this as an object-oriented \emph{antipattern}, as this approach effectively separates data from behavior, resulting in a procedural design that undermines the core principle of object-oriented programming: the encapsulation of state and process within a single unit.
 
-% TODO figure
+TODO: A figure may placed here
 
 \section{Domain Driven Design}
 \label{sec:ddd}
@@ -535,7 +554,7 @@ In a CQRS architecture, the read side typically updates its data asynchronously 
 
 Each read service independently updates its model by consuming notifications or events published by the write side, allowing the read model to store optimized, denormalized views on the data. \parencite[23]{young_cqrs_2010}
 
-%s TODO figure 
+TODO: place a figure / digram here
 
 \section{(Eventual) Consistency}
 
@@ -551,7 +570,9 @@ Event driven architecture is a design paradigm where systems communicate via the
 
 Event Sourcing is an architectural pattern within the landscape of event driven architectures. Event-sourced systems ensure that all changes to a system's state are captured and stored as an ordered sequence of domain events. Unlike traditional persistence models that overwrite data and store only the most recent state, event sourcing maintains an immutable record of every action taken over time. These events are persisted in an append-only event store, which serves as the principal source of truth from which the current system state can be derived. \parencite[457,458]{kleppmann_designing_2017}
 
-The current state of any entity in such a system can be rebuilt by replaying the history of events from the log, starting from an initial blank state. \parencite{fowler_event_2005} To address the performance costs of replaying thousands of events for every request, developers implement projections or materialized views, which are read-only, often denormalized versions of the data optimized for specific queries. \parencites{malyi_developing_2024}[461,462]{kleppmann_designing_2017} This separation of concerns is frequently managed by pairing event sourcing with the \hyperref[sec:cqrs]{\acrlong{cqrs} (\acrshort{cqrs})} pattern, which physically divides the data structures used for reading from those used for writing state changes. \parencite[50]{young_cqrs_2010} % TODO Snapshots erklären; Projection = "ephemeral", kann leicht neu gebaut werden 
+The current state of any entity in such a system can be rebuilt by replaying the history of events from the log, starting from an initial blank state. \parencite{fowler_event_2005} To address the performance costs of replaying thousands of events for every request, developers implement projections or materialized views, which are read-only, often denormalized versions of the data optimized for specific queries. \parencites{malyi_developing_2024}[461,462]{kleppmann_designing_2017} This separation of concerns is frequently managed by pairing event sourcing with the \hyperref[sec:cqrs]{\acrlong{cqrs} (\acrshort{cqrs})} pattern, which physically divides the data structures used for reading from those used for writing state changes. \parencite[50]{young_cqrs_2010}
+
+To optimize the reconstruction of state, developers often employ \textit{rolling snapshots}. These snapshots represent a serialized, denormalized point-in-time state of an aggregate, allowing the system to restore the state immediately and only replay the delta of events that occurred after the snapshot was taken. \parencite[20]{young_cqrs_2010} This heuristic effectively caps the maximum number of events to be processed, providing a predictable and significant performance gain during the loading process. It is worth noting that the event stream stays intact and is not impacted by a snapshot.
 
 \section{Traceability and auditing in IT systems}
 
@@ -573,8 +594,26 @@ As established in \autoref{sec:event-sourcing}, every state change is captured a
 \textcite{fowler_event_2005} notes that because the event log is complete, the system can perform \emph{Temporal Queries}, effectively "time-traveling" to reconstruct the exact state of the system at any historical checkpoint. This makes event streams particularly robust for forensic reviews and regulatory compliance, as they eliminate the "information loss" associated with traditional database overwrites. In the context of the legal requirements discussed in the previous section, the event stream serves as a sequence of actions that satisfies the need for a verifiable, time-sequenced history.
 
 \subsection{Rebuilding state from an audit log and an event stream}
-% TODO remove this section?
-\section{Scalability of systems}
+
+There is a fundamental difference in how systems built with a secondary audit log versus an event-sourced architecture reconstruct historic state. It lies in the relationship between the operational data and the chronological record. In systems with a secondary audit log, the audit log and the application state are often updated as two separate operations. This decoupling introduces the risk of silent divergence. If a failure occurs during the logging process, but the primary state change succeeds, the audit trail becomes an incomplete reflection of reality. Because the system continues to function using the primary database, these discrepancies may remain undetected until a forensic reconstruction is attempted. In this scenario, the audit log serves as a secondary piece of evidence rather than a definitive blueprint, making it difficult to guarantee that a reconstructed state is perfectly synchronized with the original historical state.
+
+In contrast, rebuilding state from an event stream is a deterministic process. Since the event stream is the primary source of truth, there is no secondary state to diverge from. State is reconstructed by mapping events to objects (aggregates or projections). If an event is not recorded, the state change never occurred. This guarantees that the log and the system state are consistent by design, ensuring traceability.
+
+\section{Scalability of systems (TODO)}
+
+This section describes which factors play a role in the scalability of a system. Architectural concerns (e.g. refactoring systems to be split up into microservices), resource consumption, etc.
+
+We define different angles on scalability:
+
+\begin{itemize}
+    \item Throughput Scalability: How the system handles an increasing number of commands (writes) vs. queries (reads).
+    \item Data Volume: How the system behaves as the history of events or audit logs grows into the terabytes.
+    \item Organizational / architectural Scalability: How easily multiple teams can work on the system without creating bottlenecks (the "microservices" angle).
+\end{itemize}
+
+Then address write and read scalability; and differences in ES and CRUD architectures. CRUD: e.g. database contention (locks); CQRS would require sharding based on aggregate ID. Two-phase commits in a distributed system?
+
+ES-CQRS with snapshots as strategy for scaling huge event streams (quicker reconstruction of state); but increased storage size. Data is often duplicated across projections.
 
 \chapter{Related Work}
 
@@ -728,7 +767,7 @@ $axon\_storage\_size$ is only recorded for the ES-CQRS application. $postgres\_s
         \addlinespace
         $postgres\_size$      & Size of PostgreSQL database                          & Server            \\
         \addlinespace
-        axon\_storage\_size   & Size of Axon storage, incl. Event and Snapshot store & Axon Server       \\
+        $axon\_storage\_size$ & Size of Axon storage, incl. Event and Snapshot store & Axon Server       \\
         \bottomrule
     \end{tabularx}
     \caption{All metrics collected during load testing}
@@ -846,8 +885,15 @@ Often, command handling functions are placed directly inside the aggregate. Howe
 In these external command handlers, aggregates can be loaded manually from Axon's repositories using the aggregate's ID. Afterward, the \keyw{execute} function can be used to execute commands on the loaded aggregate. \parencite{axoniq_command_2025-1}
 
 \subsubsection*{Set-based validation}
+\label{sec:set-based-validation}
 
-TO DO $\rightarrow$  move section from implementation to here
+When receiving a command, aggregates handle it by validating their internal state inside command handlers and either rejecting the command or publishing an event. However, validation across a set of aggregates, called "set-based validation", is not possible inside a single aggregate. A business requirement like "Usernames must be unique" can only be implemented using set-based validation, as the entire set of aggregates must be inspected before making a decision.
+
+Set-based implementation in Axon can be implemented by using lookup tables. This approach utilizes a dedicated command-side projection, often referred to as a lookup projector, to maintain a specialized view of the system state. While projectors are typically associated with the read-side of a \acrshort{cqrs} architecture, a lookup projector is specifically designed to support the command side. It maintains a highly optimized and consistent dataset, such as a registry of unique identifiers, which can be queried during the validation phase of a command.
+
+To ensure that this lookup table remains synchronized and provides the necessary consistency for validation, Axon employs subscribing event processors, which are described in \autoref{sec:axon-events}. Unlike tracking event processors which operate asynchronously and introduce eventual consistency, subscribing event processors execute within the same thread and transaction as the event publication. This mechanism ensures that the lookup table is updated immediately after an event is applied to the aggregate. Consequently, if the update to the lookup table fails due to a constraint violation or database error, the entire transaction is rolled back, preventing the system from reaching an inconsistent state.
+
+In practice, this validation logic is often encapsulated within a domain service or a validator interface that is injected directly into the aggregate's command handler. This service interacts with the lookup table repository to verify global invariants before the aggregate state is modified. By separating the lookup logic from the read-model, the system avoids the latency of eventual consistency while maintaining the architectural integrity of the aggregate as a boundary for consistency. This pattern effectively bridges the gap between the isolated nature of individual aggregates and the necessity for global state verification in complex domain models. \parencite{ceelie_set_2020}
 
 \subsubsection*{Events}
 \label{sec:axon-events}
@@ -954,7 +1000,7 @@ void getLectureDetails_shouldReturn200_returnTwoDates() {
             .body("data.dates", hasSize(2));
 }
 \end{lstlisting}
-\captionof{lstlisting}[Contract test example]{Contract test example; adapted from \javaname{test-suite/src/test/karsch.lukas.lectures.AbstractLecturesE2ETest}}
+{\captionof{lstlisting}[Contract test example]{Contract test example; adapted from \javaname{test-suite/src/test/karsch.lukas.lectures.AbstractLecturesE2ETest}}}
 \label{lst:e2e-test}
 
 All contract tests follow a consistent pattern as shown in \autoref{lst:e2e-test}. First, a test method is annotated with \javaname{@DisplayName} to provide a descriptive, human-readable name. The test method itself is precisely named after the behavior it asserts. In the example above, the test verifies that the response status code is \javaname{200} and that the response body contains a field called \javaname{dates} consisting of an array of size two.
@@ -979,7 +1025,7 @@ public class PostgresTestcontainerConfiguration {
     }
 }
 \end{lstlisting}
-\captionof{lstlisting}[\keyw{PostgresTestcontainerConfiguration}]{\javaname{impl-crud/src/test/karsch.lukas.}\keyw{PostgresTestcontainerConfiguration}}
+{\captionof{lstlisting}[\keyw{PostgresTestcontainerConfiguration}]{\javaname{impl-crud/src/test/karsch.lukas.}\keyw{PostgresTestcontainerConfiguration}}}
 \label{lst:testcontainer-configuration}
 
 \autoref{lst:testcontainer-configuration} starts a \hyperref[sec:postgresql]{PostgreSQL} container using the latest available image. \texttt{@ServiceConnection} makes sure the Spring application can connect to the container. This configuration can then be imported as shown in \autoref{lst:import-testcontainer}.
@@ -989,7 +1035,7 @@ public class PostgresTestcontainerConfiguration {
 %%@Import%%(PostgresTestcontainerConfiguration.class)
 public class CrudLecturesE2ETest extends AbstractLecturesE2ETest { }
 \end{lstlisting}
-\captionof{lstlisting}[\keyw{CrudLecturesE2ETest}]{\javaname{impl-crud/src/test/karsch.lukas.e2e.lectures.CrudLecturesE2ETest}}
+{\captionof{lstlisting}[\keyw{CrudLecturesE2ETest}]{\javaname{impl-crud/src/test/karsch.lukas.e2e.lectures.CrudLecturesE2ETest}}}
 \label{lst:import-testcontainer}
 
 \section{CRUD implementation}
@@ -1065,7 +1111,9 @@ void logChange(
     \item \textbf{JPA Entity Listeners}: JPA's lifecycle events (\texttt{@PrePersist}, \texttt{@PreUpdate}, etc.) can be used to intercept changes. This approach is database-independent and keeps the logic within the Java application, allowing access to application internals like beans and Spring's security context. In full-grade applications built using Spring Security, the security context lets developers access the current user, making it possible to attach them to the new audit log entry. (needs reference) \label{item:jpa-entity-listener}
 \end{enumerate}
 
-\subsection{Chosen Implementation: JPA Entity Listener}
+\subsection{Chosen Implementation: JPA Entity Listener (TODO)}
+
+This is wrong; chosen implementation is Hibernate Envers. Change this section.
 
 The \acrshort{crud} implementation of the application utilizes approach \ref{item:jpa-entity-listener}, JPA entity listeners, which offer a good balance between automation and flexibility. This approach ensures that every change to an entity is captured without polluting the service layer with logging calls, while still allowing the application to enrich the log with application-level context. The current user is automatically added to the log entry by the entity listener, while service methods can attach additional context to an entity before it is persisted, if desired.
 
@@ -1140,7 +1188,7 @@ The command side is responsible for handling state changes in the application. I
 
 Aggregates are the core components of the command side. They represent a consistency boundary for state changes. In this implementation, an example of an aggregate is the \keyw{CourseAggregate} \footnote{\javaname{impl-es-cqrs/src/main/java/karsch.lukas.features.course.commands.CourseAggregate}}. It handles the \keyw{CreateCourseCommand}, validates it, and if successful, emits a \keyw{CourseCreatedEvent}.
 
-A core aspect of the validation within the \keyw{CourseAggregate} is set-based validation. Before creating a course, the system must verify that all the specified prerequisite courses actually exist. This is handled by the \keyw{ICourseValidator}\footnote{\javaname{impl-es-cqrs/src/main/java/karsch.lukas.features.course.commands.ICourseValidator}}, which is injected into the aggregate's command handler. The validator uses an SQL lookup table, implemented using a \acrshort{jpa} entity and repository, that is maintained by the \keyw{CourseLookupProjector}. This ensures that the command is validated against a consistent view of the system's state. It is important to note that while projectors typically belong to the read side, "lookup projectors" in this application belong to the command side. They are independent to the read side and maintain their own view of the system. This view is not eventually consistent, but strongly consistent, making it suitable for command validation. A strongly consistent lookup table is achieved through the use of \hyperref[sec:axon-events]{subscribing event listeners}, which are executed immediately after an event has been applied.
+Before creating a course, the system must verify that all the specified prerequisite courses actually exist. This is handled by the \keyw{ICourseValidator},\footnote{\javaname{impl-es-cqrs/src/main/java/karsch.lukas.features.course.commands.ICourseValidator}} which is injected into the aggregate's command handler. The validator employs set-based validation as described in \autoref{sec:set-based-validation}. Once the prerequisite courses are validated, a \keyw{CourseCreatedEvent} is emitted. Otherwise, a specific \keyw{MissingCoursesException} is thrown, indicating that command handling was rejected.
 
 \subsubsection{External Command Handlers}
 \label{sec:impl-external-command-handlers}
@@ -1168,7 +1216,7 @@ The projector also illustrates how the projection's database entities are design
 
 A common challenge in \acrshort{cqrs} and event-driven architectures is providing synchronous feedback to users. For example, when a student enrolls in a lecture, they expect an immediate response indicating whether they were successfully enrolled or placed on a waitlist. However, commands are usually handled asynchronously. In \acrshort{cqrs}, commands are also not intended to return data.
 
-To solve this, the \keyw{LecturesController} uses Axon's subscription queries. When an enrollment request is received, it sends the \keyw{EnrollStudentCommand} and simultaneously opens a subscription query (\keyw{EnrollmentStatusQuery}). This query waits for an \keyw{EnrollmentStatusUpdate} event. The read-side projector responsible for processing enrollments publishes this update after processing the respective \keyw{StudentEnrolledEvent} or \keyw{StudentWaitlistedEvent}. The controller blocks for a short period, waiting for this update to be published, and then returns the result to the user. This approach makes the user interface synchronous, while not contradicting with the asynchronous nature of \acrshort{cqrs} systems, as the command handling process is unchanged. While this approach provides the desired synchronous user experience, it has the downside of coupling the client to the event processing flow. In a typical scenario, one might use WebSockets or other client-side notification mechanisms to inform the user about the result of their action. However, for the context of this thesis, where the focus is on the backend implementation and contract testing, this solution is a pragmatic compromise. % TODO improve this section
+To solve this, the \keyw{LecturesController} uses Axon's subscription queries. When an enrollment request is received, it sends the \keyw{EnrollStudentCommand} and simultaneously opens a subscription query (\keyw{EnrollmentStatusQuery}). This query waits for an \keyw{EnrollmentStatusUpdate} event. The read-side projector responsible for processing enrollments publishes this update after processing the respective \keyw{StudentEnrolledEvent} or \keyw{StudentWaitlistedEvent}. The controller blocks for a short period, waiting for this update to be published, and then returns the result to the user. This approach makes the user interface synchronous, while not contradicting with the asynchronous nature of \acrshort{cqrs} systems, as the command handling process is unchanged. While this approach provides the desired synchronous user experience, it has the downside of coupling the client to the event processing flow. In a typical scenario, developers might employ WebSockets or other client-side notification mechanisms to inform the user about the result of their action. However, for the context of this thesis, where the primary goal is to implement two applications with an identical interface, this solution is a pragmatic compromise. % TODO improve this section
 
 \subsection{Encapsulation and API Boundaries}
 \label{sec:encapsulation-and-api-boundaries}
@@ -1232,9 +1280,9 @@ By integrating with Spring Boot's \glspl{testcontainer} support, running the app
 \subsection{VM Provisioning for Performance Testing}
 \label{sec:vm-provisioning}
 
-To ensure a stable and isolated environment for performance benchmarks, a dedicated VM setup is used. The process of creating and provisioning these \acrshortpl{vm} on a Proxmox host is fully automated.
+To ensure a stable and isolated environment for performance benchmarks, a dedicated \acrshort{vm} setup is used. The process of creating and provisioning these \acrshortpl{vm} on a Proxmox host is fully automated.
 
-A shell script, \keyw{create-vm.sh}, orchestrates the creation of a VM template from an Ubuntu 24.04 cloud image. Cloud images are pre-configured, lightweight variants of operating systems. This script works in conjunction with a \keyw{cloud-init.yml} configuration file that handles the provisioning of the VM upon its first boot.
+A shell script, \keyw{create-vm.sh},\footnote{\javaname{performance-tests/vm/scripts/create-vm.sh}} orchestrates the creation of a \acrshort{vm} template from an Ubuntu 24.04 cloud image. Cloud images are pre-configured, lightweight variants of operating systems. This script works in conjunction with a CloudInit \footnote{\url{https://cloudinit.readthedocs.io/en/latest/}} configuration file that handles the provisioning of the \acrshort{vm} upon its first boot. \footnote{\javaname{performance-tests/vm/scripts/cloud-init.yml}}
 
 During the provisioning process, a number of steps are executed. First, it is made sure that the system is up-to-date by installing any available software updates. Next, a `thesis` user is created for which the environment is configured. Afterward, the script installs all necessary software, including \gls{docker}, git, Conda, Python, k6, Maven, and Java 25. Once all necessary software is installed, the project's git repository is cloned and a Maven build is triggered. Finally, the \gls{docker} images are built. After these steps are completed, the provisioned \acrshort{vm} is ready to run the applications and load tests.
 
@@ -1295,7 +1343,7 @@ export default function (data) {
     checkResponseIs201(res);
 }
 \end{lstlisting}
-\captionof{lstlisting}[k6 script, simplified code example]{Simplified code example of a k6 script to test course creation. Adapted from \javaname{performance-tests/k6/writes/create-course-prerequisites/create-course-prerequisites.js}}
+{\captionof{lstlisting}[k6 script, simplified code example]{Simplified code example of a k6 script to test course creation. Adapted from \javaname{performance-tests/k6/writes/create-course-prerequisites/create-course-prerequisites.js}}}
 \label{lst:create-course-k6-script}
 
 \subsection{Load Test Lifecycle}
@@ -1328,17 +1376,15 @@ The primary difference from a typical k6 test lies in the execution flow within 
 
 To track the success rate of this request, the script introduces a custom Rate metric named $read\_visible\_rate$. By manually adding true or false to this metric based on whether the lecture was found, indicated by a response status of 200, the script generates a percentage of "fresh" requests inside the required threshold of 100ms. This provides a clear statistical view of how reliably the ES-CQRS system maintains its "fresh" data under varying levels of load.
 
-\chapter{Results}
+\chapter{Results (TODO)}
 
 \input{tables/latency_get-lectures_500VU}
 
-\chapter{Discussion}
+\chapter{Discussion (TODO)}
 
 \section{Analysis of results}
 
-\section{Conclusion \& Further work}
-
-Finally, I'm done!
+\section{Conclusion \& Further work (TODO)}
 
 \newpage
 \printbibliography
