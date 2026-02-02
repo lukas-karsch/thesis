@@ -45,6 +45,21 @@
   moredelim=[is][\textcolor{pgrey}]{\%\%}{\%\%}
 }
 
+\lstdefinelanguage{JavaScript}{
+  keywords={typeof, new, true, false, catch, function, return, null, catch, switch, var, if, in, while, do, else, case, break},
+  keywordstyle=\color{porange},
+  ndkeywords={class, export, default, boolean, throw, implements, import, this},
+  ndkeywordstyle=\color{porange}\bfseries,
+  sensitive=false,
+  comment=[l]{//},
+  morecomment=[s]{/*}{*/},
+  commentstyle=\color{pgrey},
+  stringstyle=\color{pgreen},
+  morestring=[b]',
+  morestring=[b]",
+  morestring=[b]`
+}
+
 \usepackage{caption}
 \captionsetup{font=small}
 
@@ -286,6 +301,10 @@
 \newacronym[plural=SLAs,firstplural={Service Level Agreements (SLAs)}]{sla}{SLA}{Service Level Agreement}
 
 \newacronym{vm}{VM}{Virtual Machine}
+
+\newacronym{ssh}{SSH}{Secure Shell}
+
+\newacronym{scp}{SCP}{Secure Copy}
 
 \begin{document}
 
@@ -727,6 +746,19 @@ The results collected during load testing show how the applications perform unde
 This section will describe the implications of the collected results on the predicted scalability of systems. To do so, literature is analyzed which describes the correlation between performance, resource usage and scalability. We analyze how quickly a system reaches its bottlenecks and in which cases which system is better scalable.
 
 Scalability also depends on the architecture of a software. For example, an application designed to separate reads and writes allows to separate the application into microservices more easily than a monolith. This view on scalability will be described further when presenting the results of architectural metrics.
+
+\subsection{Load Testing Scenarios (TODO)}
+
+This subsection lists every load testing scenario and explains why its results are relevant to the research question.
+
+\begin{itemize}
+    \item Create Courses Simple
+    \item Create Courses with Prerequisites
+    \item Get lectures
+    \item Enrollment
+    \item Create lecture and read (time to consistency)
+    \item More?
+\end{itemize}
 
 \section{Flexibility - Architectural Metrics (TODO)}
 
@@ -1206,36 +1238,95 @@ A shell script, \keyw{create-vm.sh}, orchestrates the creation of a VM template 
 
 During the provisioning process, a number of steps are executed. First, it is made sure that the system is up-to-date by installing any available software updates. Next, a `thesis` user is created for which the environment is configured. Afterward, the script installs all necessary software, including \gls{docker}, git, Conda, Python, k6, Maven, and Java 25. Once all necessary software is installed, the project's git repository is cloned and a Maven build is triggered. Finally, the \gls{docker} images are built. After these steps are completed, the provisioned \acrshort{vm} is ready to run the applications and load tests.
 
-Instead of starting the \acrshort{vm} directly, the script shuts the \acrshort{vm} down and converts it into a Proxmox template, which can be re-created efficiently.
+Instead of starting the \acrshort{vm} directly, the script shuts the \acrshort{vm} down and converts it into a Proxmox template, which can be re-created efficiently. This template is used to create the client and server \glspl{vm}.
 
-\section{Performance Tests}
+\section{Load Tests}
 
 This section describes the implementation of load tests.
 
-\subsection{k6 Tests}
+\subsection{k6 Scripts}
+\label{sec:k6-implementation}
 
-Using k6, several test scripts were written. Show structure and example for one script: seed data in setup function, options (ramping arrival rate, open model!), export default function.
+The core of the load testing suite are the load-generating scripts developed using \hyperref[sec:k6]{k6}. \autoref{lst:create-course-k6-script} illustrates the implementation of a typical k6 script using the creation of courses with prerequisites as an example. \footnote{\javaname{performance-tests/k6/writes/create-course-prerequisites/create-course-prerequisites.js}}
+
+After defining necessary imports, the test script extracts execution parameters from the \keyw{\_\_ENV} object which is injected by the k6 test runner. Most k6 scripts written for this project rely on \acrshort{rps}, representing the target iteration rate, and \texttt{TARGET\_HOST}, which is the URL the application under test is reachable at.
+
+The value of \acrshort{rps} is used to define test options. Namely, a scenario, optional thresholds and the statistics to collect are defined. A test may have several scenarios, however in the k6 scripts used in this project, only one scenario per test is defined. Each scenario has a specific executor. In this case, the "ramping-arrival-rate" executor is used, as opposed to the "ramping-vus" executor. While the "ramping-vus" executor defines the number of virtual users interacting with the application (closed model), "ramping-arrival-rate" executors define the number of iterations per second (open model). This important distinction is described in more detail in \autoref{sec:load-test-theory}. Stages in a scenario define the "timeline" of \acrshort{rps}. In the given example, \acrshort{rps} are increased from 0 to the target \acrshort{rps} over a duration of 20 seconds. This \acrshort{rps} is then held for a duration of 80 seconds, before decreasing \acrshort{rps} back to 0 over a span of 20 seconds.
+
+After defining test options, an optional setup function is implemented. It is executed once by k6, before running the load-generating "export default" function. In the setup function, seed data can be created. The given code example uses the setup function to create 10 prerequisite courses. Their IDs are returned from the setup function.
+
+Data returned from the setup function can be passed to the "export default" function, which is the core of any load test. This is the function that is executed repeatedly to generate load. The implementation of this function in the given example is rather simple. One POST request is sent to the server. This request includes a payload which references a random number of prerequisite courses, as well as other required parameters for course creation.
+
+\begin{lstlisting}[language=JavaScript]
+// Imports omitted
+const {TARGET_HOST, RPS} = __ENV;
+
+export const options = {
+    scenarios: {
+        createCourses: {
+            executor: "ramping-arrival-rate",
+            timeUnit: "1s",
+            preAllocatedVUs: RPS,
+            stages: [
+                {target: RPS, duration: "20s"},
+                {target: RPS, duration: "80s"},
+                {target: 0, duration: "20s"}
+            ]
+        }
+    },
+    thresholds: {
+        'http_req_failed': ['rate<0.01'], // Error rate must be <1%
+    },
+    summaryTrendStats: ["med", "p(99)", "p(95)", "avg"],
+};
+
+export function setup() {
+    const prerequisiteIds = createPrerequisites(10);
+    return { prerequisiteIds };
+}
+
+export default function (data) {
+    const {prerequisiteIds} = data; 
+
+    const url = `${TARGET_HOST}/courses`;
+    const prerequisiteCourseIds = selectRandomPrerequisiteIds();
+    const payload = createPayload(prerequisiteCourseIds);
+    const res = http.post(url, payload);
+    checkResponseIs201(res);
+}
+\end{lstlisting}
+\captionof{lstlisting}[k6 script, simplified code example]{Simplified code example of a k6 script to test course creation. Adapted from \javaname{performance-tests/k6/writes/create-course-prerequisites/create-course-prerequisites.js}}
+\label{lst:create-course-k6-script}
 
 \subsection{Load Test Lifecycle}
 
-k6 script alone is not enough: it can perform test on a running application, but thats it. To run the test and collect metrics, in between runs restart the app and dependencies, lifecycle needs to be managed.
+The k6 scripts alone are not enough to execute a large, repeated load test. While they can generate load on a running application and are capable of collecting client-side metrics, external lifecycle management is needed to control the infrastructure and ensure a clean environment in between each test run.
 
-Elements:
+The lifecycle of repeated load tests is managed using python scripts. The core scripts are \keyw{perf\_runner.py} \footnote{\keyw{performance-tests/perf\_runner.py}} and \keyw{many\_runs.py} \footnote{\keyw{performance-tests/many\_runs.py}}. These scripts instrument the entire lifecycle of the application and k6 runs. They are responsible for starting the application using \gls{docker}, collecting server-side metrics using Prometheus and post-processing results.
 
-\begin{itemize}
-    \item perf\_runner.py. Docker remote context, start docker compose, start Prometheus. After finishing test execution, collect metrics and postprocess (link to next subsection) This can maybe be described using a diagram?
-    \item which relies on metric.json definition
-    \item many\_runs.py to orchestrate a big amount of runs
-    \item then finally, shell scripts executing the many\_runs.py many times, in between adjusting configuration of VUs (RPS)
-\end{itemize}
+The core logic within \keyw{perf\_runner.py} follows a defined flow for every single test run. It begins by determining the execution context. If a remote configuration is provided, it establishes a \gls{docker} Remote Context via \gls{ssh} to interact with the target \acrshort{vm}. It then deploys the application using \texttt{docker compose up}. Before directing any traffic towards the application, the Actuator's health endpoint is polled to ensure the application is running properly.
+
+Once the application is healthy, the script sets up Prometheus for server-side monitoring. After dynamically generating a \javaname{prometheus.yml} configuration file, a Prometheus container is started, targeted to scrape the application under test. To ensure short-term spikes in latency or resource consumption can be captured, the configuration defines a polling interval of 2 seconds.
+
+With the environment and monitoring active, the script invokes k6. Configuration parameters for the test run are expected to be defined in \javaname{metric.json}, which is a file placed alongside a test script. It includes metadata and parameters such as the number of \acrshortpl{VU} and the target host URL. These parameters are passed directly to the k6 engine via environment variables. Inside the k6 scripts, the VUs environment variable is used to define the arrival rate within the ramping-arrival-rate executor rather than a fixed number of concurrent users. Because k6 is configured to trigger a specific number of iterations per second, this parameter effectively acts as a control for Requests Per Second (RPS), ensuring the load remains consistent regardless of how long the individual HTTP calls take to complete. % TODO unverständlicher satz wahrscheinlich
+
+After k6 completed its load generation, the script enters a data-extraction phase. It queries the Prometheus API to retrieve system-level metrics. Next, it parses the k6-summary.json file, which is a file generated by k6 that includes all metrics recorded during the run. The collected data is processed and merged into standardized CSV files (client\_metrics.csv and server\_metrics.csv).
+
+Once all data is extracted, the system is ready for the next run. To prepare the environment, all containers need to be stopped first. That is done by running \javaname{docker compose down -v} inside the \gls{docker} remote context, with the \texttt{-v} argument explicitly removing all docker volumes. This makes sure PostgreSQL's and Axon Server's data stores are emptied out before the next test iteration.
+
+While \javaname{perf\_runner.py} manages the lifecycle of a single test, \javaname{many\_runs.py} acts as a high-level orchestrator, designed to automate large-scale comparative benchmarks by executing multiple iterations across both implementations by running a single command. The script can be configured to run an arbitrary number of tests, which will be executed for both applications. The script accepts the metric configuration files and passes them on to \javaname{perf\_runner.py}.
 
 \subsection{Post Processing Test Results}
 
-Collected Prometheus metrics are (partly) post-processed and aggregated. For example, turn client and server latency metrics into aggregated CSV files which contain $latency\_avg$, $latency\_p50$ etc.
+After extracting data from the k6 output and Prometheus, it is consolidated into a unified CSV format. This is necessary because the two systems use differing naming conventions and units: while k6 might report the 95th percentile latency as $p(95)$ in milliseconds, Prometheus might expose it through a complex PromQL query resulting in a label like $latency_p95$, measured in seconds. Precisely, k6's $med$, $avg$ and percentile latency metrics are mapped to the Prometheus equivalent. Performing this normalization step immediately after the test run means the collected data can easily be compared and visualized later.
 
-\subsection{Testing "Freshness": Time to Consistency (TODO)}
+\subsection{Testing "Freshness": Time to Consistency}
 
-This is a "special" case of test because after trying to create, we want to find out how quickly that change is reflected in the read model. Implementation is still to do.
+To assess the eventual consistency of the ES-CQRS architecture, a specialized test for the \hyperref[slo-freshness]{Freshness \acrshort{slo}} was developed.\footnote{\keyw{performance-tests/k6/time-to-consistency/create-lecture/create-lecture.js}} Unlike standard performance scripts, which measure the speed of isolated requests, this script is specifically designed to measure the synchronization delay between the command and query sides of the application. This delay, called eventual consistency, occurs because the write-side (Command) and read-side (Query) are strictly separated in \acrshort{cqrs}.
+
+The primary difference from a typical k6 test lies in the execution flow within the default function. Rather than executing a single \acrshort{http} call, this test executes two calls to the application. First, it performs a POST request to create a lecture and captures the resulting ID. After creating the lecture, the script performs sleeps for exactly 0.1 seconds, the threshold defined in the Freshness \acrshort{slo}. After this threshold, the application is expected to have synchronized the write- and read-side. Once the script wakes up from its sleep, it performs a GET request, attempting to fetch the newly created lecture.
+
+To track the success rate of this request, the script introduces a custom Rate metric named $read\_visible\_rate$. By manually adding true or false to this metric based on whether the lecture was found, indicated by a response status of 200, the script generates a percentage of "fresh" requests inside the required threshold of 100ms. This provides a clear statistical view of how reliably the ES-CQRS system maintains its "fresh" data under varying levels of load.
 
 \chapter{Results}
 

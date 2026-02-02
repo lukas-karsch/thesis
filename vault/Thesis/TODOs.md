@@ -39,7 +39,7 @@
 	- https://github.com/Witiko/markdown/issues/448
 	- Unify naming of load vs performance testing
 ## Urgent
-- ...
+- Write _something_ for every remaining section 
 ## Before Finishing
 - Check README
 - Clone repo in blank folder, check everything works
