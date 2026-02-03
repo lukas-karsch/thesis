@@ -207,7 +207,11 @@ def visualize_aggregated_lineplot(
     additional_title: str = "",
 ):
     _lineplot_latency_vs_users(
-        aggregated, log_x=log_x, log_y=log_y, additional_title=additional_title
+        aggregated,
+        log_x=log_x,
+        log_y=log_y,
+        additional_title=additional_title,
+        show_slo=False,
     )
 
 

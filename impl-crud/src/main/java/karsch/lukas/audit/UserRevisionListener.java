@@ -17,19 +17,30 @@ public class UserRevisionListener implements RevisionListener {
         rev.setTimestamp(systemTime);
 
         try {
-            final RequestContext context;
-            if (RequestContextHolder.getRequestAttributes() == null) {
-                context = null;
+            final RequestContext requestContext;
+            final AuditContext auditContext;
+            if (!isInsideRequestScope()) {
+                requestContext = null;
+                auditContext = null;
             } else {
-                context = SpringContext.getBean(RequestContext.class);
+                requestContext = SpringContext.getBean(RequestContext.class);
+                auditContext = SpringContext.getBean(AuditContext.class);
             }
-            if (context != null && context.getUserId() != null) {
-                rev.setRevisionMadeBy(String.format("%s_%s", context.getUserType(), context.getUserId()));
+            if (requestContext != null && requestContext.getUserId() != null) {
+                rev.setRevisionMadeBy(String.format("%s_%s", requestContext.getUserType(), requestContext.getUserId()));
             } else {
                 rev.setRevisionMadeBy("SYSTEM");
+            }
+
+            if (auditContext != null) {
+                rev.setAdditionalContext(auditContext.getAdditionalContext());
             }
         } catch (Exception e) {
             rev.setRevisionMadeBy("Unknown");
         }
+    }
+
+    private static boolean isInsideRequestScope() {
+        return RequestContextHolder.getRequestAttributes() != null;
     }
 }

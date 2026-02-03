@@ -11,6 +11,8 @@
 	- Change the API:
 		- make GET /lectures return ALL lectures 
 		- create GET /lectures-for-student
+		- introduce new endpoint to kick students out of a lecture 
+		  reasoning: distinguish in audits if student disenrolled or was kicked out 
     - CRUD
 	    - check if indexes are set up correctly 
 	    - clean up StatsService 
@@ -38,15 +40,17 @@
 		- "get grades" load test 
 		- another really complex load test (most JOINs i can find)
 		- historical reconstruction load test 
+		- **Profile performance of applications**
+			- read-lectures: CQRS is slower. i supect JSON deserialization is the issue - should profile this! 
 - Statistical significance: https://de.wikipedia.org/wiki/Wilcoxon-Mann-Whitney-Test
 - **Writing**
 	- Write method on flexibility [[Method - Flexibility]]
-	- https://github.com/Witiko/markdown/issues/448
+	- Mermaid diagram in latex: https://github.com/Witiko/markdown/issues/448
 	- Unify naming of load vs performance testing
 	- Mention that, when trying to audit _read_ operations, event sourcing is not sufficient. 
+	- Think of title that is NOT the research question 
+	- Write part about envers implementation 
 ## Urgent
-- Write _something_ for every remaining section 
-- Collect run results for read-lectures, 5000 RPS 
 - **Run tests**
 	- time-to-consistency
 	- enrolling

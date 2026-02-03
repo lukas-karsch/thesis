@@ -13,4 +13,8 @@ public class CustomRevisionEntity extends DefaultRevisionEntity {
     @Getter
     @Setter
     private String revisionMadeBy;
+
+    @Getter
+    @Setter
+    private String additionalContext;
 }
