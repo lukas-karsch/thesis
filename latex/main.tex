@@ -426,6 +426,7 @@ Non-goals:
     \item Perfectly implement DDD semantics
     \item Tune applications to get the best performance
     \item Implement mechanics to support schema evolution
+    \item Implement full-grade application using security best practices, etc -> custom RequestContext with own "authorization" methods
 \end{itemize}
 
 \section{Structure of the paper (TODO)}
@@ -852,11 +853,7 @@ This subsection lists every load testing scenario and explains why its results a
 
 \section{Flexibility - Architectural Metrics (TODO)}
 
-This section describes various architectural metrics which are established in literature and used to assess the flexibility and quality of a software architecture. It serves as a basis to answer \hyperref[rs-architecture]{\acrshort{rs} 2}.
-
-\section{Traceability (TODO)}
-
-This section describes how traceability will be compared; it serves as a basis to answer \hyperref[rs-traceability]{\acrshort{rs} 3}. The method uses established static analysis methods to compare the two architectures. Describe how the results will be visualized and what they may indicate. Maybe talk about schema evolution.
+This section describes various architectural metrics which are established in literature and used to assess the flexibility and quality of a software architecture. It serves as a basis to answer \hyperref[rs-architecture]{\acrshort{rs} 2}. The method uses established static analysis methods to compare the two architectures. Describe how the results will be visualized and what they may indicate. Maybe talk about schema evolution.
 
 \textbf{Metrics:}
 
@@ -876,6 +873,10 @@ This section describes how traceability will be compared; it serves as a basis t
     \item Singh, "Object Oriented Coupling based Test Case Prioritization"
     \item Overeem et al., "An empirical characterization of event sourced systems and their schema evolution — Lessons from industry"
 \end{itemize}
+
+\section{Traceability (TODO)}
+
+This section describes how traceability will be compared; it serves as a basis to answer \hyperref[rs-traceability]{\acrshort{rs} 3}. Maybe talk about schema evolution here (how does schema evolution affect the ability to make historic queries in the system).
 
 \subsection{Accuracy of reconstruction}
 
@@ -1104,8 +1105,10 @@ void getLectureDetails_shouldReturn200_returnTwoDates() {
             .body("data.dates", hasSize(2));
 }
 \end{lstlisting}
-{\captionof{lstlisting}[Contract test example]{Contract test example; adapted from \javaname{test-suite/src/test/karsch.lukas.lectures.AbstractLecturesE2ETest}}}
+{
+\captionof{lstlisting}[Contract test example]{Contract test example; adapted from \javaname{test-suite/src/test/karsch.lukas.lectures.AbstractLecturesE2ETest}}
 \label{lst:e2e-test}
+}
 
 All contract tests follow a consistent pattern as shown in \autoref{lst:e2e-test}. First, a test method is annotated with \javaname{@DisplayName} to provide a descriptive, human-readable name. The test method itself is precisely named after the behavior it asserts. In the example above, the test verifies that the response status code is \javaname{200} and that the response body contains a field called \javaname{dates} consisting of an array of size two.
 
@@ -1129,8 +1132,10 @@ public class PostgresTestcontainerConfiguration {
     }
 }
 \end{lstlisting}
-{\captionof{lstlisting}[\keyw{PostgresTestcontainerConfiguration}]{\javaname{impl-crud/src/test/karsch.lukas.}\keyw{PostgresTestcontainerConfiguration}}}
+{
+\captionof{lstlisting}[\keyw{PostgresTestcontainerConfiguration}]{\javaname{impl-crud/src/test/karsch.lukas.}\keyw{PostgresTestcontainerConfiguration}}
 \label{lst:testcontainer-configuration}
+}
 
 \autoref{lst:testcontainer-configuration} starts a \hyperref[sec:postgresql]{PostgreSQL} container using the latest available image. \texttt{@ServiceConnection} makes sure the Spring application can connect to the container. This configuration can then be imported as shown in \autoref{lst:import-testcontainer}.
 
@@ -1139,8 +1144,10 @@ public class PostgresTestcontainerConfiguration {
 %%@Import%%(PostgresTestcontainerConfiguration.class)
 public class CrudLecturesE2ETest extends AbstractLecturesE2ETest { }
 \end{lstlisting}
-{\captionof{lstlisting}[\keyw{CrudLecturesE2ETest}]{\javaname{impl-crud/src/test/karsch.lukas.e2e.lectures.CrudLecturesE2ETest}}}
+{
+\captionof{lstlisting}[\keyw{CrudLecturesE2ETest}]{\javaname{impl-crud/src/test/karsch.lukas.e2e.lectures.CrudLecturesE2ETest}}
 \label{lst:import-testcontainer}
+}
 
 \section{CRUD implementation}
 
@@ -1150,7 +1157,7 @@ This section presents the relevant aspects of the CRUD implementation\footnote{\
 
 \subsection{Relational Modeling}
 
-The CRUD implementation uses a \hyperref[sec:crud-architecture]{normalized database} in the Third Normal Form.
+The CRUD implementation uses a \hyperref[sec:crud-architecture]{normalized database} in the Third Normal Form. TODO!! this still shows auditing class. Create a new diagram; also note that Envers' created auditing tables are not shown here.
 
 \begin{figure}[h]
     \includegraphics[width=\textwidth, inner]{../vault/Thesis/images/CRUD_ER_Diagram_3.png}
@@ -1168,11 +1175,9 @@ In the app's ER diagram, the \keyw{LectureEntity} serves as core of the schema, 
 
 \keyw{LectureEntity} also has "One to Many" relationships to \keyw{LectureWaitlistEntryEntity}, \keyw{EnrollmentEntity} and \keyw{LectureAssessmentEntity}. \keyw{LectureWaitlistEntryEntity} is a table which stores students who are waitlisted for a lecture. It is effectively a join table (with one extra column to track when the student was waitlisted) and represents a Many to Many relationship between lectures and students. The same applies to \keyw{EnrollmentEntity} which is a table storing which students are enrolled to which lecture. \keyw{LectureAssessmentEntity} represents the fact that a lecture can have many assessments (which may be an exam, a paper or a project). Each assessment in turn has many \keyw{AssessmentGradeEntity}s associated with it. This table stores which student scored which grade on an assessment. % TODO fix spacing 
 
-The \keyw{AuditLogEntry} is also visible on the ER diagram, however it has no relationships. This table and the entire audit log implementation will be laid out in the \hyperref[sec:audit-log-implementation]{following section}.
+These entities are implemented using SpringBoot's \acrshort{jpa} integration. For example, an entity with a "One to Many" relationship can be implemented as presented in \autoref{lst:simple-one-to-many}.
 
-These entities are implemented using SpringBoot's \acrshort{jpa} integration. For example, an entity with a "One to Many" relationship can be implemented like this:
-
-\begin{lstlisting}[caption={Simple JPA entity with a "One to Many" relationship},captionpos=b]
+\begin{lstlisting}[caption={Simple JPA entity with a "One to Many" relationship},captionpos=b,label={lst:simple-one-to-many}]
 %%@Entity%% 
 class LectureEntity {
     %%@Id%% 
@@ -1195,9 +1200,9 @@ The \keyw{@OneToMany} annotation defines a relational link between two entities.
 There are several strategies to implement an audit log, each with its own trade-offs:
 
 \begin{enumerate}
-    \item \textbf{Manual Logging}: Developers explicitly call a logging service in every service method that modifies data. While simple, this can lead to code duplication and is prone to human error, such as developers forgetting to add a log statement. A code example might look like this:
+    \item \textbf{Manual Logging}: Developers explicitly call a logging service in every service method that modifies data. While simple, this can lead to code duplication and is prone to human error, such as developers forgetting to add a log statement. A simple code example is presented in \autoref{lst:audit-log-code-example}.
 
-          \begin{lstlisting}[caption={Code example for manual audit logging},captionpos=b]
+          \begin{lstlisting}[caption={Code example for manual audit logging},captionpos=b,label={lst:audit-log-code-example}]
 public void updatePhoneNumber(User user, int newNumber) {
     logChange(Date.now(), user, user.getPhoneNumber(), newNumber, "UserRequestedNumberChange");
     user.setPhoneNumber(newNumber);
@@ -1211,18 +1216,89 @@ void logChange(
 }
 \end{lstlisting}
     \item \textbf{Database Triggers or Stored Procedures} can capture changes automatically and directly on the database. This guarantees that no change is missed, even if made outside the application. \textcite[515]{ingram_design_2009} mentions that database triggers run on a "per-record" basis, meaning the logic is run for each changed record individually. This may lead to degraded performance during batch operations, which is why stored procedures should be preferred over triggers for auditing concerns. It is also worth noting that this approach ties the auditing logic to a specific database, making it less portable.
-    \item  \textbf{Hibernate Envers} is an auditing solution for JPA-based applications which automatically versions entities by using the concept of revisions. Envers creates an auditing table for each entity which stores historical data, whenever a transaction is committed. \parencite{hibernate_envers_nodate}
-    \item \textbf{JPA Entity Listeners}: JPA's lifecycle events (\texttt{@PrePersist}, \texttt{@PreUpdate}, etc.) can be used to intercept changes. This approach is database-independent and keeps the logic within the Java application, allowing access to application internals like beans and Spring's security context. In full-grade applications built using Spring Security, the security context lets developers access the current user, making it possible to attach them to the new audit log entry. (needs reference) \label{item:jpa-entity-listener}
+    \item \textbf{JPA Entity Listeners}: JPA's lifecycle events (\texttt{@PrePersist}, \texttt{@PreUpdate}, etc.) can be used to intercept changes. Inside event handling functions designed for those events, it is possible to capture the changes and persist them in separate auditing tables. This approach is database-independent and keeps the logic within the Java application, allowing access to application internals like beans and Spring's security context. In full-grade applications built using Spring Security, the security context lets developers access the current user, making it possible to attach them to the new audit log entry. Additional context can also be added through thread-local or request-scoped variables. \parencite[Section 13.2]{bauer_java_2016} \label{item:jpa-entity-listener}
+    \item  \textbf{Hibernate Envers} is an auditing solution for JPA-based applications which automatically versions entities by using the concept of revisions. Envers creates an auditing table for each entity. This table stores historical data whenever a transaction is committed. It builds on top of JPA entity listeners and avoids the need for developers to build a custom auditing solution. Custom revision entities and change listeners can be implemented to capture additional context. \parencite{hibernate_envers_nodate} (TODO: is it true that Envers builds on JPA listeners?)
     \item TODO: talk about CDC (change data capture) here or in \autoref{sec:audit-log}
 \end{enumerate}
 
-\subsection{Chosen Implementation: Hibernate Envers (TODO)}
+\subsection{Chosen Implementation: Hibernate Envers} \label{sec:chosen-implementation-hibernate-envers}
 
-This section describes Hibernate Envers in detail; how it was implemented into the CRUD app, how it captures context, etc.
+The audit log in the developed CRUD application is implemented using Hibernate Envers. This solution was chosen because it seamlessly integrates with existing JPA entities to manage historical versions of data in dedicated audit tables.
+
+\subsubsection*{Enabling Auditing on Entities}
+
+To track changes for a specific entity, it must be annotated with \keyw{@Audited}. In this implementation, a common base class \texttt{AuditableEntity}\footnote{\javaname{impl-crud/src/main/java/karsch.lukas.audit.}\keyw{AuditableEntity}} is used to handle basic auditing metadata such as creation and modification timestamps using Spring Data JPA annotations. \autoref{lst:audited-entity} presents the state of an entity after enabling Envers auditing. Apart from the \keyw{@Audited} annotation, no changes are necessary, unless developers wish to exclude certain fields from auditing, in which case \keyw{@NotAudited} can be used.
+
+\begin{lstlisting}
+%%@Entity%%
+%%@Audited%%
+public class CourseEntity extends AuditableEntity { 
+    @Id @GeneratedUuidV7
+    private UUID id;
+    // all fields remain unchanged 
+} 
+\end{lstlisting}
+{
+\captionof{lstlisting}{Auditing configuration for the Course entity (\javaname{impl-crud/src/main/java/karsch.lukas.courses.}\keyw{CourseEntity}})
+\label{lst:audited-entity}
+}
+
+\subsubsection*{Custom Revision Entity and Listener}
+
+While Envers provides a default revision table (storing only a revision ID and timestamp), a custom implementation is required to capture application-specific context, such as the user responsible for the change and a descriptive, optional context which allows capturing additional information about a change.
+
+As shown in \autoref{lst:custom-revision-entity}, the \keyw{CustomRevisionEntity} extends Envers' \keyw{DefaultRevisionEntity} to include the fields \keyw{revisionMadeBy} and \keyw{additionalContext}.
+
+\begin{lstlisting}
+%%@Entity%%
+%%@RevisionEntity%%(UserRevisionListener.class)
+public class CustomRevisionEntity extends DefaultRevisionEntity {
+    private String revisionMadeBy; 
+    private String additionalContext;
+}
+\end{lstlisting}
+{
+\captionof{lstlisting}[Custom revision entity]{Custom Envers revision entity (\javaname{impl-crud/src/main/java/karsch.lukas.audit.}\keyw{CustomRevisionEntity})}
+\label{lst:custom-revision-entity}
+}
+
+The association between a transaction and this metadata is handled by the \keyw{UserRevisionListener}. This listener intercepts the creation of a new revision and populates the fields by accessing the current request scope and a custom \keyw{AuditContext} bean. Its implementation is detailed in \autoref{sec:capturing-request-scoped-context}.
+
+\subsubsection*{Capturing request-scoped context}
+\label{sec:capturing-request-scoped-context}
+
+To ensure the audit log contains meaningful information about why or by whom a change was made, the implementation utilizes Spring's \keyw{@RequestScope}. This annotation can be placed on beans, which will then be request-scoped, meaning they are re-created for each request. This annotation is used on two beans: \keyw{RequestContext}, holding information about the current user, and \keyw{AuditContext}, which is a bean able to capture additional context for auditing purposes. As \keyw{UserRevisionListener} is a Hibernate specific class living outside of Spring's managed environment, a static \keyw{getBean} method is used to access the relevant Spring beans.
+
+\begin{lstlisting}
+public class UserRevisionListener implements RevisionListener {
+    %%@Override%%
+    public void newRevision(Object revisionEntity) {
+        CustomRevisionEntity rev = (CustomRevisionEntity) revisionEntity;
+
+        if (isInsideRequestScope()) {
+            RequestContext ctx = SpringContext.getBean(RequestContext.class);
+            AuditContext audit = SpringContext.getBean(AuditContext.class);
+            
+            rev.setRevisionMadeBy(ctx.getUserType() + "_" + ctx.getUserId());
+            rev.setAdditionalContext(audit.getAdditionalContext());
+        } else {
+            rev.setRevisionMadeBy("SYSTEM");
+        }
+    }
+}
+\end{lstlisting}
+{
+\captionof{lstlisting}[Implementation of the Revision Listener]{Implementation of the Revision Listener (\javaname{impl-crud/src/main/java/karsch.lukas.audit.}\keyw{UserRevisionListener})}
+\label{lst:revision-listener}
+}
+
+\subsubsection*{Global Auditing Configuration}
+
+Finally, the \texttt{AuditingConfig}\footnote{\javaname{impl-crud/src/main/java/karsch.lukas.audit.}\keyw{AuditingConfig}} configuration class connects the application's custom time provider to the JPA auditing infrastructure. This ensures that both the standard \texttt{createdAt} fields and the Envers revision timestamps are synchronized with the application's internal clock, which is essential for consistent testing. Additionally, the configuration connects the application's request context to the auditing infrastructure, providing information about the current user. In a full-grade application, Spring security would provide the user context, though for this project, a simpler solution was preferred, as described in (TODO).
 
 \subsubsection{Reconstructing historic state (TODO)}
 
-Show how Envers can be queried for historic state (see \javaname{impl-crud/src/main/java/karsch.lukas.stats.StatsService}).
+Show how Envers can be queried for historic state (\keyw{impl-crud/src/main/java/karsch.lukas.stats.StatsService}).
 
 \section{ES/CQRS implementation}
 \label{sec:es-cqrs-implementation}
@@ -1417,7 +1493,7 @@ The core logic within \keyw{perf\_runner.py} follows a defined flow for every si
 
 Once the application is healthy, the script sets up Prometheus for server-side monitoring. After dynamically generating a \javaname{prometheus.yml} configuration file, a Prometheus container is started, targeted to scrape the application under test. To ensure short-term spikes in latency or resource consumption can be captured, the configuration defines a polling interval of 2 seconds.
 
-With the environment and monitoring active, the script invokes k6. Configuration parameters for the test run are expected to be defined in \javaname{metric.json}, which is a file placed alongside a test script. It includes metadata and parameters such as the number of \acrshortpl{VU} and the target host URL. These parameters are passed directly to the k6 engine via environment variables. Inside the k6 scripts, the VUs environment variable is used to define the arrival rate within the ramping-arrival-rate executor rather than a fixed number of concurrent users. Because k6 is configured to trigger a specific number of iterations per second, this parameter effectively acts as a control for Requests Per Second (RPS), ensuring the load remains consistent regardless of how long the individual HTTP calls take to complete. % TODO unverständlicher satz wahrscheinlich
+With the environment and monitoring active, the script invokes k6. Configuration parameters for the test run are expected to be defined in \javaname{metric.json}, which is a file placed alongside a test script. It includes metadata and parameters such as the number of \acrshortpl{VU} and the target host URL. These parameters are passed directly to the k6 engine via environment variables. Inside the k6 scripts, the \acrshortpl{VU} environment variable is used to define the arrival rate within the ramping-arrival-rate executor rather than a fixed number of concurrent users. Because k6 is configured to trigger a specific number of iterations per second, this parameter effectively acts as a control for Requests Per Second (RPS), ensuring the load remains consistent regardless of how long the individual HTTP calls take to complete. % TODO unverständlicher satz wahrscheinlich
 
 After k6 completed its load generation, the script enters a data-extraction phase. It queries the Prometheus API to retrieve system-level metrics. Next, it parses the k6-summary.json file, which is a file generated by k6 that includes all metrics recorded during the run. The collected data is processed and merged into standardized CSV files (client\_metrics.csv and server\_metrics.csv).
 
@@ -1427,7 +1503,7 @@ While \javaname{perf\_runner.py} manages the lifecycle of a single test, \javana
 
 \subsection{Post Processing Test Results}
 
-After extracting data from the k6 output and Prometheus, it is consolidated into a unified CSV format. This is necessary because the two systems use differing naming conventions and units: while k6 might report the 95th percentile latency as $p(95)$ in milliseconds, Prometheus might expose it through a complex PromQL query resulting in a label like $latency_p95$, measured in seconds. Precisely, k6's $med$, $avg$ and percentile latency metrics are mapped to the Prometheus equivalent. Performing this normalization step immediately after the test run means the collected data can easily be compared and visualized later.
+After extracting data from the k6 output and Prometheus, it is consolidated into a unified CSV format. This is necessary because the two systems use differing naming conventions and units: while k6 might report the 95th percentile latency as $p(95)$ in milliseconds, Prometheus might expose it through a complex PromQL query resulting in a label like $latency\_p95$, measured in seconds. Precisely, k6's $med$, $avg$ and percentile latency metrics are mapped to the Prometheus equivalent, laid out in \autoref{table:collected-metrics}. Performing this normalization step immediately after the test run means the collected data can easily be compared and visualized later.
 
 \subsection{Testing "Freshness": Time to Consistency}
 

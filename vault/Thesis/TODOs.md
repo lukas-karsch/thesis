@@ -16,11 +16,10 @@
     - CRUD
 	    - check if indexes are set up correctly 
 	    - clean up StatsService 
-	    - get rid of N+1 queries (especially StatsService)
+	    - get rid of N+1 queries 
+		    - especially StatsService
 		    - LecturesService.getLecturesForStudent() has N+1 query 
 	    - examine default lock type, if i have any race conditions, @Version usage 
-	    - Audit log
-		    - allow capturing additional context 
     - CQRS
 	    - try to use TEPs in my E2E tests
 	    - use @SequenceNumber aggregateVersion in repositories (https://github.com/idugalic/digital-restaurant/blob/master/drestaurant-apps/drestaurant-monolith-rest/src/main/kotlin/com/drestaurant/query/handler/RestaurantHandler.kt) ??
@@ -40,16 +39,20 @@
 		- "get grades" load test 
 		- another really complex load test (most JOINs i can find)
 		- historical reconstruction load test 
+		- read lecture details 
 		- **Profile performance of applications**
 			- read-lectures: CQRS is slower. i supect JSON deserialization is the issue - should profile this! 
 - Statistical significance: https://de.wikipedia.org/wiki/Wilcoxon-Mann-Whitney-Test
 - **Writing**
-	- Write method on flexibility [[Method - Flexibility]]
-	- Mermaid diagram in latex: https://github.com/Witiko/markdown/issues/448
-	- Unify naming of load vs performance testing
+	- Write method on flexibility [[Method - Flexibility]] 
+	- Mermaid diagram in latex: https://github.com/Witiko/markdown/issues/448 
+	- Unify naming of load vs performance testing 
 	- Mention that, when trying to audit _read_ operations, event sourcing is not sufficient. 
 	- Think of title that is NOT the research question 
-	- Write part about envers implementation 
+	- Write part about envers historic state reconstruction 
+		- add Envers to tech stack 
+	- need to explain my method of "authentication" somewhere 
+	- ES-CQRS: show how to reconstruct state / specific time-travel projections 
 ## Urgent
 - **Run tests**
 	- time-to-consistency
@@ -63,3 +66,4 @@
 - Demonstrate how to start test run with testcontainers 
 - Make sure external links all exist (e.g. to Docker, Axon, etc)
 - Push to GitHub aswell and add the link to latex file
+- Check all internal links in latex (to source code)
