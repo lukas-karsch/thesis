@@ -9,4 +9,4 @@ $ram\_usage\_total$
 $hikari\_connections$
 $tomcat\_threads$
 $postgres\_size$
- 
+

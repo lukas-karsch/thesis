@@ -27,7 +27,6 @@
 	    - maybe set subscribing processors in bean, not application.properties 
 	    - unit test event handlers and aggregates 
 		- every projection needs to handle events it cares about, DON'T query local 
-		- maybe move external validation (using lookup tables) to message interceptors to avoid blocking the aggregate 
 		- is it clean that the lookup tables are injected into every command side? -> should they also keep their own projections? but they would have to be subscribing anyways.. so maybe it doesnt matter because its a "smell" either way 
 		- make sure event handlers are idempotent 
 			- [[2025-12-16 Problems with my Axon projections]]
@@ -43,7 +42,7 @@
 		- **Profile performance of applications**
 			- read-lectures: CQRS is slower. i supect JSON deserialization is the issue - should profile this! 
 - Statistical significance: https://de.wikipedia.org/wiki/Wilcoxon-Mann-Whitney-Test
-- **Writing**
+- **Writing** 
 	- Write method on flexibility [[Method - Flexibility]] 
 	- Mermaid diagram in latex: https://github.com/Witiko/markdown/issues/448 
 	- Unify naming of load vs performance testing 
@@ -52,18 +51,26 @@
 	- Write part about envers historic state reconstruction 
 		- add Envers to tech stack 
 	- need to explain my method of "authentication" somewhere 
-	- ES-CQRS: show how to reconstruct state / specific time-travel projections 
+	- Write more about ES-CQRS implementation 
+		- show how to reconstruct state / specific time-travel projections 
+	- [[2026-02-04 Fragen fürs nächste Meeting]]
 ## Urgent
 - **Run tests**
 	- time-to-consistency
 	- enrolling
+- Think of title 
+	- Aktikkalmaz & Jordine Bescheid geben 
 ## Before Finishing
-- Check README
+- Check READMES 
 - Clone repo in blank folder, check everything works
     - -> refine "installation" section of README
 - Make sure swagger UI works and requests can be sent 
-- Demonstrate how to start docker 
-- Demonstrate how to start test run with testcontainers 
 - Make sure external links all exist (e.g. to Docker, Axon, etc)
-- Push to GitHub aswell and add the link to latex file
+- Push to GitHub aswell and add the repo link to latex file
 - Check all internal links in latex (to source code)
+- Tag final commit on date of submission 
+- Add all used AI tools to appendix 
+- Check that research question is correct everywhere 
+- Unterschrift im PDF platzieren
+- Make sure all versions are pinned in pom.xml 
+

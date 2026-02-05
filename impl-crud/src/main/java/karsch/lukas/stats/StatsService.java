@@ -214,12 +214,12 @@ public class StatsService {
 
         if (startDate != null) {
             query.add(AuditEntity.revisionProperty("timestamp").gt(
-                    startDate.atZone(ZoneId.systemDefault()).toInstant().toEpochMilli())
+                    startDate.atZone(ZoneId.of("UTC")).toInstant().toEpochMilli())
             );
         }
         if (endDate != null) {
             query.add(AuditEntity.revisionProperty("timestamp").le(
-                    endDate.atZone(ZoneId.systemDefault()).toInstant().toEpochMilli())
+                    endDate.atZone(ZoneId.of("UTC")).toInstant().toEpochMilli())
             );
         }
 
@@ -233,7 +233,7 @@ public class StatsService {
                     return new GradeChangeDTO(
                             lectureAssessmentId,
                             entity.getGrade(),
-                            LocalDateTime.ofInstant(Instant.ofEpochMilli(revision.getTimestamp()), ZoneId.systemDefault())
+                            LocalDateTime.ofInstant(Instant.ofEpochMilli(revision.getTimestamp()), ZoneId.of("UTC"))
                     );
                 })
                 .sorted((g1, g2) -> g2.changedAt().compareTo(g1.changedAt()))

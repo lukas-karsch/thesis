@@ -1,0 +1,191 @@
+% !TeX root = ../main.tex
+\chapter{Basics}
+
+To provide a comprehensive framework for the technical implementation discussed in this thesis, this chapter outlines the foundations of modern web architecture, domain-driven design, and the mechanisms facilitating consistency and auditing in event-driven systems.
+
+\section{WWW, Web APIs, REST}
+
+The \acrfull{www} is a connected information network used to exchange data. Resources are can be accessed via \glspl{uri} which are transferred using formats like \acrshort{json} or \acrshort{html} via protocols like \gls{http}. \gls{http} is a stateless protocol based on a request-response structure. It supports standardized request types, such as \texttt{GET} and \texttt{POST}, which convey a semantic meaning \parencite{jacobs_architecture_2004}.
+
+Web APIs are interfaces that enable applications to communicate. They use \gls{http} as a network-based API \parencite[138]{fielding_architectural_2000}. Modern APIs typically follow \gls{rest} principles. REST stands for "Representational State Transfer" and describes an architectural style for distributed hypermedia systems \parencite[76]{fielding_architectural_2000}.
+
+REST APIs adhere to principles derived from a set of constraints imposed by the \gls{http} protocol, for example. One such constraint is "stateless communication": Communication between clients and the server must be \emph{stateless}, meaning the client must provide all the necessary information for the server to fully understand the request.
+
+Furthermore, every resource in REST applications must be addressable via a unique ID, which can then be used to derive a \acrshort{uri} to access the resource. Below are some examples for resources and \glspl{uri} which could be derived from them:
+
+\begin{itemize}
+    \item Book; ID=1; URI=\texttt{http://example.com/books/1}
+    \item Book; ID=2; URI=\texttt{http://example.com/books/2}
+    \item Author; ID=100; URI=\texttt{http://example.com/authors/100}
+\end{itemize}
+
+The "\acrfull{hateoas}" principle states that resources should be linked to each other. Clients should be able to control the application by following a series of links provided by the server \parencite{tilkov_brief_2007}.
+
+Every resource must support the same interface, usually \gls{http} methods (GET, POST, PUT, etc.) where operations on the resource correspond to one method of the interface. For example, a POST operation on a customer might map to the \texttt{createCustomer()} operation on a service.
+
+Resources are decoupled from their representations. Clients can request different representations of a resource, depending on their needs \parencite{tilkov_brief_2007}: a web browser might request \acrshort{html}, while another server or application might request \acrshort{xml} or \acrshort{json}.
+
+%s TODO explain CRUD here or somewhere else? 
+
+\section{Layered Architecture Foundations}
+\label{sec:layered}
+
+Layered Architecture is the most common architecture pattern in enterprise applications. Applications following a layered architecture are divided into \emph{horizontal layers}, with each layer performing a specific role. A standard implementation consists of the following layers:
+
+\begin{itemize}
+    \item Presentation: Handles requests and displays data in a user interface or by turning it into representations (e.g. \acrshort{json}).
+    \item Business: Encapsulates business logic.
+    \item Persistence: Persists data by interacting with the underlying persistence technologies (e.g. SQL databases).
+    \item Database: Manages the physical storage, retrieval, and integrity of the application's data records.
+\end{itemize}
+
+A key concept in this design is layers of isolation, where layers are "closed", meaning a request must pass through the layer directly below it to reach the next, ensuring that changes in one layer do not affect others.
+
+In a layered application, data flows downwards during request handling and upwards during the response: a request arrives in the presentation layer, which delegates to the business layer. The business layer fetches data from the persistence layer which holds logic to retrieve data, e.g. by encapsulating SQL statements.
+
+The database responds with raw data, which is turned into a \acrlong{dao} (\acrshort{dao}) by the persistence layer. The business layer uses this data to execute rules and make decisions. The result will be returned to the presentation layer which can then wrap the response and return it to the caller. \parencite{richards_software_2015}
+
+The data in layered applications is often times modeled in an \emph{anemic} way. In an \gls{adm}, business entities are treated as only data. They are objects which contain no business logic, only getters and setters. Business logic is entirely contained in the business (or "service") layer. \textcite{anemic-fowler-2003} describes this as an object-oriented \emph{antipattern}, as this approach effectively separates data from behavior, resulting in a procedural design that undermines the core principle of object-oriented programming: the encapsulation of state and process within a single unit.
+
+TODO: A figure may placed here
+
+\section{Domain Driven Design}
+\label{sec:ddd}
+
+\acrfull{ddd} is a different architectural approach for applications.  It differs from layered architecture primarily in the way the domain is modelled and the responsibilities of application services.
+
+The core idea of \acrshort{ddd} is that the primary focus of a software project should not be the underlying technologies, but the domain. The domain is the topic with which a software concerns itself. The software design should be based on a model that closely matches the domain and reflects a deep understanding of business requirements. \parencite[8, 12]{evans_domain-driven_2004}
+
+This domain model is built from a \emph{ubiquitous language} which is a language shared between domain experts and software experts. This ubiquitous language is built directly from the real domain and must be used in all communications regarding the software. \parencite[24-26]{evans_domain-driven_2004}
+
+%s TODO here, talk about model driven design -> way from the language to the code 
+
+The software must always reflect the way that the domain is talked about. Changes to the domain and the ubiquitous language must result in an immediate change to the domain model.
+
+When modeling the domain model, the aim should not be to create a perfect replica of the real world. While it should carefully be chosen, the domain model is artificial and forms a selective abstraction which should be chosen for its utility. \parencite[12, 13]{evans_domain-driven_2004}
+
+While \hyperref[sec:layered]{Layered Architecture} organizes code into technical tiers and is typically built on \glspl{adm}, often resulting in the \emph{big ball of mud} antipattern \parencite[V]{richards_software_2015}, \acrshort{ddd} demands a \gls{rdm} where objects incorporate both data and the behavior or rules that govern that data. The code is structured semantically into bounded context and modules which are chosen to tell the "story" of a system rather than its technicalities. \parencite[80]{evans_domain-driven_2004}
+
+Entities (also known as reference objects) are domain elements fundamentally defined by a thread of continuity and identity rather than their specific attributes. Entities must be distinguishable from other entities, even if they share the same characteristics. To ensure consistency and identity, a unique identifier is assigned to entities. This identifier is immutable throughout the object's life. \parencite[65-69]{evans_domain-driven_2004}
+
+Value Objects are elements that describe the nature or state of something and have no conceptual identity of their own. They are interesting only for their characteristics. While two entities with the same characteristics are considered as different from each other, the system does not care about "identity" of a value object, since only its characteristics are relevant. Value objects should be used to encapsulate concepts, such as using an "Address" object instead of distinct "Street" and "City" attributes. Value objects should be immutable. They are never modified, instead they are replaced entirely when a new value is required. \parencite[70-72]{evans_domain-driven_2004}
+
+Using a \gls{rdm} does not mean that there should be no layers, the opposite is the case. \textcite{evans_domain-driven_2004} advocates for using layers in domain driven designs. He proposes the following layers: \parencite[53]{evans_domain-driven_2004}
+
+\begin{itemize}
+    \item Presentation: Presents information and handles commands
+    \item Application Layer: Coordinates app activity. Does not hold business logic, but delegate tasks and hold information about their progress
+    \item Domain Layer: Holds information about the domain. Stateful objects (rich domain model) that hold business logic and rules
+    \item Infrastructure layer: Supports other layers. Handles concerns like communication and persistence
+\end{itemize}
+
+\textcite[75]{evans_domain-driven_2004} points out that in some cases, operations in the domain can not be mapped to one object. For example, transferring money does conceptually not belong to one bank account. In those cases, where operations are important domain concepts, domain services can be introduced as part of model-driven design. To keep the domain model rich and not fall back into procedural style programming like with an \gls{adm}, it is important to use services only when necessary. Services are not allowed to strip the entities and value objects in the domain of behavior. According to Evans, a good domain service has the following characteristics:
+
+\begin{itemize}
+    \item The operation relates to a domain concept which would be misplaced on an entity or a value object
+    \item The operation performed refers to other objects in the domain
+    \item The operation is stateless
+\end{itemize}
+
+\section{CRUD architecture}
+\label{sec:crud-architecture}
+
+% TODO refine 
+
+\hyperref[sec:layered]{Layered architectures} are the standard for data-oriented enterprise applications. These applications mostly follow a \acrshort{crud} architecture. \acrshort{crud} is an acronym coined by \textcite{martin_managing_1983} that stands for "Create, Read, Update, Delete". These four actions can be applied to any record of data.
+
+The state of domain objects in a \acrshort{crud} architecture is often mapped to normalized tables on a relational database, though other storage mechanisms maybe used. The application acts on the current state of the data, with all actions (reads and writes) acting on the same data. % TODO cite 
+
+\acrshort{acid} (\acrlong{acid}) are an important feature of \acrshort{crud} applications. They can be guaranteed using transactions, ensuring that data stays consistent and operations are \glslink{atomicity}{atomic}. \parencite[10,11]{bernstein_principles_2009} % TODO more explanation: what is a transaction, commit, rollback, etc 
+
+Databases in CRUD systems are typically normalized. Normalization is a process of organizing data into separate tables, removing redundancies and creating relationships through "foreign keys". It is the best practice for relational databases. There are several normal forms that can be achieved, each form building on the previous one: to achieve the second normal form, the first normal form has to be achieved first. \parencite[203]{martin_managing_1983}
+
+\begin{itemize}
+    \item 1NF (First Normal Form): Each table cell contains a single (atomic) value, every record is unique
+    \item 2NF (Second Normal Form): Remove partial dependencies by requiring that all \emph{non-key} columns are fully dependent on the primary key
+    \item 3NF (Third Normal Form): Removes transitive dependencies by requiring that non-key columns depend \emph{only} on the primary key
+    \item Further Normal Forms (4NF, 5NF): Require a table can not be broken down into smaller tables without losing data
+\end{itemize}
+
+\section{CQRS Architecture}
+\label{sec:cqrs}
+
+\acrfull{cqrs} is an architectural pattern based on the fundamental idea that the models used to update information should be separate from the models used to read information. This approach originated as an extension of Bertrand Meyer’s \acrfull{cqs} principle, which states that a method should either perform an action (a command) or return data (a query), but never both. \parencite[148]{meyer_standard_2006}
+
+\acrshort{cqrs} is different from \acrshort{cqs} in the fact that in \acrshort{cqrs}, objects are split into two objects, one containing commands, one containing queries. \parencite[17]{young_cqrs_2010}
+
+\acrshort{cqrs} applications are typically structured by splitting the application into two paths:
+
+\begin{itemize}
+    \item Command Side: Deals with data changes and captures user intent. Commands tell the system what needs to be done rather than overwriting previous state. Commands are validated by the system before execution and can be rejected. \parencite[11,12]{young_cqrs_2010}
+    \item Read Side: Strictly for reading data. The read side is not allowed to modify anything in the primary data store. The read side typically stores \glspl{dto} in its own data store that can directly be returned to the presentation layer. \parencite[20]{young_cqrs_2010}
+\end{itemize}
+
+In a CQRS architecture, the read side typically updates its data asynchronously by consuming notifications or events generated by the write side. Because the models for updating and reading information are strictly separated, a synchronization mechanism is required to ensure the read store eventually reflects the changes made by commands. This usually leads to stale data on the read side.
+
+Each read service independently updates its model by consuming notifications or events published by the write side, allowing the read model to store optimized, denormalized views on the data. \parencite[23]{young_cqrs_2010}
+
+TODO: place a figure / digram here
+
+\section{(Eventual) Consistency}
+
+% TODO have to talk about "read your writes"? 
+% TODO maybe move above CRUD and CQRS 
+
+\textcite{gray_dangers_1996} explain that large-scale systems become unstable if they are held consistent at all times according to \acrshort{acid} principles. This is mostly due to the large amount of communication necessary to handle atomic transactions in distributed systems. To address these issues, modern distributed systems often adopt the \acrshort{base} (\acrlong{base}) model which explicitly trades off isolation and strong consistency for availability. Eventually consistent systems are allowed to exist in a so-called "soft state" which eventually converges through the use of synchronization mechanisms over time rather than being strongly consistent at all times. \parencite{braun_tackling_2021, vogels_eventually_2009} This creates an inconsistency window in which data is not consistent across the system. During this window, stale data may be read. \parencite{vogels_eventually_2009}
+
+\section{Event Sourcing and event-driven architectures}
+\label{sec:event-sourcing}
+
+Event driven architecture is a design paradigm where systems communicate via the production and consumption of events. Events are records of changes in the system's domain. \parencite{michelson_event-driven_2006} This approach allows for a high degree of loose coupling, as the system publishing an event does not need to know about the recipient(s) or how they will react. These architectures offer excellent horizontal scalability and resilience, as individual system components can fail or be updated without bringing down the entire network. \parencite{fowler_event_2005}
+
+Event Sourcing is an architectural pattern within the landscape of event driven architectures. Event-sourced systems ensure that all changes to a system's state are captured and stored as an ordered sequence of domain events. Unlike traditional persistence models that overwrite data and store only the most recent state, event sourcing maintains an immutable record of every action taken over time. These events are persisted in an append-only event store, which serves as the principal source of truth from which the current system state can be derived. \parencite[457,458]{kleppmann_designing_2017}
+
+The current state of any entity in such a system can be rebuilt by replaying the history of events from the log, starting from an initial blank state. \parencite{fowler_event_2005} To address the performance costs of replaying thousands of events for every request, developers implement projections or materialized views, which are read-only, often denormalized versions of the data optimized for specific queries. \parencites{malyi_developing_2024}[461,462]{kleppmann_designing_2017} This separation of concerns is frequently managed by pairing event sourcing with the \hyperref[sec:cqrs]{\acrlong{cqrs} (\acrshort{cqrs})} pattern, which physically divides the data structures used for reading from those used for writing state changes. \parencite[50]{young_cqrs_2010}
+
+To optimize the reconstruction of state, developers often employ \textit{rolling snapshots}. These snapshots represent a serialized, denormalized point-in-time state of an aggregate, allowing the system to restore the state immediately and only replay the delta of events that occurred after the snapshot was taken. \parencite[20]{young_cqrs_2010} This heuristic effectively caps the maximum number of events to be processed, providing a predictable and significant performance gain during the loading process. It is worth noting that the event stream stays intact and is not impacted by a snapshot.
+
+\section{Traceability and auditing in IT systems}
+
+Traceability and auditing are legal requirements across various sectors, as they are derived from federal laws and regulations intended to protect the integrity and confidentiality of sensitive data. Organizations implement these mechanisms to stay compliant with mandates that require a verifiable, time-sequenced history of system activities to support oversight and forensic reviews. In the U.S. financial sector, for example, 17 CFR § 242.613 requires the establishment of a consolidated audit trail to track the complete lifecycle of securities orders, documenting every stage from origination and routing to final execution. \parencite{us_securities_and_exchange_commission_17_2012}
+
+\subsection{Audit Logs}
+\label{sec:audit-log}
+
+An audit log (often called audit trail) is a chronological record which provides evidence of a sequence of activities on an entity. \parencite{committee_on_national_security_systems_national_2010} In information security, the audit log stores a record of system activities, enabling the reconstruction of events. \parencite{atis_committee_atis_2013} A trustworthy audit log in a system can guarantee the principle of traceability which states that actions can be tracked and traced back to the entity who is responsible for them. \parencite[266]{joint_task_force_interagency_working_group_security_2020}
+
+\textcite{fowler_audit_2004} describes an audit log as simple and effective way of storing temporal information. Changes are tracked by writing a record indicating \emph{what} changed \emph{when}. A basic implementation of an audit log can have many forms, for example a text file, database tables or \acrshort{xml} documents. Fowler also mentions that while the audit log is easy to write, it is harder to read and process. While occasional reads can be done by eye, complex processing and reconstruction of historical state can be resource-intensive.
+
+In distributed environments or complex application architectures, the implementation of an audit log often introduces the "dual-write" problem. This occurs when an application is responsible for updating the primary database (the current state) and simultaneously emitting a record to a separate audit log or messaging system. As \textcite[452,453]{kleppmann_designing_2017} notes, ensuring atomicity across these two distinct writes is technically challenging. If the primary database update succeeds, but the audit log write fails, or vice versa, the two systems will diverge, leading to a loss of data integrity where the audit trail no longer reflects the "real" state of the system.
+
+This separation highlights, that in traditional \acrshort{crud} systems, the audit log is simply a secondary source of truth. As it relies on application- or database-level logic, it is nothing more but a passive observer, relying on notifications from the primary process.
+
+\subsection{Event Streams as a Basis for Traceability}
+
+While \hyperref[sec:audit-log]{traditional audit logs} are often implemented as secondary systems that capture state changes, event-driven architectures, such as those utilizing Event Sourcing, turn an event stream into the primary source of truth. In this context, an event stream is not just a diagnostic tool but an exact, chronological sequence of intent-driven records.
+
+As established in \autoref{sec:event-sourcing}, every state change is captured as a discrete event. Because these events are immutable and append-only, they provide a natural foundation for the principle of traceability. Unlike traditional "state-based" auditing, where the system might only record that a value changed from $A$ to $B$, an event stream captures the specific domain context. Tthe \emph{intent} behind a change is semantically conveyed through the event type. For example, while a traditional audit log might simply record a status update to \texttt{CLOSED}, an event-sourced system distinguishes between an \texttt{AccountDeletedByUser} event and an \texttt{AccountTerminatedForInactivity} event. This inherent metadata provides an exhaustive audit trail without the need for additional logging logic.
+
+\textcite{fowler_event_2005} notes that because the event log is complete, the system can perform \emph{Temporal Queries}, effectively "time-traveling" to reconstruct the exact state of the system at any historical checkpoint. This makes event streams particularly robust for forensic reviews and regulatory compliance, as they eliminate the "information loss" associated with traditional database overwrites. In the context of the legal requirements discussed in the previous section, the event stream serves as a sequence of actions that satisfies the need for a verifiable, time-sequenced history.
+
+\subsection{Rebuilding state from an audit log and an event stream}
+
+There is a fundamental difference in how systems built with a secondary audit log versus an event-sourced architecture reconstruct historic state. It lies in the relationship between the operational data and the chronological record. In systems with a secondary audit log, the audit log and the application state are often updated as two separate operations. This decoupling introduces the risk of silent divergence. If a failure occurs during the logging process, but the primary state change succeeds, the audit trail becomes an incomplete reflection of reality. Because the system continues to function using the primary database, these discrepancies may remain undetected until a forensic reconstruction is attempted. In this scenario, the audit log serves as a secondary piece of evidence rather than a definitive blueprint, making it difficult to guarantee that a reconstructed state is perfectly synchronized with the original historical state.
+
+In contrast, rebuilding state from an event stream is a deterministic process. Since the event stream is the primary source of truth, there is no secondary state to diverge from. State is reconstructed by mapping events to objects (aggregates or projections). If an event is not recorded, the state change never occurred. This guarantees that the log and the system state are consistent by design, ensuring traceability.
+
+\section{Scalability of systems (TODO)}
+
+This section describes which factors play a role in the scalability of a system. Architectural concerns (e.g. refactoring systems to be split up into microservices), resource consumption, etc.
+
+We define different angles on scalability:
+
+\begin{itemize}
+    \item Throughput Scalability: How the system handles an increasing number of commands (writes) vs. queries (reads).
+    \item Data Volume: How the system behaves as the history of events or audit logs grows into the terabytes.
+    \item Organizational / architectural Scalability: How easily multiple teams can work on the system without creating bottlenecks (the "microservices" angle).
+\end{itemize}
+
+Then address write and read scalability; and differences in ES and CRUD architectures. CRUD: e.g. database contention (locks); CQRS would require sharding based on aggregate ID. Two-phase commits in a distributed system?
+
+ES-CQRS with snapshots as strategy for scaling huge event streams (quicker reconstruction of state); but increased storage size. Data is often duplicated across projections.

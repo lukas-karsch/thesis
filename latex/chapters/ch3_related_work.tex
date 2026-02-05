@@ -1,0 +1,43 @@
+% !TeX root = ../main.tex
+\chapter{Related Work (TODO)}
+
+After the theoretical foundations of the thesis are covered, this chapter presents work related to the \acrlongpl{rs}. As there are 3 sub-questions to address, this chapter is divided into three sections.
+
+\section{RS1 - Performance and Scalability}
+
+\begin{itemize}
+    \item Kleppman, 2017, data intensive systems
+          - Chapter 1: scalability, performance, approaches for coping with load
+          - Chapter 11 (stream processing). Performance implications of log structured storage vs. B-Trees (db index)
+    \item Jogalekar et al, 2000. "Evaluating the scalability of distributed systems" provides a formal mathematical framework for defining "Scalability" ($P = \lambda / T$).
+    \item Singh, 2025 presents a performance comparison between DDD and CQRS. While DDD is not a traditional CRUD architecture, clearly the migration to separate read and write paths gave a performance increase
+    \item Jayaraman et al, 2024 "Implementing Command Query Responsibility Segregation (CQRS) in Large-Scale Systems"
+          includes a performance benchmark (p. 58ff)
+\end{itemize}
+
+\section{RS2 - architectural complexity, maintainability, flexibility}
+
+\begin{itemize}
+    \item Singh, 2025 "Using CQRS and Event Sourcing in the Architecture of Complex Software Solutions"
+          - specific results on code metrics: the transition to CQRS/ES increased the total number of classes (from 47 to 213) but decreased the overall cyclomatic complexity (from 534 to 522)
+          - highlights that individual modules become simpler despite higher number of classes
+    \item "Object Oriented Coupling based Test Case Prioritization":
+          - statistical approach (linear regression, hypothesis testing) to correlate OO metrics with software quality
+          - Defines and analyzes the CK Metrics Suite (WMC, DIT, NOC, CBO, RFC, LCOM). It establishes empirical correlations, such as Coupling Between Objects (CBO) having the strongest negative impact on quality
+    \item  Comparative Study of the Software Metrics for the complexity and Maintainability of Software Development: can act as "dictionary" for all the code metrics
+\end{itemize}
+
+\section{RS3 - traceability}
+
+\begin{itemize}
+    \item Maybe Gantz, 2014: Basics of IT Audit
+    \item Vamshikrishna Monagari: "Demystifying Event-Driven Microservices in Cloud-Native  FinTech Applications"
+          - contains many quantitative results, e.g.40\% lower latency for ES applications; 95\% reduction in compliance audit preparation time; reduced time for root cause analysis.
+          - Paper seems to be problematic as I could not find some of the mentioned results in the references
+\end{itemize}
+
+Maybe include sources talking about GDPR and the \emph{problems} with a non-erasable event log, and some solutions mitigating the problem? $\rightarrow$ "right to be forgotten". This is not a goal of this thesis but related.
+
+\section{Relevant results}
+
+Not sure if this needs to be its own section, but it will be important to highlight what the key findings are which are relevant to my work. Show what others discovered, things that I build upon, things that may and should be picked up again when discussing results.
