@@ -17,7 +17,5 @@ https://notebooklm.google.com/notebook/1f2b1c35-7853-47c6-ab00-568a434fa262
 -> Calculated some metrics in IntelliJ using a plugin; maybe visualize them to see if there is any difference 
 ## Opinion
 Looks like there are some metrics in literature which propose metrics to "measure" the flexibility of a software architecture. But they seem to rely a lot on static code analysis; and e.g. measuring the "abstractness" is not really a great advisor for how flexible a package is. (See http://odrotbohm.de/2024/09/the-instability-abstractness-relationsship-an-alternative-view/)
-## Abstractness and Instability Calculator
-https://github.com/xsreality/abstractness-instability-calculator
 ## Links 
 - [[2026-01-29 Visualizing flexibility metrics]]

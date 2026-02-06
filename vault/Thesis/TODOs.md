@@ -48,12 +48,12 @@
 	- Unify naming of load vs performance testing 
 	- Mention that, when trying to audit _read_ operations, event sourcing is not sufficient. 
 	- Think of title that is NOT the research question 
-	- Write part about envers historic state reconstruction 
-		- add Envers to tech stack 
+	- add Envers to tech stack 
 	- need to explain my method of "authentication" somewhere 
 	- Write more about ES-CQRS implementation 
 		- show how to reconstruct state / specific time-travel projections 
 	- [[2026-02-04 Fragen fürs nächste Meeting]]
+	- "load  testing" vs "stress testing"
 ## Urgent
 - **Run tests**
 	- time-to-consistency

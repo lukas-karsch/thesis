@@ -25,13 +25,27 @@
 - **Object Oriented Coupling based Test Case Prioritization** 
 	- statistical approach (linear regression, hypothesis testing) to correlate OO metrics with software quality
 	- Defines and analyzes the **CK Metrics Suite** (WMC, DIT, NOC, CBO, RFC, LCOM). It establishes empirical correlations, such as **Coupling Between Objects (CBO)** having the strongest negative impact on quality
+- Deshpande et al. - 2020 - Object Oriented Design Metrics for...
+  It can be seen that WMC, DIT, LCOM, LCOM3, MOA, MFA, CAM,  CBM, AMC, shown as *** as highest significance rate.* least significanceis NPM, MAX_CC and AVG-CC and lastly seen as. (dot) dam very low significant  whereas CBO, RFC, CA, CE, LOC, IC has *no significance in model building.* 
 - **Comparative Study of the Software Metrics for the complexity and Maintainability of Software Development**
 	- can act as "dictionary" for all the code metrics 
+- **Fundamentals of software architecture** 
+  Decision about which architecture should be chosen 
+  Say what he decides (if he does, need to read)
+- Abreu, Carapuça: MOOD metrics. 
+__MOOD__
+Proposed metrics by the authors: 
+The Design of Eiffel Programs: Quantitative Evaluation Using the MOOD Metrics
+Results based on EIFFEL standard libary. Small sample size, must be repeated 
 
-"To answer your question effectively:
-1. **Use Source** **and** to establish your baseline comparison: ES tends to increase **Code Volume/Class Count** but decrease **Cyclomatic Complexity** and **Coupling**.
-2. **Use Source****,****, and** to define the specific metrics (CK, MOOD, Martin's) you will analyze and the statistical methods (Regression) appropriate for them.
-3. Explain the architectural implications of your stats—e.g., why lower coupling in ES leads to better long-term flexibility despite higher initial boilerplate code."
+| Metric                             | Proposed Range (90% CI) | Heuristic Shape         |
+| ---------------------------------- | ----------------------- | ----------------------- |
+| Method Hiding Factor (MHF)         | 15.4% - 38.7%           | Band-pass (Interval)    |
+| Attribute Hiding Factor (AHF)      | 19.2% -35.5%            | High-Pass (Lower Limit) |
+| Method Inheritance Factor (MIF)    | 60.6% - 77.1%           | Band-pass (Interval)    |
+| Attribute Inheritance Factor (AIF) | 63.3% -  81.5%          | Band-pass (Interval)    |
+| Coupling Factor (COF)              | 1.3% - 5.5%             | Band-pass (Interval)    |
+| Polymorphism Factor (POF)          | 5.3% - 10.8%            | Band-pass (Interval)    |
 
 **RS 3 - traceability** 
 - Gantz, 2014: Basics of IT Audit 

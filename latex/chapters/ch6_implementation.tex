@@ -1,6 +1,205 @@
 % !TeX root = ../main.tex
 \chapter{Implementation}
 
+After defining functional and non-functional requirements, the two applications can be implemented. This will be detailed in this chapter. After describing the utilized technologies, the contract tests ran on both applications are described. Next, implementation details of \acrshort{crud} and \acrshort{es}-\acrshort{cqrs} are given. Finally, it is presented how the load tests were developed.
+
+\section{Endpoints}
+
+Table \autoref{table:endpoints} presents a feature matrix, mapping \acrshort{http} endpoints to their functionality. As this thesis focuses not on the functionality of an application, but instead an architectural comparison, not all implemented endpoints are listed.
+
+\begin{table}[htp!]
+    \small
+    \centering
+    \begin{tabularx}{\linewidth}{lXl}
+        \toprule
+        \textbf{Endpoint}    & \textbf{Description}                  & \textbf{Response} \\ \midrule
+        GET /lectures        & Get lectures a student is enrolled in & 200               \\
+        \addlinespace
+        POST /courses/create & Used by professors to create a course & 201               \\
+        \bottomrule
+    \end{tabularx}
+    \caption{Selected endpoints implemented in the applications}
+    \label{table:endpoints}
+\end{table}
+
+\section{Technologies}
+\label{sec:technologies}
+
+This section describes all technologies used for the implementation and evaluation of the two applications.
+
+\subsection{SpringBoot}
+
+SpringBoot \footnote{\href{https://spring.io/projects/spring-boot}{SpringBoot}} is an open-source, opinionated framework for developing enterprise Java applications. It is based on Spring Framework \footnote{\href{https://spring.io/projects/spring-framework}{Spring Framework}}, which is a platform aiming to make Java development "quicker, easier, and safer for everybody" \parencite{broadcom_inc_why_2026}. At Spring Framework's core is the Inversion of Control (IoC) container. The objects managed by this container are referred to as \textit{Beans}. While the term originates from the JavaBeans specification, a standard for creating reusable software components, Spring extends this concept by taking full responsibility for the lifecycle and configuration of these objects \parencite[Chapter~1.1]{walls_spring_2016}. Instead of a developer manually instantiating classes using the \texttt{new} operator, the container "injects" required dependencies at runtime. This process is known as Dependency Injection. \parencite[Chapter~1]{deinum_spring_2023}. Spring offers support for several programming paradigms: reactive, event-driven, microservices and serverless. \parencite{broadcom_inc_why_2026}
+
+SpringBoot builds on top of the Spring platform by applying a "convention-over-configuration" approach, intended to minimize the need for configuration. In a 2023 survey by JetBrains, SpringBoot was the most popular choice of web framework. \parencite{jetbrains_java_2023}
+
+Spring Boot starters are specialized dependency descriptors designed to simplify dependency management by aggregating commonly used libraries into feature-defined packages. Rather than requiring developers to manually identify and maintain a list of individual group IDs, artifact IDs, and compatible version numbers for every necessary library, starters use transitive dependency resolution to pull in all required components under a single entry. To quickly bootstrap a web application, a developer can simply add the \javaname{spring-boot-starter-web} dependency to their Maven or Gradle build file. By requesting this specific functionality, Spring Boot automatically includes essential dependencies such as Spring MVC, Jackson for JSON processing, and an embedded Tomcat server, ensuring that all included libraries have been tested together for compatibility. This approach shifts the developer's focus from managing individual JAR files to simply defining the high-level capabilities the application requires, minimizing configuration overhead and reducing risk of version mismatches. \parencite[Chapter~1.1.2]{walls_spring_2016}
+% TODO code example for IoC container / dependency injection 
+
+\subsection{PostgreSQL}
+\label{sec:postgresql}
+
+PostgreSQL \footnote{\href{https://www.postgresql.org/}{PostgreSQL}} is an open-source relational database system which has been in active development for over 35 years. Thanks to its reliability, robustness and performance, it has a strong earned reputation. \parencite{postgresql_global_development_group_postgresql_2026} PostgreSQL is designed for a wide range of workloads and can handle many tasks thanks to its extensibility and large suite of extensions, such as the popular PostGIS extension for storing and querying geospatial data. \parencite{postgis_psc_postgis_2023}
+
+\subsection{JPA}
+\label{sec:jpa}
+
+\acrfull{jpa} \footnote{\href{https://jakarta.ee/specifications/persistence/}{JPA}}, formerly Java Persistence \gls{api} is a Java specification which provides a mechanism for managing persistence and object-relational mapping (\acrshort{orm}). \glspl{orm} act as a bridge between the relational world of SQL databases and the object-oriented world of Java.
+
+Instead of writing SQL to create the database schema, entities can be described using special Java classes, supported by annotations, which can be mapped to an SQL schema. \acrshort{jpa} allows querying the database for these entities in a type-safe way by providing a range of helpful query methods on JPA repositories, for example \texttt{findAll()} or \texttt{findById(UUID id)}. This removes the need to write "low-level", database-specific SQL for basic \acrshort{crud} operations. Complex data retrieval is also possible with \acrshort{jpa} using the \acrfull{jpql}, which is an object-oriented, database-agnostic query language.
+
+When using \acrshort{jpa} with SpringBoot by including the \javaname{spring-boot-starter-data-jpa} dependency, \emph{Hibernate} \footnote{\href{https://hibernate.org/orm/}{Hibernate}} is used as implementation of the \acrshort{jpa} standard. \parencite[Chapter~1]{bauer_java_2016}
+
+\subsection{Hibernate Envers (TODO)}
+\label{sec:envers}
+
+Present Hibernate Envers here.
+
+\subsection{Jackson}
+
+Jackson \footnote{\href{https://github.com/FasterXML/jackson}{Jackson}} is a high-performance, feature-rich \acrshort{json} processing library for Java. It is the default \acrshort{json} library used within the Spring Boot ecosystem. Its primary purpose is to provide a seamless bridge between Java objects and JSON data through three main processing models: the Streaming API for incremental parsing, the Tree Model for a flexible node-based representation, and the most commonly used Data Binding module. This data binding capability allows developers to automatically convert (\emph{marshal}) Java \glspl{pojo} into JSON and vice versa (\emph{unmarshal}) with minimal configuration. Beyond its speed and efficiency, Jackson is highly extensible, offering modules to handle complex Java types like Java 8 Date/Time and Optional classes. Jackson also supports various other data formats such as XML, YAML and CSV. \parencite{oracle_jackson_nodate, fasterxml_jackson_2025}
+
+\subsection{Axon}
+\label{sec:axon}
+
+Axon Framework \footnote{\href{https://www.axoniq.io/framework}{Axon Framework}} is an open-source Java framework for building event-driven applications. Following the \acrshort{cqrs} and event-sourcing pattern, Commands, Events and Queries are the three core message types any Axon application is centered around. Commands are used to describe an intent to change the application's state. Events communicate a change that happened in the application. Queries are used to request information from the application.
+
+Axon also supports \acrlong{ddd} by providing tools to manage entities and domain logic. \parencite{axoniq_introduction_2025,axoniq_messaging_2025}
+
+Axon Server \footnote{\href{https://www.axoniq.io/server}{Axon Server}} is a platform designed specifically for event-driven systems. It functions as both a high-performance Event Store and a dedicated Message Router for commands, queries, and events. By bundling these responsibilities into a single service, Axon Server replaces the need for separate infrastructures such as a relational database for events and a message broker like Kafka or RabbitMQ for communication. Axon Server is designed to seamlessly integrate with Axon Framework. When using the Axon Server Connector, the application automatically finds and connects to the Axon Server. It is then possible to use the Axon server without further configuration. \parencite{axoniq_introduction_2025-1,axoniq_axon_2025} % TODO book source 
+
+\subsubsection*{Command dispatching}
+
+Command dispatching is the starting point for handling a command message in Axon. Axon handles commands by routing them to the appropriate command handler. The command dispatching infrastructure can be interacted with using the low-level \keyw{CommandBus} and a more convenient \keyw{CommandGateway} which is a wrapper around the \keyw{CommandBus}.
+
+\keyw{CommandBus} is the infrastructure mechanism responsible for finding and invoking the correct command handler. At most one handler is invoked for each command; if no handler is found, an exception is thrown.
+
+Using \keyw{CommandGateway} simplifies command dispatching by hiding the manual creation of \keyw{CommandMessages}. The gateway offers two main methods for synchronous and asynchronous patterns. The \keyw{send} method returns a \keyw{CompletableFuture}, which is an asynchronous mechanism in Java. If the thread needs to wait for the command result, the \keyw{sendAndWait} method can be used.
+
+In general, a handled command returns \keyw{null}, if handling was successful. Otherwise, a \keyw{CommandExecutionException} is propagated to the caller. While returning values from a command handler is not forbidden, it is used sparsely as it contradicts with CQRS semantics. One exception: command handlers which \emph{create} an aggregate typically return the aggregate identifier. \parencite{axoniq_command_2025,axoniq_infrastructure_2025}
+
+\subsubsection*{Query Handling}
+Before a query is handled, Axon dispatches it through its messaging infrastructure. Just like the command infrastructure, Axon offers a low-level \keyw{QueryBus} which requires manual query message creation and a more high-level \keyw{QueryGateway}.
+
+In contrast to command handling, multiple query handlers can be invoked for a given query. When dispatching a query, callers can decide whether they want a single result or results from all handlers. When no query handler is found, an exception is thrown.
+
+The \keyw{QueryGateway} includes different dispatching methods. For regular "point-to-point" queries, the \keyw{query} method can be used. Subscription queries are queries where callers expect an initial result and continuous updates as data changes. These queries work well with reactive programming. For large result sets, streaming queries should be used. The response returned by the query handler is split into chunks and streamed back to the caller.
+All query methods are asynchronous by nature and return Java's \keyw{CompletableFuture}. \parencite{axoniq_query_2025}
+
+\subsubsection*{Aggregates}
+\label{sec:aggregates}
+
+An aggregate is a core concept of \acrfull{ddd}. In Axon, an aggregate defines a consistency boundary around domain state and encapsulates business logic. Aggregates are the primary place where domain invariants are enforced and where commands that intend to change domain state are handled.
+
+Aggregates define command handlers using methods or constructors annotated with \keyw{@CommandHandler}. These handlers receive commands and decide whether they are valid according to domain rules. If a command is accepted, the aggregate emits one or more domain events describing \emph{what} happened. Command handlers are responsible only for decision-making; they must not directly mutate the aggregate’s state. Instead, all state changes must occur as a result of applying events.
+
+Every aggregate is typically annotated with \keyw{@Aggregate} and must declare exactly one field annotated with \keyw{@AggregateIdentifier}. This identifier uniquely identifies the aggregate instance. Axon uses it to route incoming commands to the correct aggregate and to load the corresponding event stream when rebuilding aggregate state.
+
+By default, Axon uses event-sourced aggregates. This means that aggregates are not persisted as a snapshot of their fields. Instead, their current state is reconstructed by replaying all previously stored events. Methods annotated with \keyw{@EventSourcingHandler} are called by Axon during this replay process to update the aggregate’s internal state based on event data. Since events represent facts that already occurred, event sourcing handlers must not contain business logic or make decisions.
+
+Axon also supports multi-entity aggregates. In this model, an aggregate may contain child entities that participate in command handling. Such entities are registered using \keyw{@AggregateMember}, and each entity must define a unique identifier annotated with \keyw{@EntityId}. Based on this identifier, Axon is able to route commands to the correct entity instance within the aggregate. \parencite{axoniq_multi-entity_2025}
+
+\subsubsection*{External Command Handlers}
+\label{sec:external-command-handlers}
+
+Often, command handling functions are placed directly inside the aggregate. However, this is not required and in some cases it may not be desirable or possible to directly route a command to an aggregate. Thus, any object can be used as a command handler by including methods annotated with \keyw{@CommandHandler}. One instance of this command handling object will be responsible for handling \emph{all} commands of the command types it declares in its methods.
+
+In these external command handlers, aggregates can be loaded manually from Axon's repositories using the aggregate's ID. Afterward, the \keyw{execute} function can be used to execute commands on the loaded aggregate. \parencite{axoniq_command_2025-1}
+
+\subsubsection*{Set-based validation}
+\label{sec:set-based-validation}
+
+When receiving a command, aggregates handle it by validating their internal state inside command handlers and either rejecting the command or publishing an event. However, validation across a set of aggregates, called "set-based validation", is not possible inside a single aggregate. A business requirement like "Usernames must be unique" can only be implemented using set-based validation, as the entire set of aggregates must be inspected before making a decision.
+
+Set-based implementation in Axon can be implemented by using lookup tables. This approach utilizes a dedicated command-side projection, often referred to as a lookup projector, to maintain a specialized view of the system state. While projectors are typically associated with the read-side of a \acrshort{cqrs} architecture, a lookup projector is specifically designed to support the command side. It maintains a highly optimized and consistent dataset, such as a registry of unique identifiers, which can be queried during the validation phase of a command.
+
+To ensure that this lookup table remains synchronized and provides the necessary consistency for validation, Axon employs subscribing event processors, which are described in \autoref{sec:axon-events}. Unlike tracking event processors which operate asynchronously and introduce eventual consistency, subscribing event processors execute within the same thread and transaction as the event publication. This mechanism ensures that the lookup table is updated immediately after an event is applied to the aggregate. Consequently, if the update to the lookup table fails due to a constraint violation or database error, the entire transaction is rolled back, preventing the system from reaching an inconsistent state.
+
+In practice, this validation logic is often encapsulated within a domain service or a validator interface that is injected directly into the aggregate's command handler. This service interacts with the lookup table repository to verify global invariants before the aggregate state is modified. By separating the lookup logic from the read-model, the system avoids the latency of eventual consistency while maintaining the architectural integrity of the aggregate as a boundary for consistency. This pattern effectively bridges the gap between the isolated nature of individual aggregates and the necessity for global state verification in complex domain models. \parencite{ceelie_set_2020}
+
+\subsubsection*{Events}
+\label{sec:axon-events}
+
+Event handlers are methods annotated with \keyw{@EventHandler} which react to occurrences within the app by handling Axon's event messages. Each event handler specifies the types of events it is interested in. When no handler for a given event type exists in the application, the event is ignored. \parencite{axoniq_event_2025}
+
+Axon's \keyw{@EventBus} is the infrastructure mechanism dispatching events to the subscribed event handlers. Event stores offer these functionalities and additionally persist and retrieve published events. \parencite{axoniq_event_2025-1}
+
+Event processors take care of the technical part aspects of event processing. Axon's \keyw{EventBus} implementations support both subscribing and tracking event processors. \parencite{axoniq_event_2025-1} Subscribing event processors subscribe to a message source, which delivers (pushes) events to the processor. The event is then processed in the same thread that published the event. This makes subscribing event processors suitable for real-time updates of models. However, they can only be used to receive current events and do not support event replay. Additionally, as they run on the same thread, they can not be parallelized. \parencite{axoniq_subscribing_2025}
+
+Tracking event processors, which a type of streaming event processors, read (pull) events to be processed from an event source. They run decoupled from the publishing thread, making them parallelizable. These event processors use tracking tokens track their position in the event stream. Tracking tokens can be reset and events can be replayed and reprocessed. Tracking event processors are the default in Axon and recommended for most ES-CQRS use cases. \parencite{axoniq_streaming_2025}
+
+Subscribing event processors can be configured using SpringBoot's \javaname{application.properties} file or through Java configuration classes.
+
+\subsubsection*{Sagas}
+\label{sec:sagas}
+
+In Axon, Sagas are long-running, stateful event handlers which not just react to events, but instead manage and coordinate business transactions. For each transaction being managed, one instance of a Saga exists. A Saga, which is a class annotated with \keyw{@Saga} has a lifecycle that is started by a specific event when a method annotated with \keyw{@StartSaga} is executed. The lifecycle may be ended when a method annotated with \keyw{@EndSaga} is executed; or conditionally using \keyw{SagaLifecycle.end()}. A Saga usually has a clear starting point, but may have many different ways for it to end. Each event handling method in a Saga must additionally have the \keyw{@SagaEventHandler} annotation. \parencite{axoniq_saga_2025}
+
+The way Sagas manage business transactions is by sending commands upon receiving events. They can be used when workflows across several aggregates should be implemented; or to handle long-running processes that may span over any amount of time. \parencite{axoniq_saga_2025} For example, the lifecycle of an order, from being processed, to being shipped and paid, is a process that usually takes multiple days. A use case like this is typically implemented using Sagas.
+
+A Saga is associated with one or more association values, which are key-value pairs used to route events to the correct Saga instance. A \keyw{@StartSaga} method together with the \keyw{@SagaEventHandler(associationProperty="aggregateId")} automatically associates the Saga with that identifier. Additional associations can be made programmatically, by calling \keyw{SagaLifecycle.associateWith()}. Any matching events are then routed to the Saga. \parencite{axoniq_saga_2025-1}
+
+For example, a Saga managing an order's lifecycle may be started by an \keyw{@OrderPlaced} event and associated with the \keyw{orderId}. It can then issue a \keyw{CreateInvoiceCommand} using an \keyw{invoiceId} generated inside the event handler. The Saga then associates itself with this ID to be notified of further events regarding this invoice, such as an \keyw{InvoicePaidEvent}.
+
+% TODO Show command and query gateway and illustrate example flow through an Axon application. 
+
+\subsection{Testing}
+\label{sec:testing}
+
+To ensure functionality of the applications, unit and integration tests were implemented using various testing libraries like JUnit as the testing platform, \gls{restassured} for making and asserting \gls{http} calls, Mockito for unit testing and ArchUnit for architecture tests. This section describes all mentioned technologies.
+
+JUnit \footnote{\href{https://docs.junit.org/5.11.0/user-guide/index.html}{JUnit 5}} is an open-source testing framework for Java. It offers a structured way of writing tests, driven by lifecycle methods like \texttt{beforeEach} or \texttt{afterAll}. Tests are annotated with \texttt{@Test}. They can also be parametrized and run repeatedly. Results can be asserted using assertion methods like \texttt{assertTrue()}. \parencite{noauthor_junit_nodate}
+
+REST Assured \footnote{\href{https://rest-assured.io/}{REST Assured}} is a Java library that provides a highly fluent \acrshort{dsl} for testing and validating REST APIs in a readable, chainable style. It allows complex assertions to be written inline using \gls{groovy} expressions, making it easy to deeply verify JSON responses beyond simple field checks. \parencite{restassured-documentation}
+
+The below code example shows how one might use a \gls{groovy} expression to find and validate a path in the returned JSON object:
+
+\begin{lstlisting}[caption={Validating JSON path using Rest Assured},captionpos=b]
+RestAssured.when()
+    // omitted request 
+    .then()
+    .body(
+        "data.grades.find { it.combinedGrade == 0 }.credits", 
+        equalTo(0)
+    );
+\end{lstlisting}
+
+Here, the path \texttt{data.grades} of the returned JSON object is expected to be an array. The array is filtered using a \gls{gpath} with a closure to find the first entry where \texttt{combinedGrade} equals 0. Then, this entry's \texttt{credits} field is extracted and validated using the \texttt{equalTo(0)} matcher.
+
+% TODO Mockito, ArchUnit 
+
+\subsection{SpringBoot Actuator}
+\label{sec:actuator}
+
+Spring Boot Actuator \footnote{\href{https://docs.spring.io/spring-boot/reference/actuator/index.html}{SpringBoot Actuator}} is a tool designed to help monitor and manage Spring Boot applications running in a production environment. It provides several built-in features that allow developers to check the status of the application, gather performance data, and track \gls{http} requests. These features can be accessed using either \gls{http} or \acrshort{jmx} (\acrlong{jmx}), which is a standard Java management technology. By using Actuator, developers can quickly see if an application is running correctly without the need to write custom monitoring code.
+
+The most common way to use Actuator is through its "endpoints", which are specific web addresses that provide different types of information. For example, the health endpoint shows whether the application and its connected services, like databases, are functioning correctly, while the metrics endpoint displays detailed data on memory and CPU usage. Beyond the standard options, developers can also create their own custom endpoints or connect the data to external monitoring software to visualize how an application is performing over time.
+
+Actuator can be enabled in a Spring Boot project by including the \javaname{spring-boot-starter-actuator} dependency. \parencite{broadcom_inc_production-ready_2026}
+
+\subsection{Prometheus}
+
+Prometheus \footnote{\href{https://prometheus.io/docs/introduction/overview/}{Prometheus}} is an open-source systems monitoring toolkit that was originally developed at SoundCloud and is now a project of the Cloud Native Computing Foundation. It is primarily used for collecting and storing multidimensional metrics as time-series data, meaning information is recorded with a timestamp and optional key-value pairs called labels. The system is designed for reliability and is capable of scraping data from instrumented jobs and web servers, storing it in a local time-series database, and triggering alerts based on predefined rules when specific thresholds are met. Through its powerful functional query language, PromQL, developers can aggregate and visualize performance data. \parencite{prometheus_authors_prometheus_2026,prometheus-overview-2026}
+
+To collect and export \hyperref[sec:actuator]{Actuator} metrics specifically for Prometheus, the \javaname{micrometer-registry-prometheus} dependency must be included in the classpath. \parencite{vmware_inc_micrometer_nodate} Access to the metrics is granted by including "prometheus" in the list of exposed web endpoints within the application's configuration properties. Once these components are in place, the metrics are automatically formatted for consumption and can be scraped by a Prometheus server. \parencite{broadcom_inc_metrics_2026}
+
+\subsection{Docker}
+
+\gls{docker} \footnote{\href{https://docs.docker.com/}{Docker}} is a platform used for developing and deploying applications. It is designed to separate software from the underlying infrastructure, allowing for faster delivery and consistent environments.
+
+\gls{docker}'s capabilities are centered around the use of containers, which are lightweight and isolated environments. Each container is packaged with all necessary dependencies required for an application to run, ensuring it operates independently of the host system. These workloads can be executed across different environments, such as local computers, data centers, or cloud providers, ensuring high portability. \parencite{what-is-docker}
+
+A \gls{dockerfile} is a text-based document containing a series of instructions for assembling a Docker image. Each command in this file results in the creation of a layer in the image, making the final template efficient and fast to rebuild. These images serve as read-only blueprints from which runnable instances, or containers, are created. \parencite{writing-a-dockerfile}
+
+Docker Compose is a tool used to define and manage applications consisting of multiple containers. A single configuration file is used to specify the services, networks, and volumes required for the entire application stack. The lifecycle of complex applications can be managed with this tool, enabling all associated services to be started, stopped, and coordinated with a single command. \parencite{what-is-docker-compose}
+
+\subsection{k6}
+\label{sec:k6}
+
+Grafana k6 \footnote{\href{https://grafana.com/docs/k6/latest/}{Grafana k6}} is an open-source performance testing tool designed to evaluate the reliability and performance of a system. It simulates various traffic patterns, such as constant load, sudden stress spikes, and long-term soak tests, to identify slow response times and system failures during development and continuous integration. Metrics are collected during execution and can be visualized through platforms like Grafana or exported to various data backends for detailed reporting. \parencite{k6-overview}
+
+k6 allows tests to be written in JavaScript, making it accessible and easy to integrate into existing codebases. Every k6 test follows a common structure. The main component is a function that contains the core logic of the test. This function should be the default export of the JavaScript file. It is executed concurrently for each \acrlong{VU} (\acrshort{VU}), which act as independent execution threads to repeatedly apply the test logic. The tests can be enhanced using k6's lifecycle functions, such as a setup function, which is executed only once and may be utilized to insert seed data into the system. The test execution can be configured using an "options" object, where VUs, test duration and performance thresholds can be set. \parencite{k6-write-your-first-test}
+
 \section{Contract Test Implementation}
 \label{sec:contract-test-implementation}
 
@@ -83,11 +282,11 @@ The CRUD implementation uses a \hyperref[sec:crud-architecture]{normalized datab
 
 Figure \ref{fig:crud-er-diagram} shows the Entity Relationship Diagram for the CRUD app. It includes nine entities and a value object for the app's relational database schema. Each box corresponds to an entity or value object, with the bold text being the name. Below the table's name, all attributes of the entity are listed with their type and name.
 
-Arrows represent an association. The numbers at the end of the arrows convey the multiplicity. An arrow pointing in only one direction stands for a unidirectional association, while an arrow pointing in both directions conveys a bidirectional association. For example, an arrow pointing between entity \texttt{A} and entity \texttt{B} like so: \texttt{1} $\longleftrightarrow$ \texttt{0..1} shows that one \texttt{A} can be associated with any number of \texttt{B}'s, and a \texttt{B} is always associated with exactly one \texttt{A}. % TODO kinda unreadable 
+Arrows represent an association. The numbers at the end of the arrows convey the multiplicity. An arrow pointing in only one direction stands for a unidirectional association, while an arrow pointing in both directions conveys a bidirectional association. For example, an arrow pointing between entity \texttt{A} and entity \texttt{B} like so: $1 \longleftrightarrow 0..1$ shows that one \texttt{A} can be associated with any number of \texttt{B}'s, and a \texttt{B} is always associated with exactly one \texttt{A}. % TODO kinda unreadable 
 
 Arrows with a filled diamond represent a composition. Compositions are used when an entity has a reference to a value object. This value object has no identity and is directly embedded into the entity. The only value object in figure \ref{fig:crud-er-diagram} is the \keyw{TimeSlotValueObject}.
 
-In the app's ER diagram, the \keyw{LectureEntity} serves as core of the schema, having several key associations. The 0..* $\longrightarrow$ 1 association to \keyw{CourseEntity} shows that many lectures can be created from a course and a lecture is always associated with a course. The 0..* $\longrightarrow $ 1 association to \keyw{ProfessorEntity} shows that a professor can hold many lectures (or none), and that a lecture is always associated with a professor. From the lecture's side, these relationships are called "Many to One" relationships.
+In the app's ER diagram, the \keyw{LectureEntity} serves as core of the schema, having several key associations. The $0..* \longrightarrow 1$ association to \keyw{CourseEntity} shows that many lectures can be created from a course and a lecture is always associated with a course. The $0..* \longrightarrow  1$ association to \keyw{ProfessorEntity} shows that a professor can hold many lectures (or none), and that a lecture is always associated with a professor. From the lecture's side, these relationships are called "Many to One" relationships.
 
 \keyw{LectureEntity} also has "One to Many" relationships to \keyw{LectureWaitlistEntryEntity}, \keyw{EnrollmentEntity} and \keyw{LectureAssessmentEntity}. \keyw{LectureWaitlistEntryEntity} is a table which stores students who are waitlisted for a lecture. It is effectively a join table (with one extra column to track when the student was waitlisted) and represents a Many to Many relationship between lectures and students. The same applies to \keyw{EnrollmentEntity} which is a table storing which students are enrolled to which lecture. \keyw{LectureAssessmentEntity} represents the fact that a lecture can have many assessments (which may be an exam, a paper or a project). Each assessment in turn has many \keyw{AssessmentGradeEntity}s associated with it. This table stores which student scored which grade on an assessment. % TODO fix spacing 
 
@@ -137,7 +336,8 @@ void logChange(
     \item TODO: talk about CDC (change data capture) here or in \autoref{sec:audit-log}
 \end{enumerate}
 
-\subsection{Chosen Implementation: Hibernate Envers} \label{sec:chosen-implementation-hibernate-envers}
+\subsection{Audit Log with Hibernate Envers}
+\label{sec:chosen-implementation-hibernate-envers}
 
 The audit log in the developed CRUD application is implemented using Hibernate Envers. This solution was chosen because it seamlessly integrates with existing JPA entities to manage historical versions of data in dedicated audit tables.
 
@@ -392,6 +592,25 @@ A shell script, \keyw{create-vm.sh},\footnote{\javaname{performance-tests/vm/scr
 During the provisioning process, a number of steps are executed. First, it is made sure that the system is up-to-date by installing any available software updates. Next, a `thesis` user is created for which the environment is configured. Afterward, the script installs all necessary software, including \gls{docker}, git, Conda, Python, k6, Maven, and Java 25. Once all necessary software is installed, the project's git repository is cloned and a Maven build is triggered. Finally, the \gls{docker} images are built. After these steps are completed, the provisioned \acrshort{vm} is ready to run the applications and load tests.
 
 Instead of starting the \acrshort{vm} directly, the script shuts the \acrshort{vm} down and converts it into a Proxmox template, which can be re-created efficiently. This template is used to create the client and server \glspl{vm}.
+
+The test environment and scenarios are defined as code to ensure reproducibility. Tests are executed in an isolated environment with fixed hardware allocations as specified in \autoref{table:hardware-specs}.
+
+\begin{table}[htp!]
+    \small
+    \centering
+    \begin{tabularx}{\linewidth}{lX}
+        \toprule
+        \textbf{Component} & \textbf{Specification}                                                      \\ \midrule
+        CPU                & 13th Gen Intel(R) Core(TM) i7-13700H. 14 Cores, 20 total threads. Max. 5GHz \\
+        RAM                & 32GB DDR4 (2x16GB), 3200 MT/s                                               \\
+        Hard Drive         & SanDisk Plus SSD 1TB 2.5" SATA 6GB/s                                        \\
+        \bottomrule
+    \end{tabularx}
+    \caption{Hardware specifications for the performance evaluation machine}
+    \label{table:hardware-specs}
+\end{table}
+
+The physical host provisions two \glspl{vm}: the "client VM" for load generation and the "server VM" for the application and its dependencies (PostgreSQL and Axon Server). While hosting both on one physical machine makes network latency negligible, the "queueing delay" remains measurable at the client level, allowing for the identification of request queues building up on the server, indicating bottlenecks.
 
 \section{Load Tests}
 

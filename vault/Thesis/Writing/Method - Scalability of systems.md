@@ -29,3 +29,55 @@ This is where the two architectures diverge significantly
 - **"Domain-Driven Design" (Eric Evans):** Essential for understanding **Aggregates**, which are the unit of scalability in Event Sourcing.
 - **"Implementing Domain-Driven Design" (Vaughn Vernon):** Specifically the chapters on Event Sourcing and CQRS for practical architectural patterns.
 - **Academic Paper:** _"Event Sourcing: Statements and Replies"_ by Dirk Riehle. It provides a formal look at the trade-offs of the pattern.
+--- 
+## Correlation of latency, resource consumption and scalability 
+### Jogalekar & Woodside, Evaluating the scalability of distributed systems 
+- mathematical formula for scalability 
+- response time is a variable in this formula 
+$k_i$ = scale 
+$\lambda(k)$  = throughput in responses / sec
+$f(k)$ = average _value_ of each response, 
+$C(k)$ = cost expressed as running cost per second to be uniform with $\lambda$
+
+Productitity $F(k)$:
+$F (k) = \lambda(k) * f(k) / C(k)$
+This formula relates systems at two different scale factors; its a ratio of the productivites:
+$\psi(k_1, k_2) = F(k_2) / F(k_1)$ 
+
+A threshold for $ψ$ is set below which a system is deemed scalable 
+
+**My value function could be:** 
+$f(k) = 1 / (1 + (T(k) / \hat T))$
+with $T(k)$ being the measured $latency_p95$ and $\hat T$ being 100ms (latency SLO)
+
+**My cost function?**
+- use resource utilization = cloud costs for servers, database, event store
+	- could look at what my VMs have, then think scaling = More instances 
+	- base this on CPU usage 
+	- Show separate price for event store 
+- $C(k) = C_{infra}(k) + C_{storage}(k) + C_{ops}(k)$$
+	- infra = compute, cost of RAM / CPU per second 
+- Cost function should include CPU and RAM usage 
+	- database and event store are not included here. 
+## Kleppman - designing data intensive systems 
+- practical architectural mechanics of how resource saturation creates latency 
+- when the system is saturated (e.g. CPU cores are maxed out), latencies skyrocket because e.g. queueing delays 
+## Synthesis 
+Learnings 
+1. As latency increases, calculated scalability decreases. Maintaining a latency near $\hat T$ is essential for a system to be considered scalable -> source = function 
+2. Resource consumption correlates with throughput. UNTIL the point where saturation is reached. At that point, locking starts. 
+	1. cpu usage 
+	2. garbage collection 
+	3. database connections 
+3. As soon as scalability comes with more overhead (coordination, locking), scalability decreases (Jogalekar, p. 22)
+4. High resource consumption directly causes latency to increase (Kleppmann, p. 15,16)
+--- 
+## The Art of scalability
+Chapter 12: Exploring architectural principles 
+	- AKF's 12 architectural principles 
+	- scale out not up 
+Chapter 17: Performance and stress testing
+	performance and stress testing for scalability 
+Chapter 23: Splitting applications for scale 
+Chapter 24: Splitting Databases for scale 
+Chapter 26: Asynchronous design for scale 

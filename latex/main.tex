@@ -248,6 +248,13 @@
     description={The response times observed at high percentiles (such as P95, P99, or P99.9), representing the slowest requests in a distribution. These "outliers" are critical to monitor because they often affect the most data-intensive operations or represent the worst-case user experience}
 }
 
+\newglossaryentry{test-configuration}
+{
+    name={Test Configuration},
+    text={test configuration},
+    description={A test configuration is the combination of a test script and the target RPS.}
+}
+
 \newacronym{www}{WWW}{World Wide Web}
 
 \newacronym{hateoas}{HATEOAS}{Hypermedia as the engine of application state}
@@ -301,10 +308,44 @@
 \newacronym{vm}{VM}{Virtual Machine}
 
 \newacronym{ssh}{SSH}{Secure Shell}
-
+ 
 \newacronym{scp}{SCP}{Secure Copy}
 
 \newacronym[text={research question}]{rs}{RS}{Research Question}
+
+\newacronym{io}{I/O}{Input / Output}
+
+\newacronym{mood}{MOOD}{Metrics for Object-Oriented Design}
+
+\newacronym{mhf}{MHF}{Method Hiding Factor}
+
+\newacronym{ahf}{AHF}{Attribute Hiding Factor}
+
+\newacronym{mif}{MIF}{Method Inheritance Factor}
+
+\newacronym{aif}{AIF}{Attribute Inheritance Factor}
+
+\newacronym{pf}{PF}{Polymorphism factor}
+
+\newacronym{cf}{CF}{Coupling Factor}
+
+\newacronym{clf}{CLF}{Clustering Factor}
+
+\newacronym{rf}{RF}{Reuse Factor}
+
+\newacronym{ck}{CK}{Chidamber and Kemerer Metrics}
+
+\newacronym{wmc}{WMC}{Weighted Methods per Class}
+
+\newacronym{dit}{DIT}{Depth of Inheritance Tree}
+
+\newacronym{noc}{NOC}{Number of Children}
+
+\newacronym{cbo}{CBO}{Coupling Between Objects}
+
+\newacronym{rfc}{RFC}{Response for a Class}
+
+\newacronym{lcom}{LCOM}{Lack of Cohesion in Methods}
 
 \begin{document}
 
@@ -410,25 +451,6 @@ Hiermit versichere ich, Lukas Karsch, ehrenwörtlich, dass ich die vorliegende B
 \chapter{Source Code}
 
 The full source code for this thesis, including both apps, performance tests and markdown notes, is available at: \url{https://gitlab.mi.hdm-stuttgart.de/lk224/thesis}
-
-\chapter{Resources}
-
-\begin{table}[htp!]
-    \small
-    \centering
-    \begin{tabularx}{\linewidth}{Xl}
-        \toprule
-        \textbf{Technology}                                                                              & \textbf{Version} \\ \midrule
-        Java                                                                                             & 25               \\
-        JUnit                                                                                            & 5.11.0           \\
-        AssertJ                                                                                          & 3.27.6           \\
-        Axon Framework                                                                                   & 4.11.3           \\
-        Testcontainers Java Library, incl. child dependencies: PostgreSQL testcontainer \& JUnit support & 1.19.7           \\
-        \bottomrule
-    \end{tabularx}
-    \caption{Version matrix for all technologies used throughout the work}
-    \label{table:version-matrix}
-\end{table}
 
 %LTeX: language=de-DE
 \chapter{Nutzung von KI-Tools}

@@ -8,6 +8,7 @@ To what extent can CRUD and ES-CQRS systems accurately and efficiently reconstru
 - **Schema Resiliency:** How the history survives changes to the database structure or business rules. (?)
 
 **Business metrics:**
+These metrics are currently NOT in the paper. #todo
 - root cause analysis 
 - time to debug 
 - security audit complexity and required work 

@@ -70,14 +70,26 @@ Entities (also known as reference objects) are domain elements fundamentally def
 
 Value Objects are elements that describe the nature or state of something and have no conceptual identity of their own. They are interesting only for their characteristics. While two entities with the same characteristics are considered as different from each other, the system does not care about "identity" of a value object, since only its characteristics are relevant. Value objects should be used to encapsulate concepts, such as using an "Address" object instead of distinct "Street" and "City" attributes. Value objects should be immutable. They are never modified, instead they are replaced entirely when a new value is required. \parencite[70-72]{evans_domain-driven_2004}
 
-Using a \gls{rdm} does not mean that there should be no layers, the opposite is the case. \textcite{evans_domain-driven_2004} advocates for using layers in domain driven designs. He proposes the following layers: \parencite[53]{evans_domain-driven_2004}
+Using a \gls{rdm} does not mean that there should be no layers, the opposite is the case. \textcite{evans_domain-driven_2004} advocates for using layers in domain driven designs. He proposes the layers presented in \autoref{table:ddd-layers}.
 
-\begin{itemize}
-    \item Presentation: Presents information and handles commands
-    \item Application Layer: Coordinates app activity. Does not hold business logic, but delegate tasks and hold information about their progress
-    \item Domain Layer: Holds information about the domain. Stateful objects (rich domain model) that hold business logic and rules
-    \item Infrastructure layer: Supports other layers. Handles concerns like communication and persistence
-\end{itemize}
+\begin{table}[htp!]
+    \small
+    \centering
+    \begin{tabularx}{\linewidth}{lX}
+        \toprule
+        \textbf{Layer}          & \textbf{Responsibility}                                                                                              \\ \midrule
+        \textbf{Presentation}   & Presents information and handles commands                                                                            \\
+        \addlinespace
+        \textbf{Application}    & Coordinates app activity. Does not hold business logic, but delegate tasks and hold information about their progress \\
+        \addlinespace
+        \textbf{Domain}         & Holds information about the domain. Stateful objects (rich domain model) that hold business logic and rules          \\
+        \addlinespace
+        \textbf{Infrastructure} & Supports other layers. Handles concerns like communication and persistence                                           \\
+        \bottomrule
+    \end{tabularx}
+    \caption[Layers in \acrshort{ddd}]{Layers in \acrshort{ddd} \parencite[53]{evans_domain-driven_2004}}
+    \label{table:ddd-layers}
+\end{table}
 
 \textcite[75]{evans_domain-driven_2004} points out that in some cases, operations in the domain can not be mapped to one object. For example, transferring money does conceptually not belong to one bank account. In those cases, where operations are important domain concepts, domain services can be introduced as part of model-driven design. To keep the domain model rich and not fall back into procedural style programming like with an \gls{adm}, it is important to use services only when necessary. Services are not allowed to strip the entities and value objects in the domain of behavior. According to Evans, a good domain service has the following characteristics:
 
@@ -189,3 +201,10 @@ We define different angles on scalability:
 Then address write and read scalability; and differences in ES and CRUD architectures. CRUD: e.g. database contention (locks); CQRS would require sharding based on aggregate ID. Two-phase commits in a distributed system?
 
 ES-CQRS with snapshots as strategy for scaling huge event streams (quicker reconstruction of state); but increased storage size. Data is often duplicated across projections.
+
+Literature
+\begin{itemize}
+    \item \textcite{abbott_art_2010}
+    \item \textcite{jogalekar_evaluating_2000}
+    \item \textcite{kleppmann_designing_2017}
+\end{itemize}

@@ -33,7 +33,7 @@ Schaubilder sind gute Idee
 3. Dann Evaluation von Vergleich 
 Diese 3 Phasen vorstellen: warum und wie 
 
-Project requirements gehört NICHT in Methodik, nur definieren, _Dass_ man das macht, und wie die aussehen, damit man die TEsts am ende machen soll 
+Project requirements gehört NICHT in Methodik, nur definieren, _Dass_ man das macht, und wie die aussehen, damit man die Tests am ende machen soll 
 
 Anforderungsanalyse wäre ein eigenes Kapitel "Requirements Analysis"
 -> erst DANN Implementation 
