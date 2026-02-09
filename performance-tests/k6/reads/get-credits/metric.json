@@ -1,0 +1,11 @@
+{
+  "metric": {
+    "method": "GET",
+    "uri": "/stats/credits"
+  },
+  "file": "get-credits.js",
+  "metadata": {
+    "title": "Get credits for a student"
+  },
+  "VUs": 50
+}

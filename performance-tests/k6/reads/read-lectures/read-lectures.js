@@ -3,6 +3,7 @@ import {group, sleep} from "k6";
 import {assertResponseIs201, checkResponseIs200} from "../../helper/assert.js";
 import {getVUS} from "../../helper/env.js";
 import {getOffsetDate, setTime} from "../../helper/time.js"
+import {createProfessor} from "../../helper/professor";
 
 const TARGET_HOST = __ENV.HOST || 'http://localhost:8080';
 
@@ -22,7 +23,6 @@ export const options = {
         }
     },
     thresholds: {
-        // 'http_req_duration': ['p(95)<500'], // 95% of requests must complete below 500ms
         'http_req_failed': ['rate<0.01'],    // Error rate must be less than 1%
     },
     summaryTrendStats: ["med", "p(99)", "p(95)", "avg"],
@@ -45,17 +45,10 @@ export function setup() {
         }));
     }
 
-    const createProfessorResponse = http.post(`${TARGET_HOST}/users/professor`, JSON.stringify({
+    const professorId = createProfessor(http, {
         firstName: "Lukas",
         lastName: "Karsch"
-    }), {
-        headers: {
-            "Content-Type": "application/json"
-        }
-    })
-    assertResponseIs201(createProfessorResponse)
-    const professorId = createProfessorResponse.json().data
-    console.log(`Created professor with ID ${professorId}`)
+    }, TARGET_HOST)
 
     const professorParams = {
         headers: {

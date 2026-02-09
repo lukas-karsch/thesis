@@ -30,7 +30,7 @@ public class StatsController implements IStatsController {
     public ResponseEntity<ApiResponse<AccumulatedCreditsResponse>> getAccumulatedCredits(UUID studentId) {
         var creditsResponse = queryGateway.query(new GetCreditsForStudentQuery(studentId), ResponseTypes.instanceOf(AccumulatedCreditsResponse.class)).join();
         if (creditsResponse == null) {
-            throw new QueryExecutionException("Student " + studentId + " not found", null, ErrorDetails.RESOURCE_NOT_FOUND);
+            throw new QueryExecutionException("Could not get credits for student " + studentId, null, ErrorDetails.RESOURCE_NOT_FOUND);
         }
 
         return new ResponseEntity<>(

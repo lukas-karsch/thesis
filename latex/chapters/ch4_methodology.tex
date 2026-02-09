@@ -8,9 +8,11 @@ To answer the primary research question based on the three defined sub-research 
 
 This chapter describes the method, detailing each phase and finally presenting the comparison methods used to assess performance, scalability, flexibility and traceability.
 
-\section{Phase 1: Requirement Analysis (TODO)}
+\section{Phase 1: Requirement Analysis}
 
-Before implementing, it is necessary to conduct a requirement analysis. This requires defining functional requirements, regarding the domain and business logic of the application. Afterward, non-functional requirements are specified. These include performance goals (\acrshortpl{slo}) and auditability of the applications.
+Before implementing, it is necessary to conduct a requirement analysis. This requires defining functional requirements, regarding the domain and business logic of the application. Afterward, non-functional requirements are specified. These include performance goals (\acrshortpl{slo}), auditability and observability of the applications.
+
+The defined requirements then serve as a contract which both implementations adhere to, ensuring a fair comparison.
 
 \section{Phase 2: Implementation of prototypes}
 
@@ -146,7 +148,7 @@ The architectural factors going into scalability which were described in this se
 
 To accurately assess the performance of the architectures, a diverse suite of load tests should be employed. The selection of specific endpoints for testing follows the methodology outlined by \textcite[260, 265]{abbott_art_2010}, prioritizing scenarios based on usage volume, business criticality, and resource intensity.
 
-When choosing which endpoints are relevant to test, Abbott advocates for a "Pareto Distribution" (80/20 rule) and argues that 20\% of tests will provide developers with 80\% of information. Endpoints can be ordered by criticality, a process which identifies the endpoints that are most likely to affect performance. Endpoints can also be ranked by usage of \gls{io} necessary, locking or synchronous calls. After ordering the endpoints as described, the 80/20 rule can be used to select one read and write per "complexity" level, eliminating the need to load test every single endpoint.
+When choosing which endpoints are relevant to test, Abbott advocates for a "Pareto Distribution" (80/20 rule) and argues that 20\% of tests will provide developers with 80\% of information. Endpoints can be ordered by criticality, a process which identifies the endpoints that are most likely to affect performance. Endpoints can also be ranked by usage of \gls{io} necessary, locking or synchronous calls. After ordering the endpoints as described, the 80/20 rule can be used to select one read and write per "complexity level", eliminating the need to load test every single endpoint.
 
 \subsection{Flexibility - Architectural Metrics}
 
@@ -192,7 +194,7 @@ Regarding long-term flexibility and evolution, metrics that evaluate stability a
 
 TODO: Finally, talk about schema evolution a little bit. Can we determine methods to decide which architecture is more flexible regarding schemas?
 
-\subsection{Traceability (TODO)}
+\subsection{Traceability}
 
 This section describes how traceability will be compared; it serves as a basis to answer \hyperref[rs-traceability]{\acrshort{rs} 3}. The traceability aspect will be compared via two perspectives. First, the \emph{accuracy} of historic reconstruction is compared. Then, \emph{efficiency} of reconstructions is evaluated and compared.
 

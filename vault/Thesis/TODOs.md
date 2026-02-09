@@ -23,7 +23,6 @@
     - CQRS
 	    - try to use TEPs in my E2E tests
 	    - use @SequenceNumber aggregateVersion in repositories (https://github.com/idugalic/digital-restaurant/blob/master/drestaurant-apps/drestaurant-monolith-rest/src/main/kotlin/com/drestaurant/query/handler/RestaurantHandler.kt) ??
-	    - contain JSON parsing and logic inside the projected entities? 
 	    - maybe set subscribing processors in bean, not application.properties 
 	    - unit test event handlers and aggregates 
 		- every projection needs to handle events it cares about, DON'T query local 
@@ -34,7 +33,7 @@
 	- **Tests**
 		- Performance test for recreating historic state 
 		- Introduce a more complex / arbitrary historic query? 
-		- Enroll student to more courses in "read-lectures"
+		- Enroll student to more courses in "read-lectures" 
 		- "get grades" load test 
 		- another really complex load test (most JOINs i can find)
 		- historical reconstruction load test 
@@ -43,17 +42,16 @@
 			- read-lectures: CQRS is slower. i supect JSON deserialization is the issue - should profile this! 
 - Statistical significance: https://de.wikipedia.org/wiki/Wilcoxon-Mann-Whitney-Test
 - **Writing** 
-	- Write method on flexibility [[Method - Flexibility]] 
 	- Mermaid diagram in latex: https://github.com/Witiko/markdown/issues/448 
 	- Unify naming of load vs performance testing 
 	- Mention that, when trying to audit _read_ operations, event sourcing is not sufficient. 
-	- Think of title that is NOT the research question 
 	- add Envers to tech stack 
 	- need to explain my method of "authentication" somewhere 
 	- Write more about ES-CQRS implementation 
 		- show how to reconstruct state / specific time-travel projections 
 	- [[2026-02-04 Fragen fürs nächste Meeting]]
-	- "load  testing" vs "stress testing"
+	- "load testing" vs "stress testing"?
+	- Feedback von Jordine einarbeiten 
 ## Urgent
 - **Run tests**
 	- time-to-consistency

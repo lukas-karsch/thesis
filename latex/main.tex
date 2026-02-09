@@ -349,7 +349,7 @@
 
 \begin{document}
 
-\title{How does an Event Sourcing architecture compare to CRUD systems with an independent audit log, when it comes to scalability, performance and traceability?}
+\title{Performance, flexibility and traceability: Evaluating the impact of Event Sourcing and CQRS compared to traditional systems with an audit log.}
 \author{Lukas Karsch}
 
 \begin{titlepage}
@@ -366,7 +366,7 @@
 
     %LTeX: language=en-US
     % Title
-    {\LARGE\bfseries How does an Event Sourcing architecture compare to CRUD systems with an independent audit log, when it comes to scalability, performance and traceability?}
+    {\LARGE\bfseries Performance, flexibility and traceability: Evaluating the impact of Event Sourcing and CQRS compared to traditional systems with an audit log.}
     %LTeX: language=de-DE
 
     \vspace{0.5cm}
@@ -375,7 +375,7 @@
 
     {\large\bfseries Vorgelegt von Lukas Karsch}
 
-    {\small mit der Matrikelnummer: 45259}
+    {\small mit der Matrikelnummer 45259}
 
     \vspace{0.3cm}
 
@@ -404,7 +404,7 @@
 \pagenumbering{roman}
 %LTeX: language=de-DE
 \section*{Ehrenwörtliche Erklärung}
-Hiermit versichere ich, Lukas Karsch, ehrenwörtlich, dass ich die vorliegende Bachelorarbeit mit dem Titel: "How does an Event Sourcing architecture compare to CRUD systems with an independent audit log, when it comes to scalability, performance and traceability?" selbstständig und ohne fremde Hilfe verfasst und keine anderen als die angegebenen Hilfsmittel benutzt habe. Die Stellen der Arbeit, die dem Wortlaut oder dem Sinn nach anderen Werken entnommen wurden, sind in jedem Fall unter Angabe der Quelle kenntlich gemacht. Ebenso sind alle Stellen, die mit Hilfe eines KI-basierten Schreibwerkzeugs erstellt oder überarbeitet wurden, kenntlich gemacht. Die im Anhang aufgelisteten KI-Werkzeuge wurden ausschließlich zum Lektorat verwendet. Anschließend wurde sichergestellt, dass der Inhalt mit den intendierten Aussagen noch übereinstimmt. Die Arbeit ist noch nicht veröffentlicht oder in anderer Form als Prüfungsleistung vorgelegt worden. Ich habe die Bedeutung der ehrenwörtlichen Versicherung und die prüfungsrechtlichen Folgen (§ 24 Abs. 2 Bachelor-SPO) einer unrichtigen oder unvollständigen ehrenwörtlichen Versicherung zur Kenntnis genommen.
+Hiermit versichere ich, Lukas Karsch, ehrenwörtlich, dass ich die vorliegende Bachelorarbeit mit dem Titel: "Performance, flexibility and traceability: Evaluating the impact of Event Sourcing and CQRS compared to traditional systems with an audit log" selbstständig und ohne fremde Hilfe verfasst und keine anderen als die angegebenen Hilfsmittel benutzt habe. Die Stellen der Arbeit, die dem Wortlaut oder dem Sinn nach anderen Werken entnommen wurden, sind in jedem Fall unter Angabe der Quelle kenntlich gemacht. Ebenso sind alle Stellen, die mit Hilfe eines KI-basierten Schreibwerkzeugs erstellt oder überarbeitet wurden, kenntlich gemacht. Die im Anhang aufgelisteten KI-Werkzeuge wurden ausschließlich zum Lektorat verwendet. Anschließend wurde sichergestellt, dass der Inhalt mit den intendierten Aussagen noch übereinstimmt. Die Arbeit ist noch nicht veröffentlicht oder in anderer Form als Prüfungsleistung vorgelegt worden. Ich habe die Bedeutung der ehrenwörtlichen Versicherung und die prüfungsrechtlichen Folgen (§ 24 Abs. 2 Bachelor-SPO) einer unrichtigen oder unvollständigen ehrenwörtlichen Versicherung zur Kenntnis genommen.
 
 \vspace{1.8cm} % Space for signature
 
@@ -450,7 +450,14 @@ Hiermit versichere ich, Lukas Karsch, ehrenwörtlich, dass ich die vorliegende B
 
 \chapter{Source Code}
 
-The full source code for this thesis, including both apps, performance tests and markdown notes, is available at: \url{https://gitlab.mi.hdm-stuttgart.de/lk224/thesis}
+The full source code for this thesis, including both applications, performance tests and markdown notes, is available at the following locations:
+
+\begin{itemize}
+    \item \url{https://gitlab.mi.hdm-stuttgart.de/lk224/thesis}
+    \item TODO: GitHub link
+\end{itemize}
+
+The repository contains \texttt{README} files with instructions on how to launch the applications, execute load tests and how to reproduce the \acrshort{vm} environments.
 
 %LTeX: language=de-DE
 \chapter{Nutzung von KI-Tools}
@@ -464,6 +471,7 @@ The full source code for this thesis, including both apps, performance tests and
         Alle Kapitel                 & Gemini           & LaTeX Syntax-Unterstützung: Skelette für Tabellen, figures, listings \\
         \addlinespace
         Alle Kapitel                 & DeepL Write      & Grammatikalische und stilistische Überarbeitung von Textsegmenten    \\
+        Alle Kapitel                 & DeepL Translate  & Übersetzung von Wörtern und Redewendungen                            \\
         \bottomrule
     \end{tabularx}
     \caption{KI tools used throughout the thesis}

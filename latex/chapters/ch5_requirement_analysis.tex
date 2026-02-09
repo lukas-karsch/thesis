@@ -1,22 +1,20 @@
 % !TeX root = ../main.tex
 \chapter{Requirement Analysis}
 
-TODO: source on functional and non-functional requirements.
-
-This thesis aims to provide a fair, quantitative comparison of \acrshort{crud} and \acrshort{cqrs} / \acrshort{es} architectures regarding all three research questions. To achieve this, the architectures should be applied not only to the same domain, but to the exact same requirements. The implementations can then be tested against the same \glspl{contract-test} to ensure their interfaces and behavior is identical.
-
-All requirements which go into achieving this are described here. Functional and non-functional requirements are described. The functional requirements include information about the domain, entities, and business rules. Non-functional requirements to the project are meta: they belong to the whole of the both projects. e.g. identical API, contract test suite...
+This thesis aims to provide a fair, quantitative comparison of \acrshort{crud} and \acrshort{cqrs}-\acrshort{es} architectures regarding all three research questions. To achieve this, the architectures should be applied not only to the same domain, but to the exact same requirements.
 
 \section{Functional Requirements}
 
-\subsection{Project requirements}
+A functional requirement describes a specific behavior that a product must exhibit under specific circumstances. These requirements specify what the system \emph{does} by detailing the capabilities and functions the solution must possess to allow users to perform their tasks. \parencite[4]{wiegers_software_2023} To ensure clarity regarding exactly how the system should behave, functional requirements are often written using patterns that include the keyword "shall," such as "The system shall let the user do something". \parencite[109]{wiegers_software_2023}
+
+\subsection{Project description}
 
 The applications will implement a course enrollment and grading system which might for example be used in universities. Professors can create courses and lectures which students can enroll to. These lectures can have assignments, which professors enter grades for. Once a lecture is finished, final grades and awarded credits can be calculated. Students are able to view their enrollments, grades and credits.
 
 \subsection{Entities}
 \label{sec:entities}
 
-Two types of users exist in the domain: professors and students. Their personal information is not relevant for this thesis, which is why only their first and last name are stored for presentation reasons. The student additionally has a semester.
+Two types of users exist in the domain: professors and students. Their personal information is not relevant for this thesis, which is why only their first and last name are stored for presentation reasons. The student additionally has a semester. (TODO: aktuell ist Semester irrelevant)
 
 Professors can create courses. Courses have a name, a description, an amount of credits they yield, a minimum amount of credits required to enroll and can have a set of courses as prerequisites.
 
@@ -29,32 +27,53 @@ A lecture can have several assessments. Each assessment has a type. The professo
 
 Relationships and business rules in this system are deliberately chosen complex, involving many relationships between \hyperref[sec:entities]{entities} and intricate validation rules. This approach was adopted in order to be able to make realistic assumptions about the research question by evaluating a project that closely resembles complex, real-world scenarios.
 
-The following list presents a selection of business rules which were implemented.
+\subsection{Resulting functional requirements}
+
+Based on the domain described above, the following list presents a selection of functional requirements. As this thesis focuses on an architectural comparison, not every functional requirement going into the application is listed.
 
 \begin{itemize}
-    \item Existence checks: any requests including references to entities will fail if the references entities do not exist.
-    \item Requests leading to conflicts, for example creating a lecture with overlapping time slots, will fail.
-    \item When a student tries enrolling to a lecture which is already full, they will be put on a waitlist.
-    \item When a student disenrolls from a lecture, the next eligible student (higher semesters are preferred) will be enrolled.
-    \item Actions on a lecture can only be performed during the appropriate lifecycle state (enrolling only when the lifecycle is "open for enrollment", grades can only be assigned when the lecture is "finished").
+    \item Existence checks: any requests including references to entities shall fail if the references entities do not exist.
+    \item Requests leading to conflicts, for example creating a lecture with overlapping time slots, shall fail.
+    \item When a student tries enrolling to a lecture which is already full, they shall be put on a waitlist.
+    \item When a student disenrolls from a lecture, the next eligible student (higher semesters are preferred) shall be enrolled.
+    \item Actions on a lecture shall only be performed during the appropriate lifecycle state (enrolling only when the lifecycle is "open for enrollment", grades shall only be assigned when the lecture is "finished").
 \end{itemize}
 
 \section{Non-functional requirements}
 
-\begin{itemize}
-    \item SLOs
-    \item Auditing
-\end{itemize}
+A non-functional requirement, often referred to as a \emph{quality attribute}, describes the quality or performance characteristics of a solution. \parencite[4]{wiegers_software_2023} Rather than defining \emph{what} the product does, these requirements focus on \emph{how well it functions}. They establish specific goals or constraints for the design and implementation, such as targets for security, availability, or response time, to ensure the system satisfies user expectations. \parencite[67]{wiegers_software_2023}
+
+The following non-functional requirements (quality attributes) are defined.
 
 \subsection{Service Level Objectives}
 \label{sec:slo}
 
-While \glspl{sla} are agreements with users regarding uptime and performance, \glspl{slo} are the technical targets used by engineers to meet those requirements. \parencite{beyer_site_2016} This thesis attempts to define realistic \acrshortpl{slo} to establish a "breaking point" for each architecture.
+While \glspl{sla} are agreements with users regarding uptime and performance, \glspl{slo} are the technical targets used by engineers to meet those requirements. \parencite[63,65]{beyer_site_2016} This thesis attempts to define realistic \acrshortpl{slo} to establish a "breaking point" for each architecture.
 
 Following \textcite[135]{nielsen_usability_1993}, a response time of 100ms is the threshold for human perception of "instant" feedback. This serves as the baseline for the following targets:
 
 \begin{itemize}
-    \item \textbf{Latency \acrshort{slo}}: All endpoints must maintain a client-side P95 latency of $\le$100ms to ensure the system feels "instant" for 95\% of requests. \label{slo-latency}
-    \item \textbf{Freshness \acrshort{slo}}: In the Event Sourcing implementation, the asynchronous nature of projections introduces a lag. All writes must be reflected in the PostgreSQL read-model within $\le$100ms to ensure eventual consistency remains imperceptible. This \acrshort{slo} applies only to the ES-CQRS implementation. \label{slo-freshness}
-    \item \textbf{Reliability \acrshort{slo}}: Both implementations must maintain a failure rate of <0.1\% under stress. \label{slo-reliability}
+    \item \textbf{Latency \acrshort{slo}}: All endpoints shall maintain a client-side P95 latency of $\le$100ms to ensure the system feels "instant" for 95\% of requests. \label{slo-latency}
+    \item \textbf{Freshness \acrshort{slo}}: In the Event Sourcing implementation, the asynchronous nature of projections introduces a lag. All writes shall be reflected in the PostgreSQL read-model within $\le$100ms to ensure eventual consistency remains imperceptible. While the read-side is eventually consistent, the command-side (write-model) shall maintain immediate consistency to ensure business rules are validated against the latest state. \label{slo-freshness}
+    \item \textbf{Reliability \acrshort{slo}}: Both implementations shall maintain a failure rate of <0.1\% under stress. \label{slo-reliability}
+\end{itemize}
+
+\subsection{Auditing}
+\label{sec:req-auditing}
+
+Both systems need to be fully auditable. Every change to an entity must be reflected as a historical record. Historic states should be accurately reconstructible.
+
+\subsection{Observability}
+\label{sec:req-observability}
+
+The systems must expose observability endpoints. These should be able to present information about the system internals. Precisely, CPU and RAM usage, database connections and size of data stores should be available. Additionally, request latencies should be exposed as histograms.
+
+\subsection{Consistency}
+\label{sec:req-consistency}
+
+To ensure the integrity of the operations, the following consistency requirements apply:
+
+\begin{itemize}
+    \item \textbf{Write Consistency}: Both architectures shall provide immediate (strong) consistency for write operations. This ensures that any command (e.g., enrolling a student) is validated against the most recent state of the aggregate to prevent violations of business rules.
+    \item \textbf{Read Consistency}: The \acrshort{crud} implementation shall provide immediate consistency for reads. The \acrshort{es}-\acrshort{cqrs} implementation may utilize eventual consistency for its read-models according to the \hyperref[slo-freshness]{Freshness SLO}.
 \end{itemize}

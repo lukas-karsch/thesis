@@ -24,6 +24,7 @@ given the architectural constraints, an event log can perfectly recreate histori
 	- Monagari, 2026 said this 
 	- cites other papers not supporting his claims 
 
+Event sourcing is NOT sufficient when trying to audit read operations 
 ## Efficiency 
 - assumption: fetching data from audit log tables may be more efficient, because date filters can be used on indexed tables
 - ES system has to play ALL events. (Snapshots can not be used when replaying events, they are only used when rehydrating aggregates. $\rightarrow$ this part probably belongs in result)

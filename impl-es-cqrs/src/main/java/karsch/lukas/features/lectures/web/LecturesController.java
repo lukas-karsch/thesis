@@ -74,7 +74,6 @@ public class LecturesController implements ILecturesController {
                         }
                         // Otherwise, switch to waiting for updates
                         return subscription.updates().next().handle((u, s) -> {
-                            log.debug("Update: {}", u);
                             s.next(u);
                         });
                     });

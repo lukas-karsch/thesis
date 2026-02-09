@@ -360,7 +360,8 @@ class LecturesService {
         }
 
         if (!timeSlotService.hasEnded(assessment.getTimeSlot(), timeSlotMapper)) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Can not assign grades for a assessment that has not ended");
+            log.debug("Can not assign grades for an assessment that has not ended. Current time={}; assessmentDate={} ", timeSlotService.getCurrentTime(), assessment.getTimeSlot());
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Can not assign grades for an assessment that has not ended");
         }
 
         var grade = new AssessmentGradeEntity();
