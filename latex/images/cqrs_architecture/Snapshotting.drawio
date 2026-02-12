@@ -1,0 +1,52 @@
+<mxfile host="app.diagrams.net" agent="Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/145.0.0.0 Safari/537.36" version="29.3.8">
+  <diagram name="Seite-1" id="aHmd0QrBmtKUicjSQvTI">
+    <mxGraphModel dx="740" dy="405" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="827" pageHeight="1169" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        <mxCell id="SUThCynuHJBZjMuvL9qw-3" parent="1" style="rounded=1;arcSize=20;strokeWidth=1;fillColor=#FEF4F3;fontFamily=Consolas;strokeColor=#D79995;" value="Event 0" vertex="1">
+          <mxGeometry height="54" width="83" x="79" y="20" as="geometry" />
+        </mxCell>
+        <mxCell id="SUThCynuHJBZjMuvL9qw-4" parent="1" style="rounded=1;arcSize=20;strokeWidth=1;fillColor=#FEF4F3;fontFamily=Consolas;strokeColor=#D79995;" value="Event 100" vertex="1">
+          <mxGeometry height="54" width="100" x="71" y="148" as="geometry" />
+        </mxCell>
+        <mxCell id="SUThCynuHJBZjMuvL9qw-5" parent="1" style="whiteSpace=wrap;strokeWidth=1;fillColor=#ECECFE;fontFamily=Consolas;strokeColor=#8E72D7;" value="Snapshot Store" vertex="1">
+          <mxGeometry height="54" width="166" x="260" y="148" as="geometry" />
+        </mxCell>
+        <mxCell id="SUThCynuHJBZjMuvL9qw-6" parent="1" style="rounded=1;arcSize=20;strokeWidth=1;fillColor=#FEF4F3;fontFamily=Consolas;strokeColor=#D79995;" value="Event 101" vertex="1">
+          <mxGeometry height="54" width="100" x="70.5" y="250" as="geometry" />
+        </mxCell>
+        <mxCell id="SUThCynuHJBZjMuvL9qw-7" parent="1" style="whiteSpace=wrap;strokeWidth=1;fillColor=#ECECFE;fontFamily=Consolas;strokeColor=#8E72D7;" value="Aggregate" vertex="1">
+          <mxGeometry height="54" width="103" x="291.5" y="250" as="geometry" />
+        </mxCell>
+        <mxCell id="SUThCynuHJBZjMuvL9qw-8" edge="1" parent="1" source="SUThCynuHJBZjMuvL9qw-3" style="curved=1;startArrow=none;endArrow=block;exitX=0.5;exitY=1;entryX=0.5;entryY=0;rounded=0;fontFamily=Consolas;labelBackgroundColor=#E0E0E0;" target="SUThCynuHJBZjMuvL9qw-4" value="Events 1-99">
+          <mxGeometry relative="1" x="-0.0272" y="-1" as="geometry">
+            <mxPoint as="offset" />
+            <Array as="points" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="SUThCynuHJBZjMuvL9qw-9" edge="1" parent="1" source="SUThCynuHJBZjMuvL9qw-4" style="curved=1;startArrow=none;endArrow=block;exitX=1;exitY=0.5;rounded=0;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;fontFamily=Consolas;labelBackgroundColor=#E0E0E0;" target="SUThCynuHJBZjMuvL9qw-5" value="Snapshot">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points" />
+            <mxPoint x="230" y="167" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="SUThCynuHJBZjMuvL9qw-10" edge="1" parent="1" source="SUThCynuHJBZjMuvL9qw-4" style="curved=1;startArrow=none;endArrow=block;exitX=0.5;exitY=1;entryX=0.5;entryY=0;rounded=0;entryDx=0;entryDy=0;exitDx=0;exitDy=0;fontFamily=Consolas;" target="SUThCynuHJBZjMuvL9qw-6" value="">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="SUThCynuHJBZjMuvL9qw-11" edge="1" parent="1" source="SUThCynuHJBZjMuvL9qw-7" style="curved=1;startArrow=none;endArrow=block;exitX=0.5;exitY=0;entryX=0.5;entryY=1;rounded=0;entryDx=0;entryDy=0;exitDx=0;exitDy=0;fontFamily=Consolas;labelBackgroundColor=#E0E0E0;" target="SUThCynuHJBZjMuvL9qw-5" value="1. load">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="SUThCynuHJBZjMuvL9qw-12" edge="1" parent="1" source="SUThCynuHJBZjMuvL9qw-7" style="curved=1;startArrow=none;endArrow=block;exitX=0;exitY=0.5;entryX=1;entryY=0.5;rounded=0;entryDx=0;entryDy=0;exitDx=0;exitDy=0;fontFamily=Consolas;labelBackgroundColor=#E0E0E0;" target="SUThCynuHJBZjMuvL9qw-6" value="2. replay">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points" />
+          </mxGeometry>
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>

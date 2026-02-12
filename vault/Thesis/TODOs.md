@@ -47,16 +47,11 @@
 	- Discussion: Mention that when trying to audit _read_ operations, event sourcing is not sufficient. 
 	- add Envers to tech stack 
 	- need to explain my method of "authentication" somewhere 
-	- Write more about ES-CQRS implementation 
-		- show how to reconstruct state / specific time-travel projections 
 	- [[2026-02-04 Fragen fürs nächste Meeting]]
 	- "load testing" vs "stress testing"?
 	- Feedback von Jordine einarbeiten 
 	- Technologien den Anforderungen zuordnen 
 ## Urgent
-- Run tests
-	- get-credits for 2000 and 5000 RPS 
-	- time-to-consistency for 300 and 400 RPS 
 - Think of title 
 	- Aktikkalmaz & Jordine Bescheid geben 
 ## Before Finishing
@@ -73,3 +68,4 @@
 - Unterschrift im PDF platzieren
 - Make sure all versions are pinned in pom.xml 
 - Make sure glossary entries and acronyms can all be resolved -> check latex compiler logs 
+- Alle Citations fixen!

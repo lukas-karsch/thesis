@@ -7,9 +7,9 @@
 
 This thesis provides a quantitative and qualitative comparison between Event Sourcing and traditional CRUD architectures. The primary research question is: \textbf{"How does an Event Sourcing architecture compare to CRUD systems with an independent audit log regarding performance, scalability, flexibility and traceability?"}
 
-To provide a comprehensive answer, the following three sub-research questions (RS) are addressed:
+To provide a comprehensive answer, the following three sub-research questions (RQ) are addressed:
 
-\begin{enumerate}[label={RS \arabic*}]
+\begin{enumerate}[label={RQ \arabic*}]
     \item \textbf{Performance and Scalability:} How do \acrshort{crud} and \acrshort{es}-\acrshort{cqrs} implementations perform under increasing load, and what are the resulting implications for system scalability and resource efficiency? \label{rs-performance-scalability}
     \item \textbf{Architectural Complexity and Flexibility:} What are the fundamental structural differences between the two approaches, and how do these impact the long-term flexibility and evolution of the codebase? \label{rs-architecture}
     \item \textbf{Historical Traceability:} To what extent can \acrshort{crud} and \acrshort{es}-\acrshort{cqrs} systems accurately and efficiently reconstruct historical states to satisfy business intent and compliance requirements? \label{rs-traceability}
@@ -35,9 +35,10 @@ Non-goals:
 
 \begin{itemize}
     \item Perfectly implement DDD semantics
-    \item Tune applications to get the best performance
+    \item Tune applications / configurations to get the best performance
     \item Implement mechanics to support schema evolution
     \item Implement full-grade application using security best practices, etc -> custom RequestContext with own "authorization" methods
+    \item Creating a "real", usable application with GUI
 \end{itemize}
 
 \section{Structure of the thesis (TODO)}

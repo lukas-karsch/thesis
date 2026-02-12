@@ -1,12 +1,11 @@
 import json
 import re
 from pathlib import Path
-from typing import List
 
 import pandas as pd
 
+from visualize.aggregate import find_matching_folders
 from visualize.side_by_side_box_plot import (
-    visualize_aggregated_lineplot,
     lineplot_read_visible_rate_vs_users,
 )
 
@@ -96,36 +95,30 @@ def parse_k6_output(folder: Path) -> pd.DataFrame:
     return df
 
 
-def _find_matching_folders(base_name: str, directory: Path) -> List[Path]:
-    if not directory.is_dir():
-        raise ValueError(f"Path '{directory}' is not a directory.")
-
-    matching_folders: List[Path] = []
-
-    # check current directory
-    if directory.name.startswith(base_name):
-        matching_folders.append(directory)
-
-    # recurse into subdirectories
-    for child in directory.iterdir():
-        if child.is_dir():
-            matching_folders.extend(_find_matching_folders(base_name, child))
-
-    return matching_folders
-
-
 def main():
-    base_path = Path(
-        "C:\\Users\\lukas\\Documents\\Studium\\Bachelorarbeit\\Test Results\\time-to-consistency\\create-lecture\\run-k6\\"
-    )
-    base_name = "run-create-lecture"
+    import argparse
 
-    all_folders = _find_matching_folders(base_name, base_path)
+    parser = argparse.ArgumentParser()
+    parser.add_argument("--dir", required=True)
+    parser.add_argument(
+        "--base_name",
+        required=True,
+        help="Base name of the result folders to aggregate.",
+    )
+    args = parser.parse_args()
+
+    base_path = Path(args.dir)
+    base_name = args.base_name
+
+    all_folders = find_matching_folders(base_name, base_path)
     print(f"Found {len(all_folders)} folders.")
 
-    dfs = pd.concat([parse_k6_output(f) for f in all_folders], ignore_index=True)
+    dfs = pd.concat(
+        [parse_k6_output(f) for f in all_folders if "-20-" not in f.stem],
+        ignore_index=True,
+    )
 
-    lineplot_read_visible_rate_vs_users(dfs)
+    lineplot_read_visible_rate_vs_users(dfs, log_x=False)
 
 
 if __name__ == "__main__":

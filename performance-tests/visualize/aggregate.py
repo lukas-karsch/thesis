@@ -12,14 +12,14 @@ from visualize.helper import load_csv
 def _find_matching_metrics_csv(
     base_name: str, directory: Path, file: Literal["server", "client"]
 ) -> List[Path]:
-    folders = _find_matching_folders(base_name, directory)
+    folders = find_matching_folders(base_name, directory)
 
     filename = "server_metrics.csv" if file == "server" else "client_metrics.csv"
 
     return [(Path(folder) / filename) for folder in folders]
 
 
-def _find_matching_folders(base_name: str, directory: Path) -> List[Path]:
+def find_matching_folders(base_name: str, directory: Path) -> List[Path]:
     if not directory.is_dir():
         raise ValueError(f"Path '{directory}' is not a directory.")
 
@@ -32,7 +32,7 @@ def _find_matching_folders(base_name: str, directory: Path) -> List[Path]:
     # recurse into subdirectories
     for child in directory.iterdir():
         if child.is_dir():
-            matching_folders.extend(_find_matching_folders(base_name, child))
+            matching_folders.extend(find_matching_folders(base_name, child))
 
     return matching_folders
 
@@ -61,7 +61,7 @@ def aggregate_prometheus_metrics(metric_json_name: str, directory: Path):
     :return: dict[str, pd.DataFrame]
     """
 
-    folders = _find_matching_folders("", directory)
+    folders = find_matching_folders("", directory)
     print(f"Info: Found {len(folders)} matching folders")
 
     # app -> list of value lists

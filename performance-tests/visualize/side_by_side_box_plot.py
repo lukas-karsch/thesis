@@ -231,7 +231,7 @@ def lineplot_read_visible_rate_vs_users(
                 ax=ax,
             )
 
-        ax.set_xlabel("Requests per second (RPS)")
+        ax.set_xlabel("Iterations per second (IPS)")
         ax.set_ylabel("Read visible rate")
 
         if log_x:

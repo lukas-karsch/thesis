@@ -24,12 +24,12 @@ After implementing the prototypes, they can be compared and evaluated based on t
 
 \subsection{Performance and Scalability}
 
-To answer \hyperref[rs-performance-scalability]{\acrshort{rs} 1}, the performance characteristics of both architectural patterns will be evaluated and compared. To achieve this, load tests are executed on selected endpoints. The theoretical foundations of load testing, environmental constraints, and the data collection methodology are described in this subsection. Finally, perspectives on scalability are presented, which can be derived by analyzing results of load tests.
+To answer \hyperref[rs-performance-scalability]{\acrshort{rq} 1}, the performance characteristics of both architectural patterns will be evaluated and compared. To achieve this, load tests are executed on selected endpoints. The theoretical foundations of load testing, environmental constraints, and the data collection methodology are described in this subsection. Finally, perspectives on scalability are presented, which can be derived by analyzing results of load tests.
 
 \subsubsection{Theoretical Load Testing Foundations}
 \label{sec:load-test-theory}
 
-To provide accurate performance metrics, load testing is performed on both implementations based on the methodology defined by \textcite[10-17]{kleppmann_designing_2017}. Load is generally characterized using "load parameters," which vary depending on the system's nature. For this thesis, the primary load parameter is the number of concurrent requests to the web server. \parencite[11]{kleppmann_designing_2017}
+To provide accurate performance metrics, load testing is performed on both implementations based on the methodology defined by \textcite[10-17]{kleppmann_designing_2017}. Load is generally characterized using "load parameters," which vary depending on the system's nature. For this thesis, the primary load parameter is the number of concurrent requests to the web server. \cite[11]{kleppmann_designing_2017}
 
 The tests measure \textbf{\acrfull{rps}} and client-side response times. \textcite[15,16]{kleppmann_designing_2017} emphasizes the importance of client-side measurement to account for "queueing delays." As server-side processing is limited by hardware resources (e.g., CPU cores), requests may be stalled before processing begins. Server-side metrics typically measure latencies by executing request filters which only run once the request starts being processed. Therefore, server-side latency metrics often exclude the "waiting time" a request spent in the queue, leading to an overly optimistic view of performance. Consequently, the client-side latencies are more relevant to measure user-perceived performance.
 
@@ -39,21 +39,19 @@ This thesis adopts the approach of keeping system resources constant while measu
 
 \textcite[264]{abbott_art_2009} mentions another way of looking at load testing: In positive testing, load is increased until an application is overwhelmed, while negative testing takes away system resources such as memory, threads or connections, until the application degrades.
 
-To evaluate results, the arithmetic mean is avoided as it obscures the experience of typical users and the impact of outliers. Instead, this thesis uses \glspl{percentile}. The \gls{median} (P50) serves as the metric for "typical" response time. Exactly 50\% of requests experience the median latency or less, while the other half experiences a higher latency. However, to capture the experience of users facing high delays, it is critical to measure "\glspl{tail-latency}" via a high percentile like P95 or P99. High percentiles identify the performance of outliers which, despite being a numerical minority, often represent the most valuable or complex operations. \parencite[14-16]{kleppmann_designing_2017}
+To evaluate results, the arithmetic mean is avoided as it obscures the experience of typical users and the impact of outliers. Instead, this thesis uses \glspl{percentile}. The \gls{median} (P50) serves as the metric for "typical" response time. Exactly 50\% of requests experience the median latency or less, while the other half experiences a higher latency. However, to capture the experience of users facing high delays, it is critical to measure "\glspl{tail-latency}" via a high percentile like P95 or P99. High percentiles identify the performance of outliers which, despite being a numerical minority, often represent the most valuable or complex operations. \cite[14-16]{kleppmann_designing_2017}
 
 \subsubsection{Test Execution}
 \label{sec:test-execution-method}
 
-To obtain significant results, each \emph{test configuration} (the combination of a test script and target \acrshort{rps}) should be executed a sufficient number of times. \parencite[259]{abbott_art_2009} Between each execution, the application and its dependencies should be restarted to ensure independent results.
+To obtain significant results, each \emph{test configuration} (the combination of a test script and target \acrshort{rps}) should be executed a sufficient number of times. \cite[259]{abbott_art_2009} Between each execution, the application and its dependencies should be restarted to ensure independent results.
 
 \subsubsection{Comparability and Environment}
 
-\hyperref[sec:test-execution-method]{Section \ref*{sec:test-execution-method}} describes that \glspl{test-configuration} must be repeated an appropriate number of times to achieve accurate results. Additionally, the environment in which the tests are run must be controlled. It should be reproducible, identical for each test run and experience no disturbances like system updates while tests are being executed. \parencite[Chapter 17]{abbott_art_2009}
+\hyperref[sec:test-execution-method]{Section \ref*{sec:test-execution-method}} describes that \glspl{test-configuration} must be repeated an appropriate number of times to achieve accurate results. Additionally, the environment in which the tests are run must be controlled. It should be reproducible, identical for each test run and experience no disturbances like system updates while tests are being executed. \cite[Chapter 17]{abbott_art_2009}
 
 \subsubsection{Collected Metrics}
 \label{sec:collected-metrics}
-
-TODO: gehört das hier hin, besonders die Tabelle, da sie etwas über implementation details verrät?
 
 All metrics collected during load testing are listed in \autoref{table:collected-metrics}. The column "Metric" shows the name that will be used to refer to this metric from now on. "Location" describes where the metric is being recorded.
 
@@ -126,7 +124,7 @@ From the given productivity metric, a scalability metric can be calculated. To d
 
 \[ \psi(k_1, k_2) = \frac{F(k_2)}{F(k_1)} \]
 
-When $\psi$ is close to or greater than 1, the system is considered to be scalable. \parencite[4-6]{jogalekar_evaluating_2000}
+When $\psi$ is close to or greater than 1, the system is considered to be scalable. \cite[4-6]{jogalekar_evaluating_2000}
 
 \subsubsection{Headroom and Resource Saturation}
 
@@ -140,7 +138,7 @@ Scalability is influenced by the alignment between the technology and the organi
 
 A primary factor in architectural decisions is the choice to "scale out" (horizontal scaling) rather than "scale up" (vertical scaling). \emph{Scaling out} relies on adding more units of commodity hardware, which is cheaper, standard equipment, to handle increased load, whereas \emph{scaling up} depends on purchasing larger, faster, and more expensive individual systems. According to \textcite[203, 207]{abbott_art_2009}, scaling out using commodity hardware should be preferred, because it demonstrates that a system is not viable through faster, more expensive hardware. Instead, a system designed to be horizontally split is more resilient as it does not rely on third-party technologies or technological progress.
 
-Code architecture further impacts scalability through the implementation of fault isolation, asynchronous design, and statelessness. Fault isolative architectures, often described as "swim lanes," ensure that a failure in one component does not propagate to others, preserving the availability of the broader system. \parencite[Chapter 21]{abbott_art_2009} Additionally, asynchronous designs are more tolerant of slowdowns, as the speed of the entire system is not determined by its slowest component. This makes asynchronous systems easier to scale. \parencite[205]{abbott_art_2009} Finally, stateless systems allow requests to be distributed freely across any available server, making them more scalable. \textcite[206]{abbott_art_2009} argues that stateful applications should be avoided, when possible.
+Code architecture further impacts scalability through the implementation of fault isolation, asynchronous design, and statelessness. Fault isolative architectures, often described as "swim lanes," ensure that a failure in one component does not propagate to others, preserving the availability of the broader system. \cite[Chapter 21]{abbott_art_2009} Additionally, asynchronous designs are more tolerant of slowdowns, as the speed of the entire system is not determined by its slowest component. This makes asynchronous systems easier to scale. \cite[205]{abbott_art_2009} Finally, stateless systems allow requests to be distributed freely across any available server, making them more scalable. \textcite[206]{abbott_art_2009} argues that stateful applications should be avoided, when possible.
 
 The architectural factors going into scalability which were described in this section will be used to give a precise comparison between the systems when discussing results. TODO this sentence
 
@@ -152,14 +150,14 @@ When choosing which endpoints are relevant to test, Abbott advocates for a "Pare
 
 \subsection{Flexibility - Architectural Metrics}
 
-This section describes various architectural metrics established in literature which are used to assess the flexibility, quality and evolutionary potential of a software architecture. These metrics serve as a basis to answer \hyperref[rs-architecture]{\acrshort{rs} 2}, using static analysis to compare the two architectures.
+This section describes various architectural metrics established in literature which are used to assess the flexibility, quality and evolutionary potential of a software architecture. These metrics serve as a basis to answer \hyperref[rs-architecture]{\acrshort{rq} 2}, using static analysis to compare the two architectures.
 
 \subsubsection{Coupling and Stability}
 \label{sec:coupling-stability}
 
 Coupling metrics are based on graph theory. They are used to measure how dependent components are on each other. \emph{Afferent coupling} measures the number of incoming connections to a code artifact, indicating how many other components depend on it. \emph{Efferent coupling} calculates the number of outgoing connections to other artifacts, reflecting the component's dependency on external code. The concepts of afferent and efferent coupling were first introduced by \textcite{yourdon_structured_1978} in 1978.
 
-\emph{Instability} assesses the volatility of a code base by calculating the ratio of efferent coupling to the sum of all coupling, indicating how easily a component breaks when changed. \emph{Abstractness} determines the ratio of abstract artifacts, such as interfaces and abstract classes, to concrete implementations within a module. Finally, the "\emph{Distance from the Main Sequence}" combines abstractness and instability to determine if a component is optimally balanced or falls into problematic "zones of uselessness or pain". \parencite[261-268]{martin_agile_2003}
+\emph{Instability} assesses the volatility of a code base by calculating the ratio of efferent coupling to the sum of all coupling, indicating how easily a component breaks when changed. \emph{Abstractness} determines the ratio of abstract artifacts, such as interfaces and abstract classes, to concrete implementations within a module. Finally, the "\emph{Distance from the Main Sequence}" combines abstractness and instability to determine if a component is optimally balanced or falls into problematic "zones of uselessness or pain". \cite[261-268]{martin_agile_2003}
 
 \subsubsection{MOOD metrics}
 \label{sec:mood}
@@ -168,11 +166,11 @@ Coupling metrics are based on graph theory. They are used to measure how depende
 
 \subsubsection{Complexity Metrics}
 
-A common metric for code complexity is cyclomatic complexity. Cyclomatic complexity can give a measure for code complexity at the function, class or application level by measuring the number of decision paths through a given component. \parencite[79,80]{richards_fundamentals_2020} It is distinguished between essential complexity (complexity necessary for the domain) and accidental complexity introduced through poor coding practices.
+A common metric for code complexity is cyclomatic complexity. Cyclomatic complexity can give a measure for code complexity at the function, class or application level by measuring the number of decision paths through a given component. \cite[79,80]{richards_fundamentals_2020} It is distinguished between essential complexity (complexity necessary for the domain) and accidental complexity introduced through poor coding practices.
 
 \subsubsection{Connascence}
 
-\emph{Connascence} is a concept described by \textcite{page-jones_what_1995}. It refines afferent and efferent coupling and describes a relationship where two components are coupled such that a change in one requires a modification in the other to maintain system correctness. There are two types of connascence: static connascence, which can be analyzed at the source code level, and dynamic connascence, evaluated at runtime. \parencite[48-53]{richards_fundamentals_2020}
+\emph{Connascence} is a concept described by \textcite{page-jones_what_1995}. It refines afferent and efferent coupling and describes a relationship where two components are coupled such that a change in one requires a modification in the other to maintain system correctness. There are two types of connascence: static connascence, which can be analyzed at the source code level, and dynamic connascence, evaluated at runtime. \cite[48-53]{richards_fundamentals_2020}
 
 \subsubsection{Chidamber and Kemerer (CK) Metrics}
 
@@ -180,13 +178,13 @@ A common metric for code complexity is cyclomatic complexity. Cyclomatic complex
 
 \subsubsection{Usefulness of Static Analysis}
 
-So, how can these static analysis metrics help to answer \acrshort{rs} 2? They offer a quantitative method to identify the fundamental structural differences between architectures by measuring how components are organized and connected. Metrics such as \emph{\gls{cbo}} and \emph{Afferent/Efferent coupling} reveal the degree of dependence between modules. High coupling suggests a structure where changes in one area may have affects on large parts of the system, while low coupling indicates better modularity and isolation, leading to easier maintenance. \parencite{chawla_comparative_2013} Additionally, cohesion metrics like \emph{\gls{lcom}} and complexity measures such as \emph{\gls{wmc}} help determine if an architecture is composed of focused, manageable components or large, complex classes that attempt to do too much. \parencite{chawla_comparative_2013}
+So, how can these static analysis metrics help to answer \acrshort{rq} 2? They offer a quantitative method to identify the fundamental structural differences between architectures by measuring how components are organized and connected. Metrics such as \emph{\gls{cbo}} and \emph{Afferent/Efferent coupling} reveal the degree of dependence between modules. High coupling suggests a structure where changes in one area may have affects on large parts of the system, while low coupling indicates better modularity and isolation, leading to easier maintenance. \cite{chawla_comparative_2013} Additionally, cohesion metrics like \emph{\gls{lcom}} and complexity measures such as \emph{\gls{wmc}} help determine if an architecture is composed of focused, manageable components or large, complex classes that attempt to do too much. \cite{chawla_comparative_2013}
 
-Regarding long-term flexibility and evolution, metrics that evaluate stability and abstraction provide insights into how easily a codebase may change over time. For example, calculating \emph{Instability} and \emph{Abstractness} allows architects to visualize their \emph{"Distance from the Main Sequence,"} highlighting which parts of the system may be becoming too rigid to change or too abstract to be useful. \parencite[45-47]{richards_fundamentals_2020}
+Regarding long-term flexibility and evolution, metrics that evaluate stability and abstraction provide insights into how easily a codebase may change over time. For example, calculating \emph{Instability} and \emph{Abstractness} allows architects to visualize their \emph{"Distance from the Main Sequence,"} highlighting which parts of the system may be becoming too rigid to change or too abstract to be useful. \cite[45-47]{richards_fundamentals_2020}
 
 \subsubsection{Critiques of Static Analysis methods}
 
-\textcite[44]{richards_fundamentals_2020} offer a strong critique of the \gls{lcom} metric. They argue that the metric possesses "serious deficiencies" because it only measures the structural lack of cohesion (how methods and fields physically interact). The metric cannot determine if the pieces of code logically fit together. They also criticize complexity metrics like cyclomatic complexity, calling them "blunt". Their primary critique is that complexity metrics can not distinguish between essential complexity (complexity necessary for the domain) and accidental complexity introduced through poor coding practices. \parencite[48]{richards_fundamentals_2020} Finally, the authors express their critique of connascence, mentioning that it focuses too much on the low-level details of software coupling. They argue that developers should care more about \emph{how} components are coupled (e.g. synchronous or asynchronous). \parencite[53]{richards_fundamentals_2020}
+\textcite[44]{richards_fundamentals_2020} offer a strong critique of the \gls{lcom} metric. They argue that the metric possesses "serious deficiencies" because it only measures the structural lack of cohesion (how methods and fields physically interact). The metric cannot determine if the pieces of code logically fit together. They also criticize complexity metrics like cyclomatic complexity, calling them "blunt". Their primary critique is that complexity metrics can not distinguish between essential complexity (complexity necessary for the domain) and accidental complexity introduced through poor coding practices. \cite[48]{richards_fundamentals_2020} Finally, the authors express their critique of connascence, mentioning that it focuses too much on the low-level details of software coupling. They argue that developers should care more about \emph{how} components are coupled (e.g. synchronous or asynchronous). \cite[53]{richards_fundamentals_2020}
 
 \textcite{drotbohm_instability-abstractness-relationship_2024}, a Spring engineer, offers his critique on the \emph{abstractness} metric, highlighting that it mistakes the existence of interfaces with actual, useful abstractions.
 
@@ -196,7 +194,7 @@ TODO: Finally, talk about schema evolution a little bit. Can we determine method
 
 \subsection{Traceability}
 
-This section describes how traceability will be compared; it serves as a basis to answer \hyperref[rs-traceability]{\acrshort{rs} 3}. The traceability aspect will be compared via two perspectives. First, the \emph{accuracy} of historic reconstruction is compared. Then, \emph{efficiency} of reconstructions is evaluated and compared.
+This section describes how traceability will be compared; it serves as a basis to answer \hyperref[rs-traceability]{\acrshort{rq} 3}. The traceability aspect will be compared via two perspectives. First, the \emph{accuracy} of historic reconstruction is compared. Then, \emph{efficiency} of reconstructions is evaluated and compared.
 
 \subsubsection{Accuracy of reconstruction}
 
