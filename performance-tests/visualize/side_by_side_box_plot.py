@@ -106,16 +106,14 @@ def _lineplot_latency_vs_users(
         uri_df = df[df["uri"] == uri]
 
         fig, ax = plt.subplots()
+        ax_rate = None  # secondary axis (created lazily)
 
         for app in ["crud", "es-cqrs"]:
             app_df = uri_df[uri_df["app"] == app]
 
-            if ax is None:
-                continue
-
+            # ---- latency ----
             for metric, label in percentiles.items():
                 metric_df = app_df[app_df["metric"] == metric]
-
                 if metric_df.empty:
                     continue
 
@@ -133,8 +131,28 @@ def _lineplot_latency_vs_users(
                     ax=ax,
                 )
 
-        # ---- axis config ----
+            # ---- read_visible_rate ----
+            rate_df = app_df[app_df["metric"] == "read_visible_rate"]
+            if not rate_df.empty:
+                if ax_rate is None:
+                    ax_rate = ax.twinx()
+                    ax_rate.set_ylabel("Read visible rate")
+                    ax_rate.set_ylim(0, 1)
 
+                rate_df = rate_df.sort_values("virtual_users")
+
+                sns.lineplot(
+                    data=rate_df,
+                    x="virtual_users",
+                    y="value",
+                    markers=True,
+                    linestyle=":",
+                    color=APP_COLORS[app],
+                    label=f"{pretty_name(app)} visible rate",
+                    ax=ax_rate,
+                )
+
+        # ---- axis config (latency axis) ----
         ax.set_xlabel("Requests per second (RPS)")
 
         if log_x:
@@ -148,20 +166,17 @@ def _lineplot_latency_vs_users(
             ax.get_yaxis().set_major_formatter(ScalarFormatter())
 
         ax.set_ylabel("Latency (ms)")
-
         ax.set_title(
             f"Latency vs load — {df['method'].iloc[0]} {uri} {additional_title}"
         )
-
         ax.grid(True, linestyle="--", alpha=0.6)
 
-        # ---- legend handling ----
-        handles = []
-        labels = []
-
-        h, l = ax.get_legend_handles_labels()
-        handles.extend(h)
-        labels.extend(l)
+        # ---- legend merge (important when using twinx) ----
+        handles, labels = ax.get_legend_handles_labels()
+        if ax_rate:
+            h2, l2 = ax_rate.get_legend_handles_labels()
+            handles += h2
+            labels += l2
 
         ax.legend(handles, labels, loc="upper right")
 
@@ -177,6 +192,62 @@ def _lineplot_latency_vs_users(
                 fontsize="x-small",
                 transform=ax.get_yaxis_transform(),
             )
+
+        plt.tight_layout()
+        plt.show()
+
+
+def lineplot_read_visible_rate_vs_users(
+    df: pd.DataFrame,
+    *,
+    log_x: bool = True,
+    additional_title: str = "",
+) -> None:
+    for uri in sorted(df["uri"].unique()):
+        uri_df = df[(df["uri"] == uri) & (df["metric"] == "read_visible_rate")]
+
+        if uri_df.empty:
+            continue
+
+        fig, ax = plt.subplots()
+
+        for app in ["crud", "es-cqrs"]:
+            app_df = uri_df[uri_df["app"] == app]
+            if app_df.empty:
+                continue
+
+            app_df = app_df.sort_values("virtual_users")
+
+            offset = 0.002 if app == "crud" else -0.002
+            sns.lineplot(
+                data=app_df.assign(value_jitter=app_df["value"] + offset),
+                x="virtual_users",
+                y="value_jitter",
+                markers=True,
+                linestyle="-",
+                color=APP_COLORS[app],
+                label=f"{pretty_name(app)} visible rate",
+                errorbar="sd",
+                ax=ax,
+            )
+
+        ax.set_xlabel("Requests per second (RPS)")
+        ax.set_ylabel("Read visible rate")
+
+        if log_x:
+            ax.set_xscale("log")
+            ax.get_xaxis().set_major_formatter(ScalarFormatter())
+
+        ax.set_xticks(sorted(uri_df["virtual_users"].unique()))
+
+        ax.set_ylim(0, 1.02)  # small headroom above 1
+        ax.grid(True, linestyle="--", alpha=0.6, zorder=0)
+
+        ax.set_title(
+            f"Read visible rate vs load — {df['method'].iloc[0]} {uri} {additional_title}"
+        )
+
+        ax.legend(loc="lower left")
 
         plt.tight_layout()
         plt.show()

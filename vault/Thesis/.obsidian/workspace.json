@@ -4,11 +4,11 @@
     "type": "split",
     "children": [
       {
-        "id": "67eb1f11eeb98e7d",
+        "id": "f4c14194cef0d515",
         "type": "tabs",
         "children": [
           {
-            "id": "8d89f3f81e5450cc",
+            "id": "88bb5544781a6e6e",
             "type": "leaf",
             "state": {
               "type": "markdown",
@@ -22,49 +22,21 @@
             }
           },
           {
-            "id": "c233a1648e26cb29",
+            "id": "3faff162917907a9",
             "type": "leaf",
             "state": {
               "type": "markdown",
               "state": {
-                "file": "Writing/Method - traceability.md",
+                "file": "Advice/VMs.md",
                 "mode": "source",
                 "source": false
               },
               "icon": "lucide-file",
-              "title": "Method - traceability"
+              "title": "VMs"
             }
           },
           {
-            "id": "dbbd9bebbab1b876",
-            "type": "leaf",
-            "state": {
-              "type": "markdown",
-              "state": {
-                "file": "Writing/Results - traceability.md",
-                "mode": "source",
-                "source": false
-              },
-              "icon": "lucide-file",
-              "title": "Results - traceability"
-            }
-          },
-          {
-            "id": "3177838d7d7d04a7",
-            "type": "leaf",
-            "state": {
-              "type": "markdown",
-              "state": {
-                "file": "Writing/Results - traceability.md",
-                "mode": "source",
-                "source": false
-              },
-              "icon": "lucide-file",
-              "title": "Results - traceability"
-            }
-          },
-          {
-            "id": "b52c5a860cf4a0a2",
+            "id": "6d74fb4d48374cba",
             "type": "leaf",
             "state": {
               "type": "markdown",
@@ -130,7 +102,8 @@
               "title": "Bookmarks"
             }
           }
-        ]
+        ],
+        "currentTab": 1
       }
     ],
     "direction": "horizontal",
@@ -225,35 +198,35 @@
       "bases:Create new base": false
     }
   },
-  "active": "8d89f3f81e5450cc",
+  "active": "88bb5544781a6e6e",
   "lastOpenFiles": [
-    "Writing/Results - traceability.md",
-    "Thesis - Landing Page.md",
-    "Technical Design Log/2026-01-29 Visualizing flexibility metrics.md",
-    "TODOs.md",
-    "Writing/Method - traceability.md",
-    "Writing/Results - flexibility, architecture.md",
-    "Writing/Related Work.md",
-    "Technical Design Log/2026-01-26 Flexibility.md",
-    "Writing/Method - Flexibility.md",
     "Advice/VMs.md",
+    "TODOs.md",
+    "Thesis - Landing Page.md",
+    "Meetings/Rückfragen zum Feedback.md",
+    "Writing/Results - flexibility, architecture.md",
+    "Writing/Method - traceability.md",
+    "Technologies/Docker.md",
+    "Technical Design Log/2026-01-19 Latency vs. Load.md",
+    "Technical Design Log/2026-01-26 Flexibility.md",
+    "Technical Design Log/2026-01-28 PERFORMANCE MUST DO.md",
+    "Technical Design Log/2025-12-29 Where to measure.md",
+    "Technical Design Log/2025-12-22 What can i benchmark.md",
+    "Technical Design Log/2025-12-19 Preparing for performance tests.md",
+    "Technical Design Log/2025-12-19 Apps are finished.md",
+    "Technical Design Log/2025-12-16 Problems with my Axon projections.md",
+    "Technical Design Log/2026-01-07 What else to measure.md",
+    "Technical Design Log/2026-01-10 Run performance tests on a VM.md",
+    "Writing/Results - traceability.md",
+    "Technical Design Log/2026-01-29 Visualizing flexibility metrics.md",
+    "Writing/Related Work.md",
+    "Writing/Method - Flexibility.md",
     "Meetings/2026-02-04 Fragen fürs nächste Meeting.md",
     "Writing/Method - Performance.md",
     "Writing/Method - Scalability of systems.md",
-    "Technical Design Log/2025-12-16 Problems with my Axon projections.md",
     "Writing/Metrics.md",
     "Writing/Interpret results - performance.md",
-    "Technical Design Log/2026-02-02 Latex indentation problem.md",
-    "Technical Design Log/2026-02-03 Run enrollment test.md",
     "Untitled.canvas",
-    "Technical Design Log/2026-01-31 Big performance issue exposed.md",
-    "Writing/Audit Log - Draft.md",
-    "Writing/Axon.md",
-    "Writing/Implementation - Infrastructure.md",
-    "Advice/CloudInit.md",
-    "Writing/Discussion.md",
-    "Writing/Outline.md",
-    "Technologies/Untitled.md",
     "images/Pasted image 20260202152540.png",
     "images/Pasted image 20260126165908.png",
     "images/Pasted image 20260126165850.png",

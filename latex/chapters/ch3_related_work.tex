@@ -1,44 +1,45 @@
 % !TeX root = ../main.tex
-\chapter{Related Work (TODO)}
+\chapter{Related Work}
 
 After the theoretical foundations of the thesis are covered, this chapter presents work related to the \acrlongpl{rs}. As there are 3 sub-questions to address, this chapter is divided into three sections.
 
 \section{RS1 - Performance and Scalability}
+\label{sec:rw-rs1}
 
-\begin{itemize}
-      \item Kleppman, 2017, data intensive systems
-            - Chapter 1: scalability, performance, approaches for coping with load
-            - Chapter 11 (stream processing). Performance implications of log structured storage vs. B-Trees (db index)
-      \item Jogalekar et al, 2000. "Evaluating the scalability of distributed systems" provides a formal mathematical framework for defining "Scalability" ($P = \lambda / T$).
-      \item Singh, 2025 presents a performance comparison between DDD and CQRS. While DDD is not a traditional CRUD architecture, clearly the migration to separate read and write paths gave a performance increase
-      \item Jayaraman et al, 2024 "Implementing Command Query Responsibility Segregation (CQRS) in Large-Scale Systems"
-            includes a performance benchmark (p. 58ff)
-      \item \parencite{abbott_art_2010}
-\end{itemize}
+Scalability and performance are critical considerations in modern distributed system design. \textcite{kleppmann_designing_2017} provides a foundational understanding of these concepts, defining scalability not simply as the ability to handle increased load, but as the capacity to maintain performance as load parameters grow. \parencite[Chapter 1]{kleppmann_designing_2017} To quantify scalability characteristics, \textcite{jogalekar_evaluating_2000} established a formal mathematical framework for scalability, defining a metric based on cost-effectiveness where productivity is a function of throughput and quality of service (specifically response time). Their work emphasizes that good scalability results from the system architecture and the scaling strategy.
 
-\section{RS2 - architectural complexity, maintainability, flexibility}
+Building on these theoretical foundations, recent studies have empirically evaluated the impact of architectural patterns like \gls{cqrs} on system performance. \textcite{jayaraman_implementing_2024} investigated the implementation of \gls{cqrs} in large-scale systems, using performance benchmarks to demonstrate that separating read and write models allows for independent optimization, reducing response times and improving throughput compared to monolithic architectures. Their research, based on simulations in a controlled environment, indicated that CQRS systems, particularly when using read replicas and caching, maintained superior response times under high-concurrency workloads where traditional monolithic systems faced bottlenecks.
 
-\begin{itemize}
-      \item Singh, 2025 "Using CQRS and Event Sourcing in the Architecture of Complex Software Solutions"
-            - specific results on code metrics: the transition to CQRS/ES increased the total number of classes (from 47 to 213) but decreased the overall cyclomatic complexity (from 534 to 522)
-            - highlights that individual modules become simpler despite higher number of classes
-      \item "Object Oriented Coupling based Test Case Prioritization":
-            - statistical approach (linear regression, hypothesis testing) to correlate OO metrics with software quality
-            - Defines and analyzes the CK Metrics Suite (WMC, DIT, NOC, CBO, RFC, LCOM). It establishes empirical correlations, such as Coupling Between Objects (CBO) having the strongest negative impact on quality
-      \item  Comparative Study of the Software Metrics for the complexity and Maintainability of Software Development: can act as "dictionary" for all the code metrics
-\end{itemize}
+Further supporting these findings, \textcite{hruzin_migration_2024} presented a comparative analysis of a task-tracking system migrated from a traditional \gls{ddd} architecture to one using \gls{cqrs} and \acrlong{es}. The study found that while the transition increased code and infrastructure complexity, it yielded performance gains, increasing bulk read operation speeds by a factor of 6. Write operation performance varied after making the transition to \gls{cqrs}, with some operations demonstrating acceleration and others experiencing a slowdown.
 
-\section{RS3 - traceability}
+Generally, there exists a consensus in the reviewed literature that decoupling Command processing from Query processing enables more granular scaling strategies, allowing systems to handle load more efficiently than traditional CRUD-based approaches. \cite{hruzin_migration_2024,jayaraman_implementing_2024} TODO: more literature
 
-\begin{itemize}
-      \item Maybe Gantz, 2014: Basics of IT Audit
-      \item Vamshikrishna Monagari: "Demystifying Event-Driven Microservices in Cloud-Native  FinTech Applications"
-            - contains many quantitative results, e.g.40\% lower latency for ES applications; 95\% reduction in compliance audit preparation time; reduced time for root cause analysis.
-            - Paper seems to be problematic as I could not find some of the mentioned results in the references
-\end{itemize}
+\section{RS2 - Architectural Complexity, Maintainability, Flexibility}
 
-Maybe include sources talking about GDPR and the \emph{problems} with a non-erasable event log, and some solutions mitigating the problem? $\rightarrow$ "right to be forgotten". This is not a goal of this thesis but related.
+Recent literature provides empirical evidence regarding the structural impact of adopting \gls{cqrs} and \acrlong{es}. The work conducted by \textcite{hruzin_migration_2024}, described in \autoref{sec:rw-rs1}, also showed specific results regarding code complexity: the migration increased the total number of classes from 47 to 213, while the overall cyclomatic complexity of the system decreased from $534$ to $522$. This suggests that while additional infrastructure classes are required, the individual modules become simpler. The authors argue that the separation of Commands and Queries simplifies debugging and extension of the application.
 
-\section{Relevant results}
+To objectively measure such qualities, researchers rely on established object-oriented metrics. \textcite{singh_object_2018} employed statistical approaches, including hypothesis testing and linear regression, to correlate the \gls{ck} suite with software quality. Their analysis established that metrics such as \gls{dit} and \gls{noc} impact quality, but \gls{cbo} demonstrated the strongest negative correlation with software quality. \textcite{basili_validation_1996} present a validation of the \gls{ck} metrics, conducting experiments to test how these metrics correlate with defects in a program. Their results show that \gls{dit}, \gls{rfc} and \gls{noc} were most significant for predicting defects in a program, while \gls{lcom} was shown to be insignificant. TODO: quickly mention other metrics?
 
-Not sure if this needs to be its own section, but it will be important to highlight what the key findings are which are relevant to my work. Show what others discovered, things that I build upon, things that may and should be picked up again when discussing results.
+% Regarding long-term evolution and flexibility, \textcite{abbott_art_2009} propose the architectural splitting of a system by function or customer to create "fault isolative" structures that reduce merge conflicts and allow engineering teams to focus on specific services, thereby decreasing time to market.
+
+Kleppmann highlights the evolutionary advantages of \acrlong{es}. He argues that systems gain the flexibility to derive new read-optimized views from the same history without the need for schema migrations. \parencite[461,462]{kleppmann_designing_2017}
+
+While Kleppmann emphasizes the architectural freedom to evolve views on existing data, \textcite{overeem_empirical_2021} discuss 19 event-sourced systems and point out that many engineers struggle with \emph{schema evolution} in \acrlong{es}. Schema evolution is the process of changing the schema of events. The challenge is that the immutable history of the event log must remain compatible with evolving business logic, which turns the flexibility of the read-side into difficulties on the write-side. Schema evolution is not a goal of this thesis. However, these characteristics will be considered when comparing the architectural flexibility of event-sourced systems to traditional \acrshort{crud} systems.
+
+In terms of maintainability, while \textcite{jayaraman_implementing_2024} noted increased performance and scalability when using \gls{cqrs} with \acrlong{es}, they also found higher maintenance complexity and higher operational costs.
+
+\section{RS3 - Historical Traceability}
+
+\textcite[457,531]{kleppmann_designing_2017} mentions that using \gls{es} makes it easier to reproduce bugs and diagnose unexpected behaviors by replaying the event log. \textcite{monagari_demystifying_2026} cites empirical data showing that financial institutions using \acrlong{es} reduced incident resolution time from 4.2 hours to 23 minutes by replaying events to reproduce exact system states, though the primary data could not be verified during literature review.
+
+\textcite{gantz_basics_2014} defines IT auditing as the process of validating controls to protect assets and information. Historically, audit logs were often viewed as "disposable" data, overwritten regularly to save space. \parencite[3]{maier_audit_2006} However, Maier argues that regulatory pressure and the need for accountability have made log retention critical for event reconstruction and forensic analysis. \parencite[4,17]{maier_audit_2006}
+
+Effective auditing requires "evidence": information that auditors can verify against established criteria. \parencite[155]{gantz_basics_2014} Gantz emphasizes that the reliability of a system depends on its ability to produce accurate evidence of past states and operations. \parencite[4]{gantz_basics_2014}
+
+The standard audit logging approach employed in traditional \acrshort{crud} systems has several downsides which can be found in the literature. \textcite[531]{kleppmann_designing_2017} notes that even if transaction logs are captured, they reveal what changed, but not necessarily \emph{why}. The application logic that decided on the mutation is transient and context may be lost. \textcite[23,24]{maier_audit_2006} points out that reconstructing a security incident in a distributed environment is time-consuming. It may require manually correlating logs from separate systems with different formats and time synchronizations.
+
+In contrast, \acrlong{es} treats state changes as an immutable sequence of events. \textcite{helland_immutability_2015} emphasizes that the event log \emph{is the truth}, and any application state is derived from it. Because the log is append-only, history is never overwritten. This allows for deterministic replay of events, making any historic state perfectly reconstructible. \textcite[531]{kleppmann_designing_2017} also highlights that events typically capture user intent.
+
+In terms of compliance and integrity, \textcite[531]{kleppmann_designing_2017} points out that the integrity of an event store can be verified through hashes, making event-sourced systems highly reliable.
+
+While the reviewed literature establishes the superiority of event-sourced systems in terms of data integrity, no empirical research comparing the actual computational efficiency of state reconstruction between \acrlong{es} and traditional \acrshort{crud} audit logs could be found. Consequently, this thesis aims to fill that gap by quantifying the performance differences between these architectures when reconstructing historical states.

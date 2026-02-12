@@ -77,3 +77,8 @@ To ensure the integrity of the operations, the following consistency requirement
     \item \textbf{Write Consistency}: Both architectures shall provide immediate (strong) consistency for write operations. This ensures that any command (e.g., enrolling a student) is validated against the most recent state of the aggregate to prevent violations of business rules.
     \item \textbf{Read Consistency}: The \acrshort{crud} implementation shall provide immediate consistency for reads. The \acrshort{es}-\acrshort{cqrs} implementation may utilize eventual consistency for its read-models according to the \hyperref[slo-freshness]{Freshness SLO}.
 \end{itemize}
+
+\subsection{Contract}
+\label{sec:contract}
+
+Both implementations must follow the same contract regarding endpoints, request and response schemas and state transitions. To ensure this, an extensive test suite shall be set up. While the internals of the implementations will be vastly different architecturally, they will both have the same public \gls{api}, making it possible to send requests and verify the responses. Therefore, one test suite shall be developed which can be executed on both applications. The test suite should include integration tests for all \gls{api} endpoints covering both regular and edge-case (error) scenarios to ensure that both implementations behave identically.
