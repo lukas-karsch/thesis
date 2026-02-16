@@ -9,15 +9,23 @@ For all load tests, the primary results are visualized through diagrams like lat
 
 \subsection{Significance}
 
-TODO: explain significance test.
+The significance levels indicated in the tables inside the appendix are calculated using the \emph{Mann-Whitney U} significance test. In load testing, response times are usually skewed by outliers (tail latencies) that would incorrectly bias a standard average-based test. The Mann-Whitney U test is used because it doesn't require normally distributed samples and compares the \emph{rankings} of results rather than the averages, making it more resistant to these outliers\cite[Chapter 13.3]{triola_elementary_2012}. TODO: cite on "latencies are skewed"
 
 \subsection{Warmup}
 
 Median CPU Usage: warmup times omitted (first few second spikes)
 
+\subsection{Speedup / Ratios}
+
+When comparing the CRUD and ES-CQRS applications' results, sometimes a "speedup" factor or ratio is given. For example, a 5x speedup may be stated. These precise numbers supporting these statements are also available in the tables inside the appendix. The term "speedup" is used when comparing latencies, while the term "ratio" is used for resource metrics like $cpu\_usage$. The given speedups / ratios are always calculated like this: $\frac{metric_{crud}}{metric_{es\_cqrs}}$.
+
 \subsection{Write Performance}
 
 Presents the results of load tests for write (POST) endpoints.
+
+\subsection{Graphs}
+
+Explain standard deviation shown in the graphs.
 
 \subsubsection{L1: Create Courses Simple}
 \label{sec:l1}
@@ -110,7 +118,26 @@ Presents results of load tests for read (GET) endpoints.
 \subsubsection{L3: Read lectures}
 \label{sec:l3}
 
-Blabla...
+\texttt{GET} \texttt{/lectures} is used to fetch all lectures a student is enrolled or waitlisted in. \autoref{fig:l3_combined} presents client-side and server-side latencies for this endpoint.
+
+\begin{figure}[H]
+    \centering
+    \begin{subfigure}[b]{0.49\textwidth}
+        \centering
+        \includegraphics[width=\textwidth]{images/results/read-lectures/read-lectures_latency-vs-load_client__to4000RPS.png}
+        \caption{Latency vs. Load measured on the client}
+        \label{fig:l3_latency_vs_load_client}
+    \end{subfigure}
+    \hfill
+    \begin{subfigure}[b]{0.49\textwidth}
+        \centering
+        \includegraphics[width=\textwidth]{images/results/read-lectures/read-lectures_latency-vs-load_server__to4000RPS.png}
+        \caption{Latency vs. Load measured on the server}
+        \label{fig:l3_latency_vs_load_server}
+    \end{subfigure}
+    \caption[L3 Performance Metrics, load measured in \gls{rps}]{L3 Performance Metrics: Load measured in \gls{rps}. Detailed results in \ref{results:l3}.}
+    \label{fig:l3_combined}
+\end{figure}
 
 \subsubsection{L4: Get credits}
 \label{sec:l4}
@@ -145,7 +172,7 @@ The server latencies, displayed in \autoref{fig:l4_latency_vs_load_server}, diff
 
 \ref{slo-freshness} defined a threshold of 100ms inside which all writes shall be reflected on the read-side. This "freshness" is measured in the following test.
 
-\subsubsection{L5: Create Lectures}
+\subsubsection{L5: Create Lecture, then Read}
 
 This load test differs from others in the fact that each iteration executes 2 \gls{http} requests. The first request creates a lecture. After sleeping for 100ms --- the consistency threshold defined in \ref{slo-freshness} --- the script executes a request to \texttt{GET} the created lecture. If status code $404$ is returned, the write was not reflected in the read model in time. The rate of successful reads is recorded as a metric called $read\_visible\_rate$, presented in \autoref{fig:l5_read_visible_rate}. It can be seen that once exceeding 200 \gls{ips}, the ES-CQRS application failed to synchronize the read-side fast enough. \autoref{fig:l5_latency_vs_load} shows the latencies under varying loads. The $latency\_p50$ remains similar for both applications, however the ES-CQRS application's $latency\_p95$ increases with rising \gls{ips}, to exceeding the threshold defined in \ref{slo-latency} when exceeding 400 \gls{ips}.
 

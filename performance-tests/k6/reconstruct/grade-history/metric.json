@@ -1,0 +1,11 @@
+{
+  "metric": {
+    "method": "POST",
+    "uri": "/stats/grades/history"
+  },
+  "file": "grade-history.js",
+  "metadata": {
+    "title": "Read grade history for a student and an assessment"
+  },
+  "VUs": 50
+}

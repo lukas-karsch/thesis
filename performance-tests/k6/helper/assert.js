@@ -13,3 +13,9 @@ export const assertResponseIs201 = res => {
         throw new Error(`Status code assertion failed: was ${res.status}, expected 201}`)
     }
 }
+
+export const assertResponseIs200 = res => {
+    if (res.status !== 200) {
+        throw new Error(`Status code assertion failed: was ${res.status}, expected 201}`)
+    }
+}

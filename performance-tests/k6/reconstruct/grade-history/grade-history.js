@@ -14,6 +14,7 @@ export const options = {
             executor: "ramping-arrival-rate",
             timeUnit: "1s",
             preAllocatedVUs: VUS,
+            maxVus: VUS * 3,
             stages: [
                 {target: VUS, duration: "20s"},
                 {target: VUS, duration: "80s"},
@@ -25,23 +26,24 @@ export const options = {
         'http_req_failed': ['rate<0.01'],    // Error rate must be less than 1%
     },
     summaryTrendStats: ["med", "p(99)", "p(95)", "avg"],
-    setupTimeout: '130s'
+    setupTimeout: '140s'
 };
 
 export function setup() {
-    return createGrades(http, TARGET_HOST, false);
+    return createGrades(http, TARGET_HOST, true);
 }
 
 export default function (data) {
-    const {studentIds} = data;
+    const {studentIds, assessmentIds} = data;
 
     const studentId = studentIds[Math.floor(Math.random() * studentIds.length)];
+    const assessmentId = assessmentIds[Math.floor(Math.random() * assessmentIds.length)].trim();
 
-    group("Get credits for a student", () => {
-        const res = http.get(`${TARGET_HOST}/stats/credits?studentId=${studentId}`);
+    group("Get grade history for a student and assessment", () => {
+        const res = http.get(`${TARGET_HOST}/stats/grades/history?studentId=${studentId}&lectureAssessmentId=${assessmentId}`);
         checkResponseIs200(res);
         check(res, {
-            "credits is not 0": r => r.json().data.totalCredits !== 0
+            "grade history shouldn't be empty": r => r.json().data.history.length > 0
         });
     });
 }
