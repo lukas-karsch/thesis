@@ -61,7 +61,7 @@ runcmd:
   - sudo -u thesis -i bash -c "/opt/miniconda/bin/conda create -y -n dev_env python=3.14"
 
   # 5. install necessary packages
-  - sudo -u thesis -i bash -c "/opt/miniconda/bin/conda install -n dev_env -y pandas numpy matplotlib requests"
+  - sudo -u thesis -i bash -c "/opt/miniconda/bin/conda install -n dev_env -y pandas numpy matplotlib requests scipy jinja2"
 
   # Download Java 25
   - echo "Downloading jdk25 from https://github.com/adoptium/temurin25-binaries/releases/download/jdk-25.0.2%2B10/OpenJDK25U-jdk_x64_linux_hotspot_25.0.2_10.tar.gz"

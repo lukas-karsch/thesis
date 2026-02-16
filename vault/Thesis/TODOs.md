@@ -1,11 +1,4 @@
 - **Literature**
-    - ES #es
-        - Projections!
-        - lesen "Evaluation and Use of Event Sourcing" (Bachelorarbeit)
-    - Audit Logs #audit-log
-        - "Evaluation and Use of Event Sourcing (BA)"
-    - Performance measurement best practices #performance
-    - [[2026-01-07 Fragen fürs nächste Meeting]] -> Buch zu scalability finden, Annahmen bzgl des Zusammenhangs von CPU / RAM usage und scalability 
     - Evolutionary Architectures lesen 
 - **Code**
 	- Change the API:
@@ -41,19 +34,24 @@
 		- **Profile performance of applications**
 			- read-lectures: CQRS is slower. i supect JSON deserialization is the issue - should profile this! 
 - Statistical significance: https://de.wikipedia.org/wiki/Wilcoxon-Mann-Whitney-Test
+- Script to aggregate time series data in a table.
 - **Writing** 
-	- Mermaid diagram in latex: https://github.com/Witiko/markdown/issues/448 
 	- Unify naming of load vs performance testing 
 	- Discussion: Mention that when trying to audit _read_ operations, event sourcing is not sufficient. 
 	- add Envers to tech stack 
-	- need to explain my method of "authentication" somewhere 
 	- [[2026-02-04 Fragen fürs nächste Meeting]]
 	- "load testing" vs "stress testing"?
 	- Feedback von Jordine einarbeiten 
 	- Technologien den Anforderungen zuordnen 
+	- Move metrics and load testing basics from Methodology to Basics?
+	- Fix ER diagram of CRUD app, simplify explanation 
+	- Tabellen: Mean durch Median ersetzen 
 ## Urgent
 - Think of title 
 	- Aktikkalmaz & Jordine Bescheid geben 
+- Tests
+	- get-credits: 4000 RPS 
+	- enroll: 1000 RPS 
 ## Before Finishing
 - Check READMES 
 - Clone repo in blank folder, check everything works
@@ -68,4 +66,4 @@
 - Unterschrift im PDF platzieren
 - Make sure all versions are pinned in pom.xml 
 - Make sure glossary entries and acronyms can all be resolved -> check latex compiler logs 
-- Alle Citations fixen!
+- Glossar entries hinzufügen

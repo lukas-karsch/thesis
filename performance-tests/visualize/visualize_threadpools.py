@@ -22,18 +22,18 @@ def sns_plot_with_sd(df: pd.DataFrame, metric: dict, metric_json: Any):
     sns.lineplot(
         data=df,
         x=df["time_index"] * 5,
-        y=df["value"] * 100,
+        y=df["value"],
         hue="app",
         palette=APP_COLORS,
         estimator=np.median,
         errorbar=("pi", 90),
     )
 
-    plt.ylim(0, 100)
+    plt.ylim(0, 210)
     plt.xlabel("Time (seconds)")
-    plt.ylabel("CPU Usage (%)")
+    plt.ylabel("Threadpool Usage")
     plt.suptitle(
-        f"{metric['method']} {metric['uri']}: CPU Usage Over Time ({metric['rps']} RPS)"
+        f"{metric['method']} {metric['uri']}: Threadpool Saturation Over Time ({metric['rps']} RPS)"
     )
     plt.title(metric_json["metadata"]["title"], fontsize=10)
 
@@ -54,10 +54,10 @@ def main():
     metric_folder_base_name = f"{base_name}-{VUs}-"
 
     aggregated = aggregate_raw_prometheus_metrics(
-        "cpu_usage.json",
+        "tomcat_threads_current_threads.json",
         base_path,
         metric_folder_base_name,
-        metric_name="process_cpu_usage",
+        metric_name="tomcat_threads_current_threads",
     )
 
     metric_path = get_metric_json(base_path)

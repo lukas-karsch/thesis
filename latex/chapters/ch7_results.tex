@@ -3,6 +3,173 @@
 
 \section{Performance}
 
-This section describes results of load testing.
+This section describes results of load testing. Each \gls{l} is presented in order, describing the kind of endpoint and test that was employed.
 
-\input{tables/latency_get-lectures_500VU}
+For all load tests, the primary results are visualized through diagrams like latency-vs-load line plots. The raw numerical data, including confidence intervals and significance levels for all tested load levels, are provided in \autoref{appendix:results}.
+
+\subsection{Significance}
+
+TODO: explain significance test.
+
+\subsection{Warmup}
+
+Median CPU Usage: warmup times omitted (first few second spikes)
+
+\subsection{Write Performance}
+
+Presents the results of load tests for write (POST) endpoints.
+
+\subsubsection{L1: Create Courses Simple}
+\label{sec:l1}
+
+The endpoint \texttt{POST} \texttt{/courses} can be used by professors to create courses. The "simple" test case tests creation of courses \emph{without prerequisites}. This means that no validation is necessary to create a new entity, making this test the raw insertion performance.
+
+\autoref{fig:l1_combined} presents line graphs which describe the observed latencies under varying loads of both applications by showing their $latency\_p50$ (median) and $latency\_p95$ (tail latency). The Latency \gls{slo} defined the threshold at 100ms, meaning the ES-CQRS application failed to satisfy the \gls{slo} between 500 and 1000 \gls{rps}. Meanwhile, the \gls{crud} application achieves a sub 10ms $latency\_p95$ until at least 1000 \gls{rps}.
+
+It can be noted that the latency curve follows the same pattern in both the measurements made on the client and on the server, except for the ES-CQRS $latency\_p95$ which exhibits a value of over 1000ms on the client, but only around 300ms on the server.
+
+\begin{figure}[H]
+    \centering
+    \begin{subfigure}[b]{0.49\textwidth}
+        \centering
+        \includegraphics[width=\textwidth]{images/results/create-course-simple/create_course_simple_latency-vs-load__client.png}
+        \caption{Latency vs. Load measured on the client}
+        \label{fig:l1_latency_vs_load_client}
+    \end{subfigure}
+    \hfill
+    \begin{subfigure}[b]{0.49\textwidth}
+        \centering
+        \includegraphics[width=\textwidth]{images/results/create-course-simple/create_course_simple_latency-vs-load__server.png}
+        \caption{Latency vs. Load measured on the server}
+        \label{fig:l1_latency_vs_load_server}
+    \end{subfigure}
+    \caption[L1 Performance Metrics, load measured in \gls{rps}]{L1 Performance Metrics: Load measured in \gls{rps}. Detailed results in \ref{results:l1}.}
+    \label{fig:l1_combined}
+\end{figure}
+
+\autoref{fig:l1_cpu_usage_vs_load} presents median CPU usage of the endpoint under increasing load. The ES-CQRS application has a higher CPU usage, exhibiting a value of $\sim45\%$ at 1000 \gls{rps}, while the CRUD application uses $\sim10\%$. The CRUD application's CPU usage rises linearly, while the ES-CQRS application's CPU usage rises slower past 500 \gls{rps}.
+
+\begin{figure}[H]
+    \centering
+    \begin{subfigure}[b]{\textwidth}
+        \centering
+        \includegraphics[width=\textwidth]{images/results/create-course-simple/CPU_Usage_vs_Load.png}
+        \caption{CPU Usage (\%) vs. load. Results in \ref{table:run-create-course-simple-aggregated-cpu-usage}}
+        \label{fig:l1_cpu_usage_vs_load}
+    \end{subfigure}
+    \caption{L1: Resource usage graphs}
+    \label{fig:l1_resource_vs_load}
+\end{figure}
+
+\subsubsection{L2: Create Courses Prerequisites}
+\label{sec:l2}
+
+This test also evaluates the performance of the endpoint described in \autoref{sec:l1}. However, before executing the load generation, a set of "prerequisite" courses are generated, which are then referenced during load generation. This creates the necessity to do additional checks on existing data, verifying whether the referenced courses actually exist.
+
+The performance, presented in \autoref{fig:l2_combined}, is similar to the observations made in \hyperref[sec:l1]{L1}. After exceeding 500 \gls{rps}, the ES-CQRS application fails to satisfy \ref{slo-latency} with a $latency\_p95$ exceeding the threshold of 100ms. The CRUD application, on the other hand, is able to fulfill the latency threshold up to at least 1000 \gls{rps}.
+
+It can be noted that the latency curve follows the same pattern in both the measurements made on the client and on the server, except for the ES-CQRS $latency\_p95$ which exhibits a value of over 1000ms on the client, but only around 300ms on the server.
+
+\begin{figure}[H]
+    \centering
+    \begin{subfigure}[b]{0.49\textwidth}
+        \centering
+        \includegraphics[width=\textwidth]{images/results/create-course-prerequisites/create-course-prerequisites__latency-vs-load__client.png}
+        \caption{Latency vs. Load measured on the client}
+        \label{fig:l2_latency_vs_load_client}
+    \end{subfigure}
+    \hfill
+    \begin{subfigure}[b]{0.49\textwidth}
+        \centering
+        \includegraphics[width=\textwidth]{images/results/create-course-prerequisites/create-course-prerequisites__latency-vs-load__server.png}
+        \caption{Latency vs. Load measured on the server}
+        \label{fig:l2_latency_vs_load_server}
+    \end{subfigure}
+    \caption[L2 Performance Metrics, load measured in \gls{rps}]{L2 Performance Metrics: Load measured in \gls{rps}. Detailed results in \ref{results:l2}.}
+    \label{fig:l2_combined}
+\end{figure}
+
+\autoref{fig:l2_cpu_usage_vs_load} presents median $cpu\_usage$ of the endpoint under increasing load. The ES-CQRS application has a higher CPU usage, exhibiting a value of $\sim45\%$ at 1000 \gls{rps}, while the CRUD application uses $\sim10\%$. The CRUD application's CPU usage rises linearly, while the ES-CQRS application's CPU usage rises slower past 500 \gls{rps}.
+
+\begin{figure}[H]
+    \centering
+    \begin{subfigure}[b]{\textwidth}
+        \centering
+        \includegraphics[width=\textwidth]{images/results/create-course-prerequisites/CPU_usage_vs_load.png}
+        \caption{CPU Usage (\%) vs. load. Results in \ref{table:run-create-course-prerequisites-aggregated-cpu-usage}}
+        \label{fig:l2_cpu_usage_vs_load}
+    \end{subfigure}
+    \caption{L2: Resource usage graphs}
+    \label{fig:l2_resource_vs_load}
+\end{figure}
+
+\subsection{Read Performance}
+
+Presents results of load tests for read (GET) endpoints.
+
+\subsubsection{L3: Read lectures}
+\label{sec:l3}
+
+Blabla...
+
+\subsubsection{L4: Get credits}
+\label{sec:l4}
+
+The GET /stats/credits endpoint retrieves a student's total collected credits. \autoref{fig:l4_latency_vs_load_client} presents its client-side latency under increasing load. It can be seen that the $latency\_p50$ drops from around 2ms to 1ms for both applications until around 2000 \gls{rps}.
+
+Between 2000 \gls{rps} and 3000 \gls{rps}, a performance divergence occurs: the CRUD application's $latency\_p50$ and $latency\_p95$ increase to more than 1000ms, violating \ref{slo-latency} beyond 2000 \gls{rps}. On the other hand, the ES-CQRS application still exhibits a $latency\_p95$ of less than 10ms at 3000 \gls{rps}. Between 3000 \gls{rps} and 5000 \gls{rps}, the ES-CQRS app's latencies also begin to violate \ref{slo-latency}, reaching latencies around 1000ms.
+
+The server latencies, displayed in \autoref{fig:l4_latency_vs_load_server}, differ from client latencies at higher loads. Starting at 3000 \gls{rps}, the measured latencies do not increase as strongly as observed on the client. At 5000 \gls{rps}, the $latency\_p95$ of the CRUD app resides around 260ms, while the ES-CQRS app has a $latency\_p95$ of around 50ms.
+
+\begin{figure}[H]
+    \centering
+    \begin{subfigure}[b]{0.49\textwidth}
+        \centering
+        \includegraphics[width=\textwidth]{images/results/get-credits/get-credits-latency-vs-load__client.png}
+        \caption{Latency vs. Load measured on the client}
+        \label{fig:l4_latency_vs_load_client}
+    \end{subfigure}
+    \hfill
+    \begin{subfigure}[b]{0.49\textwidth}
+        \centering
+        \includegraphics[width=\textwidth]{images/results/get-credits/get-credits-latency-vs-load__server.png}
+        \caption{Latency vs. Load measured on the server}
+        \label{fig:l4_latency_vs_load_server}
+    \end{subfigure}
+    \caption[L4 Performance Metrics, load measured in \gls{rps}]{L4 Performance Metrics: Load measured in \gls{rps}. Detailed results in \ref{results:l4}.}
+    \label{fig:l4_combined}
+\end{figure}
+
+\subsection{Time to Consistency}
+\label{sec:l5}
+
+\ref{slo-freshness} defined a threshold of 100ms inside which all writes shall be reflected on the read-side. This "freshness" is measured in the following test.
+
+\subsubsection{L5: Create Lectures}
+
+This load test differs from others in the fact that each iteration executes 2 \gls{http} requests. The first request creates a lecture. After sleeping for 100ms --- the consistency threshold defined in \ref{slo-freshness} --- the script executes a request to \texttt{GET} the created lecture. If status code $404$ is returned, the write was not reflected in the read model in time. The rate of successful reads is recorded as a metric called $read\_visible\_rate$, presented in \autoref{fig:l5_read_visible_rate}. It can be seen that once exceeding 200 \gls{ips}, the ES-CQRS application failed to synchronize the read-side fast enough. \autoref{fig:l5_latency_vs_load} shows the latencies under varying loads. The $latency\_p50$ remains similar for both applications, however the ES-CQRS application's $latency\_p95$ increases with rising \gls{ips}, to exceeding the threshold defined in \ref{slo-latency} when exceeding 400 \gls{ips}.
+
+The CRUD application constantly exhibits a 100\% $read\_visible\_rate$.
+
+\begin{figure}[H]
+    \centering
+    \begin{subfigure}[b]{0.49\textwidth}
+        \centering
+        \includegraphics[width=\textwidth]{images/results/time-to-consistency/get_lecture_simple_latency-vs-load__client.png}
+        \caption{Latency vs. Load}
+        \label{fig:l5_latency_vs_load}
+    \end{subfigure}
+    \hfill
+    \begin{subfigure}[b]{0.49\textwidth}
+        \centering
+        \includegraphics[width=\textwidth]{images/results/time-to-consistency/get_lecture-read-visible-rate.png}
+        \caption{Rate of visible reads}
+        \label{fig:l5_read_visible_rate}
+    \end{subfigure}
+    \caption{L5 Performance Metrics, load measured in \gls{ips} with 2 requests per iteration.}
+    \label{fig:l5_combined}
+\end{figure}
+
+\section{Static Analysis}
+
+To answer \acrshort{rq} 2. Present results of static code analysis using metrics.

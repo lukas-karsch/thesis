@@ -11,6 +11,7 @@
 \usepackage{booktabs}
 \usepackage{float} 
 \usepackage{enumitem}
+\usepackage{subcaption}
 
 % TODO
 % microtype is supposed to help with text breaking (overflow), but it gives an error:  pdfTeX error (font expansion): auto expansion is only possible with scalable fonts. <argument> ...shipout:D \box_use:N \l_shipout_box
@@ -148,13 +149,13 @@
 \newglossaryentry{rest}
 {
     name=REST,
-    description={REST stands for \emph{Representational State Transfer}. It is an architectural style for distributed hypermedia systems}
+    description={stands for \emph{Representational State Transfer}. It is an architectural style for distributed hypermedia systems}
 }
 
 \newglossaryentry{http}
 {
     name=HTTP,
-    description={HTTP stands for \emph{Hypertext Transfer Protocol}. It is a protocol used in internet communication and was defined in RFC 2616 \cite{rfc2616}}
+    description={stands for \emph{Hypertext Transfer Protocol}. It is a protocol used in internet communication and was defined in RFC 2616 \cite{rfc2616}}
 }
 
 \newglossaryentry{adm}
@@ -172,7 +173,8 @@
 \newglossaryentry{atomicity}
 {
     name=Atomicity,
-    description={Atomicity means that an action is either fully executed or not at all. Atomic operations make sure the application is not left in an invalid state \cite[10]{bernstein_principles_2009}}
+    text=atomicity,
+    description={means that an action is either fully executed or not at all. Atomic operations make sure the application is not left in an invalid state \cite[10]{bernstein_principles_2009}}
 }
 
 \newglossaryentry{cap}
@@ -253,6 +255,12 @@
     name={Test Configuration},
     text={test configuration},
     description={A test configuration is the combination of a test script and the target RPS.}
+}
+
+\newglossaryentry{layered-architecture}
+{
+    name={Layered Architecture},
+    description={divides applications into \emph{horizontal layers}, with each layer performing a specific role. Typical layers include Presentation, Business, Persistence}
 }
 
 \newacronym{www}{WWW}{World Wide Web}
@@ -348,6 +356,8 @@
 \newacronym{lcom}{LCOM}{Lack of Cohesion in Methods}
 
 \newacronym{ips}{IPS}{Iterations per Second}
+
+\newacronym{l}{L}{Load Test}
 
 \begin{document}
 
@@ -460,6 +470,50 @@ The full source code for this thesis, including both applications, performance t
 \end{itemize}
 
 The repository contains \texttt{README} files with instructions on how to launch the applications, execute load tests and how to reproduce the \acrshort{vm} environments.
+
+\chapter{Results}
+\label{appendix:results}
+
+This chapter of the appendix presents tables generated from the results during load testing. The \emph{speedup} represents the factor by which the ES-CQRS application differed from the CRUD application. The statistical significance of the performance differences was evaluated using the \emph{Mann-Whitney U} test. The results are reported using the probability thresholds defined in \autoref{table:significance}, where a lower p-value indicates a higher level of statistical significance.
+
+\begin{table}[htp!]
+    \small
+    \centering
+    \begin{tabularx}{0.7\linewidth}{cll}
+        \textbf{Significance} & \textbf{$p$-value} & \textbf{Interpretation} \\
+        \midrule
+        ***                   & $p \le 0.001$      & Highly significant      \\
+        **                    & $p \le 0.01$       & Very significant        \\
+        *                     & $p \le 0.05$       & Significant             \\
+        n.s.                  & $p > 0.05$         & Not significant         \\
+        \bottomrule
+    \end{tabularx}
+    \caption{Significance thresholds}
+    \label{table:significance}
+\end{table}
+
+\newpage
+\section{L1: Create Course Simple}
+\label{results:l1}
+
+\input{tables/run-create-course-simple_client.tex}
+\input{tables/run-create-course-simple_server.tex}
+\input{tables/run-create-course-simple_timeseries_aggregated_statistical_test.tex}
+
+\newpage
+\section{L2: Create Course Prerequisites}
+\label{results:l2}
+
+\input{tables/run-create-course-prerequisites_client.tex}
+\input{tables/run-create-course-prerequisites_server.tex}
+\input{tables/run-create-course-prerequisites_timeseries_aggregated_statistical_test.tex}
+
+\newpage
+\section{L4: Get Credits}
+\label{results:l4}
+
+\input{tables/run-get-credits_client.tex}
+\input{tables/run-get-credits_server.tex}
 
 %LTeX: language=de-DE
 \chapter{Nutzung von KI-Tools}

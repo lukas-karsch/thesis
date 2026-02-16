@@ -6,7 +6,7 @@ import pandas as pd
 
 from visualize.aggregate import find_matching_folders
 from visualize.side_by_side_box_plot import (
-    lineplot_read_visible_rate_vs_users,
+    visualize_aggregated_lineplot,
 )
 
 
@@ -80,16 +80,17 @@ def parse_k6_output(folder: Path) -> pd.DataFrame:
             )
 
         elif metric_name == "read_visible_rate":
-            rows.append(
-                {
-                    "metric": "read_visible_rate",
-                    "method": "GET",
-                    "uri": uri,
-                    "value": metric_data.get("value"),
-                    "app": app,
-                    "virtual_users": rps,
-                }
-            )
+            # rows.append(
+            #     {
+            #         "metric": "read_visible_rate",
+            #         "method": "GET",
+            #         "uri": uri,
+            #         "value": metric_data.get("value"),
+            #         "app": app,
+            #         "virtual_users": rps,
+            #     }
+            # )
+            pass
 
     df = pd.DataFrame(rows)
     return df
@@ -118,7 +119,8 @@ def main():
         ignore_index=True,
     )
 
-    lineplot_read_visible_rate_vs_users(dfs, log_x=False)
+    # lineplot_read_visible_rate_vs_users(dfs, log_x=False)
+    visualize_aggregated_lineplot(dfs, log_x=False, additional_title="(Client)")
 
 
 if __name__ == "__main__":

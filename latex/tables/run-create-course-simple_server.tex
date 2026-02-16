@@ -1,0 +1,64 @@
+\begin{table}[H]
+    \small \centering
+    \resizebox{\columnwidth}{!}{
+        \begin{tabular}{lcrrcrrcc}
+            \toprule
+                            &              & \multicolumn{2}{c}{\textbf{CRUD (ms)}} &                   & \multicolumn{2}{c}{\textbf{ES-CQRS (ms)}} &               &                                                              \\
+            \cmidrule{3-4} \cmidrule{6-7}
+            \textbf{Metric} & \textbf{RPS} & \textbf{Mean}                          & \textbf{CI $\pm$} &                                           & \textbf{Mean} & \textbf{CI $\pm$} & \textbf{Speedup} & \textbf{Significance} \\
+            \midrule
+
+            $latency\_avg$  & 25           & 3.46                                   & 0.0               &                                           & 6.69          & 0.0               & 1.9x Slower      & ***                   \\
+
+            $latency\_p50$  & 25           & 3.25                                   & 0.0               &                                           & 6.09          & 0.0               & 1.9x Slower      & ***                   \\
+
+            $latency\_p95$  & 25           & 5.29                                   & 0.0               &                                           & 11.03         & 0.0               & 2.1x Slower      & ***                   \\
+
+            $latency\_p99$  & 25           & 12.7                                   & 0.0               &                                           & 17.39         & 0.0               & 1.4x Slower      & ***                   \\
+
+            $latency\_avg$  & 50           & 2.65                                   & 0.0               &                                           & 5.34          & 0.0               & 2.0x Slower      & ***                   \\
+
+            $latency\_p50$  & 50           & 2.45                                   & 0.0               &                                           & 4.87          & 0.0               & 2.0x Slower      & ***                   \\
+
+            $latency\_p95$  & 50           & 4.27                                   & 0.0               &                                           & 9.63          & 0.0               & 2.3x Slower      & ***                   \\
+
+            $latency\_p99$  & 50           & 5.63                                   & 0.0               &                                           & 13.29         & 0.0               & 2.4x Slower      & ***                   \\
+
+            $latency\_avg$  & 100          & 2.05                                   & 0.0               &                                           & 4.09          & 0.0               & 2.0x Slower      & ***                   \\
+
+            $latency\_p50$  & 100          & 1.88                                   & 0.0               &                                           & 3.46          & 0.0               & 1.8x Slower      & ***                   \\
+
+            $latency\_p95$  & 100          & 3.46                                   & 0.0               &                                           & 8.22          & 0.0               & 2.4x Slower      & ***                   \\
+
+            $latency\_p99$  & 100          & 5.15                                   & 0.0               &                                           & 12.34         & 0.0               & 2.4x Slower      & ***                   \\
+
+            $latency\_avg$  & 200          & 1.74                                   & 0.0               &                                           & 3.57          & 0.0               & 2.1x Slower      & ***                   \\
+
+            $latency\_p50$  & 200          & 1.62                                   & 0.0               &                                           & 2.9           & 0.0               & 1.8x Slower      & ***                   \\
+
+            $latency\_p95$  & 200          & 2.79                                   & 0.0               &                                           & 7.91          & 0.0               & 2.8x Slower      & ***                   \\
+
+            $latency\_p99$  & 200          & 4.67                                   & 0.0               &                                           & 13.04         & 0.0               & 2.8x Slower      & ***                   \\
+
+            $latency\_avg$  & 500          & 1.66                                   & 0.0               &                                           & 6.84          & 0.0               & 4.1x Slower      & ***                   \\
+
+            $latency\_p50$  & 500          & 1.57                                   & 0.0               &                                           & 3.52          & 0.0               & 2.2x Slower      & ***                   \\
+
+            $latency\_p95$  & 500          & 2.29                                   & 0.0               &                                           & 24.19         & 0.0               & 10.6x Slower     & ***                   \\
+
+            $latency\_p99$  & 500          & 5.14                                   & 0.0               &                                           & 46.07         & 0.01              & 9.0x Slower      & ***                   \\
+
+            $latency\_avg$  & 1000         & 1.94                                   & 0.0               &                                           & 76.88         & 0.0               & 39.6x Slower     & ***                   \\
+
+            $latency\_p50$  & 1000         & 1.82                                   & 0.0               &                                           & 6.17          & 0.0               & 3.4x Slower      & ***                   \\
+
+            $latency\_p95$  & 1000         & 2.68                                   & 0.0               &                                           & 342.92        & 0.0               & 127.9x Slower    & ***                   \\
+
+            $latency\_p99$  & 1000         & 6.31                                   & 0.0               &                                           & 436.11        & 0.0               & 69.2x Slower     & ***                   \\
+
+            \bottomrule
+        \end{tabular}
+    }
+    \caption{Statistical comparison for POST /courses simple (server), averaged out over at least 25 runs}
+    \label{table:run-create-course-simple_server}
+\end{table}

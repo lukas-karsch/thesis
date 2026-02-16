@@ -37,7 +37,7 @@ The tests measure \textbf{\acrfull{rps}} and client-side response times. \textci
 
 This thesis adopts the approach of keeping system resources constant while measuring performance fluctuations under varying load intensities, as opposed increasing system resources to keep unchanged performance. These two perspectives are described by \textcite[13]{kleppmann_designing_2017}
 
-\textcite[264]{abbott_art_2009} mentions another way of looking at load testing: In positive testing, load is increased until an application is overwhelmed, while negative testing takes away system resources such as memory, threads or connections, until the application degrades.
+\textcite[264]{abbott_art_2009} mention another way of looking at load testing: In positive testing, load is increased until an application is overwhelmed, while negative testing takes away system resources such as memory, threads or connections, until the application degrades.
 
 To evaluate results, the arithmetic mean is avoided as it obscures the experience of typical users and the impact of outliers. Instead, this thesis uses \glspl{percentile}. The \gls{median} (P50) serves as the metric for "typical" response time. Exactly 50\% of requests experience the median latency or less, while the other half experiences a higher latency. However, to capture the experience of users facing high delays, it is critical to measure "\glspl{tail-latency}" via a high percentile like P95 or P99. High percentiles identify the performance of outliers which, despite being a numerical minority, often represent the most valuable or complex operations. \cite[14-16]{kleppmann_designing_2017}
 

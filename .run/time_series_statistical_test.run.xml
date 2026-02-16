@@ -1,6 +1,6 @@
 <component name="ProjectRunConfigurationManager">
-    <configuration default="false" name="visualize_cpu_usage" type="PythonConfigurationType" factoryName="Python"
-                   nameIsGenerated="true">
+    <configuration default="false" name="time_series_statistical_test" type="PythonConfigurationType"
+                   factoryName="Python" nameIsGenerated="true">
         <module name="performance-tests"/>
         <option name="ENV_FILES" value=""/>
         <option name="INTERPRETER_OPTIONS" value=""/>
@@ -9,14 +9,14 @@
             <env name="PYTHONUNBUFFERED" value="1"/>
         </envs>
         <option name="SDK_HOME" value=""/>
-        <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/performance-tests/"/>
+        <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/performance-tests"/>
         <option name="IS_MODULE_SDK" value="true"/>
         <option name="ADD_CONTENT_ROOTS" value="true"/>
         <option name="ADD_SOURCE_ROOTS" value="true"/>
         <EXTENSION ID="PythonCoverageRunConfigurationExtension" runner="coverage.py"/>
-        <option name="SCRIPT_NAME" value="$PROJECT_DIR$/performance-tests/visualize/visualize_cpu_usage.py"/>
+        <option name="SCRIPT_NAME" value="$PROJECT_DIR$/performance-tests/visualize/time_series_statistical_test.py"/>
         <option name="PARAMETERS"
-                value="--path &quot;../../Test Results/writes/create-course-simple&quot; --base_name &quot;run-create-course-simple&quot; --VUs 25"/>
+                value="--base_name &quot;run-create-course-simple-25&quot; --path &quot;C:\Users\lukas\Documents\Studium\Bachelorarbeit\Test Results\writes\create-course-simple&quot; --output_path &quot;C:\Users\lukas\Documents\Studium\Bachelorarbeit\Test Results\writes\create-course-simple\statistical_tests&quot;"/>
         <option name="SHOW_COMMAND_LINE" value="false"/>
         <option name="EMULATE_TERMINAL" value="false"/>
         <option name="MODULE_MODE" value="false"/>

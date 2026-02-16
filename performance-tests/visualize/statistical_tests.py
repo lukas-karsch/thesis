@@ -5,13 +5,16 @@ import pandas as pd
 from scipy import stats
 
 from visualize.aggregate import aggregate_metrics_csv
+from visualize.table import render_table
 
 
 def analyze_performance(data: pd.DataFrame):
     results = []
 
+    data.sort_values(["virtual_users", "metric"], inplace=True)
+
     # Analyze each load level and metric separately
-    for (metric, users), group in data.groupby(["metric", "virtual_users"]):
+    for (metric, users), group in data.groupby(["metric", "virtual_users"], sort=False):
         crud = group[group["app"] == "crud"]["value"]
         cqrs = group[group["app"] == "es-cqrs"]["value"]
 
@@ -28,7 +31,12 @@ def analyze_performance(data: pd.DataFrame):
         u_stat, p_val = stats.mannwhitneyu(crud, cqrs)
 
         # Speedup Ratio (How many times faster is CQRS?)
-        speedup = m_crud / m_cqrs
+        ratio = m_crud / m_cqrs
+
+        if ratio >= 1:
+            comparison = f"{round(ratio, 1)}x Faster"
+        else:
+            comparison = f"{round(1/ratio, 1)}x Slower"
 
         def _get_significance(p) -> str:
             if p <= 0.001:
@@ -41,14 +49,14 @@ def analyze_performance(data: pd.DataFrame):
 
         results.append(
             {
-                "Metric": metric,
-                "Users": users,
-                "CRUD Mean (ms)": round(m_crud * 1000, 2),
-                "CRUD CI +/-": round(get_ci(crud), 2),
-                "CQRS Mean (ms)": round(m_cqrs * 1000, 2),
-                "CQRS CI +/-": round(get_ci(cqrs), 2),
-                "Speedup": f"{round(speedup)}x",
-                "Significance": _get_significance(p_val),
+                "metric": metric,
+                "users": users,
+                "c_mean": round(m_crud * 1000, 2),
+                "c_ci": round(get_ci(crud), 2),
+                "e_mean": round(m_cqrs * 1000, 2),
+                "e_ci": round(get_ci(cqrs), 2),
+                "speedup": comparison,
+                "sig": _get_significance(p_val),
             }
         )
 
@@ -57,16 +65,41 @@ def analyze_performance(data: pd.DataFrame):
 
 def main():
     parser = argparse.ArgumentParser()
-    parser.add_argument("--base_name")
-    parser.add_argument("--path")
-    parser.add_argument("--output_path")
+    parser.add_argument("--base_name", required=True)
+    parser.add_argument("--path", required=True)
+    parser.add_argument("--output_path", required=True)
+    parser.add_argument("--omit")
     args = parser.parse_args()
 
-    df = aggregate_metrics_csv(args.base_name, Path(args.path))
-    stats_table = analyze_performance(df)
-    print(stats_table.to_string())
+    if args.omit:
+        omit = [m.strip() for m in args.omit.split(",")]
+        print(f"Metrics to omit: {omit}")
+    else:
+        omit = []
 
-    stats_table.to_csv(args.output_path, index=False)
+    for file in ["client", "server"]:
+        folders_base_name = f"{args.base_name}-"
+        df = aggregate_metrics_csv(folders_base_name, Path(args.path), file)
+
+        stats_table = analyze_performance(df)
+
+        if omit:
+            stats_table = stats_table[~stats_table["metric"].isin(omit)]
+
+        output_base_name = f"{args.base_name}_{file}"
+        output_path = (
+            Path(args.output_path) / f"{output_base_name}_statistical_test.csv"
+        )
+
+        output_path.parent.mkdir(parents=True, exist_ok=True)
+
+        stats_table.to_csv(output_path, index=False)
+        render_table(
+            stats_table,
+            f"{args.base_name}_{file}",
+            f"POST /courses ({file})",
+            Path(args.output_path) / f"{output_base_name}.tex",
+        )
 
 
 if __name__ == "__main__":

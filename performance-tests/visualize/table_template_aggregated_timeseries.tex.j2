@@ -1,0 +1,20 @@
+\begin{table}[H]
+\small
+\centering
+\resizebox{\columnwidth}{!}{
+\begin{tabular}{rrrcrrcc}
+\toprule
+& \multicolumn{2}{c}{\textbf{CRUD (ms)}} &                   & \multicolumn{2}{c}{\textbf{ES-CQRS (ms)}} &               &                                                            \\
+\cmidrule{2-3} \cmidrule{5-6}
+\textbf{RPS} & \textbf{Mean}                          & \textbf{CI $\pm$} &                                           & \textbf{Mean} & \textbf{CI $\pm$} & \textbf{Ratio} & \textbf{Significance} \\
+\midrule
+{% for row in rows %}
+    {{ row.rps }} & {{ row.crud_median }} & {{ row.crud_ci }} & & {{ row.cqrs_median }} & {{ row.cqrs_ci }} &
+    {{ row.ratio }} & {{ row.sig }} \\
+{% endfor %}
+\bottomrule
+\end{tabular}
+}
+\caption{Statistical comparison of {{ caption }}, averaged out over at least 25 runs}
+\label{table:{{ label }}}
+\end{table}

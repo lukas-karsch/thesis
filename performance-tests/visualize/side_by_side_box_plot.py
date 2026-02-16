@@ -7,11 +7,7 @@ import seaborn as sns
 from matplotlib.ticker import ScalarFormatter
 
 from visualize.helper import load_csv, pretty_name
-
-APP_COLORS = {
-    "crud": "#1f77b4",  # blue
-    "es-cqrs": "#d62728",  # red
-}
+from visualize.style import APP_COLORS
 
 
 def _boxplot_grouped_metrics(
@@ -178,7 +174,7 @@ def _lineplot_latency_vs_users(
             handles += h2
             labels += l2
 
-        ax.legend(handles, labels, loc="upper right")
+        ax.legend(handles, labels, loc="upper left")
 
         if show_slo:
             ax.axhline(100, ls="--", color="gray", alpha=0.5)

@@ -5,7 +5,7 @@ This thesis aims to provide a fair, quantitative comparison of \acrshort{crud} a
 
 \section{Functional Requirements}
 
-A functional requirement describes a specific behavior that a product must exhibit under specific circumstances. These requirements specify what the system \emph{does} by detailing the capabilities and functions the solution must possess to allow users to perform their tasks. \cite[4]{wiegers_software_2023} To ensure clarity regarding exactly how the system should behave, functional requirements are often written using patterns that include the keyword "shall," such as "The system shall let the user do something". \cite[109]{wiegers_software_2023}
+A functional requirement describes a specific behavior that a product must exhibit under specific circumstances. These requirements specify what the system \emph{does} by detailing the capabilities and functions the solution must possess to allow users to perform their tasks~\cite[4]{wiegers_software_2023}. To ensure clarity regarding exactly how the system should behave, functional requirements are often written using patterns that include the keyword "shall," such as "The system shall let the user do something"~\cite[109]{wiegers_software_2023}.
 
 \subsection{Project description}
 
@@ -14,7 +14,7 @@ The applications will implement a course enrollment and grading system which mig
 \subsection{Entities}
 \label{sec:entities}
 
-Two types of users exist in the domain: professors and students. Their personal information is not relevant for this thesis, which is why only their first and last name are stored for presentation reasons. The student additionally has a semester. (TODO: aktuell ist Semester irrelevant)
+Two types of users exist in the domain: professors and students. Their personal information is not relevant for this thesis, which is why only their first and last name are stored for presentation reasons. The student additionally has a semester.
 
 Professors can create courses. Courses have a name, a description, an amount of credits they yield, a minimum amount of credits required to enroll and can have a set of courses as prerequisites.
 
@@ -29,7 +29,7 @@ Relationships and business rules in this system are deliberately chosen complex,
 
 \subsection{Resulting functional requirements}
 
-Based on the domain described above, the following list presents a selection of functional requirements. As this thesis focuses on an architectural comparison, not every functional requirement going into the application is listed.
+Based on the domain described above, the following list presents a selection of functional requirements. As this thesis focuses on an architectural comparison, not every functional requirement going into the application is listed. TODO: refine / these are not really "functions" in itself. Explain it better.
 
 \begin{itemize}
     \item Existence checks: any requests including references to entities shall fail if the references entities do not exist.
@@ -41,22 +41,22 @@ Based on the domain described above, the following list presents a selection of 
 
 \section{Non-functional requirements}
 
-A non-functional requirement, often referred to as a \emph{quality attribute}, describes the quality or performance characteristics of a solution. \cite[4]{wiegers_software_2023} Rather than defining \emph{what} the product does, these requirements focus on \emph{how well it functions}. They establish specific goals or constraints for the design and implementation, such as targets for security, availability, or response time, to ensure the system satisfies user expectations. \cite[67]{wiegers_software_2023}
+A non-functional requirement, often referred to as a \emph{quality attribute}, describes the quality or performance characteristics of a solution~\cite[4]{wiegers_software_2023}. Rather than defining \emph{what} the product does, these requirements focus on \emph{how well it functions}. They establish specific goals or constraints for the design and implementation, such as targets for security, availability, or response time, to ensure the system satisfies user expectations~\cite[67]{wiegers_software_2023}.
 
 The following non-functional requirements (quality attributes) are defined.
 
 \subsection{Service Level Objectives}
 \label{sec:slo}
 
-While \glspl{sla} are agreements with users regarding uptime and performance, \glspl{slo} are the technical targets used by engineers to meet those requirements. \cite[63,65]{beyer_site_2016} This thesis attempts to define realistic \acrshortpl{slo} to establish a "breaking point" for each architecture.
+While \glspl{sla} are agreements with users regarding uptime and performance, \glspl{slo} are the technical targets used by engineers to meet those requirements~\cite[63,65]{beyer_site_2016}. This thesis attempts to define realistic \acrshortpl{slo} to establish a "breaking point" for each architecture.
 
 Following \textcite[135]{nielsen_usability_1993}, a response time of 100ms is the threshold for human perception of "instant" feedback. This serves as the baseline for the following targets:
 
-\begin{itemize}
-    \item \textbf{Latency \acrshort{slo}}: All endpoints shall maintain a client-side P95 latency of $\le$100ms to ensure the system feels "instant" for 95\% of requests. \label{slo-latency}
-    \item \textbf{Freshness \acrshort{slo}}: In the Event Sourcing implementation, the asynchronous nature of projections introduces a lag. All writes shall be reflected in the PostgreSQL read-model within $\le$100ms to ensure eventual consistency remains imperceptible. While the read-side is eventually consistent, the command-side (write-model) shall maintain immediate consistency to ensure business rules are validated against the latest state. \label{slo-freshness}
-    \item \textbf{Reliability \acrshort{slo}}: Both implementations shall maintain a failure rate of <0.1\% under stress. \label{slo-reliability}
-\end{itemize}
+\begin{enumerate}[label={SLO \arabic*}, ref={SLO \arabic*}, leftmargin=*]
+    \item \textbf{Latency \gls{slo}}: All endpoints shall maintain a client-side P95 latency of $\le$100ms to ensure the system feels "instant" for 95\% of requests. \label{slo-latency}
+    \item \textbf{Freshness \gls{slo}}: In the Event Sourcing implementation, the asynchronous nature of projections introduces a lag. All writes shall be reflected in the PostgreSQL read-model within $\le$100ms to ensure eventual consistency remains imperceptible. While the read-side is eventually consistent, the command-side (write-model) shall maintain immediate consistency to ensure business rules are validated against the latest state. \label{slo-freshness}
+    \item \textbf{Reliability \gls{slo}}: Both implementations shall maintain a failure rate of <0.1\% under stress. \label{slo-reliability}
+\end{enumerate}
 
 \subsection{Auditing}
 \label{sec:req-auditing}

@@ -6,6 +6,7 @@
       {
         "id": "f4c14194cef0d515",
         "type": "tabs",
+        "dimension": 54.88599348534202,
         "children": [
           {
             "id": "88bb5544781a6e6e",
@@ -13,30 +14,16 @@
             "state": {
               "type": "markdown",
               "state": {
-                "file": "Writing/CQRS Architecture Diagram.md",
+                "file": "Writing/Metrics.md",
                 "mode": "source",
                 "source": false
               },
               "icon": "lucide-file",
-              "title": "CQRS Architecture Diagram"
+              "title": "Metrics"
             }
           },
           {
             "id": "3faff162917907a9",
-            "type": "leaf",
-            "state": {
-              "type": "markdown",
-              "state": {
-                "file": "Writing/Layered Architecture Diagram.md",
-                "mode": "source",
-                "source": false
-              },
-              "icon": "lucide-file",
-              "title": "Layered Architecture Diagram"
-            }
-          },
-          {
-            "id": "6d74fb4d48374cba",
             "type": "leaf",
             "state": {
               "type": "markdown",
@@ -50,7 +37,7 @@
             }
           },
           {
-            "id": "a614529ddb97e3b6",
+            "id": "6d74fb4d48374cba",
             "type": "leaf",
             "state": {
               "type": "markdown",
@@ -63,8 +50,28 @@
               "title": "VMs"
             }
           }
-        ],
-        "currentTab": 2
+        ]
+      },
+      {
+        "id": "16ece096e32c171b",
+        "type": "tabs",
+        "dimension": 45.11400651465798,
+        "children": [
+          {
+            "id": "c2efb09d215fb0ad",
+            "type": "leaf",
+            "state": {
+              "type": "markdown",
+              "state": {
+                "file": "TODO Tagesliste.md",
+                "mode": "source",
+                "source": false
+              },
+              "icon": "lucide-file",
+              "title": "TODO Tagesliste"
+            }
+          }
+        ]
       }
     ],
     "direction": "vertical"
@@ -212,15 +219,22 @@
       "bases:Create new base": false
     }
   },
-  "active": "6d74fb4d48374cba",
+  "active": "88bb5544781a6e6e",
   "lastOpenFiles": [
-    "Thesis - Landing Page.md",
-    "Writing/CQRS Architecture Diagram.md",
+    "TODOs.md",
+    "TODO Tagesliste.md",
     "Advice/VMs.md",
+    "Writing/Metrics.md",
+    "Writing/CQRS Architecture Diagram.md",
+    "Untitled 1.base",
+    "Untitled.base",
+    "Writing/Layered Architecture Diagram.md",
+    "Technical Design Log/2026-01-29 Visualizing flexibility metrics.md",
+    "Writing/Method - Performance.md",
+    "Writing/Discussion.md",
+    "Thesis - Landing Page.md",
     "Writing/ES CQRS implementation.md",
     "Writing/CRUD vs. CQRS.md",
-    "TODOs.md",
-    "Writing/Layered Architecture Diagram.md",
     "Writing/Method - Flexibility.md",
     "Writing/Eventual Consistency Diagram.md",
     "Meetings/Rückfragen zum Feedback.md",
@@ -234,12 +248,6 @@
     "Technical Design Log/2025-12-22 What can i benchmark.md",
     "Technical Design Log/2025-12-19 Preparing for performance tests.md",
     "Technical Design Log/2025-12-19 Apps are finished.md",
-    "Technical Design Log/2025-12-16 Problems with my Axon projections.md",
-    "Technical Design Log/2026-01-07 What else to measure.md",
-    "Technical Design Log/2026-01-10 Run performance tests on a VM.md",
-    "Writing/Results - traceability.md",
-    "Technical Design Log/2026-01-29 Visualizing flexibility metrics.md",
-    "Writing/Related Work.md",
     "Untitled.canvas",
     "images/Pasted image 20260202152540.png",
     "images/Pasted image 20260126165908.png",
@@ -258,8 +266,6 @@
     "images/plot_get_lectures_latency_vs_virtual_users",
     "images/plot_get_lectures_latency_comparison",
     "Writing",
-    "images",
-    "Meetings",
-    "Untitled.base"
+    "images"
   ]
 }

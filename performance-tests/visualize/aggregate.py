@@ -49,19 +49,23 @@ def aggregate_metrics_csv(
     return pd.concat([load_csv(f) for f in matching_metric_files], ignore_index=True)
 
 
-def aggregate_prometheus_metrics(metric_json_name: str, directory: Path):
+def aggregate_prometheus_metrics(
+    metric_json_name: str,
+    directory: Path,
+    base_name,
+    metric_name: str | None = None,
+    metric_for: str = "spring",
+):
     """
     Aggregates and averages all collected metric JSONs based on app (by folder name).
 
     For each app (e.g. crud, es-cqrs), all Prometheus metric JSONs are loaded.
     Values are aligned by index (not timestamp!) and aggregated using the median.
 
-    :param metric_json_name: name of the JSON files to aggregate
-    :param directory: directory to traverse while searching for metrics
     :return: dict[str, pd.DataFrame]
     """
 
-    folders = find_matching_folders("", directory)
+    folders = find_matching_folders(base_name, directory)
     print(f"Info: Found {len(folders)} matching folders")
 
     # app -> list of value lists
@@ -86,7 +90,25 @@ def aggregate_prometheus_metrics(metric_json_name: str, directory: Path):
         with open(metric_path) as f:
             metric_json = json.load(f)
 
-        values = metric_json["data"]["result"][0]["values"]
+        results = values = metric_json["data"]["result"]
+        if metric_name is None:
+            for r in results:
+                if r["metric"]["job"] == metric_for:
+                    values = r["values"]
+                    break
+        else:
+            for r in results:
+                if (
+                    r["metric"]["__name__"] == metric_name
+                    and r["metric"]["job"] == metric_for
+                ):
+                    values = r["values"]
+                    break
+
+        if values is None:
+            raise ValueError(
+                f"No values for the metric could be found. metric_name={metric_name}, metric_for={metric_for}"
+            )
 
         # extract only metric values, ignore timestamps
         series = [float(v[1]) for v in values]
@@ -111,6 +133,83 @@ def aggregate_prometheus_metrics(metric_json_name: str, directory: Path):
     return aggregated
 
 
+def aggregate_raw_prometheus_metrics(
+    metric_json_name: str,
+    directory: Path,
+    base_name: str,
+    metric_name: str | None = None,
+    metric_for: str = "spring",
+):
+    folders = find_matching_folders(base_name, directory)
+    print(f"Info: Found {len(folders)} matching folders")
+    if len(folders) == 0:
+        raise ValueError(
+            f"Found no matching folders for base_name={base_name}, directory{directory}"
+        )
+
+    # app -> list of runs (each run is a list of floats)
+    raw_data: dict[str, list[list[float]]] = defaultdict(list)
+
+    for folder in folders:
+        prometheus_dir = folder / "prometheus"
+        metric_path = prometheus_dir / metric_json_name
+
+        if not metric_path.is_file():
+            print(f"Warn: {metric_path} is not a file.")
+            continue
+
+        app = "crud" if "crud" in folder.name else "es-cqrs"
+
+        with open(metric_path) as f:
+            metric_json = json.load(f)
+
+        results = metric_json["data"]["result"]
+        values = None
+
+        # Logic to find correct metric series
+        for r in results:
+            if metric_name:
+                if (
+                    r["metric"]["__name__"] == metric_name
+                    and r["metric"]["job"] == metric_for
+                ):
+                    values = r["values"]
+                    break
+            job = r["metric"].get("job")
+            if job == metric_for:
+                values = r["values"]
+                break
+            else:
+                values = results[0]["values"]
+
+        if values:
+            series = [float(v[1]) for v in values]
+            raw_data[app].append(series)
+
+    # Align and Clean
+    all_records = []
+    for app, runs in raw_data.items():
+        if not runs:
+            continue
+
+        # Find the minimum length among all runs for this app to ensure alignment
+        min_len = min(len(r) for r in runs)
+
+        for run_idx, series in enumerate(runs):
+            # Trim the series to min_len
+            for i in range(min_len):
+                all_records.append(
+                    {
+                        "time_index": i,
+                        "value": series[i],
+                        "app": app,
+                        "run_id": f"{app}_run_{run_idx}",
+                    }
+                )
+
+    return pd.DataFrame(all_records)
+
+
 def main():
     parser = argparse.ArgumentParser()
     parser.add_argument("--dir", required=True)
@@ -119,9 +218,10 @@ def main():
         required=True,
         help="Base name of the result folders to aggregate.",
     )
+    parser.add_argument("--file", choices=["client", "server"], required=True)
     args = parser.parse_args()
 
-    df = aggregate_metrics_csv(args.base_name, Path(args.dir))
+    df = aggregate_metrics_csv(args.base_name, Path(args.dir), args.file)
     print(df)
 
 

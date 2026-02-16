@@ -1,0 +1,29 @@
+\begin{table}[H]
+   \small
+   \centering
+   \resizebox{\columnwidth}{!}{
+      \begin{tabular}{crrcrrcc}
+         \toprule
+                      & \multicolumn{2}{c}{\textbf{CRUD (ms)}} &                   & \multicolumn{2}{c}{\textbf{ES-CQRS (ms)}} &               &                                                            \\
+         \cmidrule{2-3} \cmidrule{5-6}
+         \textbf{RPS} & \textbf{Mean}                          & \textbf{CI $\pm$} &                                           & \textbf{Mean} & \textbf{CI $\pm$} & \textbf{Ratio} & \textbf{Significance} \\
+         \midrule
+
+         25           & 0.015                                  & 0.0011            &                                           & 0.0379        & 0.0026            & 2.6x Higher    & ***                   \\
+
+         50           & 0.0163                                 & 0.0014            &                                           & 0.0471        & 0.0023            & 2.5x Higher    & ***                   \\
+
+         100          & 0.0239                                 & 0.0029            &                                           & 0.0769        & 0.0039            & 2.6x Higher    & ***                   \\
+
+         200          & 0.0276                                 & 0.0029            &                                           & 0.1297        & 0.0048            & 3.6x Higher    & ***                   \\
+
+         500          & 0.0525                                 & 0.0017            &                                           & 0.2865        & 0.0053            & 5.6x Higher    & ***                   \\
+
+         1000         & 0.1056                                 & 0.003             &                                           & 0.4536        & 0.0092            & 4.4x Higher    & ***                   \\
+
+         \bottomrule
+      \end{tabular}
+   }
+   \caption{Statistical comparison of $cpu\_usage$ for POST /courses with prerequisites, averaged out over at least 25 runs}
+   \label{table:run-create-course-simple-aggregated-cpu-usage}
+\end{table}

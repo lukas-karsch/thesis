@@ -3,7 +3,7 @@ import {group, sleep} from "k6";
 import {assertResponseIs201, checkResponseIs200} from "../../helper/assert.js";
 import {getVUS} from "../../helper/env.js";
 import {getOffsetDate, setTime} from "../../helper/time.js"
-import {createProfessor} from "../../helper/professor";
+import {createProfessor} from "../../helper/professor.js";
 
 const TARGET_HOST = __ENV.HOST || 'http://localhost:8080';
 
