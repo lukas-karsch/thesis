@@ -8,6 +8,7 @@
 \usepackage{xcolor}
 \usepackage[export]{adjustbox}
 \usepackage{tabularx}
+\usepackage{longtable}
 \usepackage{booktabs}
 \usepackage{float} 
 \usepackage{enumitem}
@@ -471,7 +472,7 @@ The full source code for this thesis, including both applications, performance t
 
 The repository contains \texttt{README} files with instructions on how to launch the applications, execute load tests and how to reproduce the \acrshort{vm} environments.
 
-\chapter{Results}
+\chapter{Load Testing Results}
 \label{appendix:results}
 
 This chapter of the appendix presents tables generated from the results during load testing. The \emph{speedup} represents the factor by which the ES-CQRS application differed from the CRUD application. The statistical significance of the performance differences was evaluated using the \emph{Mann-Whitney U} test. The results are reported using the probability thresholds defined in \autoref{table:significance}, where a lower p-value indicates a higher level of statistical significance.
@@ -521,6 +522,30 @@ This chapter of the appendix presents tables generated from the results during l
 
 \input{tables/run-get-credits_client.tex}
 \input{tables/run-get-credits_server.tex}
+
+\chapter{Results of Static Analysis}
+
+\section{MOOD}
+\label{appendix:mood-results}
+
+\input{tables/mood.tex}
+
+\section{Complexity Metrics}
+\label{appendix:complexity}
+
+TODO.
+
+\section{Chidamber Kemerer Metrics}
+\label{appendix:ck-results}
+
+\input{tables/ck-crud.tex}
+\input{tables/ck-es-cqrs.tex}
+
+\section{Dependency Metrics}
+\label{appendix:dependency}
+
+\input{tables/dependency-crud.tex}
+\input{tables/dependency-es-cqrs.tex}
 
 %LTeX: language=de-DE
 \chapter{Nutzung von KI-Tools}

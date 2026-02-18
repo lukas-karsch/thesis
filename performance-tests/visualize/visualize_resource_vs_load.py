@@ -6,7 +6,7 @@ import pandas as pd
 import seaborn as sns
 from matplotlib import pyplot as plt
 
-from visualize.aggregate import aggregate_raw_prometheus_metrics
+from visualize.aggregate import aggregate_timeseries_prometheus_metrics
 from visualize.helper import get_metric_json
 from visualize.style import APP_COLORS
 
@@ -21,15 +21,15 @@ def main():
     base_name = args.base_name
 
     rps_list = [25, 50, 100, 200, 500, 1000]
-    steady_state_start = 8
+    steady_state_start = 0
     summary_records = []
 
     for rps in rps_list:
-        df_rps = aggregate_raw_prometheus_metrics(
-            metric_json_name="cpu_usage.json",
+        df_rps = aggregate_timeseries_prometheus_metrics(
+            metric_json_name="postgres_size_bytes.json",
             directory=base_path,
             base_name=f"{base_name}-{rps}-",
-            metric_name="process_cpu_usage",
+            metric_name="database_size_bytes",
         )
 
         steady_df = df_rps[df_rps["time_index"] >= steady_state_start]
@@ -38,7 +38,7 @@ def main():
             median_val = steady_df[steady_df["app"] == app]["value"].median()
 
             summary_records.append(
-                {"RPS": rps, "Median CPU (%)": median_val, "App": app}
+                {"RPS": rps, "Median Data Store Size (MB)": median_val, "App": app}
             )
 
     summary_df = pd.DataFrame(summary_records)
@@ -61,12 +61,12 @@ def main():
     metric_json = json.loads(metric_path.read_text())
 
     plt.suptitle(
-        f"{metric_json["metric"]['method']} {metric_json["metric"]['uri']}: CPU Usage vs. Load",
+        f"{metric_json["metric"]['method']} {metric_json["metric"]['uri']}: Data Store Size vs. Load",
     )
     plt.title(metric_json["metadata"]["title"], fontsize=10)
     plt.xlabel("RPS (Requests Per Second)", fontsize=12)
     plt.xticks(rps_list)
-    plt.ylabel("Median CPU Usage (%)", fontsize=12)
+    plt.ylabel("Median Data Store Size (MB)", fontsize=12)
     plt.ylim(0, 100)
     plt.tight_layout()
     plt.show()

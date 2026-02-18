@@ -51,10 +51,14 @@ Instead of writing SQL to create the database schema, entities can be described 
 
 When using \acrshort{jpa} with SpringBoot by including the \javaname{spring-boot-starter-data-jpa} dependency, \emph{Hibernate}\footnote{\url{https://hibernate.org/orm/}} is used as implementation of the \acrshort{jpa} standard~\cite[Chapter~1]{bauer_java_2016}.
 
-\subsection{Hibernate Envers (TODO)}
+\subsection{Hibernate Envers}
 \label{sec:envers}
 
-Present Hibernate Envers here.
+Envers\footnote{\url{https://hibernate.org/orm/envers/}} is a Hibernate project designed for audit logging and versioning of historic data. When using Envers, a copy of data (a "revision") is stored in specific revision tables managed by Envers~\cite[Chapter~13.3]{bauer_java_2016}.
+
+Envers offers an API, primarily accessed through the \keyw{AuditReader}, to query historic versions of data~\cite[Chapter~13.3]{bauer_java_2016}.
+
+To use Hibernate Envers, the \javaname{org.hibernate.orm:hibernate-envers} dependency must be added to the project's classpath.
 
 \subsection{Jackson}
 
@@ -694,3 +698,36 @@ To assess the eventual consistency of the ES-CQRS architecture, a specialized te
 The primary difference from a typical k6 test lies in the execution flow within the default function. Rather than executing a single \gls{http} call, this test executes two calls to the application. First, it performs a POST request to create a lecture and captures the resulting ID. After creating the lecture, the script performs sleeps for exactly 0.1 seconds, the threshold defined in the Freshness \acrshort{slo}. After this threshold, the application is expected to have synchronized the write- and read-side. Once the script wakes up from its sleep, it performs a GET request, attempting to fetch the newly created lecture.
 
 To track the success rate of this request, the script introduces a custom Rate metric named $read\_visible\_rate$. By manually adding true or false to this metric based on whether the lecture was found, indicated by a response status of 200, the script generates a percentage of "fresh" requests inside the required threshold of 100ms. This provides a clear statistical view of how reliably the ES-CQRS system maintains its "fresh" data under varying levels of load.
+
+\section{Static Analysis}
+\label{sec:static-analysis-impl}
+
+The IntelliJ plugin \emph{MetricsReloaded}\footnote{\url{https://plugins.jetbrains.com/plugin/93-metricsreloaded}} was used to collect static analysis metrics from both applications.
+
+The afferent ($C_a$) and efferent ($C_e$) coupling metrics, previously described in \autoref{sec:coupling-stability}, can not directly be calculated by MetricsReloaded. Instead, the plugin can calculate metrics for incoming and outgoing dependencies. These can be mapped to the afferent and efferent coupling metrics, as shown in \autoref{table:mapping-of-metrics}. Additionally, MetricsReloaded calculates transitive (indirect) dependencies, allowing for a broader view of the system's dependencies and package dependencies, describing the number of packages a class depends on or the number of packages depending on a class.
+
+\begin{table}[htp!]
+    \centering
+    \small
+    \begin{tabularx}{\linewidth}{llX}
+        \toprule
+        \textbf{Plugin Metric} & \textbf{Theoretical Metric} & \textbf{Definition}                     \\
+        \midrule
+        $Dpt$                  & $C_a$                       & Incoming dependencies                   \\
+        \addlinespace
+        $Dcy$                  & $C_e$                       & Outgoing dependencies                   \\
+        \addlinespace
+        $Dpt^*$                & transitive $C_a$            & Indirect incoming dependencies          \\
+        \addlinespace
+        $Dcy^*$                & transitive  $C_e$           & Indirect outgoing dependencies          \\
+        \addlinespace
+        $PDcy$                 &                             & Outgoing dependencies to other packages \\
+        \addlinespace
+        $PDpt$                 &                             & Packages depending on this class        \\
+        \bottomrule
+    \end{tabularx}
+    \caption{Mapping of theoretical to plugin metrics}
+    \label{table:mapping-of-metrics}
+\end{table}
+
+Other metrics outlined in \autoref{sec:flexibility-architectural-metrics} are also supported by MetricsReloaded, such as \gls{mood}, \gls{ck}, various complexity metrics and the stability metrics described in \cite{martin_agile_2003}.

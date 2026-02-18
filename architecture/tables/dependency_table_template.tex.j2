@@ -1,0 +1,13 @@
+\footnotesize
+\begin{longtable}{lrrrrrr}
+\toprule
+\textbf{Class}  & \textbf{Dpt} & \textbf{Dpt*} & \textbf{Dcy} & \textbf{Dcy*} & \textbf{PDpt} & \textbf{PDcy} \\
+\midrule
+{% for row in rows %}
+    {{ e(row['Class']) }} & {{ row['Dpt'] }} & {{ row['Dpt*'] }} & {{ row['Dcy'] }} & {{ row['Dcy*'] }} &
+    {{ row['PDpt'] }} & {{ row['PDcy'] }} \\
+{% endfor %}
+\bottomrule
+\caption{Dependency Metrics for {{ caption }}. \emph{k.l} used as abbreviation for \emph{karsch.lukas}}
+\label{table:{{ label }}
+\end{longtable}

@@ -4,7 +4,7 @@ from pathlib import Path
 import pandas as pd
 from scipy import stats
 
-from visualize.aggregate import aggregate_raw_prometheus_metrics
+from visualize.aggregate import aggregate_timeseries_prometheus_metrics
 from visualize.table import render_table
 
 
@@ -77,7 +77,7 @@ def main():
     rps_list = [25, 50, 100, 200, 500, 1000]
     # Generate the full stats table
     for rps in rps_list:
-        df_per_rps = aggregate_raw_prometheus_metrics(
+        df_per_rps = aggregate_timeseries_prometheus_metrics(
             "cpu_usage.json",
             Path(args.path),
             f"{args.base_name}-{rps}-",

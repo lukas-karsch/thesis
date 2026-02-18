@@ -4,7 +4,7 @@ from pathlib import Path
 import pandas as pd
 from scipy import stats
 
-from visualize.aggregate import aggregate_raw_prometheus_metrics
+from visualize.aggregate import aggregate_timeseries_prometheus_metrics
 from visualize.table import render_table
 
 
@@ -86,7 +86,7 @@ def main():
         omit = []
 
     folders_base_name = f"{args.base_name}-"
-    df = aggregate_raw_prometheus_metrics(
+    df = aggregate_timeseries_prometheus_metrics(
         "cpu_usage.json", Path(args.path), folders_base_name, "process_cpu_usage"
     )
 

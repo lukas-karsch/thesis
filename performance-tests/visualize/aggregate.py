@@ -133,7 +133,7 @@ def aggregate_prometheus_metrics(
     return aggregated
 
 
-def aggregate_raw_prometheus_metrics(
+def aggregate_timeseries_prometheus_metrics(
     metric_json_name: str,
     directory: Path,
     base_name: str,
@@ -207,6 +207,77 @@ def aggregate_raw_prometheus_metrics(
                     }
                 )
 
+    return pd.DataFrame(all_records)
+
+
+def aggregate_single_val_prometheus_metrics(
+    metric_json_name: str,
+    directory: Path,
+    base_name: str,
+    metric_name: str | None = None,
+    job: str = "spring",
+    type: str | None = None,
+):
+    folders = find_matching_folders(base_name, directory)
+    print(f"Info: Found {len(folders)} matching folders")
+    if len(folders) == 0:
+        raise ValueError(
+            f"Found no matching folders for base_name={base_name}, directory{directory}"
+        )
+
+    raw_data: dict[str, list[float]] = defaultdict(list)
+
+    for folder in folders:
+        prometheus_dir = folder / "prometheus"
+        metric_path = prometheus_dir / metric_json_name
+
+        if not metric_path.is_file():
+            print(f"Warn: {metric_path} is not a file.")
+            continue
+
+        app = "crud" if "crud" in folder.name else "es-cqrs"
+
+        with open(metric_path) as f:
+            metric_json = json.load(f)
+
+        results = metric_json["data"]["result"]
+        value = None
+
+        # Logic to find correct metric series
+        for r in results:
+            if metric_name:
+                if r["metric"]["__name__"] == metric_name and r["metric"]["job"] == job:
+                    value = r["value"][1]
+                    break
+            metric_job = r["metric"].get("job")
+            metric_type = r["metric"].get("type")
+            if (
+                metric_job == job
+                and (type is not None and metric_type == type)
+                or type is None
+            ):
+                value = r["value"][1]
+                break
+            else:
+                value = results[0]["value"][1]
+
+        if value:
+            raw_data[app].append(float(value))
+
+    # Align and Clean
+    all_records = []
+    for app, runs in raw_data.items():
+        if not runs:
+            continue
+
+        for run_idx, val in enumerate(runs):
+            all_records.append(
+                {
+                    "value": val,
+                    "app": app,
+                    "run_id": f"{app}_run_{run_idx}",
+                }
+            )
     return pd.DataFrame(all_records)
 
 

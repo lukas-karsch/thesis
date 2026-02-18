@@ -149,15 +149,16 @@ To accurately assess the performance of the architectures, a diverse suite of lo
 When choosing which endpoints are relevant to test, Abbott advocates for a "Pareto Distribution" (80/20 rule) and argues that 20\% of tests will provide developers with 80\% of information. Endpoints can be ordered by criticality, a process which identifies the endpoints that are most likely to affect performance. Endpoints can also be ranked by usage of \gls{io} necessary, locking or synchronous calls. After ordering the endpoints as described, the 80/20 rule can be used to select one read and write per "complexity level", eliminating the need to load test every single endpoint.
 
 \subsection{Flexibility - Architectural Metrics}
+\label{sec:flexibility-architectural-metrics}
 
 This section describes various architectural metrics established in literature which are used to assess the flexibility, quality and evolutionary potential of a software architecture. These metrics serve as a basis to answer \hyperref[rs-architecture]{\acrshort{rq} 2}, using static analysis to compare the two architectures.
 
 \subsubsection{Coupling and Stability}
 \label{sec:coupling-stability}
 
-Coupling metrics are based on graph theory. They are used to measure how dependent components are on each other. \emph{Afferent coupling} measures the number of incoming connections to a code artifact, indicating how many other components depend on it. \emph{Efferent coupling} calculates the number of outgoing connections to other artifacts, reflecting the component's dependency on external code. The concepts of afferent and efferent coupling were first introduced by \textcite{yourdon_structured_1978} in 1978.
+Coupling metrics are based on graph theory. They are used to measure how dependent components are on each other. \emph{Afferent coupling} ($C_a$) measures the number of incoming connections to a code artifact, indicating how many other components depend on it. \emph{Efferent coupling} ($C_e$)calculates the number of outgoing connections to other artifacts, reflecting the component's dependency on external code. The concepts of afferent and efferent coupling were first introduced by \textcite{yourdon_structured_1978} in 1978.
 
-\emph{Instability} assesses the volatility of a code base by calculating the ratio of efferent coupling to the sum of all coupling, indicating how easily a component breaks when changed. \emph{Abstractness} determines the ratio of abstract artifacts, such as interfaces and abstract classes, to concrete implementations within a module. Finally, the "\emph{Distance from the Main Sequence}" combines abstractness and instability to determine if a component is optimally balanced or falls into problematic "zones of uselessness or pain". \cite[261-268]{martin_agile_2003}
+\emph{Instability} assesses the volatility of a code base by calculating the ratio of efferent coupling to the sum of all coupling, indicating how easily a component breaks when changed. \emph{Abstractness} determines the ratio of abstract artifacts, such as interfaces and abstract classes, to concrete implementations within a module. Finally, the \emph{Distance from the Main Sequence} combines abstractness and instability to determine if a component is optimally balanced or falls into problematic "zones of uselessness or pain"~\cite[261-268]{martin_agile_2003}.
 
 \subsubsection{MOOD metrics}
 \label{sec:mood}
@@ -165,14 +166,17 @@ Coupling metrics are based on graph theory. They are used to measure how depende
 \emph{\gls{mood}}, introduced by \textcite{brito_e_abreu_object-oriented_1994}, provide a summary of the overall quality of an object-oriented project. The \emph{\gls{mhf}} represents the ratio of hidden methods to total methods, indicating the level of encapsulation. The \emph{\gls{ahf}} measures the ratio of hidden attributes to total attributes, serving as indicator for the system's encapsulation. The \emph{\gls{mif}} calculates the ratio of inherited methods to the total available methods. The \emph{\gls{aif}} determines the ratio of inherited attributes to the total attributes available in the classes. The \emph{\gls{pf}} measures the actual number of different polymorphic situations relative to the maximum possible distinct situations. The \emph{\gls{cf}} evaluates the ratio of actual couplings not related to inheritance against the maximum possible number of couplings in the system. The \emph{\gls{clf}} measures the ratio of independent class groups, or "Class Clusters," to the total number of classes, identifying disjoint sub-graphs within the system. Finally, the \emph{\gls{rf}} measures the ratio of code reused from library code or inheritance to the total code written. All \gls{mood} metrics are expressed in percentages, meaning they take a value between $0$ and $1$.
 
 \subsubsection{Complexity Metrics}
+\label{sec:complexity-metrics}
 
 A common metric for code complexity is cyclomatic complexity. Cyclomatic complexity can give a measure for code complexity at the function, class or application level by measuring the number of decision paths through a given component. \cite[79,80]{richards_fundamentals_2020} It is distinguished between essential complexity (complexity necessary for the domain) and accidental complexity introduced through poor coding practices.
 
-\subsubsection{Connascence}
+% \subsubsection{Connascence}
+% \label{sec:connascence}
 
-\emph{Connascence} is a concept described by \textcite{page-jones_what_1995}. It refines afferent and efferent coupling and describes a relationship where two components are coupled such that a change in one requires a modification in the other to maintain system correctness. There are two types of connascence: static connascence, which can be analyzed at the source code level, and dynamic connascence, evaluated at runtime. \cite[48-53]{richards_fundamentals_2020}
+% \emph{Connascence} is a concept described by \textcite{page-jones_what_1995}. It refines afferent and efferent coupling and describes a relationship where two components are coupled such that a change in one requires a modification in the other to maintain system correctness. There are two types of connascence: static connascence, which can be analyzed at the source code level, and dynamic connascence, evaluated at runtime. \cite[48-53]{richards_fundamentals_2020}
 
 \subsubsection{Chidamber and Kemerer (CK) Metrics}
+\label{sec:ck-metrics}
 
 \emph{\gls{ck}} are the most well-known object-oriented suite of metrics, according to \textcite[162]{chawla_comparative_2013}. They are described in a work from 1994 by \textcite{chidamber_metrics_1994}. \emph{\gls{wmc}} calculates the sum of the complexities of all methods within a class to determine how much effort is required to maintain it. The authors deliberately do not give a specific complexity function to make the metric as general as possible. \emph{\gls{dit}} measures the maximum length from a specific node to the root of the tree, where deeper trees imply higher complexity. \emph{\gls{noc}} counts the immediate subclasses of a class, indicating the potential influence on the design and level of reuse. \emph{\gls{cbo}} counts the number of other classes to which a specific class is coupled, serving as an indicator of sensitivity to changes in other parts of the design. \emph{\gls{rfc}} counts the number of methods that can be executed in response to a message received by an object, reflecting the class's complexity. \emph{\gls{lcom}} measures the degree to which methods within a class reference different instance variables, where high values indicate a class does too many unrelated things.
 

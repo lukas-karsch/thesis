@@ -9,7 +9,7 @@ import pandas as pd
 import seaborn as sns
 
 from visualize.aggregate import (
-    aggregate_raw_prometheus_metrics,
+    aggregate_timeseries_prometheus_metrics,
 )
 from visualize.helper import get_metric_json
 from visualize.style import APP_COLORS
@@ -53,7 +53,7 @@ def main():
 
     metric_folder_base_name = f"{base_name}-{VUs}-"
 
-    aggregated = aggregate_raw_prometheus_metrics(
+    aggregated = aggregate_timeseries_prometheus_metrics(
         "cpu_usage.json",
         base_path,
         metric_folder_base_name,

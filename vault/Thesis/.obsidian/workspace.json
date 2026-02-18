@@ -6,22 +6,7 @@
       {
         "id": "f4c14194cef0d515",
         "type": "tabs",
-        "dimension": 54.88599348534202,
         "children": [
-          {
-            "id": "88bb5544781a6e6e",
-            "type": "leaf",
-            "state": {
-              "type": "markdown",
-              "state": {
-                "file": "Technologies/k6.md",
-                "mode": "source",
-                "source": false
-              },
-              "icon": "lucide-file",
-              "title": "k6"
-            }
-          },
           {
             "id": "3faff162917907a9",
             "type": "leaf",
@@ -48,27 +33,6 @@
               },
               "icon": "lucide-file",
               "title": "VMs"
-            }
-          }
-        ]
-      },
-      {
-        "id": "16ece096e32c171b",
-        "type": "tabs",
-        "dimension": 45.11400651465798,
-        "children": [
-          {
-            "id": "c2efb09d215fb0ad",
-            "type": "leaf",
-            "state": {
-              "type": "markdown",
-              "state": {
-                "file": "TODO Tagesliste.md",
-                "mode": "source",
-                "source": false
-              },
-              "icon": "lucide-file",
-              "title": "TODO Tagesliste"
             }
           }
         ]
@@ -103,7 +67,7 @@
             "state": {
               "type": "search",
               "state": {
-                "query": "k6",
+                "query": "flexib",
                 "matchingCase": false,
                 "explainSearch": false,
                 "collapseAll": false,
@@ -124,12 +88,11 @@
               "title": "Bookmarks"
             }
           }
-        ],
-        "currentTab": 1
+        ]
       }
     ],
     "direction": "horizontal",
-    "width": 357.5
+    "width": 289.50418853759766
   },
   "right": {
     "id": "920b3393cd6238af",
@@ -220,18 +183,20 @@
       "bases:Create new base": false
     }
   },
-  "active": "c2efb09d215fb0ad",
+  "active": "3faff162917907a9",
   "lastOpenFiles": [
-    "Technologies/k6.md",
-    "Writing/Metrics.md",
+    "Technical Design Log/2026-01-29 Visualizing flexibility metrics.md",
     "TODO Tagesliste.md",
-    "Advice/VMs.md",
+    "Technical Design Log/2026-01-26 Flexibility.md",
+    "Technologies/k6.md",
     "TODOs.md",
+    "Advice/VMs.md",
+    "Technical Design Log/2026-02-17 k6 setup function quirks.md",
+    "Writing/Metrics.md",
     "Writing/CQRS Architecture Diagram.md",
     "Untitled 1.base",
     "Untitled.base",
     "Writing/Layered Architecture Diagram.md",
-    "Technical Design Log/2026-01-29 Visualizing flexibility metrics.md",
     "Writing/Method - Performance.md",
     "Writing/Discussion.md",
     "Thesis - Landing Page.md",
@@ -244,12 +209,10 @@
     "Writing/Method - traceability.md",
     "Technologies/Docker.md",
     "Technical Design Log/2026-01-19 Latency vs. Load.md",
-    "Technical Design Log/2026-01-26 Flexibility.md",
     "Technical Design Log/2026-01-28 PERFORMANCE MUST DO.md",
     "Technical Design Log/2025-12-29 Where to measure.md",
     "Technical Design Log/2025-12-22 What can i benchmark.md",
     "Technical Design Log/2025-12-19 Preparing for performance tests.md",
-    "Technical Design Log/2025-12-19 Apps are finished.md",
     "Untitled.canvas",
     "images/Pasted image 20260202152540.png",
     "images/Pasted image 20260126165908.png",
