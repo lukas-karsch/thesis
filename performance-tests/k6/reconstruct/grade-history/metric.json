@@ -1,6 +1,6 @@
 {
   "metric": {
-    "method": "POST",
+    "method": "GET",
     "uri": "/stats/grades/history"
   },
   "file": "grade-history.js",

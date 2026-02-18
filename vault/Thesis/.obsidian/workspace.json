@@ -27,15 +27,16 @@
             "state": {
               "type": "markdown",
               "state": {
-                "file": "Advice/VMs.md",
+                "file": "TODO Tagesliste.md",
                 "mode": "source",
                 "source": false
               },
               "icon": "lucide-file",
-              "title": "VMs"
+              "title": "TODO Tagesliste"
             }
           }
-        ]
+        ],
+        "currentTab": 1
       }
     ],
     "direction": "vertical"
@@ -183,14 +184,15 @@
       "bases:Create new base": false
     }
   },
-  "active": "3faff162917907a9",
+  "active": "6d74fb4d48374cba",
   "lastOpenFiles": [
+    "TODOs.md",
     "Technical Design Log/2026-01-29 Visualizing flexibility metrics.md",
     "TODO Tagesliste.md",
+    "Thesis - Landing Page.md",
+    "Advice/VMs.md",
     "Technical Design Log/2026-01-26 Flexibility.md",
     "Technologies/k6.md",
-    "TODOs.md",
-    "Advice/VMs.md",
     "Technical Design Log/2026-02-17 k6 setup function quirks.md",
     "Writing/Metrics.md",
     "Writing/CQRS Architecture Diagram.md",
@@ -199,7 +201,6 @@
     "Writing/Layered Architecture Diagram.md",
     "Writing/Method - Performance.md",
     "Writing/Discussion.md",
-    "Thesis - Landing Page.md",
     "Writing/ES CQRS implementation.md",
     "Writing/CRUD vs. CQRS.md",
     "Writing/Method - Flexibility.md",

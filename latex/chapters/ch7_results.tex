@@ -256,10 +256,10 @@ TODO: What about CLF and RF?
     \label{fig:mood-results}
 \end{figure}
 
-\subsection{Complexity Metrics}
+\subsection{Complexity Metrics (TODO)}
 \label{sec:results-complexity}
 
-hm.
+TODO
 
 \subsection{Chidamber Kemerer Metrics}
 
@@ -279,6 +279,10 @@ Both architectures exhibit a median \gls{noc} of 0.
 \end{figure}
 
 \subsection{Dependency Metrics}
+
+\autoref{table:mapping-of-metrics} outlined all dependency metrics recorded in the applications using boxplots. The metrics were taken on a class basis.
+
+\autoref{fig:dpt} illustrates the distribution of $Dpt$, the number of classes depending directly on a class, for both architectures. Both architectures have an approximately equal median at $\approx2$. This indicates that in both cases, a typical class is depended upon by two other classes. The 25th to 75th percentile (indicates by the shaded areas) differs for the architectures. The CRUD architecture shows that 50\% of classes have 1 to 3 dependents, while the ES-CQRS architecture exhibits a higher variability, with 50\% of values falling between 0 and 4.
 
 \begin{figure}[H]
     \centering
