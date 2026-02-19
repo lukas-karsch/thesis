@@ -16,7 +16,7 @@ def main() -> None:
     args = parser.parse_args()
 
     log_y = True
-    log_x = False
+    log_x = True
 
     aggregated_server = aggregate_metrics_csv(args.base_name, Path(args.dir), "server")
     # visualize_aggregated(aggregated_server, additional_title="(Server)")

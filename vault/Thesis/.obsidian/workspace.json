@@ -13,12 +13,26 @@
             "state": {
               "type": "markdown",
               "state": {
-                "file": "TODOs.md",
+                "file": "Writing/Interpret results - performance.md",
                 "mode": "source",
                 "source": false
               },
               "icon": "lucide-file",
-              "title": "TODOs"
+              "title": "Interpret results - performance"
+            }
+          },
+          {
+            "id": "121d39f4712911b1",
+            "type": "leaf",
+            "state": {
+              "type": "markdown",
+              "state": {
+                "file": "Interpret results - flexibility.md",
+                "mode": "source",
+                "source": false
+              },
+              "icon": "lucide-file",
+              "title": "Interpret results - flexibility"
             }
           },
           {
@@ -103,8 +117,7 @@
               "title": "Bookmarks"
             }
           }
-        ],
-        "currentTab": 1
+        ]
       }
     ],
     "direction": "horizontal",
@@ -199,13 +212,19 @@
       "bases:Create new base": false
     }
   },
-  "active": "92515454d5473992",
+  "active": "6d74fb4d48374cba",
   "lastOpenFiles": [
+    "Advice/VMs.md",
     "TODO Tagesliste.md",
+    "Writing/Interpret results - performance.md",
+    "Interpret results - flexibility.md",
+    "Writing/Implementation - Infrastructure.md",
+    "Writing/Results - flexibility, architecture.md",
+    "Writing/Outline.md",
+    "Schedule.md",
     "TODOs.md",
     "Technical Design Log/2026-01-29 Visualizing flexibility metrics.md",
     "Thesis - Landing Page.md",
-    "Advice/VMs.md",
     "Technical Design Log/2026-01-26 Flexibility.md",
     "Technologies/k6.md",
     "Technical Design Log/2026-02-17 k6 setup function quirks.md",
@@ -221,14 +240,8 @@
     "Writing/Method - Flexibility.md",
     "Writing/Eventual Consistency Diagram.md",
     "Meetings/Rückfragen zum Feedback.md",
-    "Writing/Results - flexibility, architecture.md",
     "Writing/Method - traceability.md",
     "Technologies/Docker.md",
-    "Technical Design Log/2026-01-19 Latency vs. Load.md",
-    "Technical Design Log/2026-01-28 PERFORMANCE MUST DO.md",
-    "Technical Design Log/2025-12-29 Where to measure.md",
-    "Technical Design Log/2025-12-22 What can i benchmark.md",
-    "Technical Design Log/2025-12-19 Preparing for performance tests.md",
     "Untitled.canvas",
     "images/Pasted image 20260202152540.png",
     "images/Pasted image 20260126165908.png",

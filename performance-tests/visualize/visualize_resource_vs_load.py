@@ -10,66 +10,116 @@ from visualize.aggregate import aggregate_timeseries_prometheus_metrics
 from visualize.helper import get_metric_json
 from visualize.style import APP_COLORS
 
+OPTIONS = {
+    "CPU_USAGE": {
+        "metric_json_name": "cpu_usage.json",
+        "metric_name": "process_cpu_usage",
+        "steady_state_start": 6,
+        "df_metric_name": "CPU Usage",
+        "title": "CPU Usage (%) vs. Load",
+        "ylabel": "CPU Usage (%)",
+        "y_multiply": 100,
+    },
+    "THREADPOOL_USAGE": {
+        "metric_json_name": "tomcat_threads_current_threads.json",
+        "metric_name": "tomcat_threads_current_threads",
+        "steady_state_start": 0,
+        "df_metric_name": "Threadpool Usage",
+        "title": "Threadpool Usage vs. Load",
+        "ylabel": "Threadpool Usage",
+    },
+    "DB_CONNECTIONS": {
+        "metric_json_name": "hikaricp_connections_active.json",
+        "metric_name": "hikaricp_connections_active",
+        "steady_state_start": 0,
+        "df_metric_name": "Database Connections",
+        "title": "Database Connections vs. Load",
+        "ylabel": "Database Connections",
+    },
+}
 
-def main():
-    parser = argparse.ArgumentParser()
-    parser.add_argument("--path", required=True)
-    parser.add_argument("--base_name", required=True)
-    args = parser.parse_args()
+THREADPOOL_LIMIT = 200
 
-    base_path = Path(args.path)
-    base_name = args.base_name
+rps_list = [25, 50, 100, 200, 500, 1000]
 
-    rps_list = [25, 50, 100, 200, 500, 1000]
-    steady_state_start = 0
-    summary_records = []
+
+def visualize_metric(METRIC: dict, base_path: Path, base_name: str) -> None:
+    steady_state_start = METRIC["steady_state_start"]
+    records = []
 
     for rps in rps_list:
         df_rps = aggregate_timeseries_prometheus_metrics(
-            metric_json_name="postgres_size_bytes.json",
+            metric_json_name=METRIC["metric_json_name"],
             directory=base_path,
             base_name=f"{base_name}-{rps}-",
-            metric_name="database_size_bytes",
+            metric_name=METRIC["metric_name"],
         )
 
         steady_df = df_rps[df_rps["time_index"] >= steady_state_start]
 
         for app in ["crud", "es-cqrs"]:
-            median_val = steady_df[steady_df["app"] == app]["value"].median()
+            app_vals = steady_df.loc[steady_df["app"] == app, "value"]
 
-            summary_records.append(
-                {"RPS": rps, "Median Data Store Size (MB)": median_val, "App": app}
-            )
+            for v in app_vals:
+                records.append(
+                    {
+                        "RPS": rps,
+                        METRIC["df_metric_name"]: v * METRIC.get("y_multiply", 1),
+                        "App": app.upper(),
+                    }
+                )
 
-    summary_df = pd.DataFrame(summary_records)
+    plot_df = pd.DataFrame(records)
 
     plt.figure(figsize=(9, 6))
     sns.set_style("whitegrid")
 
-    # Using a lineplot with markers to show the trend
     sns.lineplot(
-        data=summary_df,
+        data=plot_df,
         x="RPS",
-        y=summary_df["Median CPU (%)"] * 100,
+        y=METRIC["df_metric_name"],
         hue="App",
         palette=APP_COLORS,
         linewidth=2.5,
-        errorbar="sd",
+        estimator="median",
+        errorbar=("pi", 50),
+        marker="o",
     )
 
     metric_path = get_metric_json(base_path)
     metric_json = json.loads(metric_path.read_text())
 
     plt.suptitle(
-        f"{metric_json["metric"]['method']} {metric_json["metric"]['uri']}: Data Store Size vs. Load",
+        f"{metric_json['metric']['method']} {metric_json['metric']['uri']}: {METRIC["title"]}",
     )
     plt.title(metric_json["metadata"]["title"], fontsize=10)
     plt.xlabel("RPS (Requests Per Second)", fontsize=12)
     plt.xticks(rps_list)
-    plt.ylabel("Median Data Store Size (MB)", fontsize=12)
-    plt.ylim(0, 100)
+    plt.ylabel(METRIC["ylabel"], fontsize=12)
     plt.tight_layout()
     plt.show()
+
+
+def main():
+    parser = argparse.ArgumentParser()
+    parser.add_argument("--path", required=True)
+    parser.add_argument("--base_name", required=True)
+    parser.add_argument(
+        "--metric", choices=["CPU_USAGE", "THREADPOOL_USAGE", "DB_CONNECTIONS"]
+    )
+    args = parser.parse_args()
+
+    base_path = Path(args.path)
+    base_name = args.base_name
+    metric = args.metric
+
+    if metric is not None:
+        visualize_metric(OPTIONS[metric], base_path, base_name)
+    else:
+        for _n, option in OPTIONS.items():
+            visualize_metric(option, base_path, base_name)
+
+    print("!! Make sure 'rps_list' is set correctly!!")
 
 
 if __name__ == "__main__":

@@ -62,6 +62,7 @@
 
 \usepackage{caption}
 \captionsetup{font=small}
+\captionsetup[sub]{font=scriptsize}
 
 \DeclareCaptionFormat{listing}{
   \rule{\linewidth}{0.2pt}\par\vskip1pt #1#2#3
@@ -514,18 +515,31 @@ This chapter of the appendix presents tables generated from the results during l
 \input{tables/run-create-course-prerequisites_timeseries_aggregated_statistical_test.tex}
 
 \newpage
-\section{L3: Read Lectures}
+\section{L3: Enroll to Lecture}
 \label{results:l3}
+
+\input{tables/run-enroll-to-lecture_client.tex}
+\input{tables/run-enroll-to-lecture_server.tex}
+
+\newpage
+\section{L4: Read Lectures}
+\label{results:l4}
 
 \input{tables/run-read-lectures_client.tex}
 \input{tables/run-read-lectures_server.tex}
 
 \newpage
-\section{L4: Get Credits}
-\label{results:l4}
+\section{L5: Get Credits}
+\label{results:l5}
 
 \input{tables/run-get-credits_client.tex}
 \input{tables/run-get-credits_server.tex}
+
+\newpage
+\section{L6: Time to Consistency (TODO)}
+\label{results:l6}
+
+TODO!
 
 \chapter{Results of Static Analysis}
 
@@ -544,6 +558,20 @@ TODO.
 
 \input{tables/ck-crud.tex}
 \input{tables/ck-es-cqrs.tex}
+
+\section{Coupling Metrics}
+\label{appendix:coupling-results}
+
+TODO. Can use same script as Instability and abstractness metrics.
+
+\section{Instability and Abstractness Metrics}
+\label{appendix:instability-abstractness}
+
+\input{tables/instability.tex}
+\input{tables/abstractness.tex}
+\input{tables/distance.tex}
+
+TODO: table for visualization of main sequence. Show package -> abstractness and instability. can use same script as Coupling metrics table.
 
 \section{Dependency Metrics}
 \label{appendix:dependency}

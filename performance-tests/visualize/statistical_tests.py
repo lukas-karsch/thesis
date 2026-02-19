@@ -13,7 +13,6 @@ def analyze_performance(data: pd.DataFrame):
 
     data.sort_values(["virtual_users", "metric"], inplace=True)
 
-    # Analyze each load level and metric separately
     for (metric, users), group in data.groupby(["metric", "virtual_users"], sort=False):
         crud = group[group["app"] == "crud"]["value"]
         cqrs = group[group["app"] == "es-cqrs"]["value"]
@@ -31,12 +30,17 @@ def analyze_performance(data: pd.DataFrame):
         u_stat, p_val = stats.mannwhitneyu(crud, cqrs)
 
         # Speedup Ratio (How many times faster is CQRS?)
-        ratio = m_crud / m_cqrs
+        if m_cqrs > 0:
+            ratio = m_crud / m_cqrs
+        else:
+            ratio = float("inf") if m_crud > 0 else float("nan")
 
         if ratio >= 1:
             comparison = f"{round(ratio, 1)}x Faster"
-        else:
+        elif 0 < ratio < 1:
             comparison = f"{round(1/ratio, 1)}x Slower"
+        else:
+            comparison = "NaN"
 
         def _get_significance(p) -> str:
             if p <= 0.001:
@@ -47,13 +51,25 @@ def analyze_performance(data: pd.DataFrame):
                 return "*"
             return "n.s."
 
+        c_mean = (
+            round(m_crud * 1000, 2)
+            if metric != "dropped_iterations_rate"
+            else round(m_crud, 2)
+        )
+
+        e_mean = (
+            round(m_cqrs * 1000, 2)
+            if metric != "dropped_iterations_rate"
+            else round(m_cqrs, 2)
+        )
+
         results.append(
             {
                 "metric": metric,
                 "users": users,
-                "c_mean": round(m_crud * 1000, 2),
+                "c_mean": c_mean,
                 "c_ci": round(get_ci(crud), 2),
-                "e_mean": round(m_cqrs * 1000, 2),
+                "e_mean": e_mean,
                 "e_ci": round(get_ci(cqrs), 2),
                 "speedup": comparison,
                 "sig": _get_significance(p_val),

@@ -119,7 +119,7 @@ def _lineplot_latency_vs_users(
                     data=metric_df,
                     x="virtual_users",
                     y="value_ms",
-                    markers=True,
+                    markers="o",
                     linestyle="--" if metric == "latency_p95" else "-",
                     color=APP_COLORS[app],
                     label=f"{pretty_name(app)} {label}",
@@ -141,7 +141,7 @@ def _lineplot_latency_vs_users(
                     data=rate_df,
                     x="virtual_users",
                     y="value",
-                    markers=True,
+                    markers="o",
                     linestyle=":",
                     color=APP_COLORS[app],
                     label=f"{pretty_name(app)} visible rate",
@@ -155,9 +155,9 @@ def _lineplot_latency_vs_users(
             ax.set_xscale("log")
             ax.get_xaxis().set_major_formatter(ScalarFormatter())
 
-        # ax.set_xticks(sorted(df["virtual_users"].unique()))
-        ax.set_xticks([25, 200, 500, 1000, 2000, 3000, 4000, 5000])
-        ax.tick_params(axis="x", labelrotation=45)
+        ax.set_xticks(sorted(df["virtual_users"].unique()))
+        # ax.set_xticks([25, 200, 500, 1000, 2000, 3000, 4000, 5000])
+        # ax.tick_params(axis="x", labelrotation=45)
 
         if log_y:
             ax.set_yscale("log")
@@ -280,7 +280,7 @@ def visualize_aggregated_lineplot(
         log_x=log_x,
         log_y=log_y,
         additional_title=additional_title,
-        show_slo=False,
+        show_slo=True,
     )
 
 

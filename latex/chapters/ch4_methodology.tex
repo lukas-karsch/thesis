@@ -161,7 +161,14 @@ Coupling metrics are based on graph theory. They are used to measure how depende
 \subsubsection{Instability and Abstractness}
 \label{sec:instability}
 
-\emph{Instability} assesses the volatility of a code base by calculating the ratio of efferent coupling to the sum of all coupling, indicating how easily a component breaks when changed. \emph{Abstractness} determines the ratio of abstract artifacts, such as interfaces and abstract classes, to concrete implementations within a module. Finally, the \emph{Distance from the Main Sequence} combines abstractness and instability to determine if a component is optimally balanced or falls into problematic "zones of uselessness or pain"~\cite[261-268]{martin_agile_2003}.
+\emph{Instability} assesses the volatility of a code base by calculating the ratio of efferent coupling to the sum of all coupling, indicating how easily a component breaks when changed. \emph{Abstractness} determines the ratio of abstract artifacts, such as interfaces and abstract classes, to concrete implementations within a module. Finally, the \emph{Distance from the Main Sequence} combines abstractness and instability to determine if a component is optimally balanced or falls into problematic "Zones of Uselessness or Pain"~\cite[261-268]{martin_agile_2003}. Martin considers a stable, concrete package to fall into the "Zone of Pain", while instable, highly abstract packages fall into the "Zone of Uselessness". The Main Sequence is illustrated in \autoref{fig:method-main-sequence}.
+
+\begin{figure}[h]
+    \centering
+    \includegraphics[width=0.8\textwidth]{images/Abstractness-Instability-Main_Sequence.png}
+    \caption[Main Sequence, Zones of Pain and Uselessness]{Main Sequence, Zones of Pain and Uselessness. Adapted from \cite[266]{martin_agile_2003}}
+    \label{fig:method-main-sequence}
+\end{figure}
 
 \subsubsection{MOOD metrics}
 \label{sec:mood}

@@ -466,36 +466,50 @@ def extract_k6_summary_to_csv(
     target_method = metric_def["metric"]["method"]
 
     group_metrics = summary.get("metrics", {}).get("group_duration", {})
+    dropped = summary.get("metrics", {}).get("dropped_iterations", {})
     if not group_metrics:
         print("⚠️ No group_duration metrics found in summary.")
         return
 
     rows = []
 
+    # lookup table to rename metrics, so that they match the prometheus metrics
+    k6_stat_name_to_metric_stat_name = {
+        "med": "latency_p50",
+        "p(95)": "latency_p95",
+        "p(90)": "latency_p90",
+        "p(99)": "latency_p99",
+        "avg": "latency_avg",
+    }
+
+    uri = metric_def["metric"].get("uri", "all_groups")
+
     for stat_name, value in group_metrics.items():
         # Skip non-numeric metadata if any exists
         if not isinstance(value, (int, float)):
             continue
-
-        # lookup table to rename metrics, so that they match the prometheus metrics
-        k6_stat_name_to_metric_stat_name = {
-            "med": "latency_p50",
-            "p(95)": "latency_p95",
-            "p(90)": "latency_p90",
-            "p(99)": "latency_p99",
-            "avg": "latency_avg",
-        }
 
         rows.append(
             {
                 "app": app,
                 "metric": k6_stat_name_to_metric_stat_name.get(stat_name, stat_name),
                 "method": target_method,
-                "uri": metric_def["metric"].get("uri", "all_groups"),
+                "uri": uri,
                 "value": value / 1000,  # turn into seconds
                 "virtual_users": vus,
             }
         )
+
+    rows.append(
+        {
+            "app": app,
+            "metric": "dropped_iterations_rate",
+            "method": target_method,
+            "uri": uri,
+            "value": dropped.get("rate", 0),
+            "virtual_users": vus,
+        }
+    )
 
     fieldnames = ["metric", "method", "uri", "value", "app", "virtual_users"]
 
