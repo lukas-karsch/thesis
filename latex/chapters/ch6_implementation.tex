@@ -704,7 +704,7 @@ To track the success rate of this request, the script introduces a custom Rate m
 
 The IntelliJ plugin \emph{MetricsReloaded}\footnote{\url{https://plugins.jetbrains.com/plugin/93-metricsreloaded}} was used to collect static analysis metrics from both applications.
 
-The afferent ($C_a$) and efferent ($C_e$) coupling metrics, previously described in \autoref{sec:coupling-stability}, can not directly be calculated by MetricsReloaded. Instead, the plugin can calculate metrics for incoming and outgoing dependencies. These can be mapped to the afferent and efferent coupling metrics, as shown in \autoref{table:mapping-of-metrics}. Additionally, MetricsReloaded calculates transitive (indirect) dependencies, allowing for a broader view of the system's dependencies and package dependencies, describing the number of packages a class depends on or the number of packages depending on a class.
+The afferent ($C_a$) and efferent ($C_e$) coupling metrics, previously described in \autoref{sec:coupling-metrics}, can be calculated by MetricsReloaded on a per-package basis. Furthermore, the plugin can calculate metrics for incoming and outgoing dependencies on a class-basis. These can be mapped to the afferent and efferent coupling metrics, as shown in \autoref{table:dependency-metrics}. Additionally, MetricsReloaded calculates transitive (indirect) dependencies, allowing for a broader view of the system's dependencies, describing the number of packages a class depends on or the number of packages depending on a class.
 
 \begin{table}[htp!]
     \centering
@@ -713,9 +713,9 @@ The afferent ($C_a$) and efferent ($C_e$) coupling metrics, previously described
         \toprule
         \textbf{Plugin Metric} & \textbf{Theoretical Metric} & \textbf{Definition}                     \\
         \midrule
-        $Dpt$                  & $C_a$                       & Incoming dependencies                   \\
+        $Dpt$                  & $C_a$ (per-class)           & Incoming dependencies                   \\
         \addlinespace
-        $Dcy$                  & $C_e$                       & Outgoing dependencies                   \\
+        $Dcy$                  & $C_e$ (per-class)           & Outgoing dependencies                   \\
         \addlinespace
         $Dpt^*$                & transitive $C_a$            & Indirect incoming dependencies          \\
         \addlinespace
@@ -726,8 +726,8 @@ The afferent ($C_a$) and efferent ($C_e$) coupling metrics, previously described
         $PDpt$                 &                             & Packages depending on this class        \\
         \bottomrule
     \end{tabularx}
-    \caption{Mapping of theoretical to plugin metrics}
-    \label{table:mapping-of-metrics}
+    \caption{Class-based dependency metrics}
+    \label{table:dependency-metrics}
 \end{table}
 
 Other metrics outlined in \autoref{sec:flexibility-architectural-metrics} are also supported by MetricsReloaded, such as \gls{mood}, \gls{ck}, various complexity metrics and the stability metrics described in \cite{martin_agile_2003}.

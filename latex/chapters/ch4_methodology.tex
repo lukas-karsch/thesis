@@ -37,7 +37,7 @@ The tests measure \textbf{\acrfull{rps}} and client-side response times. \textci
 
 This thesis adopts the approach of keeping system resources constant while measuring performance fluctuations under varying load intensities, as opposed increasing system resources to keep unchanged performance. These two perspectives are described by \textcite[13]{kleppmann_designing_2017}
 
-\textcite[264]{abbott_art_2009} mention another way of looking at load testing: In positive testing, load is increased until an application is overwhelmed, while negative testing takes away system resources such as memory, threads or connections, until the application degrades.
+\textcite[264]{abbott_art_2009} mention another way of looking at load testing: In \emph{positive testing}, load is increased until an application is overwhelmed, while \emph{negative testing} takes away system resources such as memory, threads or connections, until the application degrades.
 
 To evaluate results, the arithmetic mean is avoided as it obscures the experience of typical users and the impact of outliers. Instead, this thesis uses \glspl{percentile}. The \gls{median} (P50) serves as the metric for "typical" response time. Exactly 50\% of requests experience the median latency or less, while the other half experiences a higher latency. However, to capture the experience of users facing high delays, it is critical to measure "\glspl{tail-latency}" via a high percentile like P95 or P99. High percentiles identify the performance of outliers which, despite being a numerical minority, often represent the most valuable or complex operations. \cite[14-16]{kleppmann_designing_2017}
 
@@ -153,10 +153,13 @@ When choosing which endpoints are relevant to test, Abbott advocates for a "Pare
 
 This section describes various architectural metrics established in literature which are used to assess the flexibility, quality and evolutionary potential of a software architecture. These metrics serve as a basis to answer \hyperref[rs-architecture]{\acrshort{rq} 2}, using static analysis to compare the two architectures.
 
-\subsubsection{Coupling and Stability}
-\label{sec:coupling-stability}
+\subsubsection{Coupling Metrics}
+\label{sec:coupling-metrics}
 
-Coupling metrics are based on graph theory. They are used to measure how dependent components are on each other. \emph{Afferent coupling} ($C_a$) measures the number of incoming connections to a code artifact, indicating how many other components depend on it. \emph{Efferent coupling} ($C_e$)calculates the number of outgoing connections to other artifacts, reflecting the component's dependency on external code. The concepts of afferent and efferent coupling were first introduced by \textcite{yourdon_structured_1978} in 1978.
+Coupling metrics are based on graph theory. They are used to measure how dependent components are on each other. \emph{Afferent coupling} ($C_a$) measures the number of incoming connections to a code artifact, indicating how many other components depend on it. \emph{Efferent coupling} ($C_e$) calculates the number of outgoing connections to other artifacts, reflecting the component's dependency on external code. The concepts of afferent and efferent coupling were first introduced by \textcite{yourdon_structured_1978} in 1978.
+
+\subsubsection{Instability and Abstractness}
+\label{sec:instability}
 
 \emph{Instability} assesses the volatility of a code base by calculating the ratio of efferent coupling to the sum of all coupling, indicating how easily a component breaks when changed. \emph{Abstractness} determines the ratio of abstract artifacts, such as interfaces and abstract classes, to concrete implementations within a module. Finally, the \emph{Distance from the Main Sequence} combines abstractness and instability to determine if a component is optimally balanced or falls into problematic "zones of uselessness or pain"~\cite[261-268]{martin_agile_2003}.
 
@@ -169,11 +172,6 @@ Coupling metrics are based on graph theory. They are used to measure how depende
 \label{sec:complexity-metrics}
 
 A common metric for code complexity is cyclomatic complexity. Cyclomatic complexity can give a measure for code complexity at the function, class or application level by measuring the number of decision paths through a given component. \cite[79,80]{richards_fundamentals_2020} It is distinguished between essential complexity (complexity necessary for the domain) and accidental complexity introduced through poor coding practices.
-
-% \subsubsection{Connascence}
-% \label{sec:connascence}
-
-% \emph{Connascence} is a concept described by \textcite{page-jones_what_1995}. It refines afferent and efferent coupling and describes a relationship where two components are coupled such that a change in one requires a modification in the other to maintain system correctness. There are two types of connascence: static connascence, which can be analyzed at the source code level, and dynamic connascence, evaluated at runtime. \cite[48-53]{richards_fundamentals_2020}
 
 \subsubsection{Chidamber and Kemerer (CK) Metrics}
 \label{sec:ck-metrics}

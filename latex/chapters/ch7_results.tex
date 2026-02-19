@@ -227,10 +227,200 @@ The CRUD application constantly exhibits a 100\% $read\_visible\_rate$.
 
 To answer \acrshort{rq} 2. Present results of static code analysis using metrics.
 
-\subsection{Coupling and Stability Metrics}
-\label{sec:results-coupling-stability}
+\subsection{Coupling Metrics}
+\label{sec:results-coupling}
 
-Abc.
+Afferent coupling ($C_a$, describing incoming connections) and Efferent coupling ($C_e$, describing outgoing connections), which were described in \autoref{sec:coupling-metrics}, are calculated by MetricsReloaded on a package-basis. The results are visualized in a boxplot. Package size influences the value of $C_a$ and $C_e$, which is why the results were normalized by class count. Therefore, the plots show this data:
+
+\[C_a\_norm = \frac{C_a}{Class\_count}\]
+\[C_e\_norm = \frac{C_e}{Class\_count}\]
+
+\autoref{fig:combined_ca} presents the normalized $C_a$ per application. The CRUD application generally has higher Afferent coupling across its packages (a 33\% higher median and higher 75th \gls{percentile}). Most packages in the ES-CQRS architecture have low Afferent coupling, but some packages areas are more coupled than any package found in the CRUD app.
+
+\begin{figure}[H]
+    \centering
+    \begin{subfigure}[c]{0.48\textwidth}
+        \centering
+        \includegraphics[width=\textwidth]{images/static-analysis/Ca_normalized_Afferent_Coupling_per_package.png}
+        \caption{Boxplot distribution}
+    \end{subfigure}
+    \hfill
+    \begin{subfigure}[c]{0.48\textwidth}
+        \centering
+        \small
+        \resizebox{\textwidth}{!}{
+            \input{tables/ca_norm.tex}
+        }
+        \caption{Descriptive statistics}
+    \end{subfigure}
+    \caption{Comparison of $C_a$ (Afferent coupling) by Application.}
+    \label{fig:combined_ca}
+\end{figure}
+
+Regarding Efferent coupling, both architectures show more similarity. The medians are almost equal at values of 2.1 (CRUD) and 2.5 (ES-CQRS). CRUD's \gls{iqr} is wider, ranging from 0 to $\approx13$, while the ES-CQRS \gls{iqr} ranges from 0 to $\approx9$. However, the ES-CQRS architecture displays more outliers (7, versus 2 in CRUD) reaching a value of 148, while the maximum value of the CRUD architecture is 92.
+
+\begin{figure}[H]
+    \centering
+    \begin{subfigure}[c]{0.48\textwidth}
+        \centering
+        \includegraphics[width=\textwidth]{images/static-analysis/Ce_normalized_Efferent_Coupling_per_package.png}
+        \caption{Boxplot distribution}
+    \end{subfigure}
+    \hfill
+    \begin{subfigure}[c]{0.48\textwidth}
+        \centering
+        \small
+        \resizebox{\textwidth}{!}{
+            \input{tables/ce_norm.tex}
+        }
+        \caption{Descriptive statistics}
+    \end{subfigure}
+    \caption{Comparison of $C_e$ (Efferent coupling) by Application.}
+    \label{fig:combined_ce}
+\end{figure}
+
+\subsection{Dependency Metrics}
+\label{sec:results-dependency}
+
+\autoref{table:dependency-metrics} outlined all dependency metrics recorded in the applications. In this section, these metrics are visualized using boxplots and descriptive statistics. Per-class results for the described dependency metrics are available in \autoref{appendix:dependency}.
+
+\autoref{fig:combined_dpt} illustrates the distribution of $Dpt$, the number of classes depending directly on a class (\emph{dependents}), for both architectures. Both architectures have an equal median at 2. This indicates that in both cases, a typical class has two dependents. The range between the 25th to 75th \gls{percentile}, also called \gls{iqr} is indicated by the shaded areas. It differs for the two architectures. The CRUD architecture shows that 50\% of classes have 1 to 3 dependents, while the ES-CQRS architecture exhibits a higher variability, with 50\% of values falling between 0 and 4. (TODO: sind mehr als 50\% weil 0 lower bound ist)
+
+\begin{figure}[H]
+    \centering
+    \begin{subfigure}[c]{0.48\textwidth}
+        \centering
+        \includegraphics[width=\textwidth]{images/static-analysis/class_dependencies_DPT.png}
+        \caption{Boxplot distribution}
+    \end{subfigure}
+    \hfill
+    \begin{subfigure}[c]{0.48\textwidth}
+        \centering
+        \small
+        \resizebox{\textwidth}{!}{ % Resizes table to fit subfigure width
+            \input{tables/dpt.tex}
+        }
+        \caption{Descriptive statistics}
+    \end{subfigure}
+    \caption{Comparison of $Dpt$ (direct dependants) by Application.}
+    \label{fig:combined_dpt}
+\end{figure}
+
+$Dpt^*$, the transitive dependent count, is presented in \autoref{fig:combined_dpt_transitive}. Compared to $Dpt$, a larger difference between the architectures is visible. While the median values of both applications are still similar, with values between 2 and 4, the CRUD architecture's \gls{iqr} has a much wider range than the ES-CQRS architecture. 50\% of classes in the CRUD architecture have between 2 and 33 transitive dependents, while 50\% of the ES-CQRS architecture's classes have between 0 and 7 transitive dependents.
+
+\begin{figure}[H]
+    \centering
+    \begin{subfigure}[c]{0.48\textwidth}
+        \centering
+        \includegraphics[width=\textwidth]{images/static-analysis/class_dependencies_DPT-transitive.png}
+        \caption{Boxplot distribution}
+    \end{subfigure}
+    \hfill
+    \begin{subfigure}[c]{0.48\textwidth}
+        \centering
+        \small
+        \resizebox{\textwidth}{!}{ % Resizes table to fit subfigure width
+            \input{tables/dpt_transitive.tex}
+        }
+        \caption{Descriptive statistics}
+    \end{subfigure}
+    \caption{Comparison of $Dpt^*$ (transitive dependants) by Application.}
+    \label{fig:combined_dpt_transitive}
+\end{figure}
+
+\autoref{fig:combined_dcy} illustrates the distribution of $Dcy$, a metric representing the number of classes a given class directly depends on (\emph{dependencies}). Similar to the results for $Dpt$, the direct dependencies across both architectures exhibit similar values. CRUD and ES-CQRS architecture exhibit a median $Dcy$ of 2, respectively 1, with both \gls{iqr} situated between 0 and 4. Both architectures feature several outliers, with individual classes reaching direct dependency counts of approximately 40.
+
+\begin{figure}[H]
+    \centering
+    \begin{subfigure}[c]{0.48\textwidth}
+        \centering
+        \includegraphics[width=\textwidth]{images/static-analysis/class_dependencies_DCY.png}
+        \caption{Boxplot distribution}
+    \end{subfigure}
+    \hfill
+    \begin{subfigure}[c]{0.48\textwidth}
+        \centering
+        \small
+        \resizebox{\textwidth}{!}{
+            \input{tables/dcy.tex}
+        }
+        \caption{Descriptive statistics}
+    \end{subfigure}
+    \caption{Comparison of $Dcy$ (direct dependencies) by Application.}
+    \label{fig:combined_dcy}
+\end{figure}
+
+A more pronounced divergence is visible in the transitive dependencies, $Dcy^*$, presented in \autoref{fig:combined_dcy_transitive}. In the CRUD architecture, this distribution shows a much wider range, with the \gls{iqr} sitting between 1 and 26 transitive dependencies.
+
+The ES-CQRS architecture exhibits a more concentrated distribution. The \gls{iqr} is narrower, with 50\% of classes having between 0 and 3 transitive dependencies. While there are numerous outliers reaching more than 40 transitive dependencies, the primary distribution remains lower than that of the CRUD application.
+
+\begin{figure}[H]
+    \centering
+    \begin{subfigure}[c]{0.48\textwidth}
+        \centering
+        \includegraphics[width=\textwidth]{images/static-analysis/class_dependencies_DCY-transitive.png}
+        \caption{Boxplot distribution}
+    \end{subfigure}
+    \hfill
+    \begin{subfigure}[c]{0.48\textwidth}
+        \centering
+        \small
+        \resizebox{\textwidth}{!}{
+            \input{tables/dcy_transitive.tex}
+        }
+        \caption{Descriptive statistics}
+    \end{subfigure}
+    \caption{Comparison of $Dcy^*$ (transitive dependencies) by Application.}
+    \label{fig:combined_dcy_transitive}
+\end{figure}
+
+$PDpt$, presented in \autoref{fig:combined_PDpt}, is a metric describing the number of packages transitively depending on a class. Both architectures have a median value of 1 and a P75 of 2, indicating that at least 75\% of classes have less than 2 transitive package dependents.
+
+\begin{figure}[H]
+    \centering
+    \begin{subfigure}[c]{0.48\textwidth}
+        \centering
+        \includegraphics[width=\textwidth]{images/static-analysis/class_dependencies_PDpt.png}
+        \caption{Boxplot distribution}
+    \end{subfigure}
+    \hfill
+    \begin{subfigure}[c]{0.48\textwidth}
+        \centering
+        \small
+        \resizebox{\textwidth}{!}{
+            \input{tables/PDpt.tex}
+        }
+        \caption{Descriptive statistics}
+    \end{subfigure}
+    \caption{Comparison of $PDpt$ (transitive package dependents) by Application.}
+    \label{fig:combined_PDpt}
+\end{figure}
+
+The $PDcy$ metric describes the number of packages a class transitively depends on. It is presented in \autoref{fig:combined_PDcy}. Again, both architectures show similar values with a median of 1.5 for the CRUD architecture and 1 for ES-CQRS. The \gls{iqr} ranges from $\approx1$ to $\approx3$ for CRUD, and from 0 to 2 for ES-CQRS. The ES-CQRS architecture exhibits more outliers at 7 with a maximum value of 13, while the CRUD application shows one outlier depending on 8 packages.
+
+\begin{figure}[H]
+    \centering
+    \begin{subfigure}[c]{0.48\textwidth}
+        \centering
+        \includegraphics[width=\textwidth]{images/static-analysis/class_dependencies_PDcy.png}
+        \caption{Boxplot distribution}
+    \end{subfigure}
+    \hfill
+    \begin{subfigure}[c]{0.48\textwidth}
+        \centering
+        \small
+        \resizebox{\textwidth}{!}{
+            \input{tables/PDcy.tex}
+        }
+        \caption{Descriptive statistics}
+    \end{subfigure}
+    \caption{Comparison of $PDcy$ (transitive package dependencies) by Application.}
+    \label{fig:combined_PDcy}
+\end{figure}
+
+\subsubsection{Instability and Abstractness (TODO)}
+
+apodkwapod
 
 \subsection{MOOD Metrics}
 \label{sec:results-mood}
@@ -269,69 +459,11 @@ The CRUD architecture's plot (blue) forms the larger shape. It reaches the highe
 
 The ES-CQRS architecture's plot forms a smaller shape nested mostly inside the blue area. It shows lower values than the CRUD architecture on the \gls{cbo} (0.07), \gls{wmc} (0), and \gls{rfc} (< 0.05) axes. It sits close to the CRUD architecture on the \gls{lcom} and \gls{dit} axes.
 
-Both architectures exhibit a median \gls{noc} of 0.
+Both architectures exhibit a median \gls{noc} of 0. TODO: also show average here. some values are kinda misleading when only using the median. Polymorphism exists in the CRUD app.
 
 \begin{figure}[H]
     \centering
     \includegraphics[width=0.7\textwidth]{images/static-analysis/Median-c-k-metrics.png}
     \caption{Median CK-Metrics presented in a spider diagram. Detailed results in \ref{appendix:ck-results}}
     \label{fig:ck-results}
-\end{figure}
-
-\subsection{Dependency Metrics}
-
-\autoref{table:mapping-of-metrics} outlined all dependency metrics recorded in the applications using boxplots. The metrics were taken on a class basis.
-
-\autoref{fig:dpt} illustrates the distribution of $Dpt$, the number of classes depending directly on a class, for both architectures. Both architectures have an approximately equal median at $\approx2$. This indicates that in both cases, a typical class is depended upon by two other classes. The 25th to 75th percentile (indicates by the shaded areas) differs for the architectures. The CRUD architecture shows that 50\% of classes have 1 to 3 dependents, while the ES-CQRS architecture exhibits a higher variability, with 50\% of values falling between 0 and 4.
-
-\begin{figure}[H]
-    \centering
-    \begin{subfigure}[b]{0.48\textwidth}
-        \centering
-        \includegraphics[width=\textwidth]{images/static-analysis/class_dependencies_DPT.png}
-        \caption{$Dpt$: Number of classes depending directly on this class.}
-        \label{fig:dpt}
-    \end{subfigure}
-    \hfill
-    \begin{subfigure}[b]{0.48\textwidth}
-        \centering
-        \includegraphics[width=\textwidth]{images/static-analysis/class_dependencies_DPT-transitive.png}
-        \caption{$Dpt^*$: Number of classes depending transitively on this class.}
-        \label{fig:dpt_transitive}
-    \end{subfigure}
-
-    \vspace{2em}
-
-    \begin{subfigure}[b]{0.48\textwidth}
-        \centering
-        \includegraphics[width=\textwidth]{images/static-analysis/class_dependencies_DCY.png}
-        \caption{$Dcy$: Number of classes this class directly depends on.}
-        \label{fig:dcy}
-    \end{subfigure}
-    \hfill
-    \begin{subfigure}[b]{0.48\textwidth}
-        \centering
-        \includegraphics[width=\textwidth]{images/static-analysis/class_dependencies_DCY-transitive.png}
-        \caption{$Dcy^*$: Number of classes this class transitively depends on.}
-        \label{fig:dcy_transitive}
-    \end{subfigure}
-
-    \vspace{2em}
-
-    \begin{subfigure}[b]{0.48\textwidth}
-        \centering
-        \includegraphics[width=\textwidth]{images/static-analysis/class_dependencies_PDpt.png}
-        \caption{$PDpt$: Number of packages which transitively depend on this class.}
-        \label{fig:PDpt}
-    \end{subfigure}
-    \hfill
-    \begin{subfigure}[b]{0.48\textwidth}
-        \centering
-        \includegraphics[width=\textwidth]{images/static-analysis/class_dependencies_PDcy.png}
-        \caption{$PDcy$: Number of packages on which this class transitively depends.}
-        \label{fig:PDcy}
-    \end{subfigure}
-
-    \caption{Dependency Metrics. Detailed results in \ref{appendix:dependency}}
-    \label{fig:dependency_metrics}
 \end{figure}
