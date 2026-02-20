@@ -22,20 +22,6 @@
             }
           },
           {
-            "id": "121d39f4712911b1",
-            "type": "leaf",
-            "state": {
-              "type": "markdown",
-              "state": {
-                "file": "Interpret results - flexibility.md",
-                "mode": "source",
-                "source": false
-              },
-              "icon": "lucide-file",
-              "title": "Interpret results - flexibility"
-            }
-          },
-          {
             "id": "6d74fb4d48374cba",
             "type": "leaf",
             "state": {
@@ -48,23 +34,9 @@
               "icon": "lucide-file",
               "title": "TODO Tagesliste"
             }
-          },
-          {
-            "id": "92515454d5473992",
-            "type": "leaf",
-            "state": {
-              "type": "markdown",
-              "state": {
-                "file": "Advice/VMs.md",
-                "mode": "source",
-                "source": false
-              },
-              "icon": "lucide-file",
-              "title": "VMs"
-            }
           }
         ],
-        "currentTab": 2
+        "currentTab": 1
       }
     ],
     "direction": "vertical"
@@ -137,7 +109,7 @@
             "state": {
               "type": "backlink",
               "state": {
-                "file": "TODOs.md",
+                "file": "TODO Tagesliste.md",
                 "collapseAll": false,
                 "extraContext": false,
                 "sortOrder": "alphabetical",
@@ -147,7 +119,7 @@
                 "unlinkedCollapsed": true
               },
               "icon": "links-coming-in",
-              "title": "Backlinks for TODOs"
+              "title": "Backlinks for TODO Tagesliste"
             }
           },
           {
@@ -156,12 +128,12 @@
             "state": {
               "type": "outgoing-link",
               "state": {
-                "file": "System Design/API Design.md",
+                "file": "TODO Tagesliste.md",
                 "linksCollapsed": false,
                 "unlinkedCollapsed": true
               },
               "icon": "links-going-out",
-              "title": "Outgoing links from API Design"
+              "title": "Outgoing links from TODO Tagesliste"
             }
           },
           {
@@ -214,17 +186,22 @@
   },
   "active": "6d74fb4d48374cba",
   "lastOpenFiles": [
-    "Advice/VMs.md",
-    "TODO Tagesliste.md",
     "Writing/Interpret results - performance.md",
+    "TODO Tagesliste.md",
+    "Pasted image 20260220152808.png",
     "Interpret results - flexibility.md",
+    "Advice/VMs.md",
+    "Meetings/Mail an Jordine.md",
+    "Thesis - Landing Page.md",
+    "Meetings/2026-02-04 Fragen fürs nächste Meeting.md",
+    "Meetings/2026-01-07 Fragen fürs nächste Meeting.md",
+    "Meetings/2025-11-12 Exposé Feedback.md",
     "Writing/Implementation - Infrastructure.md",
     "Writing/Results - flexibility, architecture.md",
     "Writing/Outline.md",
     "Schedule.md",
     "TODOs.md",
     "Technical Design Log/2026-01-29 Visualizing flexibility metrics.md",
-    "Thesis - Landing Page.md",
     "Technical Design Log/2026-01-26 Flexibility.md",
     "Technologies/k6.md",
     "Technical Design Log/2026-02-17 k6 setup function quirks.md",
@@ -237,11 +214,6 @@
     "Writing/Discussion.md",
     "Writing/ES CQRS implementation.md",
     "Writing/CRUD vs. CQRS.md",
-    "Writing/Method - Flexibility.md",
-    "Writing/Eventual Consistency Diagram.md",
-    "Meetings/Rückfragen zum Feedback.md",
-    "Writing/Method - traceability.md",
-    "Technologies/Docker.md",
     "Untitled.canvas",
     "images/Pasted image 20260202152540.png",
     "images/Pasted image 20260126165908.png",
@@ -256,7 +228,6 @@
     "images/latency-vs-load-run-read-lectures__split_y_axis.png",
     "images/latency-vs-load-run-read-lectures__log_axis.png",
     "images/latency-vs-load-run-read-lectures.png",
-    "latency-vs-load-run-read-lectures.png",
     "images/plot_get_lectures_latency_vs_virtual_users",
     "images/plot_get_lectures_latency_comparison",
     "Writing",

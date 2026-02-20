@@ -5,6 +5,7 @@ import pandas as pd
 from scipy import stats
 
 from visualize.aggregate import aggregate_timeseries_prometheus_metrics
+from visualize.helper import get_median_ci
 from visualize.table import render_table
 
 
@@ -36,12 +37,7 @@ def analyze_performance_by_time(data: pd.DataFrame):
         crud = group[group["app"] == "crud"]["value"]
         cqrs = group[group["app"] == "es-cqrs"]["value"]
 
-        m_crud, m_cqrs = crud.mean(), cqrs.mean()
-
-        def get_ci(series):
-            if len(series) < 2:
-                return 0
-            return stats.sem(series) * stats.t.ppf(0.975, len(series) - 1)
+        med_crud, med_cqrs = crud.median(), cqrs.median()
 
         try:
             u_stat, p_val = stats.mannwhitneyu(crud, cqrs)
@@ -49,20 +45,23 @@ def analyze_performance_by_time(data: pd.DataFrame):
             p_val = 1.0
 
         # Ratio
-        ratio = m_crud / m_cqrs if m_cqrs != 0 else 0
-        comparison = (
-            f"{round(ratio, 1)}x Higher"
-            if ratio >= 1
-            else f"{round(1/ratio, 1)}x Lower"
-        )
+        ratio = med_crud / med_cqrs if med_cqrs != 0 else 0
+        if ratio != 0:
+            comparison = (
+                f"{round(ratio, 1)}x Higher"
+                if ratio >= 1
+                else f"{round(1/ratio, 1)}x Lower"
+            )
+        else:
+            comparison = "NaN"
 
         results.append(
             {
                 "time_index": time_idx,
-                "crud_mean": round(m_crud, 4),
-                "crud_ci": round(get_ci(crud), 4),
-                "cqrs_mean": round(m_cqrs, 4),
-                "cqrs_ci": round(get_ci(cqrs), 4),
+                "crud_mean": round(med_crud, 4),
+                "crud_ci": round(get_median_ci(crud), 4),
+                "cqrs_mean": round(med_cqrs, 4),
+                "cqrs_ci": round(get_median_ci(cqrs), 4),
                 "speedup": comparison,
                 "sig": _get_significance(p_val),
             }

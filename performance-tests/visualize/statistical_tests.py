@@ -5,6 +5,7 @@ import pandas as pd
 from scipy import stats
 
 from visualize.aggregate import aggregate_metrics_csv
+from visualize.helper import get_median_ci
 from visualize.table import render_table
 
 
@@ -19,12 +20,6 @@ def analyze_performance(data: pd.DataFrame):
 
         # Calculate Means
         m_crud, m_cqrs = crud.mean(), cqrs.mean()
-
-        # Calculate 95% Confidence Interval
-        def get_ci(series):
-            if len(series) < 2:
-                return 0
-            return stats.sem(series) * stats.t.ppf((1 + 0.95) / 2.0, len(series) - 1)
 
         # Mann-Whitney U Test (Non-parametric significance)
         u_stat, p_val = stats.mannwhitneyu(crud, cqrs)
@@ -51,6 +46,8 @@ def analyze_performance(data: pd.DataFrame):
                 return "*"
             return "n.s."
 
+        print(f"metric={metric}")
+
         c_mean = (
             round(m_crud * 1000, 2)
             if metric != "dropped_iterations_rate"
@@ -68,9 +65,9 @@ def analyze_performance(data: pd.DataFrame):
                 "metric": metric,
                 "users": users,
                 "c_mean": c_mean,
-                "c_ci": round(get_ci(crud), 2),
+                "c_ci": round(get_median_ci(crud), 2),
                 "e_mean": e_mean,
-                "e_ci": round(get_ci(cqrs), 2),
+                "e_ci": round(get_median_ci(cqrs), 2),
                 "speedup": comparison,
                 "sig": _get_significance(p_val),
             }

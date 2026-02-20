@@ -5,6 +5,8 @@ import pandas as pd
 from scipy import stats
 
 from visualize.aggregate import aggregate_timeseries_prometheus_metrics
+from visualize.helper import get_significance, get_median_ci
+from visualize.metrics import OPTIONS
 from visualize.table import render_table
 
 
@@ -17,60 +19,42 @@ def analyze_performance_per_rps(data: pd.DataFrame):
         crud_values = group[group["app"] == "crud"]["value"]
         cqrs_values = group[group["app"] == "es-cqrs"]["value"]
 
-        # Calculate Medians (requested) and Means (for Ratio)
         med_crud, med_cqrs = crud_values.median(), cqrs_values.median()
-        m_crud, m_cqrs = crud_values.mean(), cqrs_values.mean()
 
-        def get_ci(series):
-            if len(series) < 2:
-                return 0
-            return stats.sem(series) * stats.t.ppf(0.975, len(series) - 1)
-
-        # Statistical significance across all samples at this RPS
         try:
             _, p_val = stats.mannwhitneyu(crud_values, cqrs_values)
         except ValueError:
             p_val = 1.0
 
-        def _get_significance(p):
-            if p <= 0.001:
-                return "***"
-            if p <= 0.01:
-                return "**"
-            if p <= 0.05:
-                return "*"
-            return "n.s."
-
-        ratio = m_crud / m_cqrs if m_cqrs != 0 else 0
-        comparison = (
-            f"{round(ratio, 1)}x Lower"
-            if ratio >= 1
-            else f"{round(1/ratio, 1)}x Higher"
-        )
+        ratio = med_crud / med_cqrs if med_cqrs != 0 else 0
+        if ratio != 0:
+            comparison = (
+                f"{round(ratio, 1)}x Lower"
+                if ratio >= 1
+                else f"{round(1/ratio, 1)}x Higher"
+            )
+        else:
+            comparison = "NaN"
 
         results.append(
             {
                 "rps": rps,
                 "crud_median": round(med_crud, 4),
-                "crud_ci": round(get_ci(crud_values), 4),
+                "crud_ci": round(get_median_ci(crud_values), 4),
                 "cqrs_median": round(med_cqrs, 4),
-                "cqrs_ci": round(get_ci(cqrs_values), 4),
+                "cqrs_ci": round(get_median_ci(cqrs_values), 4),
                 "ratio": comparison,
-                "sig": _get_significance(p_val),
+                "sig": get_significance(p_val),
             }
         )
 
     return pd.DataFrame(results)
 
 
-def main():
-    parser = argparse.ArgumentParser()
-    parser.add_argument("--base_name", required=True)
-    parser.add_argument("--path", required=True)
-    parser.add_argument("--output_path", required=True)
-    args = parser.parse_args()
-
-    steady_state_start = 8
+def do_analysis(
+    path: Path, base_name: str, output_path: Path, metric: dict, endpoint: str
+):
+    steady_state_start = metric.get("steady_state_start", 0)
 
     summary = []
 
@@ -78,10 +62,10 @@ def main():
     # Generate the full stats table
     for rps in rps_list:
         df_per_rps = aggregate_timeseries_prometheus_metrics(
-            "cpu_usage.json",
-            Path(args.path),
-            f"{args.base_name}-{rps}-",
-            "process_cpu_usage",
+            metric["metric_json_name"],
+            path,
+            f"{base_name}-{rps}-",
+            metric["metric_name"],
         )
 
         df_per_rps["rps"] = rps
@@ -93,23 +77,39 @@ def main():
 
     stats_table = analyze_performance_per_rps(df)
 
-    output_base_name = f"{args.base_name}"
-    output_path = (
-        Path(args.output_path)
-        / f"{output_base_name}_timeseries_aggregated_statistical_test.csv"
-    )
+    output_base_name = f"{base_name}"
+    name = metric["df_metric_name"].replace(" ", "_")
+    csv_path = output_path / f"{output_base_name}_{name}.csv"
 
-    output_path.parent.mkdir(parents=True, exist_ok=True)
+    csv_path.parent.mkdir(parents=True, exist_ok=True)
 
-    stats_table.to_csv(output_path, index=False)
+    stats_table.to_csv(csv_path, index=False)
     render_table(
         stats_table,
-        f"{args.base_name}-aggregated-cpu-usage",
-        f"$cpu\_usage$ for POST /courses with prerequisites",
-        Path(args.output_path)
-        / f"{output_base_name}_timeseries_aggregated_statistical_test.tex",
+        f"{base_name}-aggregated-{name}",
+        f"{metric["metric_output_name"]} for {endpoint}",
+        output_path / f"{output_base_name}_{name}.tex",
         type="aggregated_timeseries",
     )
+
+
+def main():
+    parser = argparse.ArgumentParser()
+    parser.add_argument("--base_name", required=True)
+    parser.add_argument("--path", required=True)
+    parser.add_argument("--output_path", required=True)
+    args = parser.parse_args()
+
+    for _, option in OPTIONS.items():
+        do_analysis(
+            Path(args.path),
+            args.base_name,
+            Path(args.output_path),
+            option,
+            "GET /lectures",
+        )
+
+    print("Done. Make sure 'rps_list' is correct!")
 
 
 if __name__ == "__main__":

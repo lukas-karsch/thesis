@@ -58,7 +58,6 @@ def main():
                 ]
                 ev_vals = axon_event_size.loc[axon_event_size["app"] == app, "value"]
 
-                # align by index; adjust if your data needs a different join key
                 total_vals = (
                     pg_vals.reset_index(drop=True)
                     + sn_vals.reset_index(drop=True)

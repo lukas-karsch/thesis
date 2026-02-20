@@ -480,7 +480,9 @@ The repository contains \texttt{README} files with instructions on how to launch
 \chapter{Load Testing Results}
 \label{appendix:results}
 
-This chapter of the appendix presents tables generated from the results during load testing. The \emph{speedup} represents the factor by which the ES-CQRS application differed from the CRUD application. The statistical significance of the performance differences was evaluated using the \emph{Mann-Whitney U} test. The results are reported using the probability thresholds defined in \autoref{table:significance}, where a lower p-value indicates a higher level of statistical significance.
+This chapter of the appendix presents tables generated from the results during load testing. The \emph{speedup} represents the factor by which the ES-CQRS application differed from the CRUD application. The statistical significance of the performance differences was evaluated using the \emph{Mann-Whitney U} test. If its result is significant ($p \le 0.05$), that means that the difference in values are unlikely to be due to noise or randomness.
+
+The results are reported using the probability thresholds defined in \autoref{table:significance}, where a lower p-value indicates a higher level of statistical significance.
 
 \begin{table}[htp!]
     \small
@@ -504,7 +506,9 @@ This chapter of the appendix presents tables generated from the results during l
 
 \input{tables/run-create-course-simple_client.tex}
 \input{tables/run-create-course-simple_server.tex}
-\input{tables/run-create-course-simple_timeseries_aggregated_statistical_test.tex}
+\input{tables/run-create-course-simple_CPU_Usage.tex}
+\input{tables/run-create-course-simple_Threadpool_Usage.tex}
+\input{tables/run-create-course-simple_Database_Connections.tex}
 
 \newpage
 \section{L2: Create Course Prerequisites}
@@ -512,7 +516,10 @@ This chapter of the appendix presents tables generated from the results during l
 
 \input{tables/run-create-course-prerequisites_client.tex}
 \input{tables/run-create-course-prerequisites_server.tex}
-\input{tables/run-create-course-prerequisites_timeseries_aggregated_statistical_test.tex}
+\input{tables/run-create-course-prerequisites_cpu_usage.tex}
+\input{tables/run-create-course-prerequisites_threadpool_usage.tex}
+\input{tables/run-create-course-prerequisites_Database_Connections.tex}
+\input{tables/run-create-course-prerequisites_datastore_size.tex}
 
 \newpage
 \section{L3: Enroll to Lecture}
@@ -520,6 +527,10 @@ This chapter of the appendix presents tables generated from the results during l
 
 \input{tables/run-enroll-to-lecture_client.tex}
 \input{tables/run-enroll-to-lecture_server.tex}
+\input{tables/run-enroll-to-lecture_CPU_Usage.tex}
+\input{tables/run-enroll-to-lecture_threadpool_usage.tex}
+\input{tables/run-enroll-to-lecture_Database_Connections.tex}
+\input{tables/run-enroll-to-lecture_datastore_size.tex}
 
 \newpage
 \section{L4: Read Lectures}
@@ -527,6 +538,9 @@ This chapter of the appendix presents tables generated from the results during l
 
 \input{tables/run-read-lectures_client.tex}
 \input{tables/run-read-lectures_server.tex}
+\input{tables/run-read-lectures_CPU_Usage.tex}
+\input{tables/run-read-lectures_Threadpool_Usage.tex}
+\input{tables/run-read-lectures_Database_Connections.tex}
 
 \newpage
 \section{L5: Get Credits}

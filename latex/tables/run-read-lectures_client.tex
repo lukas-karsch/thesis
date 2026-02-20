@@ -3,118 +3,100 @@
     \resizebox{\columnwidth}{!}{
         \begin{tabular}{lcrrcrrcc}
             \toprule
-                            &              & \multicolumn{2}{c}{\textbf{CRUD (ms)}} &                   & \multicolumn{2}{c}{\textbf{ES-CQRS (ms)}} &               &                                                              \\
+                                        &              & \multicolumn{2}{c}{\textbf{CRUD (ms)}} &                   & \multicolumn{2}{c}{\textbf{ES-CQRS (ms)}} &               &                                                              \\
             \cmidrule{3-4} \cmidrule{6-7}
-            \textbf{Metric} & \textbf{RPS} & \textbf{Mean}                          & \textbf{CI $\pm$} &                                           & \textbf{Mean} & \textbf{CI $\pm$} & \textbf{Speedup} & \textbf{Significance} \\
+            \textbf{Metric}             & \textbf{RPS} & \textbf{Mean}                          & \textbf{CI $\pm$} &                                           & \textbf{Mean} & \textbf{CI $\pm$} & \textbf{Speedup} & \textbf{Significance} \\
             \midrule
 
-            $latency\_avg$  & 25           & 2.52                                   & 0.0               &                                           & 3.16          & 0.0               &
-            1.3x Slower     & ***                                                                                                                                                                                                  \\
+            $dropped\_iterations\_rate$ & 25           & 0.0                                    & 0.0               &                                           & 0.0           & 0.0               & NaN              & n.s.                  \\
 
-            $latency\_p50$  & 25           & 2.37                                   & 0.0               &                                           & 3.03          & 0.0               &
-            1.3x Slower     & ***                                                                                                                                                                                                  \\
+            $latency\_avg$              & 25           & 2.52                                   & 0.0               &                                           & 3.16          & 0.0               & 1.3x Slower      & ***                   \\
 
-            $latency\_p95$  & 25           & 3.73                                   & 0.0               &                                           & 4.38          & 0.0               &
-            1.2x Slower     & ***                                                                                                                                                                                                  \\
+            $latency\_p50$              & 25           & 2.37                                   & 0.0               &                                           & 3.03          & 0.0               & 1.3x Slower      & ***                   \\
 
-            $latency\_p99$  & 25           & 5.18                                   & 0.0               &                                           & 5.41          & 0.0               &
-            1.0x Slower     & ***                                                                                                                                                                                                  \\
+            $latency\_p95$              & 25           & 3.73                                   & 0.0               &                                           & 4.38          & 0.0               & 1.2x Slower      & ***                   \\
 
-            $latency\_avg$  & 50           & 1.88                                   & 0.0               &                                           & 2.49          & 0.0               &
-            1.3x Slower     & ***                                                                                                                                                                                                  \\
+            $latency\_p99$              & 25           & 5.18                                   & 0.0               &                                           & 5.41          & 0.0               & 1.0x Slower      & ***                   \\
 
-            $latency\_p50$  & 50           & 1.7                                    & 0.0               &                                           & 2.32          & 0.0               &
-            1.4x Slower     & ***                                                                                                                                                                                                  \\
+            $dropped\_iterations\_rate$ & 50           & 0.0                                    & 0.0               &                                           & 0.0           & 0.0               & NaN              & n.s.                  \\
 
-            $latency\_p95$  & 50           & 3.12                                   & 0.0               &                                           & 3.78          & 0.0               &
-            1.2x Slower     & ***                                                                                                                                                                                                  \\
+            $latency\_avg$              & 50           & 1.88                                   & 0.0               &                                           & 2.49          & 0.0               & 1.3x Slower      & ***                   \\
 
-            $latency\_p99$  & 50           & 4.68                                   & 0.0               &                                           & 5.04          & 0.0               &
-            1.1x Slower     & ***                                                                                                                                                                                                  \\
+            $latency\_p50$              & 50           & 1.7                                    & 0.0               &                                           & 2.32          & 0.0               & 1.4x Slower      & ***                   \\
 
-            $latency\_avg$  & 100          & 1.4                                    & 0.0               &                                           & 1.94          & 0.0               &
-            1.4x Slower     & ***                                                                                                                                                                                                  \\
+            $latency\_p95$              & 50           & 3.12                                   & 0.0               &                                           & 3.78          & 0.0               & 1.2x Slower      & ***                   \\
 
-            $latency\_p50$  & 100          & 1.23                                   & 0.0               &                                           & 1.75          & 0.0               &
-            1.4x Slower     & ***                                                                                                                                                                                                  \\
+            $latency\_p99$              & 50           & 4.68                                   & 0.0               &                                           & 5.04          & 0.0               & 1.1x Slower      & ***                   \\
 
-            $latency\_p95$  & 100          & 2.41                                   & 0.0               &                                           & 3.17          & 0.0               &
-            1.3x Slower     & ***                                                                                                                                                                                                  \\
+            $dropped\_iterations\_rate$ & 100          & 0.0                                    & 0.0               &                                           & 0.0           & 0.0               & NaN              & n.s.                  \\
 
-            $latency\_p99$  & 100          & 4.15                                   & 0.0               &                                           & 4.7           & 0.0               &
-            1.1x Slower     & ***                                                                                                                                                                                                  \\
+            $latency\_avg$              & 100          & 1.4                                    & 0.0               &                                           & 1.94          & 0.0               & 1.4x Slower      & ***                   \\
 
-            $latency\_avg$  & 200          & 1.02                                   & 0.0               &                                           & 1.45          & 0.0               &
-            1.4x Slower     & ***                                                                                                                                                                                                  \\
+            $latency\_p50$              & 100          & 1.23                                   & 0.0               &                                           & 1.75          & 0.0               & 1.4x Slower      & ***                   \\
 
-            $latency\_p50$  & 200          & 0.88                                   & 0.0               &                                           & 1.26          & 0.0               &
-            1.4x Slower     & ***                                                                                                                                                                                                  \\
+            $latency\_p95$              & 100          & 2.41                                   & 0.0               &                                           & 3.17          & 0.0               & 1.3x Slower      & ***                   \\
 
-            $latency\_p95$  & 200          & 1.83                                   & 0.0               &                                           & 2.59          & 0.0               &
-            1.4x Slower     & ***                                                                                                                                                                                                  \\
+            $latency\_p99$              & 100          & 4.15                                   & 0.0               &                                           & 4.7           & 0.0               & 1.1x Slower      & ***                   \\
 
-            $latency\_p99$  & 200          & 3.32                                   & 0.0               &                                           & 4.22          & 0.0               &
-            1.3x Slower     & ***                                                                                                                                                                                                  \\
+            $dropped\_iterations\_rate$ & 200          & 0.0                                    & 0.0               &                                           & 0.0           & 0.0               & NaN              & n.s.                  \\
 
-            $latency\_avg$  & 500          & 0.88                                   & 0.0               &                                           & 1.2           & 0.0               &
-            1.4x Slower     & ***                                                                                                                                                                                                  \\
+            $latency\_avg$              & 200          & 1.02                                   & 0.0               &                                           & 1.45          & 0.0               & 1.4x Slower      & ***                   \\
 
-            $latency\_p50$  & 500          & 0.82                                   & 0.0               &                                           & 1.06          & 0.0               &
-            1.3x Slower     & ***                                                                                                                                                                                                  \\
+            $latency\_p50$              & 200          & 0.88                                   & 0.0               &                                           & 1.26          & 0.0               & 1.4x Slower      & ***                   \\
 
-            $latency\_p95$  & 500          & 1.26                                   & 0.0               &                                           & 1.93          & 0.0               &
-            1.5x Slower     & ***                                                                                                                                                                                                  \\
+            $latency\_p95$              & 200          & 1.83                                   & 0.0               &                                           & 2.59          & 0.0               & 1.4x Slower      & ***                   \\
 
-            $latency\_p99$  & 500          & 2.28                                   & 0.0               &                                           & 3.56          & 0.0               &
-            1.6x Slower     & ***                                                                                                                                                                                                  \\
+            $latency\_p99$              & 200          & 3.32                                   & 0.0               &                                           & 4.22          & 0.0               & 1.3x Slower      & ***                   \\
 
-            $latency\_avg$  & 1000         & 0.84                                   & 0.0               &                                           & 1.14          & 0.0               &
-            1.4x Slower     & ***                                                                                                                                                                                                  \\
+            $dropped\_iterations\_rate$ & 500          & 0.0                                    & 0.0               &                                           & 0.0           & 0.0               & NaN              & n.s.                  \\
 
-            $latency\_p50$  & 1000         & 0.79                                   & 0.0               &                                           & 0.99          & 0.0               &
-            1.3x Slower     & ***                                                                                                                                                                                                  \\
+            $latency\_avg$              & 500          & 0.88                                   & 0.0               &                                           & 1.2           & 0.0               & 1.4x Slower      & ***                   \\
 
-            $latency\_p95$  & 1000         & 1.12                                   & 0.0               &                                           & 1.73          & 0.0               &
-            1.5x Slower     & ***                                                                                                                                                                                                  \\
+            $latency\_p50$              & 500          & 0.82                                   & 0.0               &                                           & 1.06          & 0.0               & 1.3x Slower      & ***                   \\
 
-            $latency\_p99$  & 1000         & 2.13                                   & 0.0               &                                           & 3.89          & 0.0               &
-            1.8x Slower     & ***                                                                                                                                                                                                  \\
+            $latency\_p95$              & 500          & 1.26                                   & 0.0               &                                           & 1.93          & 0.0               & 1.5x Slower      & ***                   \\
 
-            $latency\_avg$  & 2000         & 0.82                                   & 0.0               &                                           & 1.51          & 0.0               &
-            1.8x Slower     & ***                                                                                                                                                                                                  \\
+            $latency\_p99$              & 500          & 2.28                                   & 0.0               &                                           & 3.56          & 0.0               & 1.6x Slower      & ***                   \\
 
-            $latency\_p50$  & 2000         & 0.76                                   & 0.0               &                                           & 1.18          & 0.0               &
-            1.5x Slower     & ***                                                                                                                                                                                                  \\
+            $dropped\_iterations\_rate$ & 1000         & 0.0                                    & 0.0               &                                           & 0.0           & 0.0               & NaN              & n.s.                  \\
 
-            $latency\_p95$  & 2000         & 1.09                                   & 0.0               &                                           & 3.21          & 0.0               &
-            2.9x Slower     & ***                                                                                                                                                                                                  \\
+            $latency\_avg$              & 1000         & 0.84                                   & 0.0               &                                           & 1.14          & 0.0               & 1.4x Slower      & ***                   \\
 
-            $latency\_p99$  & 2000         & 2.13                                   & 0.0               &                                           & 6.72          & 0.0               &
-            3.2x Slower     & ***                                                                                                                                                                                                  \\
+            $latency\_p50$              & 1000         & 0.79                                   & 0.0               &                                           & 0.99          & 0.0               & 1.3x Slower      & ***                   \\
 
-            $latency\_avg$  & 3000         & 1.12                                   & 0.0               &                                           & 4.17          & 0.0               &
-            3.7x Slower     & ***                                                                                                                                                                                                  \\
+            $latency\_p95$              & 1000         & 1.12                                   & 0.0               &                                           & 1.73          & 0.0               & 1.5x Slower      & ***                   \\
 
-            $latency\_p50$  & 3000         & 0.92                                   & 0.0               &                                           & 2.61          & 0.0               &
-            2.8x Slower     & ***                                                                                                                                                                                                  \\
+            $latency\_p99$              & 1000         & 2.13                                   & 0.0               &                                           & 3.89          & 0.0               & 1.8x Slower      & ***                   \\
 
-            $latency\_p95$  & 3000         & 1.96                                   & 0.0               &                                           & 11.19         & 0.0               &
-            5.7x Slower     & ***                                                                                                                                                                                                  \\
+            $dropped\_iterations\_rate$ & 2000         & 0.0                                    & 0.0               &                                           & 0.0           & 0.0               & NaN              & n.s.                  \\
 
-            $latency\_p99$  & 3000         & 4.81                                   & 0.0               &                                           & 27.54         & 0.0               &
-            5.7x Slower     & ***                                                                                                                                                                                                  \\
+            $latency\_avg$              & 2000         & 0.83                                   & 0.0               &                                           & 1.51          & 0.0               & 1.8x Slower      & ***                   \\
 
-            $latency\_avg$  & 4000         & 208.97                                 & 0.08              &                                           & 80.26         & 0.03              &
-            2.6x Faster     & **                                                                                                                                                                                                   \\
+            $latency\_p50$              & 2000         & 0.77                                   & 0.0               &                                           & 1.18          & 0.0               & 1.5x Slower      & ***                   \\
 
-            $latency\_p50$  & 4000         & 124.24                                 & 0.11              &                                           & 20.16         & 0.01              &
-            6.2x Faster     & *                                                                                                                                                                                                    \\
+            $latency\_p95$              & 2000         & 1.1                                    & 0.0               &                                           & 3.24          & 0.0               & 3.0x Slower      & ***                   \\
 
-            $latency\_p95$  & 4000         & 624.77                                 & 0.13              &                                           & 369.65        & 0.15              &
-            1.7x Faster     & **                                                                                                                                                                                                   \\
+            $latency\_p99$              & 2000         & 2.13                                   & 0.0               &                                           & 6.78          & 0.0               & 3.2x Slower      & ***                   \\
 
-            $latency\_p99$  & 4000         & 732.74                                 & 0.13              &                                           & 457.09        & 0.16              &
-            1.6x Faster     & **                                                                                                                                                                                                   \\
+            $dropped\_iterations\_rate$ & 3000         & 0.0                                    & 0.0               &                                           & 0.0           & 0.0               & NaN              & n.s.                  \\
+
+            $latency\_avg$              & 3000         & 1.12                                   & 0.0               &                                           & 4.19          & 0.0               & 3.8x Slower      & ***                   \\
+
+            $latency\_p50$              & 3000         & 0.92                                   & 0.0               &                                           & 2.59          & 0.0               & 2.8x Slower      & ***                   \\
+
+            $latency\_p95$              & 3000         & 1.94                                   & 0.0               &                                           & 11.25         & 0.0               & 5.8x Slower      & ***                   \\
+
+            $latency\_p99$              & 3000         & 4.89                                   & 0.0               &                                           & 29.28         & 0.0               & 6.0x Slower      & ***                   \\
+
+            $dropped\_iterations\_rate$ & 4000         & 1.78                                   & 1.89              &                                           & 1.95          & 2.48              & 1.1x Higher      & n.s.                  \\
+
+            $latency\_avg$              & 4000         & 208.97                                 & 0.08              &                                           & 80.26         & 0.03              & 2.6x Faster      & **                    \\
+
+            $latency\_p50$              & 4000         & 124.24                                 & 0.11              &                                           & 20.16         & 0.01              & 6.2x Faster      & *                     \\
+
+            $latency\_p95$              & 4000         & 624.77                                 & 0.13              &                                           & 369.65        & 0.15              & 1.7x Faster      & **                    \\
+
+            $latency\_p99$              & 4000         & 732.74                                 & 0.13              &                                           & 457.09        & 0.16              & 1.6x Faster      & **                    \\
 
             \bottomrule
         \end{tabular}

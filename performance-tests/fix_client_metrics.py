@@ -4,10 +4,10 @@ import perf_runner
 from visualize.aggregate import find_matching_folders
 
 directory = Path(
-    "C:\\Users\\lukas\\Documents\\Studium\\Bachelorarbeit\\Test Results\\writes\\enrollment"
+    "C:\\Users\\lukas\\Documents\\Studium\\Bachelorarbeit\\Test Results\\reads\\read-lectures"
 )
 
-folders = find_matching_folders("run-enroll-to-lecture-500-", directory)
+folders = find_matching_folders("run-read-lectures-4000-", directory)
 k6_summaries = [f / "k6-summary.json" for f in folders]
 
 print(f"{len(k6_summaries)} k6-summary.json files found.")

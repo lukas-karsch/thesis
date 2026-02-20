@@ -1,0 +1,27 @@
+\begin{table}[H]
+    \small
+    \centering
+    \resizebox{\columnwidth}{!}{
+        \begin{tabular}{rrrcrrcc}
+            \toprule
+                         & \multicolumn{2}{c}{\textbf{CRUD (ms)}} &                   & \multicolumn{2}{c}{\textbf{ES-CQRS (ms)}} &                 &                                                            \\
+            \cmidrule{2-3} \cmidrule{5-6}
+            \textbf{RPS} & \textbf{Median}                        & \textbf{CI $\pm$} &                                           & \textbf{Median} & \textbf{CI $\pm$} & \textbf{Ratio} & \textbf{Significance} \\
+            \midrule
+
+            25           & 10.54                                  & 0.0               &                                           & 24.11           & 0.02              & 2.3x Higher    & ***                   \\
+
+            50           & 12.32                                  & 0.0               &                                           & 31.64           & 0.02              & 2.6x Higher    & ***                   \\
+
+            100          & 15.86                                  & 0.0               &                                           & 55.94           & 0.05              & 3.5x Higher    & ***                   \\
+
+            200          & 22.97                                  & 0.01              &                                           & 227.27          & 11.74             & 9.7x Higher    & ***                   \\
+
+            500          & 40.77                                  & 0.03              &                                           & 232.4           & 0.55              & 5.7x Higher    & ***                   \\
+
+            \bottomrule
+        \end{tabular}
+    }
+    \caption{Statistical comparison of Data Store Size (MB) for POST /lectures/\{lectureId\}/enroll, averaged out over at least 25 runs}
+    \label{table:run-enroll-to-lecture-aggregated-datastore-size}
+\end{table}

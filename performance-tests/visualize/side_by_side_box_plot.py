@@ -155,9 +155,9 @@ def _lineplot_latency_vs_users(
             ax.set_xscale("log")
             ax.get_xaxis().set_major_formatter(ScalarFormatter())
 
-        ax.set_xticks(sorted(df["virtual_users"].unique()))
-        # ax.set_xticks([25, 200, 500, 1000, 2000, 3000, 4000, 5000])
-        # ax.tick_params(axis="x", labelrotation=45)
+        # ax.set_xticks(sorted(df["virtual_users"].unique()))
+        ax.set_xticks([25, 200, 500, 1000, 2000, 3000, 4000])
+        ax.tick_params(axis="x", labelrotation=45)
 
         if log_y:
             ax.set_yscale("log")

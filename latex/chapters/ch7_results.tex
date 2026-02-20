@@ -22,9 +22,17 @@ When comparing the CRUD and ES-CQRS applications' results, sometimes a "speedup"
 
 \subsection{Dropped Iterations}
 
-In some tests, iterations were dropped. This occurs if an iteration takes longer than 1 second and no more \glspl{VU} --- which act as request processors --- are available to k6. The fact that iterations were dropped during testing is mentioned when describing results, and the rate of dropped iterations per second ($dropped\_iterations\_rate$) is available in the results tables inside the appendix.
+In some tests, iterations were dropped. This occurs if an iteration takes longer than 1 second and no more \glspl{VU}, which act as request processors, are available to k6. The fact that iterations were dropped during testing is mentioned when describing results, and the rate of dropped iterations per second ($dropped\_iterations\_rate$) is available in the results tables inside the appendix.
 
 The consequence of dropped iterations on test results will be outlined in \autoref{ch:discussion}.
+
+\subsection{Threadpool}
+
+Each load test shows the threadpool usage of the application under test. The maximum value this metric can take in these tests is 200, as it SpringBoot's default configuration.
+
+\subsection{Database Connections}
+
+Each load test presents the number of used database connections of the application under test. The maximum value this metric can take in these tests is 10, which can again be attributed to SpringBoot's default configuration.
 
 \subsection{Data Store Size}
 
@@ -36,7 +44,7 @@ The total data store size for the ES-CQRS application is defined as the sum of t
 
 In graphs that show latencies, the shaded areas in the line graphs represent the \emph{standard deviation} of the latency measurements, indicating the statistical spread or variance around the median performance at each load level. Wider areas of standard deviation indicate that the applications experience a wider range of response times.
 
-Graphs showing resource consumption typically show the area between the 25th and 75th percentile in the shaded area, also called \gls{iqr}.
+Graphs showing resource consumption typically show the area between the 25th and 75th percentile in the shaded area, also called \emph{\gls{iqr}}.
 
 TODO: Explain boxplots.
 
@@ -90,7 +98,7 @@ It can be noted that the latency curve follows the same pattern in both the meas
     \label{fig:l1_resource_vs_load}
 \end{figure}
 
-In \autoref{fig:l1_data_store_vs_load}, the size of the data store under increasing load is presented. The CRUD application's data store, consisting only of the PostgreSQL database, exhibits a linear growth, reaching a size of $\approx$70MB at 1000 \gls{rps}. With $10 000$ requests sent at 1000 \gls{rps}, this comes out to around 7kB per persisted course. The ES-CQRS graph also grows linearly. At 500 \gls{rps}, the size of the data store is about 60MB, a 1.5x higher storage consumption than the CRUD application. This equals around 12kB per persisted course. However, at 1000 \gls{rps}, the storage size decreases. This can be attributed to a projection lag caused by the eventual consistency present in the application and is explained further in \autoref{ch:discussion}. The true storage consumption of the ES-CQRS application can be assumed to be around 120MB, once all projections are updated.
+In \autoref{fig:l1_data_store_vs_load}, the size of the data store under increasing load is presented. The CRUD application's data store, consisting only of the PostgreSQL database, exhibits a linear growth, reaching a size of $\approx$70MB at 1000 \gls{rps}. With 100,000 requests sent at 1000 \gls{rps}, this comes out to around 0.7kB per persisted course. The ES-CQRS graph also grows linearly. At 500 \gls{rps}, the size of the data store is about 60MB, a 1.5x higher storage consumption than the CRUD application. This equals around 1kB per persisted course. However, at 1000 \gls{rps}, the storage size decreases. This can be attributed to a projection lag caused by the eventual consistency present in the application and is explained further in \autoref{ch:discussion}. The true storage consumption of the ES-CQRS application can be assumed to be around 120MB, once all projections are updated.
 
 \begin{figure}[H]
     \centering
@@ -114,24 +122,24 @@ In \autoref{fig:l1_data_store_vs_load}, the size of the data store under increas
 \subsubsection{L2: Create Courses Prerequisites}
 \label{sec:l2}
 
-This test also evaluates the performance of the endpoint described in \autoref{sec:l1}. However, before executing the load generation, a set of "prerequisite" courses are generated, which are then referenced during load generation. This creates the necessity to do additional checks on existing data, verifying whether the referenced courses actually exist.
+This test also evaluates the performance of the endpoint described in \autoref{sec:l1}. However, before executing the load generation, a set of "prerequisite" courses are generated. Each iteration, a random number of these courses (0 to 5) are selected which are referenced during load generation. This creates the necessity to do additional checks on existing data, verifying whether the referenced courses actually exist.
 
-The performance, presented in \autoref{fig:l2_combined} using a logarithmic y-axis, is similar to the observations made in \hyperref[sec:l1]{L1}. After exceeding 500 \gls{rps}, the ES-CQRS application fails to satisfy \ref{slo-latency} with a $latency\_p95$ exceeding the threshold of 100ms. The CRUD application, on the other hand, is able to fulfill the latency threshold up to at least 1000 \gls{rps}.
+The endpoint's performance, presented in \autoref{fig:l2_combined} using a logarithmic y-axis, is similar to the observations made in \hyperref[sec:l1]{L1}. After exceeding 500 \gls{rps}, the ES-CQRS application fails to satisfy \ref{slo-latency} with a $latency\_p95$ exceeding the threshold of 100ms. Additionally, its $dropped\_iterations\_rate$ reaches a value of 61. The CRUD application, on the other hand, is able to fulfill the latency threshold up to at least 1000 \gls{rps} without dropping iterations.
 
-It can be noted that the latency curve follows the same pattern in both the measurements made on the client and on the server, except for the ES-CQRS $latency\_p95$ which exhibits a value of over 1000ms on the client, but only $\approx$300ms on the server.
+It can be noted that the latency curve follows the same pattern in both the measurements made on the client and on the server, except for the ES-CQRS $latency\_p95$ which exhibits a value of over 1000ms on the client, but only $\approx$360ms on the server at 1000 \gls{rps}.
 
 \begin{figure}[H]
     \centering
     \begin{subfigure}[b]{0.49\textwidth}
         \centering
-        \includegraphics[width=\textwidth]{images/results/create-course-prerequisites/create-course-prerequisites__latency-vs-load__client.png}
+        \includegraphics[width=\textwidth]{images/results/create-course-prerequisites/course-prerequisites-latency-load-CLIENT.png}
         \caption{Latency vs. Load measured on the client}
         \label{fig:l2_latency_vs_load_client}
     \end{subfigure}
     \hfill
     \begin{subfigure}[b]{0.49\textwidth}
         \centering
-        \includegraphics[width=\textwidth]{images/results/create-course-prerequisites/create-course-prerequisites__latency-vs-load__server.png}
+        \includegraphics[width=\textwidth]{images/results/create-course-prerequisites/course-prerequisites-latency-load-SERVER.png}
         \caption{Latency vs. Load measured on the server}
         \label{fig:l2_latency_vs_load_server}
     \end{subfigure}
@@ -139,25 +147,59 @@ It can be noted that the latency curve follows the same pattern in both the meas
     \label{fig:l2_combined}
 \end{figure}
 
-\autoref{fig:l2_cpu_usage_vs_load} presents the median $cpu\_usage$ of the endpoint under increasing load. The ES-CQRS application has a higher CPU usage, exhibiting a value of $\approx45\%$ at 1000 \gls{rps}, while the CRUD application uses $\approx10\%$. The CRUD application's CPU usage rises linearly, while the ES-CQRS application's CPU usage rises slower past 500 \gls{rps}.
+\autoref{fig:l2_cpu_usage} presents the median $cpu\_usage$ of the endpoint under increasing load. The ES-CQRS application has a higher CPU usage, exhibiting a value of $\approx$45\% at 1000 \gls{rps}, while the CRUD application uses $\approx$10\%. The CRUD application's CPU usage rises linearly, while the ES-CQRS application's CPU usage rises slower past 500 \gls{rps}.
 
-TODO insert data store size here after re-running the test!
+The threadpool usage of both applications is visualized in \autoref{fig:l2_threadpool_usage}. At 200 \gls{rps}, ES-CQRS starts using more threads, finally reaching threadpool saturation --- meaning that all 200 possible threads of the threadpool are used --- at 1000 \gls{rps}. The CRUD application uses at most around 25 threads at 1000 \gls{rps}.
 
 \begin{figure}[H]
     \centering
-    \begin{subfigure}[b]{\textwidth}
+    \begin{subfigure}[b]{0.49\textwidth}
         \centering
-        \includegraphics[width=\textwidth]{images/results/create-course-prerequisites/CPU_usage_vs_load.png}
-        \caption{CPU Usage (\%) vs. load. Detailed results in \ref{table:run-create-course-prerequisites-aggregated-cpu-usage}}
-        \label{fig:l2_cpu_usage_vs_load}
+        \includegraphics[width=\textwidth]{images/results/create-course-prerequisites/courses-prerequisites-CPU-usage.png}
+        \caption{Resource Usage (\%) vs. Load}
+        \label{fig:l2_cpu_usage}
     \end{subfigure}
-    \caption{L2: Resource usage graphs}
-    \label{fig:l2_resource_vs_load}
+    \hfill
+    \begin{subfigure}[b]{0.49\textwidth}
+        \centering
+        \includegraphics[width=\textwidth]{images/results/create-course-prerequisites/courses-prerequisites-threadpool-usage.png}
+        \caption{Threadpool Usage vs. Load}
+        \label{fig:l2_threadpool_usage}
+    \end{subfigure}
+    \caption[L2 Resource Usage, load measured in \gls{rps}]{L2 Resource Usage: Load measured in \gls{rps}. Detailed results in \ref{results:l2}.}
+    \label{fig:l2_resource_usage_cpu}
 \end{figure}
 
-\subsubsection{L3: Enrollment (TODO)}
+\autoref{fig:l2_database} presents database usage statistics of both applications under increasing load.
 
-The endpoint \texttt{POST /lectures/{lectureId}/enroll} enrolls students to a lecture. Its performance under load is visualized in \autoref{fig:l3_combined} using logarithmic x- and y-axes.
+The median used database connections are shown in \autoref{fig:l2_db_connections}. At 1000 \gls{rps}, the ES-CQRS application uses all available connections, while the CRUD application utilizes around 2.
+
+In \autoref{fig:l2_data_size}, the size of the data store under increasing load is presented. The CRUD application's data store exhibits a linear growth, reaching a size of $\approx$107MB at 1000 \gls{rps}. With 100,000 requests sent at 1000 \gls{rps}, this comes out to roughly 1.1kB per persisted course --- around 60\% higher than when creating courses without prerequisites.
+
+The ES-CQRS application's storage consumption initially follows a linear growth pattern. At 200 \gls{rps}, the data store occupies approximately 45MB, representing a 1.6x increase compared to the CRUD application—roughly 2.3kB per persisted course. However, as the load increases beyond 500 \gls{rps}, the observed storage growth decelerates, eventually showing a decline at 1000 \gls{rps}. Again, this can be attributed to projection lag. Once the system updates all projections, the true storage consumption of the ES-CQRS application is estimated to be approximately 225MB.
+
+\begin{figure}[H]
+    \centering
+    \begin{subfigure}[b]{0.49\textwidth}
+        \centering
+        \includegraphics[width=\textwidth]{images/results/create-course-prerequisites/courses-prerequisites-db_connections-usage.png}
+        \caption{Database Connections vs. Load}
+        \label{fig:l2_db_connections}
+    \end{subfigure}
+    \hfill
+    \begin{subfigure}[b]{0.49\textwidth}
+        \centering
+        \includegraphics[width=\textwidth]{images/results/create-course-prerequisites/courses-prerequisites-data_size.png}
+        \caption{Data Store Size vs. Load}
+        \label{fig:l2_data_size}
+    \end{subfigure}
+    \caption[L2 Database Usage, load measured in \gls{rps}]{L2 Database Usage: Load measured in \gls{rps}. Detailed results in \ref{results:l2}.}
+    \label{fig:l2_database}
+\end{figure}
+
+\subsubsection{L3: Enrollment}
+
+The endpoint \texttt{POST /lectures/\{lectureId\}/enroll} enrolls students to a lecture. Its performance under load up to 500 \gls{rps} is visualized in \autoref{fig:l3_combined} using logarithmic x- and y-axes.
 
 The ES-CQRS application's $latency\_p95$ rises above 100ms between 50 and 100 \gls{rps}, violating \autoref{slo-latency}. The CRUD application's $latency\_p95$ and $latency\_p50$ remain below 10ms until 200 \gls{rps}, representing more than a 20x slowdown for the ES-CQRS application. Between 200 and 500 \gls{rps}, CRUD's P95 latency rises to over 1000ms, violating \ref{slo-latency}. At 500 \gls{rps}, ES-CQRS' $latency\_p95$ exceeds 10,000ms.
 
@@ -182,7 +224,9 @@ It is worth noting that starting from 200 \gls{rps}, the ES-CQRS's load tests st
     \label{fig:l3_combined}
 \end{figure}
 
-Now I show graphs for resource consumption during load tests.
+\autoref{fig:l3_cpu_usage} compares CPU utilization by both applications as the load increases. The ES-CQRS application consistently requires more CPU than the CRUD application across all tested loads. At lower intensities (below 200 RPS), the ES-CQRS CPU usage grows, before peaking at around 42\% at 200 \gls{rps} and remaining at that level for 500 RPS. The CRUD application shows a steady increase in CPU consumption as load increases, reaching aroud 36\% at 500 RPS.
+
+\autoref{fig:l3_threadpool_usage} illustrates the number of active threads utilized by each application to process the incoming load. At 25 and 50 RPS, both applications maintain an identical, stable baseline of 10 threads. Beyond 50 RPS, the utilized threads for ES-CQRS begin to increase. It reaches a maximum capacity of 200 threads at in between 100 and 200 \gls{rps} and remains saturated at that limit through 500 RPS. In contrast, the CRUD application maintains its baseline of 10 threads until 200 RPS. Even at the maximum load of 500 RPS, its median thread usage remains at around 17 threads. However, it should be noted that the \gls{iqr} at 500 RPS spans up to 200 threads, indicating a high variance in the measured results.
 
 \begin{figure}[H]
     \centering
@@ -203,7 +247,9 @@ Now I show graphs for resource consumption during load tests.
     \label{fig:l3_resource_usage_cpu}
 \end{figure}
 
-This is usage of database.
+Database usage under increasing load is visualized in \autoref{fig:l3_database}. \autoref{fig:l3_db_connections} shows the median active database connections. It can be seen that the ES-CQRS application reaches its peak at around 4 connections simultaneously at 200 \gls{rps}, plateauing for the final measured load of 500 \gls{rps}. On the other hand, the CRUD application uses a median of 0 connections until 100 \gls{rps}. At this point, the graph starts rising, reaching a median of 4 at 500 \gls{rps} with a wide \gls{iqr} spanning from 2 to 10.
+
+Size of the data store is presented in \autoref{fig:l3_data_size}.
 
 \begin{figure}[H]
     \centering
@@ -226,29 +272,33 @@ This is usage of database.
 
 \subsection{Read Performance}
 
-\subsubsection{L4: Read Lectures}
+When measuring read performance, no data is created during load generation. Therefore, the visualizations of data store size compared to load are replaced by simple tables, as each test creates the exact same amount of data.
+
+\subsubsection{L4: Read Lectures (TODO resource, data size)}
 \label{sec:l4}
 
 \texttt{GET} \texttt{/lectures} returns all lectures a student is enrolled or waitlisted in. \autoref{fig:l4_combined} presents client-side and server-side latencies for this endpoint using a logarithmic y-axis.
 
-In the client-side graph (\autoref{fig:l4_latency_vs_load_client}), both applications maintain $latency\_p50$ and $latency\_p95$ of below 10ms up to 3000 \gls{rps}. At 3000 \gls{rps}, the ES-CQRS application exhibits an around 5x higher $latency\_p95$ than the CRUD app. Beyond 3000 \gls{rps}, though, the CRUD latencies overtake the ES-CQRS latencies. At 4000 \gls{rps}, the ES-CQRS application exhibits a $latency\_p95$ of around 370ms, which is around 1.7x faster than  the CRUD application at 620ms.
+In the client-side graph (\autoref{fig:l4_latency_vs_load_client}), both applications maintain $latency\_p50$ and $latency\_p95$ of below 10ms up to 3000 \gls{rps}. At 3000 \gls{rps}, the ES-CQRS application exhibits an around 6x higher $latency\_p95$ than the CRUD app. Beyond 3000 \gls{rps}, though, the CRUD latencies overtake the ES-CQRS latencies. At 4000 \gls{rps}, the ES-CQRS application exhibits a $latency\_p95$ of around 370ms, which is around 1.7x faster than  the CRUD application at 620ms and a $latency\_p50$ of 20ms, around a 6x speedup compared to CRUD.
 
 Both applications violate \ref{slo-latency} beyond 3000 \gls{rps}. It can also be noted that the standard deviation, indicated by the shaded areas, grows wider, especially in the CRUD application.
 
-The server-side graph, presented in \autoref{fig:l5_latency_vs_load_server}, initially shows a similar pattern. At 3000 \gls{rps}, the latencies also start increasing, however, the observed increase is not as strong as in the client-side latencies. At 4000 \gls{rps}, the ES-CQRS application shows a $latency\_p95$ of around 60ms, the CRUD application has a $latency\_p95$ of around 130ms. The standard deviation does not grow as wide as in the client-side graph.
+It should be noted that at 4000 RPS, tests on both applications dropped some iterations with a $dropped\_iterations\_rate$ of roughly 2, meaning about 2 iterations, or about 0.05\% of iterations, were dropped per second. However, this metric exhibits high variance. Because the confidence intervals exceed the mean values, the results for this specific metric are not statistically significant (see \autoref{table:run-read-lectures_client}).
+
+The server-side graph, presented in \autoref{fig:l5_latency_vs_load_server}, initially shows a similar pattern. Once exceeding 3000 \gls{rps}, the latencies also start increasing, however, the observed increase is not as strong as in the client-side latencies. At 4000 \gls{rps}, the ES-CQRS application shows a $latency\_p95$ of around 60ms, the CRUD application has a $latency\_p95$ of around 130ms. The standard deviation does not grow as wide as in the client-side graph.
 
 \begin{figure}[H]
     \centering
     \begin{subfigure}[t]{0.49\textwidth}
         \centering
-        \includegraphics[width=\textwidth]{images/results/read-lectures/read-lectures_latency-vs-load_client__to4000RPS.png}
+        \includegraphics[width=\textwidth]{images/results/read-lectures/read-lectures_latency-vs-load_client.png}
         \caption{Latency vs. Load measured on the client}
         \label{fig:l4_latency_vs_load_client}
     \end{subfigure}
     \hfill
     \begin{subfigure}[t]{0.49\textwidth}
         \centering
-        \includegraphics[width=\textwidth]{images/results/read-lectures/read-lectures_latency-vs-load_server__to4000RPS.png}
+        \includegraphics[width=\textwidth]{images/results/read-lectures/read-lectures_latency-vs-load_server.png}
         \caption{Latency vs. Load measured on the server}
         \label{fig:l4_latency_vs_load_server}
     \end{subfigure}
@@ -256,7 +306,52 @@ The server-side graph, presented in \autoref{fig:l5_latency_vs_load_server}, ini
     \label{fig:l4_combined}
 \end{figure}
 
-\subsubsection{L5: Get credits}
+Next, present resource consumption.
+
+\begin{figure}[H]
+    \centering
+    \begin{subfigure}[b]{0.49\textwidth}
+        \centering
+        \includegraphics[width=\textwidth]{images/results/read-lectures/read-lectures_cpu_usage.png}
+        \caption{Resource Usage (\%) vs. Load}
+        \label{fig:l4_cpu_usage}
+    \end{subfigure}
+    \hfill
+    \begin{subfigure}[b]{0.49\textwidth}
+        \centering
+        \includegraphics[width=\textwidth]{images/results/read-lectures/read-lectures_threadpool_usage.png}
+        \caption{Threadpool Usage vs. Load}
+        \label{fig:l4_threadpool_usage}
+    \end{subfigure}
+    \caption[L4 Resource Usage, load measured in \gls{rps}]{L4 Resource Usage: Load measured in \gls{rps}. Detailed results in \ref{results:l4}.}
+    \label{fig:l4_resource_usage_cpu}
+\end{figure}
+
+Database stats here:
+
+\begin{figure}[H]
+    \centering
+    \begin{subfigure}[c]{0.49\textwidth}
+        \centering
+        \includegraphics[width=\textwidth]{images/results/read-lectures/read-lectures_db_connections.png}
+        \caption{Database Connections vs. Load}
+        \label{fig:l4_db_connections}
+    \end{subfigure}
+    \hfill
+    \begin{subfigure}[c]{0.49\textwidth}
+        \centering
+        \small
+        \resizebox{\textwidth}{!}{
+            \input{tables/run-read-lectures_datastore_size.tex}
+        }
+        \caption{Data Store Size}
+        \label{fig:l4_data_size}
+    \end{subfigure}
+    \caption[L4 Database Usage, load measured in \gls{rps}]{L4 Database Usage: Load measured in \gls{rps}. Detailed results in \ref{results:l4}.}
+    \label{fig:l4_database}
+\end{figure}
+
+\subsubsection{L5: Get credits (TODO resource, data size)}
 \label{sec:l5}
 
 The GET /stats/credits endpoint retrieves a student's total collected credits. \autoref{fig:l5_combined} presents the endpoint's client-side and server-side latencies using a logarithmic y-axis.
@@ -293,7 +388,7 @@ The server latencies, displayed in \autoref{fig:l5_latency_vs_load_server}, diff
 
 \ref{slo-freshness} defined a threshold of 100ms inside which all writes shall be reflected on the read-side. This "freshness" is measured in the following test.
 
-\subsubsection{L6: Create Lecture, then Read}
+\subsubsection{L6: Create Lecture, then Read (TODO resource, data size)}
 
 This load test differs from others in the fact that each iteration executes 2 \gls{http} requests. The first request creates a lecture. After sleeping for 100ms --- the consistency threshold defined in \ref{slo-freshness} --- the script executes a request to \texttt{GET} the created lecture. If status code $404$ is returned, the write was not reflected in the read model in time. The rate of successful reads is recorded as a metric called $read\_visible\_rate$, presented in \autoref{fig:l6_read_visible_rate}. It can be seen that once exceeding 200 \gls{ips}, the ES-CQRS application failed to synchronize the read-side fast enough. \autoref{fig:l6_latency_vs_load} shows the latencies under varying loads. The $latency\_p50$ remains similar for both applications, however the ES-CQRS application's $latency\_p95$ increases with rising \gls{ips}, finally violating the threshold of 100ms defined in \ref{slo-latency} once exceeding 400 \gls{ips}.
 

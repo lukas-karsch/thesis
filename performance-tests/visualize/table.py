@@ -35,5 +35,7 @@ def render_table(
         rows=df.to_dict(orient="records"), label=label, caption=caption
     )
 
-    with open(output_path, "w") as f:
-        f.write(rendered_tex)
+    with open(output_path, "w") as o:
+        o.write(rendered_tex)
+
+    return o

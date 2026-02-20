@@ -8,39 +8,12 @@ from matplotlib import pyplot as plt
 
 from visualize.aggregate import aggregate_timeseries_prometheus_metrics
 from visualize.helper import get_metric_json
+from visualize.metrics import OPTIONS
 from visualize.style import APP_COLORS
-
-OPTIONS = {
-    "CPU_USAGE": {
-        "metric_json_name": "cpu_usage.json",
-        "metric_name": "process_cpu_usage",
-        "steady_state_start": 6,
-        "df_metric_name": "CPU Usage",
-        "title": "CPU Usage (%) vs. Load",
-        "ylabel": "CPU Usage (%)",
-        "y_multiply": 100,
-    },
-    "THREADPOOL_USAGE": {
-        "metric_json_name": "tomcat_threads_current_threads.json",
-        "metric_name": "tomcat_threads_current_threads",
-        "steady_state_start": 0,
-        "df_metric_name": "Threadpool Usage",
-        "title": "Threadpool Usage vs. Load",
-        "ylabel": "Threadpool Usage",
-    },
-    "DB_CONNECTIONS": {
-        "metric_json_name": "hikaricp_connections_active.json",
-        "metric_name": "hikaricp_connections_active",
-        "steady_state_start": 0,
-        "df_metric_name": "Database Connections",
-        "title": "Database Connections vs. Load",
-        "ylabel": "Database Connections",
-    },
-}
 
 THREADPOOL_LIMIT = 200
 
-rps_list = [25, 50, 100, 200, 500, 1000]
+rps_list = [25, 50, 100, 200, 500, 1000, 2000, 3000, 4000]
 
 
 def visualize_metric(METRIC: dict, base_path: Path, base_name: str) -> None:

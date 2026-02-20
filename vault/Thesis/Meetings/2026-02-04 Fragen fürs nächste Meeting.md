@@ -50,8 +50,9 @@ Technologies von Methodik gehört in implementation
 Significance: welcher Test, und wieso? 
 
 in der Methodik direkt aufführen, was Limitierungen, Schwächen sind 
-in Kapitel 7: "Threads of validity" als Section 
+### in Kapitel 7: "Threads of validity" als Section 
 - z.B. nur demoprojekt
 - könnte in großen Projekten anders aussehen 
 - nicht im Cluster getestet
-- Forschungsfragen final beantworten 
+
+Forschungsfragen final beantworten 

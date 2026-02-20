@@ -23,7 +23,7 @@ To transfer files from the VM to my local machine, use this combination of zip a
 cd performance-tests/
 zip -r run-k6.zip run-k6
 # on the local machine 
-scp -i "path/to/sshkey" thesis@vm_ip:code/performance-tests/run-k6.zip run-k6.zip
+scp -i proxmox thesis@192.168.178.110:code/performance-tests/run-k6.zip run-k6.zip
 ```
 ## Troubleshooting 
 **Docker permission denied:** (but this should be run by cloud-init, usually)
