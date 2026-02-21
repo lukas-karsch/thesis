@@ -1,5 +1,5 @@
 **Title**
-> **Performance, flexibility and traceability:** Assessing the Impact of Event Sourcing and CQRS compared to traditional systems with an audit log.
+> **Performance, flexibility and traceability:** Evaluating the Impact of Event Sourcing and CQRS compared to traditional systems with an audit log.
 
 **Primary research question**
 > How does an Event Sourcing architecture compare to CRUD systems with an independent audit log regarding performance, scalability, flexibility and traceability?

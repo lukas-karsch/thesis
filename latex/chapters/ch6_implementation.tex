@@ -4,23 +4,28 @@
 After defining functional and non-functional requirements, the two applications can be implemented. The implementation phase will be detailed in this chapter. After describing the utilized technologies, the \glspl{contract-test} executed on both applications are outlined. Next, implementation details of \acrshort{crud} and \acrshort{es}-\acrshort{cqrs} are given. Finally, the load tests are presented.
 
 \section{Endpoints}
+\label{sec:endpoints}
 
-TODO: is this needed?
-
-Table \autoref{table:endpoints} presents a feature matrix, mapping \acrshort{http} endpoints to their functionality. As this thesis focuses not on the functionality of an application, but instead an architectural comparison, not all implemented endpoints are listed.
+Table \autoref{table:endpoints} presents a feature matrix, mapping \acrshort{http} endpoints to their functionality. As this thesis focuses not on the functionality of an application, but instead an architectural comparison, only the endpoints which will later be load-tested are listed.
 
 \begin{table}[htp!]
     \small
     \centering
-    \begin{tabularx}{\linewidth}{lXl}
+    \begin{tabularx}{\linewidth}{lXc}
         \toprule
-        \textbf{Endpoint}    & \textbf{Description}                  & \textbf{Response} \\ \midrule
-        GET /lectures        & Get lectures a student is enrolled in & 200               \\
+        \textbf{Endpoint}                     & \textbf{Description}                                     & \textbf{Response} \\ \midrule
+        \texttt{GET /lectures}                & Gets all lectures a student is enrolled or waitlisted in & 200               \\
         \addlinespace
-        POST /courses/create & Used by professors to create a course & 201               \\
+        \texttt{POST /courses/create}         & Creates a course                                         & 201               \\
+        \addlinespace
+        \texttt{POST /lectures/\{id\}/enroll} & Enroll to a lecture                                      & 201               \\
+        \addlinespace
+        \texttt{GET /stats/credits}           & Gets a student's current credits                         & 201               \\
+        \addlinespace
+        \texttt{GET /stats/grades/history}    & Gets the grade history for an assessment                 & 201               \\
         \bottomrule
     \end{tabularx}
-    \caption{Selected endpoints implemented in the applications}
+    \caption{Endpoints which will be load-tested}
     \label{table:endpoints}
 \end{table}
 
@@ -45,9 +50,9 @@ PostgreSQL \footnote{\url{https://www.postgresql.org/}} is an open-source relati
 \subsection{JPA}
 \label{sec:jpa}
 
-\gls{jpa},\footnote{\url{https://jakarta.ee/specifications/persistence/}} formerly \emph{Java Persistence \gls{api}} is a Java specification which provides a mechanism for managing persistence and object-relational mapping. \glspl{orm} act as a bridge between the relational world of SQL databases and the object-oriented world of Java.
+\gls{jpa}\footnote{\url{https://jakarta.ee/specifications/persistence/}}, formerly \emph{Java Persistence \gls{api}} is a Java specification which provides a mechanism for managing persistence and object-relational mapping. \glspl{orm} act as a mapper between the relational world of SQL databases and the object-oriented world of Java~\cite[Chapter~1]{bauer_java_2016}.
 
-Instead of writing SQL to create the database schema, entities can be described using special Java classes, supported by annotations, which can be mapped to an SQL schema. \gls{jpa} allows querying the database for these entities in a type-safe way by providing a range of helpful query methods on \gls{jpa} repositories, for example \texttt{findAll()} or \texttt{findById(UUID id)}. This removes the need to write "low-level", database-specific SQL for basic \acrshort{crud} operations. Complex data retrieval is also possible with \acrshort{jpa} using the \acrfull{jpql}, which is an object-oriented, database-agnostic query language. TODO cite
+Instead of writing SQL to create the database schema, entities can be described using special Java classes, supported by annotations, which can be mapped to an SQL schema. Using an \keyw{EntityManager}, these entities can be persisted and queried~\cite[Chapter~3]{bauer_java_2016}.
 
 When using \acrshort{jpa} with SpringBoot by including the \javaname{spring-boot-starter-data-jpa} dependency, \emph{Hibernate}\footnote{\url{https://hibernate.org/orm/}} is used as implementation of the \acrshort{jpa} standard~\cite[Chapter~1]{bauer_java_2016}.
 
@@ -71,7 +76,7 @@ Axon Framework \footnote{\url{https://www.axoniq.io/framework}} is an open-sourc
 
 Axon also supports \acrlong{ddd} by providing tools to manage entities and domain logic~\cite{axoniq_introduction_2025,axoniq_messaging_2025}.
 
-Axon Server \footnote{\url{https://www.axoniq.io/server}} is a platform designed specifically for event-driven systems. It functions as both a high-performance Event Store and a dedicated Message Router for commands, queries, and events. By bundling these responsibilities into a single service, Axon Server replaces the need for separate infrastructures such as a relational database for events and a message broker like Kafka or RabbitMQ for communication. Axon Server is designed to seamlessly integrate with Axon Framework. When using the Axon Server Connector, the application automatically finds and connects to the Axon Server. It is then possible to use the Axon server without further configuration~\cite{axoniq_introduction_2025-1,axoniq_axon_2025}. % TODO book source 
+Axon Server \footnote{\url{https://www.axoniq.io/server}} is a platform designed specifically for event-driven systems. It functions as both a high-performance Event Store and a dedicated Message Router for commands, queries, and events. By bundling these responsibilities into a single service, Axon Server replaces the need for separate infrastructures such as a relational database for events and a message broker like Kafka or RabbitMQ for communication. Axon Server is designed to seamlessly integrate with Axon Framework. When using the Axon Server Connector, the application automatically finds and connects to the Axon Server. It is then possible to use the Axon server without further configuration~\cite{axoniq_introduction_2025-1,axoniq_axon_2025}.
 
 \subsubsection*{Command dispatching}
 
@@ -146,7 +151,7 @@ A Saga is associated with one or more association values, which are key-value pa
 
 For example, a Saga managing an order's lifecycle may be started by an \keyw{@OrderPlaced} event and associated with the \keyw{orderId}. It can then issue a \keyw{CreateInvoiceCommand} using an \keyw{invoiceId} generated inside the event handler. The Saga then associates itself with this ID to be notified of further events regarding this invoice, such as an \keyw{InvoicePaidEvent}.
 
-% TODO Show command and query gateway and illustrate example flow through an Axon application. 
+TODO Show command and query gateway and illustrate example flow through an Axon application? -> refer to "Tracing request flow"
 
 \subsection{SpringBoot Actuator}
 \label{sec:actuator}
@@ -183,16 +188,17 @@ k6 allows tests to be written in JavaScript, making it accessible and easy to in
 \section{Contract Test Implementation}
 \label{sec:contract-test-implementation}
 
-To ensure the implementations adhere to the contract, a test suite is implemented in a separate module called \javaname{test-suite}\footnote{\javaname{test-suite/src/test/java/karsch.lukas}}, according to  \autoref{sec:contract}. The test classes use the \texttt{JUnit 5}\footnote{TODO link} testing framework and \texttt{REST Assured}\footnote{\url{https://rest-assured.io/}} to send and assert \gls{http} requests. The test classes are abstract and must be extended by each prototype. Each test creates seed data through functions which are implementation-specific, meaning they have to be implemented by the respective implementation.
+To ensure the implementations adhere to the contract, a test suite is implemented in a separate module called \javaname{test-suite}\footnote{\javaname{test-suite/src/test/java/karsch.lukas}}, according to  \autoref{sec:contract}. The test classes use the \texttt{JUnit 5}\footnote{\url{https://docs.junit.org/5.14.3/overview.html}} testing framework and \texttt{REST Assured}\footnote{\url{https://rest-assured.io/}} to send and assert \gls{http} requests. The test classes are abstract and must be extended by both application to add implementation-specific functionality, such as teardown and seeding functions.
 
-Necessary infrastructure for these tests is spun up by the subclasses using \glspl{testcontainer}. \glspl{testcontainer} is a way to declare infrastructure dependencies as code and is an open-source library available for many programming languages~\cite{testcontainers-homepage}.
+Necessary infrastructure for these tests is spun up by the subclasses using \glspl{testcontainer}\footnote{\url{https://testcontainers.com/}}. \glspl{testcontainer} is a way to declare infrastructure dependencies as code and is an open-source library available for many programming languages~\cite{testcontainers-homepage}.
 
 \section{Shared Base Module}
 \label{sec:shared-base-module}
 
-The \texttt{api} module serves as base module for both implementations\footnote{\javaname{api/src/main/java/karsch.lukas}}. This module defines \glspl{dto}, implemented using Java records, and controller interfaces exposing these record classes as part of their \gls{api}. These interfaces are then implemented by each application. Additionally, the base \texttt{api} module contains utilities and shared logic, for example \hyperref[sec:actuator]{Actuator} endpoints to control the application's internal clock.\footnote{\javaname{api/src/main/java/karsch.lukas.time.}\keyw{DateTimeActuatorEndpoints}}
+The \texttt{api}\footnote{\javaname{api/src/main/java/karsch.lukas}} module serves as base module for both implementations. This module defines \glspl{dto}, which implemented using Java records, and controller interfaces exposing these record classes as part of their \gls{api}. These interfaces are then implemented by each application. Additionally, the base \texttt{api} module contains utilities and shared logic, for example \hyperref[sec:actuator]{Actuator} endpoints to control the application's internal clock.\footnote{\javaname{api/src/main/java/karsch.lukas.time.}\keyw{DateTimeActuatorEndpoints}}
 
-\section{Authentication and Authorization (TODO)}
+\section{Authentication and Authorization}
+\label{sec:authentication-authorization}
 
 Instead of implementing real authentication using a technology like Spring Security\footnote{\url{https://spring.io/projects/spring-security}}, a simple header-based mechanism was used to simulate an authenticated state. This approach relies on a custom \gls{http} header to attach session information to requests.
 
@@ -204,7 +210,7 @@ This solution removes the additional implementation complexity of cryptographica
 
 \section{CRUD implementation}
 
-This section presents the relevant aspects of the \acrshort{crud} implementation,\footnote{\javaname{impl-crud/src/main/java/karsch.lukas}} mainly focusing on relational modeling using \hyperref[sec:jpa]{\acrshort{jpa}} and the audit log implementation. TODO focus is weird
+This section presents the relevant aspects of the \acrshort{crud} implementation,\footnote{\javaname{impl-crud/src/main/java/karsch.lukas}} mainly focusing on relational modeling using \hyperref[sec:jpa]{\acrshort{jpa}} and the audit log implementation.
 
 \subsection{Architectural Overview}
 
@@ -213,27 +219,19 @@ The \acrshort{crud} application is built upon a traditional Layered Architecture
 While adhering to this layered structure, \emph{feature slicing} was additionally applied to enhance modularity. The application's components are grouped into logical, domain-specific modules such as \texttt{lectures}, \texttt{users}, \texttt{courses}, and \texttt{stats}. This slicing enables all relevant code for a particular feature to reside within its dedicated package. This approach aims to reduce coupling between functional areas of the application and makes it easier to locate and modify code related to a specific feature.
 
 \subsection{Data Modeling (TODO)}
+\label{sec:crud-data-modeling}
 
-The CRUD implementation uses a \hyperref[sec:crud]{normalized database} in the Third Normal Form. TODO!! this still shows auditing class. Create a new diagram; also note that Envers' created auditing tables are not shown here.
-TODO: explain that modeling "data" here means entity / relational modeling. Make the whole section less detailed
+All data in the CRUD implementation is present in the form of database / \gls{jpa} entities. Other objects like services and controllers are \emph{stateless}. The application uses a \hyperref[sec:crud]{normalized database} in the Third Normal Form.
 
 \begin{figure}[h]
-    \includegraphics[width=\textwidth, inner]{../vault/Thesis/images/CRUD_ER_Diagram_3.png}
+    \includegraphics[width=\textwidth]{images/diagrams_crud/CRUD_ER_Diagram.drawio.png}
     \caption{Entity Relationship Diagram for the CRUD App}
     \label{fig:crud-er-diagram}
 \end{figure}
 
-Figure \ref{fig:crud-er-diagram} shows the Entity Relationship Diagram for the CRUD app. It includes nine entities and a value object for the app's relational database schema. Each box corresponds to an entity or value object, with the bold text being the name. Below the table's name, all attributes of the entity are listed with their type and name.
+Figure \ref{fig:crud-er-diagram} shows the Entity Relationship Diagram for the CRUD app. It includes nine entities and a value object for the app's relational database schema. It should be noted that the auditing table created by Hibernate Envers are not present in the diagram. The diagram highlights that \keyw{LectureEntity} is the core entity in the system, having direct a relationship to many other entities.
 
-Arrows represent an association. The numbers at the end of the arrows convey the multiplicity. An arrow pointing in only one direction stands for a unidirectional association, while an arrow pointing in both directions conveys a bidirectional association. For example, an arrow pointing between entity \texttt{A} and entity \texttt{B} like so: $1 \longleftrightarrow 0..1$ shows that one \texttt{A} can be associated with any number of \texttt{B}'s, and a \texttt{B} is always associated with exactly one \texttt{A}. % TODO kinda unreadable 
-
-Arrows with a filled diamond represent a composition. Compositions are used when an entity has a reference to a value object. This value object has no identity and is directly embedded into the entity. The only value object in figure \ref{fig:crud-er-diagram} is the \keyw{TimeSlotValueObject}.
-
-In the app's ER diagram, the \keyw{LectureEntity} serves as core of the schema, having several key associations. The $0..* \longrightarrow 1$ association to \keyw{CourseEntity} shows that many lectures can be created from a course and a lecture is always associated with a course. The $0..* \longrightarrow  1$ association to \keyw{ProfessorEntity} shows that a professor can hold many lectures (or none), and that a lecture is always associated with a professor. From the lecture's side, these relationships are called "Many to One" relationships.
-
-\keyw{LectureEntity} also has "One to Many" relationships to \keyw{LectureWaitlistEntryEntity}, \keyw{EnrollmentEntity} and \keyw{LectureAssessmentEntity}. \keyw{LectureWaitlistEntryEntity} is a table which stores students who are waitlisted for a lecture. It is effectively a join table (with one extra column to track when the student was waitlisted) and represents a Many to Many relationship between lectures and students. The same applies to \keyw{EnrollmentEntity} which is a table storing which students are enrolled to which lecture. \keyw{LectureAssessmentEntity} represents the fact that a lecture can have many assessments (which may be an exam, a paper or a project). Each assessment in turn has many \keyw{AssessmentGradeEntity}s associated with it. This table stores which student scored which grade on an assessment. % TODO fix spacing 
-
-These entities are implemented using SpringBoot's \acrshort{jpa} integration. For example, an entity with a "One to Many" relationship can be implemented as presented in \autoref{lst:simple-one-to-many}.
+All entities and value objects are implemented using SpringBoot's \acrshort{jpa} integration. For example, an entity with a "One to Many" relationship can be implemented as presented in \autoref{lst:simple-one-to-many}. TODO: braucht man das so detailliert?
 
 \begin{lstlisting}[caption={Simple JPA entity with a "One to Many" relationship},captionpos=b,label={lst:simple-one-to-many}]
 %%@Entity%% 
@@ -246,22 +244,22 @@ class LectureEntity {
 }
 \end{lstlisting}
 
-The \javaname{@Entity} annotation informs \acrshort{jpa} that the class should be mapped to a database table. If the schema generation feature is enabled, \acrshort{jpa} automatically creates a table structure that mirrors the class definition. In production environments where this feature is typically disabled, developers must provide SQL scripts to manually define the expected structure. This is commonly achieved either by including a basic initialization script or by utilizing dedicated database migration tools such as Flyway or Liquibase to manage versioned schema changes.
+The \javaname{@Entity} annotation informs \acrshort{jpa} that the class should be mapped to a database table. If the schema generation feature is enabled, \acrshort{jpa} automatically creates a table structure that mirrors the class definition. In production environments where this feature is typically disabled, developers must provide SQL scripts to manually define the expected structure. This is commonly achieved either by including a basic initialization script or by utilizing dedicated database migration tools such as Flyway\footnote{\url{https://github.com/flyway/flyway}} or Liquibase\footnote{\url{https://www.liquibase.com/}} to manage versioned schema changes.
 
 Each entity must include a field annotated with \javaname{@Id}, which serves as the unique primary key for the corresponding database record.
 
 The \keyw{@OneToMany} annotation defines a relational link between two entities. While the collection is accessed in Java as a standard list via \keyw{lecture.getEnrollments()}, \acrshort{jpa} manages this behind the scenes using a foreign key relationship. The \texttt{fetch} parameter determines when this data is retrieved: \texttt{LAZY} loading defers the database query until the collection is explicitly accessed in the code, whereas \texttt{EAGER} loading fetches the related entities immediately alongside the parent object.
 
-\subsection{Request Handling (TODO)}
+\subsection{Request Handling}
 
-abc...
+The request handling process in the CRUD application follows the flow described in \autoref{sec:layered}. A request reaches one of the web controllers (classes annotated with \keyw{@Controller}). The controller delegates the request to a service object. The service applies business logic to create, update or retrieve entities from the database using one or several repositories. Finally, the service returns a \gls{dto}, which the controller wraps in a \gls{http} response that is sent back to the client.
 
 \subsection{Encapsulation and API Boundaries}
 \label{sec:crud-encapsulation-and-api-boundaries}
 
 The design of the \acrshort{crud} prototype aims to create a clear separation between the internal logic and the external API. This is primarily achieved through the shared \texttt{api} module, described in \autoref{sec:shared-base-module}, which defines the \glspl{dto} that form the public contract for all communication. The intention is that internal data structures like database entities are always converted to these \glspl{dto} before being exposed, encapsulating the implementation details. This creates a boundary between clients and service internals.
 
-However, achieving perfect encapsulation in a Layered Architecture proves challenging. While feature slicing was applied and \glspl{dto} provide a boundary at the controller level, the underlying entity classes are often referenced across different modules, especially when they have relationships with each other (for example, the \keyw{LectureEntity} and \keyw{CourseEntity}). Furthermore, services and repositories are frequently injected and called throughout the application, leading to a tightly coupled system where the boundaries between modules can become blurred. This may make it difficult to modify one part of the system without impacting others.
+However, achieving perfect encapsulation in a Layered Architecture proves challenging. While feature slicing was applied and \glspl{dto} provide a boundary at the controller level, the underlying entity classes are often referenced across different packages, especially when they have relationships with each other (for example, the \keyw{LectureEntity} and \keyw{CourseEntity}). Furthermore, services and repositories are frequently injected and called throughout the application, leading to a tightly coupled system where the boundaries between modules can become blurred. This may make it difficult to modify one part of the system without impacting others.
 
 \subsection{Auditing and Temporal Queries}
 \label{sec:crud-auditing}
@@ -271,7 +269,7 @@ There are several strategies to implement an audit log, each with its own trade-
 \begin{enumerate}
     \item \textbf{Manual Logging}: Developers explicitly call a logging service in every service method that modifies data. While simple, this can lead to code duplication and is prone to human error, such as developers forgetting to add a log statement. A simple code example is presented in \autoref{lst:audit-log-code-example}.
 
-          \begin{lstlisting}[caption={Code example for manual audit logging},captionpos=b,label={lst:audit-log-code-example}]
+          \begin{lstlisting}[caption={Code example for manual audit logging. Adapted from~\cite{fowler_audit_2004}},captionpos=b,label={lst:audit-log-code-example}]
 public void updatePhoneNumber(User user, int newNumber) {
     logChange(Date.now(), user, user.getPhoneNumber(), newNumber, "UserRequestedNumberChange");
     user.setPhoneNumber(newNumber);
@@ -286,8 +284,8 @@ void logChange(
 \end{lstlisting}
     \item \textbf{Database Triggers or Stored Procedures} can capture changes automatically and directly on the database. This guarantees that no change is missed, even if made outside the application. \textcite[515]{ingram_design_2009} mentions that database triggers run on a "per-record" basis, meaning the logic is run for each changed record individually. This may lead to degraded performance during batch operations, which is why stored procedures should be preferred over triggers for auditing concerns. It is also worth noting that this approach ties the auditing logic to a specific database, making it less portable.
     \item \textbf{JPA Entity Listeners}: JPA's lifecycle events (\texttt{@PrePersist}, \texttt{@PreUpdate}, etc.) can be used to intercept changes. Inside event handling functions designed for those events, it is possible to capture the changes and persist them in separate auditing tables. This approach is database-independent and keeps the logic within the Java application, allowing access to application internals like beans and Spring's security context. In full-grade applications built using Spring Security, the security context lets developers access the current user, making it possible to attach them to the new audit log entry. Additional context can also be added through thread-local or request-scoped variables~\cite[Section 13.2]{bauer_java_2016}. \label{item:jpa-entity-listener}
-    \item  \textbf{Hibernate Envers} is an auditing solution for JPA-based applications which automatically versions entities by using the concept of revisions. Envers creates an auditing table for each entity. These tables store historical data whenever a transaction is committed. Custom revision entities and change listeners can be implemented to capture additional context~\cite{hibernate_envers_nodate}. (TODO: is it true that Envers builds on JPA listeners?)
-    \item TODO: talk about CDC (change data capture) here or in \autoref{sec:audit-log}
+    \item \textbf{Hibernate Envers} is an auditing solution for JPA-based applications which automatically versions entities using the concept of revisions. Envers creates an auditing table for each entity. These tables store historical data whenever a transaction is committed. Custom revision entities and change listeners can be implemented to capture additional context~\cite{hibernate_envers_nodate}.
+    \item \textbf{Change Data Capture (CDC)} is the process of extracting all changes to a data store into a form that can be replicated to other systems. For example, a stream of changes can continuously be applied to a search index~\cite[Chapter 11]{kleppmann_designing_2017}.
 \end{enumerate}
 
 The audit log in the \acrshort{crud} prototype is implemented using Hibernate Envers. This solution was chosen because it seamlessly integrates with existing JPA entities to manage historical versions of data in dedicated audit tables.
@@ -361,17 +359,15 @@ public class UserRevisionListener implements RevisionListener {
 
 \subsubsection*{Global Auditing Configuration}
 
-Finally, the \texttt{AuditingConfig}\footnote{\javaname{impl-crud/src/main/java/karsch.lukas.audit.}\keyw{AuditingConfig}} configuration class connects the application's custom time provider to the JPA auditing infrastructure. This ensures that both the standard \texttt{createdAt} fields and the Envers revision timestamps are synchronized with the application's internal clock, which is essential for consistent testing. Additionally, the configuration connects the application's request context to the auditing infrastructure, providing information about the current user. In a full-grade application, Spring security would provide the user context, though for this project, a simpler solution was preferred, as described in (TODO).
+Finally, the \texttt{AuditingConfig}\footnote{\javaname{impl-crud/src/main/java/karsch.lukas.audit.}\keyw{AuditingConfig}} configuration class connects the application's custom time provider to the JPA auditing infrastructure. This ensures that both the standard \texttt{createdAt} fields and the Envers revision timestamps are synchronized with the application's internal clock, which is essential for consistent testing. Additionally, the configuration connects the application's request context to the auditing infrastructure, providing information about the current user. In a full-grade application, Spring security would provide the user context, though for this project, a simpler solution was preferred, as described in \autoref{sec:authentication-authorization}.
 
-\subsubsection{Reconstructing Historic State (TODO refine language)}
+\subsubsection{Reconstructing Historic State}
 
-Envers stores its revision data and historic records in specific auditing tables. While those hold the information necessary to reconstruct historic state, it is interesting to examine how well this state can \emph{actually} be recreated. Imagine a service method with the purpose of returning the history of grade changes made to one grade. Envers provides a specific \gls{api} which can be queried to reconstruct historical state. The mentioned service method is implemented in \keyw{StatsService}, as shown in \autoref{lst:envers-historical-query}.
+Envers stores its revision data and historical records in special auditing tables. These tables should contain all necessary information to reconstruct historic state. Envers provides a specific \gls{api} which can be queried to reconstruct historical state. This \gls{api} was used to implement the "reconstruction" use-case in the application which allows users to query their grade history for a specific assessment. The implementation of this service method is outlined in \autoref{lst:envers-historical-query}.
 
-First, \acrshort{jpa}'s entity manager is used to obtain an instance of the AuditReader class, which provides methods to create historic queries. Using the \keyw{reader.createQuery()} method, it is possible to create a query instance by matching a specific class for which revisions shall be fetched, as well as adding a filter to match the relevant entity using its ID.
+First, \acrshort{jpa}'s entity manager is used to obtain an instance of the AuditReader class, which provides methods to create historic queries. Using the \keyw{reader.createQuery()} method, it is possible to create a query instance by matching a specific class for which revisions shall be fetched, as well as adding a filter to match the relevant entity using its ID. Beyond filtering revisions by ID, Envers enables developers to add additional matchers based on revision properties. Here, the revision property \keyw{timestamp} is used to define the relevant date bounds.
 
-In this use-case, a date filter is part of the \gls{api}. Envers enables developers to add additional matchers based on revision properties. In this case, the revision property \keyw{timestamp} is used to define lower and upper date bounds, inside which the changes are relevant.
-
-Once the query is built, the result list can be fetched, which is a list containing arrays of objects. More precisely, though not reflected by the type, each list entry is a tuple. Its first value is the historic entity, its second value is the revision entity which was created for this specific revision. Because a custom revision entity is registered, the type of this revision entity is \keyw{CustomRevisionEntity}.
+Once the query is built, the result list can be fetched. The result is a list containing arrays of objects. More precisely, each list entry is a \emph{\gls{tuple}}. The first value is the historic entity, and the second value is the revision entity created for this specific revision. Because a custom revision entity is registered, the type of this revision entity is \keyw{CustomRevisionEntity}.
 
 \begin{lstlisting}
 public GradeHistoryResponse getGradeHistory(
@@ -439,13 +435,16 @@ As reads pass through the same components as writes, a subsequent read request i
 
 The architecture of the \texttt{impl-es-cqrs} application \footnote{\javaname{impl-es-cqrs/src/main/java/karsch.lukas}} differs from the traditional layered architecture seen in the \texttt{impl-crud} application. While the CRUD implementation also has some vertical slicing, the ES-CQRS implementation is much more explicit about it. The code is organized into "features", each representing a vertical slice of the application's functionality (e.g., \texttt{course}, \texttt{enrollment}, \texttt{lectures}). Each feature is self-contained and includes its own command handlers, event sourcing handlers, query handlers, and its own web controller, if needed.
 
-A "feature slice" architecture is descriptive and able to communicate the features of a project at a glance. As clean architecture is not in the scope of this thesis, the separation into features with clear naming conventions for command and query components is sufficient, however introducing completely separate modules for the command and read sides would have increased the project structure's readability even more by clearly showing how command and read side have no access to each other. % TODO reference for "feature slicing" 
+An architecture like this is descriptive and able to communicate the features of a project at a glance. As clean architecture is not in the scope of this thesis, the separation into features with clear naming conventions for command and query components is sufficient. It should be mentioned that in many "vertical slice" architectures, the separation goes even further than described here, creating separate packages for each use-case, such as \keyw{GetOrder}, \keyw{PlaceOrder}, and so on.
 
 \subsection{Data Modeling}
 
-TODO
+TODO: Aggregates, Sagas, Commands and Events. Projections and Lookup tables.
 
 \subsection{Request Handling}
+\label{sec:es-cqrs-request-handling}
+
+This section describes how different components of the ES-CQRS application handle request. Diagrams illustrating both commands and queries are available in \autoref{sec:es-cqrs-tracing-request-flow}.
 
 \subsubsection{Command Side}
 \label{sec:command-side}
@@ -455,7 +454,7 @@ The command side is responsible for handling state changes in the application. I
 \paragraph{Aggregates and Set-Based Validation}
 \label{sec:aggregates-and-set-based-validation}
 
-Aggregates are the core components of the command side. They represent a consistency boundary for state changes. In this implementation, an example of an aggregate is the \keyw{CourseAggregate} \footnote{\javaname{impl-es-cqrs/src/main/java/karsch.lukas.features.course.commands.CourseAggregate}}. It handles the \keyw{CreateCourseCommand}, validates it, and if successful, emits a \keyw{CourseCreatedEvent}.
+Aggregates are the core components of the command side. They represent a consistency boundary for state changes. In this implementation, an example of an aggregate is the \keyw{CourseAggregate}\footnote{\javaname{impl-es-cqrs/src/main/java/karsch.lukas.features.course.commands.CourseAggregate}}. It handles the \keyw{CreateCourseCommand}, validates it, and if successful, emits a \keyw{CourseCreatedEvent}.
 
 Before creating a course, the system must verify that all the specified prerequisite courses actually exist. This is handled by the \keyw{ICourseValidator},\footnote{\javaname{impl-es-cqrs/src/main/java/karsch.lukas.features.course.commands.ICourseValidator}} which is injected into the aggregate's command handler. The validator employs set-based validation as described in \autoref{sec:set-based-validation}. Once the prerequisite courses are validated, a \keyw{CourseCreatedEvent} is emitted. Otherwise, a specific \keyw{MissingCoursesException} is thrown, indicating that command handling was rejected.
 
@@ -467,7 +466,7 @@ Not all commands can be handled by a single aggregate. For instance, assigning a
 \paragraph{Sagas for Process Management}
 \label{sec:sagas-for-process-management}
 
-Sagas are used to manage long-running business processes that span multiple aggregates. The \texttt{AwardCreditsSaga} is a prime example. It is initiated when an \keyw{EnrollmentCreatedEvent} occurs. The saga then waits for a \keyw{LectureLifecycleAdvancedEvent} with the status \texttt{FINISHED}. Once this event is received, the saga sends an \keyw{AwardCreditsCommand} to the \keyw{EnrollmentAggregate}. The saga ends when it receives a \keyw{CreditsAwardedEvent}. This ensures that credits are only awarded after a lecture is finished and all assessments have been graded. It is interesting to note that while the CRUD application calculates awarded credits based on the current state of a lecture, in the ES-CQRS implementation, the fact that credits are awarded after finishing a lecture is explicit. Even when changing the Saga later on, credits which have already been awarded will not be revoked, unless additional, explicit logic is implemented (e.g. by applying a \keyw{CreditsRevokedEvent}). % TODO keep elaborating on traceability here, OR move it to the end / Fazit.
+Sagas are used to manage long-running business processes that span multiple aggregates. The \texttt{AwardCreditsSaga} is a prime example. It is initiated when an \keyw{EnrollmentCreatedEvent} occurs. The saga then waits for a \keyw{LectureLifecycleAdvancedEvent} with the status \texttt{FINISHED}. Once this event is received, the saga sends an \keyw{AwardCreditsCommand} to the \keyw{EnrollmentAggregate}. The saga ends when it receives a \keyw{CreditsAwardedEvent}. This ensures that credits are only awarded after a lecture is finished, and all assessments have been graded. It should be noted that while the CRUD application calculates awarded credits based on the current state of a lecture, in the ES-CQRS implementation, the fact that credits are awarded after finishing a lecture is explicit. Even when changing the logic of the Saga later on, credits which have already been awarded will not be revoked, unless additional, explicit logic is implemented (e.g. by applying a \keyw{CreditsRevokedEvent}). % TODO keep elaborating on traceability here, OR move it to the end / Fazit.
 
 \subsubsection{Read Side}
 \label{sec:read-side}
@@ -478,7 +477,7 @@ When the system is queried, the queries are routed to the read side. The read si
 
 In the context of the ES-CQRS implementation, a good example of a projector that stores denormalized data for efficient querying is the \keyw{LectureProjector}. It demonstrates the fact that each projector maintains its own view of the system. Projectors must not query the system using Axon's \keyw{QueryGateway} to get access to any data needed for the projection. One reason for that is the fact that when \emph{rebuilding} projections, a common use case in event sourcing, the projectors should be able to run in parallel. If projectors depend on each other, this can result in one projection attempting to query data from another projection that is not yet up to date. This is why the \keyw{LectureProjector} not only maintains a view of lectures, but also of courses, professors and students, which are then used when building the lecture's projection.
 
-The projector also illustrates how the projection's database entities are designed: they are built in the same way as the DTO which is returned from the query handler. Arrays and associated objects are not stored via foreign keys but are instead serialized to \acrshort{json}. This allows the retrieval of all the necessary data to respond to a query with a simple \texttt{SELECT} statement. The same concepts apply to all other projectors in the ES-CQRS implementation.
+The projector also illustrates how the projection's database entities are designed: they are built in the same way as the DTO which is returned from the query handler. Arrays and associated objects are not stored via foreign keys but are instead serialized to \acrshort{json}. This allows the retrieval of all the necessary data to respond to a query with a single \texttt{SELECT} statement. The same concepts apply to all other projectors in the ES-CQRS implementation.
 
 \subsubsection{Synchronous Responses with Subscription Queries}
 \label{sec:synchronous-responses-with-subscription-queries}
@@ -533,9 +532,9 @@ public GradeHistoryResponse getGradeHistory(
 }
 
 \subsection{Tracing Request Flow}
-\label{sec:tracing-request-flow}
+\label{sec:es-cqrs-tracing-request-flow}
 
-This section illustrates the flow of commands and queries through the system. Axon's \keyw{CommandGateway} and \keyw{QueryGateway} are used in controllers to decouple them from the internals of the application. The gateways create location transparency: a controller does not need to know where its commands and queries are being routed to. % TODO reference 
+This section illustrates the flow of commands and queries through the system. Axon's \keyw{CommandGateway} and \keyw{QueryGateway} are used in controllers to decouple them from the internals of the application. The gateways create location transparency: a controller does not need to know where its commands and queries are being routed to --- the message may be handled inside the same JVM or on a different machine~\cite{axoniq_messaging_2025}.
 
 Because reads and writes take different paths through the application, two separate diagrams are presented.
 
@@ -679,11 +678,11 @@ The core logic within \keyw{perf\_runner.py} follows a defined flow for every si
 
 Once the application is healthy, the script sets up Prometheus for server-side monitoring. After dynamically generating a \javaname{prometheus.yml} configuration file, a Prometheus container is started, targeted to scrape the application under test. To ensure short-term spikes in latency or resource consumption can be captured, the configuration defines a polling interval of 2 seconds.
 
-With the environment and monitoring active, the script invokes k6. Configuration parameters for the test run are expected to be defined in \javaname{metric.json}, which is a file placed alongside a test script. It includes metadata and parameters such as the number of \acrshortpl{VU} and the target host URL. These parameters are passed directly to the k6 engine via environment variables. Inside the k6 scripts, the \acrshortpl{VU} environment variable is used to define the arrival rate within the ramping-arrival-rate executor rather than a fixed number of concurrent users. Because k6 is configured to trigger a specific number of iterations per second, this parameter effectively acts as a control for Requests Per Second (RPS), ensuring the load remains consistent regardless of how long the individual HTTP calls take to complete. % TODO unverständlicher satz wahrscheinlich
+With the environment and monitoring active, the script invokes k6. Configuration parameters for the test run are expected to be defined in \javaname{metric.json}, which is a file placed alongside a test script. It includes metadata and parameters such as the number of \acrshortpl{VU} and the target host URL. These parameters are passed directly to the k6 engine via environment variables. Inside the k6 scripts, the \texttt{VU} environment variable defines the arrival rate for the \texttt{ramping-arrival-rate} executor. Unlike a fixed concurrency model, this approach ensures a consistent load by triggering a specific number of iterations per second. By decoupling the request rate from the response time of individual \gls{http} calls, the script maintains consistent pressure on the system even if latency fluctuates during the test.
 
-After k6 completed its load generation, the script enters a data-extraction phase. It queries the Prometheus API to retrieve system-level metrics. Next, it parses the k6-summary.json file, which is a file generated by k6 that includes all metrics recorded during the run. The collected data is processed and merged into standardized CSV files (client\_metrics.csv and server\_metrics.csv).
+After k6 completes its load generation, the script enters a data-extraction phase. It queries the Prometheus API to retrieve system-level metrics. Next, it parses the k6-summary.json file, which is a file generated by k6 that includes all metrics recorded during the run. The collected data is processed and merged into standardized CSV files (client\_metrics.csv and server\_metrics.csv).
 
-Once all data is extracted, the system is ready for the next run. To prepare the environment, all containers need to be stopped first. That is done by running \javaname{docker compose down -v} inside the \gls{docker} remote context, with the \texttt{-v} argument explicitly removing all docker volumes. This makes sure PostgreSQL's and Axon Server's data stores are emptied out before the next test iteration.
+Once all data is extracted, the system is ready for the next run. To prepare the environment, all containers need to be stopped first. That is done by running \javaname{docker compose down -v} inside the \gls{docker} remote context, with the \texttt{-v} argument explicitly removing all docker volumes. This ensures a clean state by purging the persistent data stores of PostgreSQL and Axon Server.
 
 While \javaname{perf\_runner.py} manages the lifecycle of a single test, \javaname{many\_runs.py} acts as a high-level orchestrator, designed to automate large-scale comparative benchmarks by executing multiple iterations across both implementations by running a single command. The script can be configured to run an arbitrary number of tests, which will be executed for both applications. The script accepts the metric configuration files and passes them on to \javaname{perf\_runner.py}.
 

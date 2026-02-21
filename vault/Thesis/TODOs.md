@@ -15,30 +15,21 @@
 	    - examine default lock type, if i have any race conditions, @Version usage 
     - CQRS
 	    - try to use TEPs in my E2E tests
-	    - use @SequenceNumber aggregateVersion in repositories (https://github.com/idugalic/digital-restaurant/blob/master/drestaurant-apps/drestaurant-monolith-rest/src/main/kotlin/com/drestaurant/query/handler/RestaurantHandler.kt) ??
-	    - maybe set subscribing processors in bean, not application.properties 
 	    - unit test event handlers and aggregates 
-		- every projection needs to handle events it cares about, DON'T query local 
+		- every projection needs to handle events it cares about, DON'T use query gateway
 		- is it clean that the lookup tables are injected into every command side? -> should they also keep their own projections? but they would have to be subscribing anyways.. so maybe it doesnt matter because its a "smell" either way 
 		- make sure event handlers are idempotent 
 			- [[2025-12-16 Problems with my Axon projections]]
 		- add @Version to projection entities; retry on OptimisticLockException 
 	- **Tests**
-		- Performance test for recreating historic state 
 		- Introduce a more complex / arbitrary historic query? 
 		- Enroll student to more courses in "read-lectures" 
-		- "get grades" load test 
 		- another really complex load test (most JOINs i can find)
 		- historical reconstruction load test 
 		- read lecture details 
-		- **Profile performance of applications**
-			- read-lectures: CQRS is slower. i supect JSON deserialization is the issue - should profile this! 
 - Statistical significance: https://de.wikipedia.org/wiki/Wilcoxon-Mann-Whitney-Test
-- Script to aggregate time series data in a table.
 - **Writing** 
 	- Unify naming of load vs performance testing 
-	- Discussion: Mention that when trying to audit _read_ operations, event sourcing is not sufficient. 
-	- add Envers to tech stack 
 	- [[2026-02-04 Fragen fürs nächste Meeting]]
 	- "load testing" vs "stress testing"?
 	- Feedback von Jordine einarbeiten 
@@ -46,12 +37,6 @@
 	- Move metrics and load testing basics from Methodology to Basics?
 	- Fix ER diagram of CRUD app, simplify explanation 
 	- Tabellen: Mean durch Median ersetzen 
-## Urgent
-- Think of title 
-	- Aktikkalmaz & Jordine Bescheid geben 
-- Tests
-	- get-credits: 4000 RPS 
-	- enroll: 1000 RPS 
 ## Before Finishing
 - Check READMES 
 - Clone repo in blank folder, check everything works
@@ -60,10 +45,11 @@
 - Make sure external links all exist (e.g. to Docker, Axon, etc)
 - Push to GitHub aswell and add the repo link to latex file
 - Check all internal links in latex (to source code)
-- Tag final commit on date of submission 
+- **Tag final commit on date of submission** 
 - Add all used AI tools to appendix 
 - Check that research question is correct everywhere 
 - Unterschrift im PDF platzieren
 - Make sure all versions are pinned in pom.xml 
 - Make sure glossary entries and acronyms can all be resolved -> check latex compiler logs 
-- Glossar entries hinzufügen
+- Glossary entries hinzufügen
+	- all flexibility metrics

@@ -40,11 +40,11 @@ The size of the data store is calculated differently for both applications. The 
 
 The total data store size for the ES-CQRS application is defined as the sum of the PostgreSQL projection size and the allocated Axon storage. It is important to note that Axon Server allocates storage in fixed-size segments (or "pages") of 4MB. Because these segments are allocated eagerly, the total storage includes a minimum overhead of 8MB (one 4MB segment each for events and snapshots), regardless of the actual data density within those blocks. Consequently, the measured size represents the allocated capacity rather than the literal byte-count of the stored records.
 
-\subsection{Graphs}
+\subsection{Graphs (TODO)}
 
-In graphs that show latencies, the shaded areas in the line graphs represent the \emph{standard deviation} of the latency measurements, indicating the statistical spread or variance around the median performance at each load level. Wider areas of standard deviation indicate that the applications experience a wider range of response times.
+In graphs that show latencies, the shaded areas in the line graphs represent the \emph{confidence interval (CI)} of the latency measurements. TODO: explain CI.
 
-Graphs showing resource consumption typically show the area between the 25th and 75th percentile in the shaded area, also called \emph{\gls{iqr}}.
+Graphs showing resource consumption typically show the area between the 25th and 75th percentile in the shaded area, also called \emph{\gls{iqr}}. TODO: does this make sense or should it also be CI?
 
 TODO: Explain boxplots.
 
@@ -281,11 +281,11 @@ When measuring read performance, no data is created during load generation. Ther
 
 In the client-side graph (\autoref{fig:l4_latency_vs_load_client}), both applications maintain $latency\_p50$ and $latency\_p95$ of below 10ms up to 3000 \gls{rps}. At 3000 \gls{rps}, the ES-CQRS application exhibits an around 6x higher $latency\_p95$ than the CRUD app. Beyond 3000 \gls{rps}, though, the CRUD latencies overtake the ES-CQRS latencies. At 4000 \gls{rps}, the ES-CQRS application exhibits a $latency\_p95$ of around 370ms, which is around 1.7x faster than  the CRUD application at 620ms and a $latency\_p50$ of 20ms, around a 6x speedup compared to CRUD.
 
-Both applications violate \ref{slo-latency} beyond 3000 \gls{rps}. It can also be noted that the standard deviation, indicated by the shaded areas, grows wider, especially in the CRUD application.
+Both applications violate \ref{slo-latency} beyond 3000 \gls{rps}.
 
 It should be noted that at 4000 RPS, tests on both applications dropped some iterations with a $dropped\_iterations\_rate$ of roughly 2, meaning about 2 iterations, or about 0.05\% of iterations, were dropped per second. However, this metric exhibits high variance. Because the confidence intervals exceed the mean values, the results for this specific metric are not statistically significant (see \autoref{table:run-read-lectures_client}).
 
-The server-side graph, presented in \autoref{fig:l5_latency_vs_load_server}, initially shows a similar pattern. Once exceeding 3000 \gls{rps}, the latencies also start increasing, however, the observed increase is not as strong as in the client-side latencies. At 4000 \gls{rps}, the ES-CQRS application shows a $latency\_p95$ of around 60ms, the CRUD application has a $latency\_p95$ of around 130ms. The standard deviation does not grow as wide as in the client-side graph.
+The server-side graph, presented in \autoref{fig:l5_latency_vs_load_server}, initially shows a similar pattern. Once exceeding 3000 \gls{rps}, the latencies also start increasing, however, the observed increase is not as strong as in the client-side latencies. At 4000 \gls{rps}, the ES-CQRS application shows a $latency\_p95$ of around 60ms, the CRUD application has a $latency\_p95$ of around 130ms.
 
 \begin{figure}[H]
     \centering

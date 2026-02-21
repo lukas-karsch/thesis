@@ -123,7 +123,7 @@ def _lineplot_latency_vs_users(
                     linestyle="--" if metric == "latency_p95" else "-",
                     color=APP_COLORS[app],
                     label=f"{pretty_name(app)} {label}",
-                    errorbar="sd",
+                    errorbar="ci",
                     ax=ax,
                 )
 
