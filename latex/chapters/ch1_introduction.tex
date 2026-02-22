@@ -17,28 +17,23 @@ To provide a comprehensive answer, the following three sub-research questions (R
 
 The individual findings from these research questions are combined in the conclusion to provide a holistic answer to the primary research question.
 
-\section{Goals and non goals (TODO)}
+\section{Goals and non goals}
+\label{sec:goals-and-non-goals}
+
+This section defines the scope of the thesis by outlining the specific objectives to be achieved, as well as boundaries that will not be addressed.
+
+\subsection{Project Goals}
 \label{sec:goals}
 
-This section describes the goals and non-goals of the thesis.
+The primary objective of this thesis is to develop two distinct prototype implementations that share an identical interface and follow the same functional contract. One application follows a traditional CRUD-based, layered architecture, while the other utilizes \gls{cqrs} and \gls{es}. Both systems are built using Spring Boot and PostgreSQL, with the \gls{es}/\gls{cqrs} implementation additionally using the Axon Framework and Axon Server. A core goal is to implement both applications according to their respective industry best practices to ensure a fair comparison.
 
-Goals:
+The comparison focuses on providing quantitative measurements regarding performance and scalability under increasing loads. Furthermore, the thesis evaluates architectural flexibility using established static analysis metrics and uses existing literature to form a reasoned opinion on the traceability of both systems. To ensure the results represent typical developer experiences, the performance comparisons rely on out-of-the-box Spring Boot configurations rather than custom-tuned environments. A major focus of the performance evaluation lies on the reproducibility and reliability of these results, which is achieved through reproducible, code-only \gls{vm} configurations, repeatable test scripts, and executing many test iterations to minimize statistical outliers.
 
-\begin{itemize}
-    \item Create two implementations adhering to an identical interface
-    \item Provide quantitative measurements of performance, architectural flexibility and traceability
-    \item Implement both applications "the best they can be": according to principles and best practices for both architectures
-    \item Use out-of-the box configurations to provide the performance comparisons
-\end{itemize}
+\subsection{Non-Goals}
+\label{sec:non-goals}
 
-Non-goals:
+There are several areas that fall outside the scope of this research to keep the focus on the core architectural comparison. While the \gls{es}/\gls{cqrs} application uses domain-driven principles, it is not a goal to achieve perfect \gls{ddd} semantics. Similarly, the thesis does not aim to find the absolute maximum performance of either system through fine-tuning or specialized infrastructure configurations.
 
-\begin{itemize}
-    \item Perfectly implement DDD semantics
-    \item Tune applications / configurations to get the best performance
-    \item Implement mechanics to support schema evolution
-    \item Implement full-grade application using security best practices, etc -> custom RequestContext with own "authorization" methods
-    \item Creating a "real", usable application with GUI
-\end{itemize}
+From a technical standpoint, the implementations do not include mechanics to support schema evolution or data migration over time. Security is also not a primary focus. While basic authorization is handled through a custom RequestContext, the applications do not follow full-grade production security best practices. Finally, the project aims to create a functional backend for testing purposes rather than a "real" usable application, which means no graphical user interface (GUI) is developed.
 
 \section{Structure of the thesis (TODO)}
