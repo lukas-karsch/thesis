@@ -31,7 +31,7 @@ def get_metric_json(base_path: Path) -> Path:
     if metric_path.is_file():
         return metric_path
 
-    raise ValueError(f"'{metric_path} does not exist")
+    raise ValueError(f"'You have not placed the metric.json file at {metric_path}.")
 
 
 def get_median_ci(series):
@@ -60,3 +60,19 @@ def get_significance(p):
     if p <= 0.05:
         return "*"
     return "n.s."
+
+
+def get_ratio_representation(med_crud, med_cqrs) -> str:
+    ratio = med_crud / med_cqrs if med_cqrs != 0 else 0
+    if round(ratio, 1) == 1:
+        comparison = "1.0x"
+    elif ratio != 0:
+        comparison = (
+            f"{round(ratio, 1)}x Lower"
+            if ratio >= 1
+            else f"{round(1 / ratio, 1)}x Higher"
+        )
+    else:
+        comparison = "NaN"
+
+    return comparison

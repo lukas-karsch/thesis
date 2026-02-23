@@ -28,13 +28,9 @@ Furthermore, every resource in \gls{rest} applications must be addressable via a
     \label{table:resource-metadata-mapping}
 \end{table}
 
-The "\acrfull{hateoas}" principle states that resources should be linked to each other. Clients should be able to control the application by following a series of links provided by the server \cite{tilkov_brief_2007}.
-
 Every resource must support the same interface, usually \gls{http} methods (GET, POST, PUT, etc.) where operations on the resource correspond to one method of the interface. For example, a POST operation on a customer might map to the \texttt{createCustomer()} operation on a service.
 
-Resources are decoupled from their representations. Clients can request different representations of a resource, depending on their needs \cite{tilkov_brief_2007}: a web browser might request \acrshort{html}, while another server or application might request \acrshort{xml} or \acrshort{json}.
-
-TODO: replace Tilkov source, its a blog post
+In \gls{rest}, Resources are decoupled from their representations. Clients can request different representations of a resource, depending on their needs \cite{fielding_architectural_2000}. For example, a web browser might request \acrshort{html}, while another server or application might request \acrshort{xml} or \acrshort{json}.
 
 \section{Layered Architecture}
 \label{sec:layered}
@@ -192,7 +188,7 @@ Event-driven Architecture is a design paradigm where systems communicate via the
 
 \acrlong{es} is an architectural pattern within the landscape of Event-driven Architectures. \acrlong{es} ensures that all changes to a system's state are captured and stored as an ordered sequence of domain events. Unlike traditional persistence models that overwrite data and store only the most recent state, event sourcing maintains an immutable record of every action taken over time. These events are persisted in an append-only event store, which serves as the principal source of truth from which the current system state can be derived~\cite[457,458]{kleppmann_designing_2017}.
 
-The current state of any entity in such a system can be rebuilt by replaying the history of events from the log, starting from an initial blank state~\cite{fowler_event_2005}. To address the performance costs of replaying thousands of events for every request, developers implement projections or materialized views, which are read-only, often denormalized versions of the data optimized for specific queries~\cites{malyi_developing_2024}[461,462]{kleppmann_designing_2017}. This separation of concerns is frequently managed by pairing event sourcing with the \gls{cqrs} pattern described in \autoref{sec:cqrs}, which physically divides the data structures used for reading from those used for writing state changes~\cite[50]{young_cqrs_2010}. TODO: Zusammenhang CQRS und DDD (Aggregates) unklar
+The current state of any entity in such a system can be rebuilt by replaying the history of events from the log, starting from an initial blank state~\cite{fowler_event_2005}. To address the performance costs of replaying thousands of events for every request, developers implement projections or materialized views, which are read-only, often denormalized versions of the data optimized for specific queries~\cites{malyi_developing_2024}[461,462]{kleppmann_designing_2017}. This is frequently managed by pairing event sourcing with the \gls{cqrs} pattern described in \autoref{sec:cqrs}, which physically divides the data structures used for reading from those used for writing state changes~\cite[50]{young_cqrs_2010}. This architecture frequently applies \gls{ddd} principles, where commands are processed by Aggregates. The combination of \gls{cqrs}, \gls{es}, and \gls{ddd} is central to Axon Framework, which serves as the technical foundation for this study's \gls{es}/\gls{cqrs} prototype. Consequently, the following sections adopt Axon's semantics when describing the interaction between these patterns.
 
 \autoref{fig:rehydration} demonstrates the process of state reconstruction in an event-sourced \gls{cqrs} system using \gls{ddd}. To process a new command, the Aggregate must first be rehydrated to its current state. It (e.g., $ID=1$) is rehydrated by iterating through the event stream and applying those events that target its unique identifier. Events belonging to other aggregates are ignored during this process. Through applications of the events, the Aggregate transitions from its initial blank state to its current, functional state.
 

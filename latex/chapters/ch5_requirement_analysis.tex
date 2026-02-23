@@ -4,10 +4,12 @@
 This thesis aims to provide a fair, quantitative comparison of \acrshort{crud} and \acrshort{cqrs}-\acrshort{es} architectures regarding all three research questions. To achieve this, the architectures should be applied not only to the same domain, but to the exact same requirements.
 
 \section{Functional Requirements}
+\label{sec:functional-requirements}
 
 A functional requirement describes a specific behavior that a product must exhibit under specific circumstances. These requirements specify what the system \emph{does} by detailing the capabilities and functions the solution must possess to allow users to perform their tasks~\cite[4]{wiegers_software_2023}. To ensure clarity regarding exactly how the system should behave, functional requirements are often written using patterns that include the keyword "shall," such as "The system shall let the user do something"~\cite[109]{wiegers_software_2023}.
 
-\subsection{Project description}
+\subsection{Project Description}
+\label{sec:project-description}
 
 The applications will implement a course enrollment and grading system which might for example be used in universities. Professors can create courses and lectures which students can enroll to. These lectures can have assignments, which professors enter grades for. Once a lecture is finished, final grades and awarded credits can be calculated. Students are able to view their enrollments, grades and credits.
 
@@ -22,24 +24,23 @@ Courses are the "blueprints" for lectures. Lectures are the "implementation" of 
 
 A lecture can have several assessments. Each assessment has a type. The professor can enter grades for a student and an assessment. Grades are integers in the range of 0 to 100. Credits are awarded to a student as soon as they completed all assessments for a lecture with a passing grade (grade higher than 50) and once a lecture's status is set to finished.
 
-\subsection{Business rules}
+\subsection{Business Rules and System Constraints}
 \label{sec:business-rules}
 
 Relationships and business rules in this system are deliberately chosen complex, involving many relationships between \hyperref[sec:entities]{entities} and intricate validation rules. This approach was adopted in order to be able to make realistic assumptions about the research question by evaluating a project that closely resembles complex, real-world scenarios.
 
-\subsection{Resulting functional requirements}
-
-Based on the domain described above, the following list presents a selection of functional requirements. As this thesis focuses on an architectural comparison, not every functional requirement going into the application is listed. TODO: refine / these are not really "functions" in itself. Explain it better.
+Based on the domain described in \autoref{sec:project-description}, the following list presents a selection of constraints and rules which are central to the system. As this thesis focuses on an architectural comparison, not every functional requirement going into the application is listed explicitly.
 
 \begin{itemize}
-    \item Existence checks: any requests including references to entities shall fail if the references entities do not exist.
-    \item Requests leading to conflicts, for example creating a lecture with overlapping time slots, shall fail.
+    \item Referential Integrity: The system shall verify the existence of all referenced entities during request handling. Requests involving non-existent entities shall be rejected.
+    \item The system shall prevent conflicts such as time slot overlaps.
     \item When a student tries enrolling to a lecture which is already full, they shall be put on a waitlist.
     \item When a student disenrolls from a lecture, the next eligible student (higher semesters are preferred) shall be enrolled.
-    \item Actions on a lecture shall only be performed during the appropriate lifecycle state (enrolling only when the lifecycle is "open for enrollment", grades shall only be assigned when the lecture is "finished").
+    \item Actions on a lecture shall only be performed during the appropriate lifecycle state. For example, enrolling shall only be possible during a lifecycle of "open for enrollment". Grades shall only be assigned when the lecture is "finished".
 \end{itemize}
 
-\section{Non-functional requirements}
+\section{Non-functional Requirements}
+\label{sec:non-functional-requirements}
 
 A non-functional requirement, often referred to as a \emph{quality attribute}, describes the quality or performance characteristics of a solution~\cite[4]{wiegers_software_2023}. Rather than defining \emph{what} the product does, these requirements focus on \emph{how well it functions}. They establish specific goals or constraints for the design and implementation, such as targets for security, availability, or response time, to ensure the system satisfies user expectations~\cite[67]{wiegers_software_2023}.
 

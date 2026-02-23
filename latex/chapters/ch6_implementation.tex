@@ -218,7 +218,7 @@ The \acrshort{crud} application is built upon a traditional Layered Architecture
 
 While adhering to this layered structure, \emph{feature slicing} was additionally applied to enhance modularity. The application's components are grouped into logical, domain-specific modules such as \texttt{lectures}, \texttt{users}, \texttt{courses}, and \texttt{stats}. This slicing enables all relevant code for a particular feature to reside within its dedicated package. This approach aims to reduce coupling between functional areas of the application and makes it easier to locate and modify code related to a specific feature.
 
-\subsection{Data Modeling (TODO)}
+\subsection{Data Modeling}
 \label{sec:crud-data-modeling}
 
 All data in the CRUD implementation is present in the form of database / \gls{jpa} entities. Other objects like services and controllers are \emph{stateless}. The application uses a \hyperref[sec:crud]{normalized database} in the Third Normal Form.
@@ -231,7 +231,7 @@ All data in the CRUD implementation is present in the form of database / \gls{jp
 
 Figure \ref{fig:crud-er-diagram} shows the Entity Relationship Diagram for the CRUD app. It includes nine entities and a value object for the app's relational database schema. It should be noted that the auditing table created by Hibernate Envers are not present in the diagram. The diagram highlights that \keyw{LectureEntity} is the core entity in the system, having direct a relationship to many other entities.
 
-All entities and value objects are implemented using SpringBoot's \acrshort{jpa} integration. For example, an entity with a "One to Many" relationship can be implemented as presented in \autoref{lst:simple-one-to-many}. TODO: braucht man das so detailliert?
+All entities and value objects are implemented using SpringBoot's \acrshort{jpa} integration. For example, an entity with a "One to Many" relationship can be implemented as presented in \autoref{lst:simple-one-to-many}.
 
 \begin{lstlisting}[caption={Simple JPA entity with a "One to Many" relationship},captionpos=b,label={lst:simple-one-to-many}]
 %%@Entity%% 
@@ -444,7 +444,7 @@ TODO: Aggregates, Sagas, Commands and Events. Projections and Lookup tables.
 \subsection{Request Handling}
 \label{sec:es-cqrs-request-handling}
 
-This section describes how different components of the ES-CQRS application handle request. Diagrams illustrating both commands and queries are available in \autoref{sec:es-cqrs-tracing-request-flow}.
+This section describes how different components of the ES-CQRS application handle request. Diagrams illustrating the flow of both commands and queries are available in \autoref{sec:es-cqrs-tracing-request-flow}.
 
 \subsubsection{Command Side}
 \label{sec:command-side}

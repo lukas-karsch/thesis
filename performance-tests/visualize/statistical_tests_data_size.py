@@ -5,50 +5,34 @@ import pandas as pd
 from scipy import stats
 
 from visualize.aggregate import aggregate_single_val_prometheus_metrics
-from visualize.helper import get_significance
+from visualize.helper import get_significance, get_ratio_representation, get_median_ci
 from visualize.table import render_table
 
 
 def analyze_performance_per_rps(data: pd.DataFrame):
     results = []
 
-    # Group by RPS
     for rps, group in data.groupby("rps", sort=True):
-        # Extract series for both apps at this RPS level
-        # Note: 'app' is lowercase 'crud' and 'es-cqrs' in the aggregation logic below
         crud_values = group[group["app"] == "crud"]["value"]
         cqrs_values = group[group["app"] == "es-cqrs"]["value"]
 
         # Calculate Medians and Means
         med_crud, med_cqrs = crud_values.median(), cqrs_values.median()
-        m_crud, m_cqrs = crud_values.mean(), cqrs_values.mean()
 
-        def get_ci(series):
-            if len(series) < 2:
-                return 0
-            return stats.sem(series) * stats.t.ppf(0.975, len(series) - 1)
-
-        # Statistical significance
         try:
             _, p_val = stats.mannwhitneyu(crud_values, cqrs_values)
         except (ValueError, TypeError):
             p_val = 1.0
 
-        # Ratio: How much larger/smaller is CRUD vs CQRS
-        ratio = m_crud / m_cqrs if m_cqrs != 0 else 0
-        comparison = (
-            f"{round(ratio, 1)}x Lower"
-            if ratio >= 1
-            else f"{round(1/ratio, 1)}x Higher"
-        )
+        comparison = get_ratio_representation(med_crud, med_cqrs)
 
         results.append(
             {
                 "rps": rps,
                 "crud_median": round(med_crud, 2),
-                "crud_ci": round(get_ci(crud_values), 2),
+                "crud_ci": round(get_median_ci(crud_values), 2),
                 "cqrs_median": round(med_cqrs, 2),
-                "cqrs_ci": round(get_ci(cqrs_values), 2),
+                "cqrs_ci": round(get_median_ci(cqrs_values), 2),
                 "ratio": comparison,
                 "sig": get_significance(p_val),
             }
@@ -65,7 +49,7 @@ def main():
     args = parser.parse_args()
 
     base_path = Path(args.path)
-    rps_list = [25, 50, 100, 200, 500]
+    rps_list = [10, 20, 50, 100, 200, 300, 400, 500]
     all_data_frames = []
 
     for rps in rps_list:
@@ -107,22 +91,17 @@ def main():
                     drop=True
                 )
 
-                # Sum the components (MB)
                 total_mb = (pg_vals + sn_vals + ev_vals) / 1024 / 1024
             else:
                 total_mb = pg_vals / 1024 / 1024
 
-            # Create a temporary DF to collect results for this RPS/App combo
             temp_df = pd.DataFrame({"value": total_mb, "app": app, "rps": rps})
             all_data_frames.append(temp_df)
 
-    # Combine everything into one giant DF for analysis
     full_df = pd.concat(all_data_frames, ignore_index=True)
 
-    # Perform statistical analysis
     stats_table = analyze_performance_per_rps(full_df)
 
-    # Output paths
     output_base_name = f"{args.base_name}"
     output_dir = Path(args.output_path)
     output_dir.mkdir(parents=True, exist_ok=True)

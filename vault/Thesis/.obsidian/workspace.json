@@ -20,8 +20,37 @@
               "icon": "lucide-file",
               "title": "Thesis - Landing Page"
             }
+          },
+          {
+            "id": "117e709a41105db2",
+            "type": "leaf",
+            "state": {
+              "type": "markdown",
+              "state": {
+                "file": "Writing/Discussion - performance.md",
+                "mode": "source",
+                "source": false
+              },
+              "icon": "lucide-file",
+              "title": "Discussion - performance"
+            }
+          },
+          {
+            "id": "2cc809e2fd01667e",
+            "type": "leaf",
+            "state": {
+              "type": "markdown",
+              "state": {
+                "file": "TODO Tagesliste.md",
+                "mode": "source",
+                "source": false
+              },
+              "icon": "lucide-file",
+              "title": "TODO Tagesliste"
+            }
           }
-        ]
+        ],
+        "currentTab": 2
       }
     ],
     "direction": "vertical"
@@ -53,7 +82,7 @@
             "state": {
               "type": "search",
               "state": {
-                "query": "goal",
+                "query": "zip",
                 "matchingCase": false,
                 "explainSearch": false,
                 "collapseAll": false,
@@ -169,8 +198,12 @@
       "bases:Create new base": false
     }
   },
-  "active": "6d74fb4d48374cba",
+  "active": "2cc809e2fd01667e",
   "lastOpenFiles": [
+    "Advice/VMs.md",
+    "Thesis - Landing Page.md",
+    "Writing/Discussion - performance.md",
+    "TODO Tagesliste.md",
     "Writing/Interpret results - flexibility.md",
     "Writing/Related Work.md",
     "Writing/Outline.md",
@@ -187,17 +220,13 @@
     "Technical Design Log/2026-01-03 Measurements.md",
     "Writing/Method - traceability.md",
     "Writing/Discussion - scalability.md",
-    "Writing/Discussion - performance.md",
     "TODOs.md",
     "Writing/Axon.md",
     "Writing/Audit Log - Draft.md",
     "Writing/CRUD vs. CQRS.md",
     "Writing/Final Discussion.md",
-    "TODO Tagesliste.md",
     "Meetings/Mail an Jordine.md",
-    "Thesis - Landing Page.md",
     "Pasted image 20260220152808.png",
-    "Advice/VMs.md",
     "Untitled 1.base",
     "Untitled.base",
     "Untitled.canvas",

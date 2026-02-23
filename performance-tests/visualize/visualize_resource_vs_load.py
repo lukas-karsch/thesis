@@ -13,10 +13,13 @@ from visualize.style import APP_COLORS
 
 THREADPOOL_LIMIT = 200
 
-rps_list = [25, 50, 100, 200, 500, 1000, 2000, 3000, 4000]
+rps_list = [10, 20, 50, 100, 200, 300, 400, 500]
 
 
 def visualize_metric(METRIC: dict, base_path: Path, base_name: str) -> None:
+    metric_path = get_metric_json(base_path)
+    metric_json = json.loads(metric_path.read_text())
+
     steady_state_start = METRIC["steady_state_start"]
     records = []
 
@@ -59,15 +62,13 @@ def visualize_metric(METRIC: dict, base_path: Path, base_name: str) -> None:
         marker="o",
     )
 
-    metric_path = get_metric_json(base_path)
-    metric_json = json.loads(metric_path.read_text())
-
     plt.suptitle(
         f"{metric_json['metric']['method']} {metric_json['metric']['uri']}: {METRIC["title"]}",
     )
     plt.title(metric_json["metadata"]["title"], fontsize=10)
     plt.xlabel("RPS (Requests Per Second)", fontsize=12)
     plt.xticks(rps_list)
+    # plt.xticks([25, 200, 500, 1000, 2000, 3000, 4000])
     plt.ylabel(METRIC["ylabel"], fontsize=12)
     plt.tight_layout()
     plt.show()

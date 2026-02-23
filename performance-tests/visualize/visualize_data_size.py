@@ -20,7 +20,7 @@ def main():
     base_path = Path(args.path)
     base_name = args.base_name
 
-    rps_list = [25, 50, 100, 200, 500, 1000]
+    rps_list = [10, 20, 50, 100, 200, 300, 400, 500]
     records = []
 
     for rps in rps_list:
@@ -99,7 +99,7 @@ def main():
         f"{metric_json['metric']['method']} {metric_json['metric']['uri']}: Data Store Size vs. Load",
     )
     plt.title(metric_json["metadata"]["title"], fontsize=10)
-    plt.xlabel("RPS (Requests Per Second)", fontsize=12)
+    plt.xlabel("IPS (Iterations Per Second)", fontsize=12)
     plt.xticks(rps_list)
     plt.ylabel("Median Data Store Size (MB)", fontsize=12)
     plt.ylim(0)

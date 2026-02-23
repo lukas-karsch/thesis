@@ -1,0 +1,44 @@
+\begin{table}[H]
+    \small
+    \centering
+    \resizebox{\columnwidth}{!}{
+        \begin{tabular}{rrrcrrcc}
+            \toprule
+                         & \multicolumn{2}{c}{\textbf{CRUD (ms)}} &                   & \multicolumn{2}{c}{\textbf{ES-CQRS (ms)}} &                 &                                                            \\
+            \cmidrule{2-3} \cmidrule{5-6}
+            \textbf{RPS} & \textbf{Median}                        & \textbf{CI $\pm$} &                                           & \textbf{Median} & \textbf{CI $\pm$} & \textbf{Ratio} & \textbf{Significance} \\
+            \midrule
+
+            25           & 0.01                                   & 0.0006            &                                           & 0.0113          & 0.0               &
+            1.1x Higher  & ***                                                                                                                                                                                   \\
+
+            50           & 0.0163                                 & 0.0006            &                                           & 0.0189          & 0.0012            &
+            1.2x Higher  & **                                                                                                                                                                                    \\
+
+            100          & 0.0264                                 & 0.0013            &                                           & 0.0266          & 0.0019            &
+            1.0x Higher  & *                                                                                                                                                                                     \\
+
+            200          & 0.0418                                 & 0.0025            &                                           & 0.0382          & 0.0007            &
+            1.1x Lower   & n.s.                                                                                                                                                                                  \\
+
+            500          & 0.0918                                 & 0.0021            &                                           & 0.0857          & 0.0007            &
+            1.1x Lower   & ***                                                                                                                                                                                   \\
+
+            1000         & 0.2069                                 & 0.0023            &                                           & 0.1681          & 0.0015            &
+            1.2x Lower   & ***                                                                                                                                                                                   \\
+
+            2000         & 0.4454                                 & 0.0021            &                                           & 0.3535          & 0.0035            &
+            1.3x Lower   & ***                                                                                                                                                                                   \\
+
+            3000         & 0.5763                                 & 0.0006            &                                           & 0.5338          & 0.0017            &
+            1.1x Lower   & ***                                                                                                                                                                                   \\
+
+            4000         & 0.5608                                 & 0.0007            &                                           & 0.572           & 0.0062            &
+            1.0x Higher  & ***                                                                                                                                                                                   \\
+
+            \bottomrule
+        \end{tabular}
+    }
+    \caption{Statistical comparison of $cpu\_usage$ for GET /stats/credits, averaged out over at least 25 runs}
+    \label{table:run-get-credits-aggregated-CPU_Usage}
+\end{table}
