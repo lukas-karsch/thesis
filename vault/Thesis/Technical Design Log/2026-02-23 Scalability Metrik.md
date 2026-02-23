@@ -31,7 +31,6 @@ Productivity at k2 (F2): 0.1956
 Scalability (ψ): 0.013
 
 ---
-**Trying different k1 and k2**
 k1: 200 RPS
 k2: 500 RPS
 
@@ -93,7 +92,7 @@ Scalability (ψ): 0.5913
 Productivity at k1 (F1): 428.0378
 Productivity at k2 (F2): 122.4477
 Scalability (ψ): 0.2861
-
+#todo für mehr RPS
 ### L5: Get  Credits 
 k1: 1000
 k2: 2000

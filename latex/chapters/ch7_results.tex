@@ -28,17 +28,17 @@ The consequence of dropped iterations on test results will be outlined in \autor
 
 \subsection{Threadpool}
 
-Each load test shows the threadpool usage of the application under test. The maximum value this metric can take in these tests is 200, as it SpringBoot's default configuration.
+Each load test shows the threadpool usage ($tomcat\_threads$) of the application under test. The maximum value this metric can take in these tests is 200, as it SpringBoot's default configuration.
 
 \subsection{Database Connections}
 
-Each load test presents the number of used database connections of the application under test. The maximum value this metric can take in these tests is 10, which can again be attributed to SpringBoot's default configuration.
+Each load test presents the number of used database connections of the application under test --- $hikari\_connections$. The maximum value this metric can take in these tests is 10, which can again be attributed to SpringBoot's default configuration.
 
 \subsection{Data Store Size}
 
 The size of the data store is calculated differently for both applications. The CRUD application uses PostgreSQL as its only data store. The $postgres\_size$ metric equals the application's data store size.
 
-The total data store size for the ES-CQRS application is defined as the sum of the PostgreSQL projection size and the allocated Axon storage. It is important to note that Axon Server allocates storage in fixed-size segments (or "pages") of 4MB. Because these segments are allocated eagerly, the total storage includes a minimum overhead of 8MB (one 4MB segment each for events and snapshots), regardless of the actual data density within those blocks. Consequently, the measured size represents the allocated capacity rather than the literal byte-count of the stored records.
+The total data store size for the ES-CQRS application is defined as the sum of the PostgreSQL projection size and the allocated Axon storage: $postgres\_size + axon\_storage\_size$. It is important to note that Axon Server allocates storage in fixed-size segments (or "pages") of 4MB. Because these segments are allocated eagerly, the total storage includes a minimum overhead of 8MB (one 4MB segment each for events and snapshots), regardless of the actual data density within those blocks. Consequently, the measured size represents the allocated capacity rather than the literal byte-count of the stored records.
 
 \subsection{Graphs}
 
@@ -78,6 +78,8 @@ It can be noted that the latency curve follows the same pattern in both the meas
 
 \autoref{fig:l1_cpu_usage_vs_load} presents median CPU usage of the endpoint under increasing load. The ES-CQRS application generally has a higher CPU usage, exhibiting a value of $\approx$45\% at 1000 \gls{rps}, while the CRUD application uses $\approx$10\%. The CRUD application's CPU usage rises linearly, while the ES-CQRS application's CPU usage rises slower past 500 \gls{rps}.
 
+The threadpool usage of both applications is visualized in \autoref{fig:l1_threadpool_usage}. At 500 \gls{rps}, ES-CQRS starts using more threads, finally reaching threadpool saturation --- meaning that all 200 possible threads of the threadpool are used --- at 1000 \gls{rps}. The CRUD application uses at most around 25 threads at 1000 \gls{rps}.
+
 \begin{figure}[H]
     \centering
     \begin{subfigure}[t]{0.49\textwidth}
@@ -90,7 +92,7 @@ It can be noted that the latency curve follows the same pattern in both the meas
         \centering
         \includegraphics[width=\textwidth]{images/results/create-course-simple/create-course-threadpool-usage.png}
         \caption{Threadpool Usage vs. Load}
-        \label{fig:l1_data_store_vs_load}
+        \label{fig:l1_threadpool_usage}
     \end{subfigure}
     \caption[L1 Resource Usage, load measured in \gls{rps}]{L1 Resource Usage: Load measured in \gls{rps}. Detailed results in \ref{results:l1}.}
     \label{fig:l1_resource_vs_load}
@@ -116,6 +118,8 @@ In \autoref{fig:l1_data_store_vs_load}, the size of the data store under increas
     \caption[L1 Database Usage, load measured in \gls{rps}]{L1 Database Usage: Load measured in \gls{rps}. Detailed results in \ref{results:l1}.}
     \label{fig:l1_database}
 \end{figure}
+
+These values correspond to the following scalability metrics for the CRUD application: $\psi(200, 500)\approx 5.4$, $\psi(500, 1000)\approx 1.4$; and the following scalability metrics for the ES-CQRS application: $\psi(200, 500)\approx 0.6$, $\psi(500, 1000)\approx 0.01$.
 
 \subsubsection{L2: Create Courses Prerequisites}
 \label{sec:l2}
@@ -147,7 +151,7 @@ It can be noted that the latency curve follows the same pattern in both the meas
 
 \autoref{fig:l2_cpu_usage} presents the median $cpu\_usage$ of the endpoint under increasing load. The ES-CQRS application has a higher CPU usage, exhibiting a value of $\approx$45\% at 1000 \gls{rps}, while the CRUD application uses $\approx$10\%. The CRUD application's CPU usage rises linearly, while the ES-CQRS application's CPU usage rises slower past 500 \gls{rps}.
 
-The threadpool usage of both applications is visualized in \autoref{fig:l2_threadpool_usage}. At 200 \gls{rps}, ES-CQRS starts using more threads, finally reaching threadpool saturation --- meaning that all 200 possible threads of the threadpool are used --- at 1000 \gls{rps}. The CRUD application uses at most around 25 threads at 1000 \gls{rps}.
+The threadpool usage of both applications is visualized in \autoref{fig:l2_threadpool_usage}. At 200 \gls{rps}, ES-CQRS starts using more threads, finally reaching threadpool saturation at 1000 \gls{rps}. The CRUD application uses at most around 25 threads at 1000 \gls{rps}.
 
 \begin{figure}[H]
     \centering
@@ -194,6 +198,8 @@ The ES-CQRS application's storage consumption initially follows a linear growth 
     \caption[L2 Database Usage, load measured in \gls{rps}]{L2 Database Usage: Load measured in \gls{rps}. Detailed results in \ref{results:l2}.}
     \label{fig:l2_database}
 \end{figure}
+
+These values correspond to the following scalability metrics for the CRUD application: $\psi(200, 500)\approx 2.5$, $\psi(500, 1000)\approx 1.1$; and the following scalability metrics for the ES-CQRS application: $\psi(200, 500)\approx 0.4$, $\psi(500, 1000)\approx 0.02$.
 
 \subsubsection{L3: Enrollment}
 
@@ -267,6 +273,8 @@ Size of the data store is presented in \autoref{fig:l3_data_size}. The CRUD appl
     \caption[L3 Database Usage, load measured in \gls{rps}]{L3 Database Usage: Load measured in \gls{rps}. Detailed results in \ref{results:l3}.}
     \label{fig:l3_database}
 \end{figure}
+
+These values correspond to the following scalability metric for the CRUD application: $\psi(50, 100)\approx 2.7$; and the following scalability metric for the ES-CQRS application: $\psi(50, 100)\approx 0.2$.
 
 \subsection{Read Performance}
 
@@ -351,6 +359,8 @@ In terms of data store size for seed data, shown in \autoref{fig:l4_data_size}, 
     \label{fig:l4_database}
 \end{figure}
 
+These values correspond to the following scalability metric for the CRUD application: $\psi(2000, 3000)\approx 0.6$; and the following scalability metric for the ES-CQRS application: $\psi(2000, 3000)\approx 0.3$. TODO: Add 3000 → 4000 RPS.
+
 \subsubsection{L5: Get credits}
 \label{sec:l5}
 
@@ -432,6 +442,8 @@ The size of the data store is presented in \autoref{fig:l5_data_size}. At 19.6MB
     \label{fig:l5_database}
 \end{figure}
 
+These values correspond to the following scalability metrics for the CRUD application: $\psi(1000, 2000)\approx 0.4$, $\psi(2000, 3000)\approx 0.00$; and the following scalability metrics for the ES-CQRS application: $\psi(1000, 2000)\approx 1.1$, $\psi(2000, 3000)\approx 0.3$.
+
 \subsection{Time to Consistency}
 \label{sec:l6}
 
@@ -464,7 +476,7 @@ The CRUD application consistently maintains a 100\% $read\_visible\_rate$.
 
 $cpu\_usage$ of both applications is plotted in \autoref{fig:l6_cpu_usage}. A linear increase in usage can be observed in both cases, with the ES-CQRS application consistenly utilizing more CPU. At the final tested load of 500 \gls{rps}, ES-CQRS reaches a value above 40\%, while CRUD utilizes around 16\%.
 
-Threadpool usage --- $tomcat\_threads$ --- of both applications is visualized in \autoref{fig:l6_threadpool_usage}. In both cases, the value remains very close to the base value of 10. Beyond 200 \gls{rps}, ES-CQRS starts to use more threads, reaching a utilization of 100 threads at 400 \gls{rps}, and reaching the ceiling of 200 threads at the final tested load of 500 \gls{rps}. CRUD remains below 20 utilized threads consistently.
+Threadpool usage of both applications is visualized in \autoref{fig:l6_threadpool_usage}. In both cases, the value remains very close to the base value of 10. Beyond 200 \gls{rps}, ES-CQRS starts to use more threads, reaching a utilization of 100 threads at 400 \gls{rps}, and reaching the ceiling of 200 threads at the final tested load of 500 \gls{rps}. CRUD remains below 20 utilized threads consistently.
 
 \begin{figure}[H]
     \centering
@@ -507,6 +519,8 @@ In terms of data store size, shown in \autoref{fig:l6_data_size}, ES-CQRS again 
     \caption[L6 Database Usage, load measured in \gls{rps}]{L6 Database Usage: Load measured in \gls{rps}. Detailed results in \ref{results:l6}.}
     \label{fig:l6_database}
 \end{figure}
+
+These values correspond to the following scalability metric for the CRUD application: $\psi(300, 400)\approx 1.2$; and the following scalability metric for the ES-CQRS application: $\psi(300, 400)\approx 0.3$. It should be noted that the latency used for calculation was the sum of both requests' $latency\_p95$.
 
 \subsection{Historic Reconstruction}
 \label{sec:results-historic-reconstruction}
@@ -584,6 +598,8 @@ $tomcat\_threads$ is visualized in \autoref{fig:l7_threadpool_usage}. Both appli
     \caption[L7 Database Usage, load measured in \gls{rps}]{L7 Database Usage: Load measured in \gls{rps}. Detailed results in \ref{results:l7}.}
     \label{fig:l7_database}
 \end{figure}
+
+These values correspond to the following scalability metrics for the CRUD application: $\psi(500, 1000)\approx 2.0$, $\psi(1000, 2000) \approx 1.3$; and the following scalability metrics for the ES-CQRS application: $\psi(500, 1000) \approx 1.2$, $\psi(1000, 2000) \approx 0.00$.
 
 \section{Static Analysis}
 \label{sec:statc-analysis-results}

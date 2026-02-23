@@ -1,13 +1,12 @@
 ## Dienstag, 17.02 
 - API Endpunkte anpassen, wie in TODO beschrieben 
 ## Montag, 23.02. 
-- Scalability Metrik für alle Metriken beschreiben
 - Data Store -> PostgreSQL und Axon Linien separat zeigen? 
-- $CI\pm$ in data store statistical tests: alle neu berechnen
 ## Dienstag, 24.02 
 - Load test: get lecture details 
 - compare for different "enrollment" levels: how much is latency when 10, 20, 50 students are enrolled? 
 - Load test: get lectures? Große Liste fetchen. 
+- $CI\pm$ in data store statistical tests: alle neu berechnen
 ## Mittwoch, 25.02 - Cleanup
 - **Tabellen**
 	- "averaged out over..." in appendix: Wording überdenken. Vlt einfach "aggregated"
@@ -38,6 +37,7 @@
 	- Structure of the thesis 
 ## Samstag, 28.02 
 - Abstract 
+- Scalability metric für alle Tests in Anhang machen 
 ## Sonntag, 01.03 
 - Tabellen im Anhang aufhübschen 
 - ist read_visible_rate früh genug erklärt? 

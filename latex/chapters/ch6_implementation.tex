@@ -706,7 +706,7 @@ This cost function is used:
 
 \[C(k) = w_1 * \text{CPU} + w_2 * \text{S} + w_3 \left( \frac{T}{200} \right) ^2 + w_4 \left( \frac{D}{10} \right)^2\]
 
-The cost function is weighted, with $w_i$ being the weights for each metric. $S$ corresponds to total storage size. $T$ corresponds to $tomcat\_threads$, $D$ corresponds to $hikari\_connections$. These metrics are normalized to their respective ceilings.
+The cost function is weighted, with $w_i$ being the weights for each metric. $S$ corresponds to storage size. More precisely, this value is calculated using a ratio of the two applications: the application with the larger storage consumption receives a cost penalty (e.g., 2.0 for twice the usage), while the smaller footprint is "rewarded", e.g. a value of 0.5 for half the usage. Furthermore, $T$ corresponds to $tomcat\_threads$, and $D$ corresponds to $hikari\_connections$. These metrics are normalized to their respective ceilings.
 
 When testing time to consistency ("freshness"), the following term gets added to the cost function: $w_5(1 - R)^4$, with $R$ corresponding to $read\_visible\_rate$.
 
