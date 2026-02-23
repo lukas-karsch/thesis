@@ -7,7 +7,7 @@ I found the following metrics for static analysis
 	- RFC (Response for a class)
 - **Complexity** 
 	- **Methods**
-		- **v(G) (Cyclomatic Complexity):** The number of independent paths through a method. In CRUD, your "Services" might have high $v(G)$ due to complex `if/else` logic. In ES, $v(G)$ is often lower because logic is distributed into many small "Command Handlers" or "Projectors."
+		- **v(G) (Cyclomatic Complexity):** The number of independent paths through a method. 
 		- **CogC (Cognitive Complexity):** How hard the code is for a human to read.
 		- **iv(G) (Design Complexity):** How much a method’s complexity contributes to the complexity of its callers.
 		- **ev(G) (Essential Complexity):** A measure of "structuredness." A value of **1** means the code is perfectly structured; higher values indicate "spaghetti code" logic.

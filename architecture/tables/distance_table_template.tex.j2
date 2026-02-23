@@ -1,0 +1,14 @@
+\begin{table}[H]
+\footnotesize
+\begin{tabular}{lrrrrrr}
+\toprule
+\textbf{Package}  & \textbf{Abstractness $A$} & \textbf{Instability $I$} & \textbf{Distance from the Main Sequence $D$} \\
+\midrule
+{% for row in rows %}
+    {{ e(row.Package) }} & {{ row.A }} & {{ row.D }} & {{ row.I }} \\
+{% endfor %}
+\bottomrule
+\end{tabular}
+\caption{CK Metrics for {{ caption }}.}
+\label{table:{{ label }}}
+\end{table}

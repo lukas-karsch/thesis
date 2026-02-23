@@ -4,7 +4,7 @@ from jinja2 import Template
 
 from prepare_data import get_dataframe
 
-output_path = "C:\\Users\\lukas\\Documents\\Studium\\Bachelorarbeit\\thesis\\latex\\tables\\dependency-es-cqrs.tex"
+output_path = "C:\\Users\\lukas\\Documents\\Studium\\Bachelorarbeit\\thesis\\latex\\tables\\crud-coupling-per-package.tex"
 
 
 def latex_escape(value):
@@ -13,20 +13,18 @@ def latex_escape(value):
     return value
 
 
-df = get_dataframe(
-    Path("../../Static Analysis/impl-es-cqrs/es-cqrs-dependency-CLASS.csv")
-)
+df = get_dataframe(Path("../../Static Analysis/impl-crud/crud_martin.csv"))
 num_cols = df.select_dtypes(include="number").columns
 df[num_cols] = df[num_cols].astype(int)
 
-with open("tables/dependency_table_template.tex.j2") as t:
+with open("tables/coupling_table_template.tex.j2") as t:
     template = Template(t.read())
     template.globals["e"] = latex_escape
 
 rendered_tex = template.render(
     rows=df.to_dict(orient="records"),
-    label="es-cqrs-dependency",
-    caption="ES-CQRS architecture (Classes)",
+    label="crud-distance",
+    caption="CRUD architecture (Packages)",
 )
 
 with open(output_path, "w") as f:

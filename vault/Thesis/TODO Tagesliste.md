@@ -4,11 +4,6 @@
 - Scalability Metrik "ausrechnen" für alle (falls möglich), dann schreiben 
 - Data Store -> PostgreSQL und Axon Linien separat zeigen
 - $CI\pm$ in data store statistical tests: alle neu berechnen
--  Schauen, dass alle performance Visualisierungen und Beschreibungen vollständig sind 
-	- Create course prerequisites neu erstellen 
-	- Inklusive Tabellen im Anhang
-- Schauen, dass Static analysis Ergebnisse alle vollständig sind.
-	- Inklusive Tabellen im Anhang! 
 ## Dienstag, 24.02 
 - Load test: get lecture details 
 - compare for different "enrollment" levels: how much is latency when 10, 20, 50 students are enrolled? 

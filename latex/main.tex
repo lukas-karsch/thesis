@@ -586,26 +586,11 @@ This load test consists of 2 requests per iteration. Therefore, the client-side 
 
 \chapter{Results of Static Analysis}
 
-\section{MOOD}
-\label{appendix:mood-results}
-
-\input{tables/mood.tex}
-
-\section{Complexity Metrics}
-\label{appendix:complexity}
-
-TODO.
-
-\section{Chidamber Kemerer Metrics}
-\label{appendix:ck-results}
-
-\input{tables/ck-crud.tex}
-\input{tables/ck-es-cqrs.tex}
-
 \section{Coupling Metrics}
 \label{appendix:coupling-results}
 
-TODO. Can use same script as Instability and abstractness metrics.
+\input{tables/crud-coupling-per-package.tex}
+\input{tables/es-cqrs-coupling-per-package.tex}
 
 \section{Instability and Abstractness Metrics}
 \label{appendix:instability-abstractness}
@@ -613,14 +598,25 @@ TODO. Can use same script as Instability and abstractness metrics.
 \input{tables/instability.tex}
 \input{tables/abstractness.tex}
 \input{tables/distance.tex}
-
-TODO: table for visualization of main sequence. Show package -> abstractness and instability. can use same script as Coupling metrics table.
+\input{tables/crud-distance-main-sequence-per-package.tex}
+\input{tables/es-cqrs-distance-main-sequence-per-package.tex}
 
 \section{Dependency Metrics}
 \label{appendix:dependency}
 
 \input{tables/dependency-crud.tex}
 \input{tables/dependency-es-cqrs.tex}
+
+\section{MOOD}
+\label{appendix:mood-results}
+
+\input{tables/mood.tex}
+
+\section{Chidamber Kemerer Metrics}
+\label{appendix:ck-results}
+
+\input{tables/ck-crud.tex}
+\input{tables/ck-es-cqrs.tex}
 
 %LTeX: language=de-DE
 \chapter{Nutzung von KI-Tools}

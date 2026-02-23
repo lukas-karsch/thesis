@@ -647,6 +647,47 @@ Regarding Efferent coupling, the two architectures show more similarity. The med
     \label{fig:combined_ce}
 \end{figure}
 
+\subsection{Instability and Abstractness}
+
+Instability $I$ is defined as the ratio of Efferent coupling to the total coupling of a package: $I = \frac{C_e}{C_e + C_a}$. Therefore, it can take values between 0 and 1. It is visualized using a boxplot in \autoref{fig:instability}. The plot highlights a wide \gls{iqr} and a median value around 0.5 to 0.6 for both architectures.
+
+Abstractness $A$ measures the ratio of abstract classes and interfaces to the total number of classes in a package: $A = \frac{Abstract Classes + Interfaces}{Total Classes}$. Therefore, it can take values between 0 and 1. Its visualization in \autoref{fig:abstractness} shows that the typical package in both applications has an Abstractness of 0. The \gls{iqr} of the CRUD architecture reaches from 0 to 0.2; the \gls{iqr} of the ES-CQRS architecture reaches from 0 to 0.4.
+
+\autoref{fig:main-sequence} shows a scatter plot which visualizes $A$ and $I$, as well as the "Main Sequence" (gray diagonal line). The concept of the "Main Sequence" was explained in \autoref{sec:instability}. The distribution shows two prominent large clusters of the ES-CQRS architecture located at the corners of (0, 0) and (1, 0), while the remaining smaller points are scattered primarily in the lower half of the graph below the diagonal line. Generally, it can be seen that ES-CQRS has more packages than CRUD and is more abstract. The ES-CQRS architecture exhibits a slightly lower median Distance from the Main Sequence $D$ (\autoref{fig:distance-main-sequence-per-package}) with a value of around 0.4, opposed to around 0.5 for the CRUD architecture. However, both \glspl{iqr} for $D$ have a wide spread, with the ES-CQRS architecture spanning from 0.1 to almost~1.
+
+\begin{figure}[H]
+    \centering
+    \begin{subfigure}[t]{0.3\textwidth}
+        \centering
+        \includegraphics[width=\textwidth]{images/static-analysis/Instability_per_package.png}
+        \caption{Instability per package. Descriptive statistics in \autoref{table:instability}.}
+        \label{fig:instability}
+    \end{subfigure}
+    \hfill
+    \begin{subfigure}[t]{0.3\textwidth}
+        \centering
+        \includegraphics[width=\textwidth]{images/static-analysis/Abstractness_per_package.png}
+        \caption{Abstractness per package. Descriptive statistics in \autoref{table:abstractness}.}
+        \label{fig:abstractness}
+    \end{subfigure}
+    \hfill
+    \begin{subfigure}[t]{0.3\textwidth}
+        \centering
+        \includegraphics[width=\textwidth]{images/static-analysis/Distance_main_sequene_per_package.png}
+        \caption{Distance from the main sequence per package. Descriptive statistics in \autoref{table:distance-from-the-main-sequence}.}
+        \label{fig:distance-main-sequence-per-package}
+    \end{subfigure}
+    \par\medskip
+    \begin{subfigure}[t]{0.9\textwidth}
+        \centering
+        \includegraphics[width=\textwidth]{images/static-analysis/Martin_main_sequence_graph.png}
+        \caption{Visualization of the Main Sequence}
+        \label{fig:main-sequence}
+    \end{subfigure}
+    \caption[Comparison of Instability $I$ and Abstractness $A$.]{Comparison of Instability $I$ and Abstractness $A$. Detailed results in \autoref{appendix:instability-abstractness}.}
+    \label{fig:combined_instability_abstractness}
+\end{figure}
+
 \subsection{Dependency Metrics}
 \label{sec:results-dependency}
 
@@ -786,47 +827,6 @@ The $PDcy$ metric describes the number of packages a class transitively depends 
     \label{fig:combined_PDcy}
 \end{figure}
 
-\subsection{Instability and Abstractness (TODO: move below Coupling)}
-
-Instability $I$ is defined as the ratio of Efferent coupling to the total coupling of a package: $I = \frac{C_e}{C_e + C_a}$. Therefore, it can take values between 0 and 1. It is visualized using a boxplot in \autoref{fig:instability}. The plot highlights a wide \gls{iqr} and a median value around 0.5 to 0.6 for both architectures.
-
-Abstractness $A$ measures the ratio of abstract classes and interfaces to the total number of classes in a package: $A = \frac{Abstract Classes + Interfaces}{Total Classes}$. Therefore, it can take values between 0 and 1. Its visualization in \autoref{fig:abstractness} shows that the typical package in both applications has an Abstractness of 0. The \gls{iqr} of the CRUD architecture reaches from 0 to 0.2; the \gls{iqr} of the ES-CQRS architecture reaches from 0 to 0.4.
-
-\autoref{fig:main-sequence} shows a scatter plot which visualizes $A$ and $I$, as well as the "Main Sequence" (gray diagonal line). The concept of the "Main Sequence" was explained in \autoref{sec:instability}. The distribution shows two prominent large clusters of the ES-CQRS architecture located at the corners of (0, 0) and (1, 0), while the remaining smaller points are scattered primarily in the lower half of the graph below the diagonal line. Generally, it can be seen that ES-CQRS has more packages than CRUD and is more abstract. The ES-CQRS architecture exhibits a slightly lower median Distance from the Main Sequence $D$ (\autoref{fig:distance-main-sequence-per-package}) with a value of around 0.4, opposed to around 0.5 for the CRUD architecture. However, both \glspl{iqr} for $D$ have a wide spread, with the ES-CQRS architecture spanning from 0.1 to almost~1.
-
-\begin{figure}[H]
-    \centering
-    \begin{subfigure}[t]{0.3\textwidth}
-        \centering
-        \includegraphics[width=\textwidth]{images/static-analysis/Instability_per_package.png}
-        \caption{Instability per package. Descriptive statistics in \autoref{table:instability}.}
-        \label{fig:instability}
-    \end{subfigure}
-    \hfill
-    \begin{subfigure}[t]{0.3\textwidth}
-        \centering
-        \includegraphics[width=\textwidth]{images/static-analysis/Abstractness_per_package.png}
-        \caption{Abstractness per package. Descriptive statistics in \autoref{table:abstractness}.}
-        \label{fig:abstractness}
-    \end{subfigure}
-    \hfill
-    \begin{subfigure}[t]{0.3\textwidth}
-        \centering
-        \includegraphics[width=\textwidth]{images/static-analysis/Distance_main_sequene_per_package.png}
-        \caption{Distance from the main sequence per package. Descriptive statistics in \autoref{table:distance-from-the-main-sequence}.}
-        \label{fig:distance-main-sequence-per-package}
-    \end{subfigure}
-    \par\medskip
-    \begin{subfigure}[t]{0.9\textwidth}
-        \centering
-        \includegraphics[width=\textwidth]{images/static-analysis/Martin_main_sequence_graph.png}
-        \caption{Visualization of the Main Sequence}
-        \label{fig:main-sequence}
-    \end{subfigure}
-    \caption[Comparison of Instability $I$ and Abstractness $A$.]{Comparison of Instability $I$ and Abstractness $A$. Detailed results in \autoref{appendix:instability-abstractness}.}
-    \label{fig:combined_instability_abstractness}
-\end{figure}
-
 \subsection{MOOD Metrics}
 \label{sec:results-mood}
 
@@ -840,9 +840,7 @@ The \gls{aif} of the CRUD architecture is at around 28\%, the ES-CQRS applicatio
 
 Generally, the CRUD Architecture covers a larger total surface area on the diagram, specifically showing higher values on the \gls{aif} and \gls{cf} axes compared to the ES-CQRS Architecture.
 
-It is worth noting that the \gls{pf} of both architectures is not present in the diagram. This is due to the fact that the values exceed 100\%, with the CRUD architecture having a \gls{pf} of 360\%, and the ES-CQRS architecture having a \gls{pf} of 185\%. The \gls{pf} calculates the ratio of polymorphic situations to the maximum possible number of polymorphic situation, but the static analysis tool used does not take classes from libraries or external modules into consideration when computing the total possible number, which is why the values exceed 100\%.
-
-TODO: What about CLF and RF?
+It is worth noting that the \gls{pf} of both architectures is not present in the diagram. This is due to the fact that the values exceed 100\%, with the CRUD architecture having a \gls{pf} of 360\%, and the ES-CQRS architecture having a \gls{pf} of 185\%. The \gls{pf} calculates the ratio of polymorphic situations to the maximum possible number of polymorphic situations, but the static analysis tool used does not take classes from libraries or external modules into consideration when computing the total possible number, which is why the values exceed 100\%.
 
 \begin{figure}
     \centering
@@ -851,24 +849,36 @@ TODO: What about CLF and RF?
     \label{fig:mood-results}
 \end{figure}
 
-\subsection{Complexity Metrics (TODO)}
-\label{sec:results-complexity}
+% \subsection{Complexity Metrics}
+% \label{sec:results-complexity}
 
-TODO
+% Commented out: Ergebnisse sind sehr nichtssagend. In Methodik ebenfalls auskommentiert. 
 
 \subsection{Chidamber Kemerer Metrics}
 
-In \autoref{sec:ck-metrics}, the \acrlong{ck} suite was described. Its results are presented in \autoref{fig:ck-results} using a spider diagram. As the metrics are calculated on a per-class basis, the values were normalized and aggregated using a median for visualization purposes.
+In \autoref{sec:ck-metrics}, the \acrlong{ck} suite was described. Its results are presented in \autoref{fig:ck-results} using a spider diagram. As the metrics are calculated on a per-class basis, the values were normalized and aggregated using a median and a mean for visualization purposes.
 
-The CRUD architecture's plot (blue) forms the larger shape. It reaches the highest point on the \gls{cbo} axis, with a value around 0.1, and the \gls{dit} axis with a value around 0.13. It also shows a distinct outward point on the \gls{rfc} axis.
+\autoref{fig:ck_median} shows the median values of the metrics. The CRUD architecture's plot (blue) forms the larger shape. It reaches the highest point on the \gls{cbo} axis, with a value around 0.1, and the \gls{dit} axis with a value around 0.13. It also shows a distinct outward point on the \gls{rfc} axis.
 
-The ES-CQRS architecture's plot forms a smaller shape nested mostly inside the blue area. It shows lower values than the CRUD architecture on the \gls{cbo} (0.07), \gls{wmc} (0), and \gls{rfc} (< 0.05) axes. It sits close to the CRUD architecture on the \gls{lcom} and \gls{dit} axes.
+The ES-CQRS architecture's plot forms a smaller shape nested mostly inside the blue area. It shows lower values than the CRUD architecture on the \gls{cbo} (0.07), \gls{wmc} (0), and \gls{rfc} (< 0.05) axes. It sits close to the CRUD architecture on the \gls{lcom} and \gls{dit} axes. While the median \gls{wmc} of ES-CQRS sits at a value of 0, the mean (\autoref{fig:ck_mean}) shows a value of about 0.02.
 
-Both architectures exhibit a median \gls{noc} of 0. TODO: also show average here. some values are kinda misleading when only using the median. Polymorphism exists in the CRUD app.
+Both architectures exhibit a median \gls{noc} of 0. However, \autoref{fig:ck_mean} reveals that some polymorphism exists in the CRUD application.
 
 \begin{figure}[H]
     \centering
-    \includegraphics[width=0.7\textwidth]{images/static-analysis/Median-c-k-metrics.png}
-    \caption{Median CK-Metrics presented in a spider diagram. Detailed results in \ref{appendix:ck-results}}
+    \begin{subfigure}[b]{0.49\textwidth}
+        \centering
+        \includegraphics[width=\textwidth]{images/static-analysis/Median-c-k-metrics.png}
+        \caption{Median CK-Metrics}
+        \label{fig:ck_median}
+    \end{subfigure}
+    \hfill
+    \begin{subfigure}[b]{0.49\textwidth}
+        \centering
+        \includegraphics[width=\textwidth]{images/static-analysis/Mean-c-k-metrics.png}
+        \caption{Mean CK Metrics}
+        \label{fig:ck_mean}
+    \end{subfigure}
+    \caption[CK-Metrics presented in spider diagrams]{CK-Metrics presented in spider diagrams. Detailed results in \ref{appendix:ck-results}}
     \label{fig:ck-results}
 \end{figure}
