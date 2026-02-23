@@ -1,12 +1,21 @@
-# Event Sourcing vs. CRUD
+# CRUD vs. CQRS with Event Sourcing
 
 This is the source code to Lukas Karsch's bachelor's thesis, written during the winter semester 2025 / 2026 under
 supervision of Prof. Dr. Tobias Jordine and Felix Messner.
 
 The research question for the thesis is
 
-> How does an Event Sourcing architecture compare to CRUD systems with an independent audit log, when it comes to
-> scalability, performance and traceability?
+> How does an Event Sourcing architecture compare to CRUD systems with an independent audit log regarding performance,
+> scalability, flexibility and traceability?
+
+This research question is evaluated through three sub-research questions.
+
+1. **Performance and Scalability:** How do CRUD and ES-CQRS implementations perform under increasing load, and what are
+   the resulting implications for system scalability and resource efficiency?
+2. **Architectural Complexity and Flexibility:** What are the fundamental structural differences between the two
+   approaches, and how do these impact the long-term flexibility and evolution of the codebase?
+3. **Historical Traceability:** To what extent can CRUD and ES-CQRS systems accurately and efficiently reconstruct
+   historical states to satisfy business intent and compliance requirements?
 
 ## About the project
 
@@ -24,8 +33,7 @@ Both implementations use the same underlying technologies:
 - SpringBoot
 - Postgres
 - JPA
-- Lombok
-- Testcontainers
+- Testcontainers for integration tests
 
 ### ES-CQRS App
 
@@ -37,10 +45,20 @@ The es-cqrs app additionally uses the Axon server and the Axon framework for com
 
 To examine the API definitions / interfaces, look [here](api/src/main/java/karsch/lukas)
 
+The CRUD application's entrypoint is [this file](impl-crud/src/main/java/karsch/lukas/CrudApplication.java). The ES-CQRS
+application's entrypoint is [this file](impl-es-cqrs/src/main/java/karsch/lukas/EsCqrsApplication.java).
+
+Integration / contract tests can be found [here](test-suite/src/test/java/karsch/lukas)
+
+Performance test scripts, written for k6 using JavaScript, as well as visualizations and statistical tests are
+in [performance-tests](performance-tests).
+
+Results of statistical analysis were visualized using [the architecture project](architecture).
+
 ### Running the applications
 
 You need an instance of Docker running. When the application is started, you can test the API endpoints
-using [Swagger UI](http://localhost:8080/swagger-ui/index.html)
+using [Swagger UI](http://localhost:8080/swagger-ui/index.html).
 
 #### Running using testcontainers
 
@@ -55,7 +73,7 @@ application running.
 #### Running with docker-compose
 
 The applications can also be started using `docker compose`. When using IntelliJ, the apps can be started using the
-predefined run configurations.
+predefined Docker run configurations.
 
 Otherwise, here are step-by-step instructions:
 
