@@ -2,7 +2,7 @@
 - API Endpunkte anpassen, wie in TODO beschrieben 
 ## Montag, 23.02. 
 - Scalability Metrik "ausrechnen" für alle (falls möglich), dann schreiben 
-- Data Store -> PostgreSQL und Axon Linien separat zeigen
+- Data Store -> PostgreSQL und Axon Linien separat zeigen? 
 - $CI\pm$ in data store statistical tests: alle neu berechnen
 ## Dienstag, 24.02 
 - Load test: get lecture details 
@@ -31,3 +31,5 @@
 	- Structure of the thesis 
 ## Samstag, 28.02 
 - Abstract 
+## Sonntag, 01.03 
+- Tabellen im Anhang aufhübschen 

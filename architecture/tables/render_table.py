@@ -4,7 +4,7 @@ from jinja2 import Template
 
 from prepare_data import get_dataframe
 
-output_path = "C:\\Users\\lukas\\Documents\\Studium\\Bachelorarbeit\\thesis\\latex\\tables\\crud-coupling-per-package.tex"
+output_path = "C:\\Users\\lukas\\Documents\\Studium\\Bachelorarbeit\\thesis\\latex\\tables\\es-cqrs-coupling-per-package.tex"
 
 
 def latex_escape(value):
@@ -13,9 +13,9 @@ def latex_escape(value):
     return value
 
 
-df = get_dataframe(Path("../../Static Analysis/impl-crud/crud_martin.csv"))
-num_cols = df.select_dtypes(include="number").columns
-df[num_cols] = df[num_cols].astype(int)
+df = get_dataframe(Path("../../Static Analysis/impl-es-cqrs/es-cqrs-martin.csv"))
+# num_cols = df.select_dtypes(include="number").columns
+# df[num_cols] = df[num_cols].astype(int)
 
 with open("tables/coupling_table_template.tex.j2") as t:
     template = Template(t.read())
@@ -23,7 +23,7 @@ with open("tables/coupling_table_template.tex.j2") as t:
 
 rendered_tex = template.render(
     rows=df.to_dict(orient="records"),
-    label="crud-distance",
+    label="es-cqrs-coupling",
     caption="CRUD architecture (Packages)",
 )
 

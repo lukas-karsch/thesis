@@ -586,12 +586,33 @@ This load test consists of 2 requests per iteration. Therefore, the client-side 
 
 \chapter{Results of Static Analysis}
 
+This chapter lists tables containing the full results of static analysis metrics. To make the tables more readable, some package names are abbreviated according to \autoref{tab:package-name-abbreviations}.
+
+\begin{table}[H]
+    \centering
+    \small
+    \begin{tabular}{ll}
+        \toprule
+        \textbf{Package Name} & \textbf{Abbreviation} \\
+        \midrule
+        karsch.lukas          & k.l                   \\
+        features              & f                     \\
+        lectures              & le                    \\
+        enrollment            & e                     \\
+        command               & c                     \\
+        \bottomrule
+    \end{tabular}
+    \caption[Package name abbreviations]{Package name abbreviations used when presenting results.}
+    \label{tab:package-name-abbreviations}
+\end{table}
+
 \section{Coupling Metrics}
 \label{appendix:coupling-results}
 
 \input{tables/crud-coupling-per-package.tex}
 \input{tables/es-cqrs-coupling-per-package.tex}
 
+\newpage
 \section{Instability and Abstractness Metrics}
 \label{appendix:instability-abstractness}
 
@@ -601,17 +622,20 @@ This load test consists of 2 requests per iteration. Therefore, the client-side 
 \input{tables/crud-distance-main-sequence-per-package.tex}
 \input{tables/es-cqrs-distance-main-sequence-per-package.tex}
 
+\newpage
 \section{Dependency Metrics}
 \label{appendix:dependency}
 
 \input{tables/dependency-crud.tex}
 \input{tables/dependency-es-cqrs.tex}
 
+\newpage
 \section{MOOD}
 \label{appendix:mood-results}
 
 \input{tables/mood.tex}
 
+\newpage
 \section{Chidamber Kemerer Metrics}
 \label{appendix:ck-results}
 
@@ -626,14 +650,14 @@ This load test consists of 2 requests per iteration. Therefore, the client-side 
     \centering
     \begin{tabularx}{\linewidth}{llX}
         \toprule
-        \textbf{Kapitel / Codemodul} & \textbf{Tool(s)} & \textbf{Beschreibung und Begründung Einsatzzweck}                                       \\ \midrule
-        Alle Kapitel                 & Gemini           & LaTeX Syntax-Unterstützung: Skelette für Tabellen, figures, listings                    \\
+        \textbf{Kapitel / Codemodul} & \textbf{Tool(s)} & \textbf{Beschreibung und Begründung Einsatzzweck}                                                     \\ \midrule
+        Alle Kapitel                 & Gemini           & LaTeX Syntax-Unterstützung: Skelette für Tabellen, figures, listings                                  \\
         \addlinespace
-        Alle Kapitel                 & DeepL Write      & Grammatikalische und stilistische Überarbeitung von Textsegmenten                       \\
+        Alle Kapitel                 & DeepL Write      & Grammatikalische und stilistische Überarbeitung von Textsegmenten                                     \\
         \addlinespace
-        Alle Kapitel                 & DeepL Translate  & Übersetzung von Wörtern und Redewendungen                                               \\
+        Alle Kapitel                 & DeepL Translate  & Übersetzung von Wörtern und Redewendungen                                                             \\
         \addlinespace
-        Kapitel 7 (Results)          & Gemini           & Generieren von Snippets zur Visualisierung der Ergebnisse (matplotlib, pandas, seaborn) \\
+        Kapitel 7 (Results)          & Gemini           & Hilfe bei der Visualisierung \& statistischen Auswertung der Ergebnisse (matplotlib, pandas, seaborn) \\
         \bottomrule
     \end{tabularx}
     \caption{AI tools used throughout the thesis}

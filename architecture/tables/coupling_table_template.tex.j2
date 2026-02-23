@@ -1,14 +1,15 @@
 \begin{table}[H]
 \footnotesize
+\centering
 \begin{tabular}{lrrrrrr}
 \toprule
-\textbf{Package}  & \textbf{Afferent Coupling $C_a$} & \textbf{Efferent Coupling $C_e$} \\
+\textbf{Package}  & \textbf{$C_a$} & \textbf{$C_e$} \\
 \midrule
 {% for row in rows %}
     {{ e(row.Package) }} & {{ row.Ca }} & {{ row.Ce }}  \\
 {% endfor %}
 \bottomrule
 \end{tabular}
-\caption{CK Metrics for {{ caption }}.}
+\caption{Coupling Metrics for {{ caption }}.}
 \label{table:{{ label }}}
 \end{table}
