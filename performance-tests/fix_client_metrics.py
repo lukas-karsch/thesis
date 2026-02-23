@@ -7,7 +7,7 @@ directory = Path(
     "C:\\Users\\lukas\\Documents\\Studium\\Bachelorarbeit\\Test Results\\time-to-consistency\\create-lecture"
 )
 
-folders = find_matching_folders("run-create-lecture-10-", directory)
+folders = find_matching_folders("run-create-course-simple-1000-", directory)
 k6_summaries = [f / "k6-summary.json" for f in folders]
 
 print(f"{len(k6_summaries)} k6-summary.json files found.")

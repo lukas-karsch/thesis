@@ -1,0 +1,23 @@
+\begin{table}[H]
+    \small \centering
+    \resizebox{\columnwidth}{!}{
+        \begin{tabular}{lcrrcrrcc}
+            \toprule
+                                        &              & \multicolumn{2}{c}{\textbf{CRUD (ms)}} &                   & \multicolumn{2}{c}{\textbf{ES-CQRS (ms)}} &               &                                                            \\
+            \cmidrule{3-4} \cmidrule{6-7}
+            \textbf{Metric}             & \textbf{RPS} & \textbf{Mean}                          & \textbf{CI $\pm$} &                                           & \textbf{Mean} & \textbf{CI $\pm$} & \textbf{Ratio} & \textbf{Significance} \\
+            \midrule
+
+            $dropped\_iterations\_rate$ & 10           & 0                                      & 0                 &                                           & 0             & 0                 & NaN            & n.s.                  \\
+            $dropped\_iterations\_rate$ & 20           & 0                                      & 0                 &                                           & 0             & 0                 & NaN            & n.s.                  \\
+            $dropped\_iterations\_rate$ & 50           & 0                                      & 0                 &                                           & 0             & 0                 & NaN            & n.s.                  \\
+            $dropped\_iterations\_rate$ & 100          & 0                                      & 0                 &                                           & 0             & 0                 & NaN            & n.s.                  \\
+            $dropped\_iterations\_rate$ & 200          & 0                                      & 0                 &                                           & 0             & 0                 & NaN            & n.s.                  \\
+            $dropped\_iterations\_rate$ & 500          & 0                                      & 0                 &                                           & 8.26          & 1.12              & NaN            & ***                   \\
+
+            \bottomrule
+        \end{tabular}
+    }
+    \caption{Statistical comparison of  $dropped\_iterations\_rate$ for POST /lectures/create, then GET/lectures/\{lectureId\} (client), averaged out over at least 25 runs}
+    \label{table:run-create-lecture_dropped_iterations_client}
+\end{table}

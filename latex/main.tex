@@ -515,6 +515,7 @@ The results are reported using the probability thresholds defined in \autoref{ta
 \input{tables/run-create-course-simple_CPU_Usage.tex}
 \input{tables/run-create-course-simple_Threadpool_Usage.tex}
 \input{tables/run-create-course-simple_Database_Connections.tex}
+\input{tables/run-create-course-simple_datastore_size.tex}
 
 \newpage
 \section{L2: Create Course Prerequisites}
@@ -559,10 +560,14 @@ The results are reported using the probability thresholds defined in \autoref{ta
 \input{tables/run-get-credits_Database_Connections.tex}
 
 \newpage
-\section{L6: Time to Consistency (TODO)}
+\section{L6: Time to Consistency}
 \label{results:l6}
 
-TODO: latencies
+This load test consists of 2 requests per iteration. Therefore, the client-side latencies for both requests are listed separately. In a third table, the dropped iterations are listed.
+
+\input{tables/run-create-lecture_POST_client.tex}
+\input{tables/run-create-lecture_GET_client.tex}
+\input{tables/run-create-lecture_Dropped_iterations_client.tex}
 
 \input{tables/run-create-lecture_CPU_Usage.tex}
 \input{tables/run-create-lecture_Threadpool_Usage.tex}

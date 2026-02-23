@@ -49,7 +49,8 @@
               "title": "TODO Tagesliste"
             }
           }
-        ]
+        ],
+        "currentTab": 2
       }
     ],
     "direction": "vertical"
@@ -197,11 +198,11 @@
       "bases:Create new base": false
     }
   },
-  "active": "6d74fb4d48374cba",
+  "active": "2cc809e2fd01667e",
   "lastOpenFiles": [
+    "Thesis - Landing Page.md",
     "TODO Tagesliste.md",
     "Advice/VMs.md",
-    "Thesis - Landing Page.md",
     "Writing/Discussion - performance.md",
     "Writing/Interpret results - flexibility.md",
     "Writing/Related Work.md",

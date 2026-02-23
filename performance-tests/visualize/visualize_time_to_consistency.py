@@ -12,8 +12,7 @@ from visualize.side_by_side_box_plot import (
 
 def extract_rps(folder: Path) -> int | None:
     """
-    Returns the first '-' separated token in folder.stem
-    that can be parsed as an integer.
+    Attempts to extract the RPS from a folder name
     """
     for token in folder.stem.split("-"):
         try:
@@ -78,19 +77,17 @@ def parse_k6_output(folder: Path) -> pd.DataFrame:
                     },
                 ]
             )
-
-        elif metric_name == "read_visible_rate":
-            # rows.append(
-            #     {
-            #         "metric": "read_visible_rate",
-            #         "method": "GET",
-            #         "uri": uri,
-            #         "value": metric_data.get("value"),
-            #         "app": app,
-            #         "virtual_users": rps,
-            #     }
-            # )
-            pass
+        elif metric_name.startswith("dropped_iterations"):
+            rows.append(
+                {
+                    "metric": "dropped_iterations_rate",
+                    "method": "-",
+                    "uri": "-",
+                    "value": metric_data.get("rate"),
+                    "app": app,
+                    "virtual_users": rps,
+                }
+            )
 
     df = pd.DataFrame(rows)
     return df
@@ -115,7 +112,7 @@ def main():
     print(f"Found {len(all_folders)} folders.")
 
     dfs = pd.concat(
-        [parse_k6_output(f) for f in all_folders if "-20-" not in f.stem],
+        [parse_k6_output(f) for f in all_folders],
         ignore_index=True,
     )
 
