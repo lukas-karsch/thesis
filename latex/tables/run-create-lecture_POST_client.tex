@@ -3,96 +3,96 @@
     \resizebox{\columnwidth}{!}{
         \begin{tabular}{lcrrcrrcc}
             \toprule
-                            &              & \multicolumn{2}{c}{\textbf{CRUD (ms)}} &                   & \multicolumn{2}{c}{\textbf{ES-CQRS (ms)}} &               &                                                                          \\
+                            &              & \multicolumn{2}{c}{\textbf{CRUD (ms)}} &                   & \multicolumn{2}{c}{\textbf{ES-CQRS (ms)}} &               &                                                              \\
             \cmidrule{3-4} \cmidrule{6-7}
-            \textbf{Metric} & \textbf{RPS} & \textbf{Mean}                          & \textbf{CI $\pm$} &                                           & \textbf{Mean} & \textbf{CI $\pm$}             & \textbf{Speedup} & \textbf{Significance} \\
+            \textbf{Metric} & \textbf{RPS} & \textbf{Mean}                          & \textbf{CI $\pm$} &                                           & \textbf{Mean} & \textbf{CI $\pm$} & \textbf{Speedup} & \textbf{Significance} \\
             \midrule
 
-            $latency\_avg$  & 10           & 6.96                                   & 0.3               &                                           & 9.3           & 0.06                          & 1.3x Slower      & ***                   \\
+            $latency\_avg$  & 10           & 6.96                                   & 0.3               &                                           & 9.3           & 0.06              & 1.3x Slower      & ***                   \\
 
-            $latency\_p50$  & 10           & 5.69                                   & 0.05              &                                           & 8.31          & 0.03             1.5x Slower  & ***                                      \\
+            $latency\_p50$  & 10           & 5.69                                   & 0.05              &                                           & 8.31          & 0.03              & 1.5x Slower      & ***                   \\
 
-            $latency\_p95$  & 10           & 15.2                                   & 0.08              &                                           & 17.6          & 0.37             1.2x Slower  & ***                                      \\
+            $latency\_p95$  & 10           & 15.2                                   & 0.08              &                                           & 17.6          & 0.37              & 1.2x Slower      & ***                   \\
 
-            $latency\_p99$  & 10           & 17.01                                  & 0.09              &                                           & 21.91         & 0.21              1.3x Slower & ***                                      \\
+            $latency\_p99$  & 10           & 17.01                                  & 0.09              &                                           & 21.91         & 0.21              & 1.3x Slower      & ***                   \\
 
-            $latency\_avg$  & 20           & 5.08                                   & 0.03              &                                           & 7.61          & 0.02                          & 1.5x Slower      & ***                   \\
+            $latency\_avg$  & 20           & 5.08                                   & 0.03              &                                           & 7.61          & 0.02              & 1.5x Slower      & ***                   \\
 
-            $latency\_p50$  & 20           & 4.62                                   & 0.04              &                                           & 6.81          & 0.04                          & 1.5x Slower      & ***                   \\
+            $latency\_p50$  & 20           & 4.62                                   & 0.04              &                                           & 6.81          & 0.04              & 1.5x Slower      & ***                   \\
 
-            $latency\_p95$  & 20           & 7.27                                   & 0.07              &                                           & 11.8          & 0.09                          & 1.6x Slower      & ***                   \\
+            $latency\_p95$  & 20           & 7.27                                   & 0.07              &                                           & 11.8          & 0.09              & 1.6x Slower      & ***                   \\
 
-            $latency\_p99$  & 20           & 15.96                                  & 0.13              &                                           & 20.03         & 0.28                          & 1.3x Slower      & ***                   \\
+            $latency\_p99$  & 20           & 15.96                                  & 0.13              &                                           & 20.03         & 0.28              & 1.3x Slower      & ***                   \\
 
-            $latency\_avg$  & 50           & 3.67                                   & 0.02              &                                           & 5.95          & 0.02                          & 1.6x Slower      & ***                   \\
+            $latency\_avg$  & 50           & 3.67                                   & 0.02              &                                           & 5.95          & 0.02              & 1.6x Slower      & ***                   \\
 
-            $latency\_p50$  & 50           & 3.34                                   & 0.01              &                                           & 5.31          & 0.01                          & 1.6x Slower      & ***                   \\
+            $latency\_p50$  & 50           & 3.34                                   & 0.01              &                                           & 5.31          & 0.01              & 1.6x Slower      & ***                   \\
 
-            $latency\_p95$  & 50           & 5.83                                   & 0.04              &                                           & 10.22         & 0.08                          &
-            1.8x Slower     & ***                                                                                                                                                                                                              \\
+            $latency\_p95$  & 50           & 5.83                                   & 0.04              &                                           & 10.22         & 0.08              &
+            1.8x Slower     & ***                                                                                                                                                                                                  \\
 
-            $latency\_p99$  & 50           & 7.79                                   & 0.06              &                                           & 13.83         & 0.19                          &
-            1.8x Slower     & ***                                                                                                                                                                                                              \\
+            $latency\_p99$  & 50           & 7.79                                   & 0.06              &                                           & 13.83         & 0.19              &
+            1.8x Slower     & ***                                                                                                                                                                                                  \\
 
-            $latency\_avg$  & 100          & 2.97                                   & 0.02              &                                           & 4.65          & 0.01                          &
-            1.6x Slower     & ***                                                                                                                                                                                                              \\
+            $latency\_avg$  & 100          & 2.97                                   & 0.02              &                                           & 4.65          & 0.01              &
+            1.6x Slower     & ***                                                                                                                                                                                                  \\
 
-            $latency\_p50$  & 100          & 2.73                                   & 0.02              &                                           & 4.02          & 0.01                          &
-            1.5x Slower     & ***                                                                                                                                                                                                              \\
+            $latency\_p50$  & 100          & 2.73                                   & 0.02              &                                           & 4.02          & 0.01              &
+            1.5x Slower     & ***                                                                                                                                                                                                  \\
 
-            $latency\_p95$  & 100          & 4.76                                   & 0.07              &                                           & 8.73          & 0.04                          &
-            1.8x Slower     & ***                                                                                                                                                                                                              \\
+            $latency\_p95$  & 100          & 4.76                                   & 0.07              &                                           & 8.73          & 0.04              &
+            1.8x Slower     & ***                                                                                                                                                                                                  \\
 
-            $latency\_p99$  & 100          & 6.89                                   & 0.05              &                                           & 13.37         & 0.1                           &
-            1.9x Slower     & ***                                                                                                                                                                                                              \\
+            $latency\_p99$  & 100          & 6.89                                   & 0.05              &                                           & 13.37         & 0.1               &
+            1.9x Slower     & ***                                                                                                                                                                                                  \\
 
-            $latency\_avg$  & 200          & 2.58                                   & 0.01              &                                           & 4.45          & 0.04                          &
-            1.7x Slower     & ***                                                                                                                                                                                                              \\
+            $latency\_avg$  & 200          & 2.58                                   & 0.01              &                                           & 4.45          & 0.04              &
+            1.7x Slower     & ***                                                                                                                                                                                                  \\
 
-            $latency\_p50$  & 200          & 2.37                                   & 0.01              &                                           & 3.49          & 0.02                          &
-            1.5x Slower     & ***                                                                                                                                                                                                              \\
+            $latency\_p50$  & 200          & 2.37                                   & 0.01              &                                           & 3.49          & 0.02              &
+            1.5x Slower     & ***                                                                                                                                                                                                  \\
 
-            $latency\_p95$  & 200          & 3.83                                   & 0.05              &                                           & 9.85          & 0.19                          &
-            2.6x Slower     & ***                                                                                                                                                                                                              \\
+            $latency\_p95$  & 200          & 3.83                                   & 0.05              &                                           & 9.85          & 0.19              &
+            2.6x Slower     & ***                                                                                                                                                                                                  \\
 
-            $latency\_p99$  & 200          & 6.01                                   & 0.04              &                                           & 16.89         & 0.77                          &
-            2.8x Slower     & ***                                                                                                                                                                                                              \\
+            $latency\_p99$  & 200          & 6.01                                   & 0.04              &                                           & 16.89         & 0.77              &
+            2.8x Slower     & ***                                                                                                                                                                                                  \\
 
-            $latency\_avg$  & 300          & 2.57                                   & 0.01              &                                           & 6.78          & 0.17                          &
-            2.6x Slower     & ***                                                                                                                                                                                                              \\
+            $latency\_avg$  & 300          & 2.57                                   & 0.01              &                                           & 6.78          & 0.17              &
+            2.6x Slower     & ***                                                                                                                                                                                                  \\
 
-            $latency\_p50$  & 300          & 2.37                                   & 0.01              &                                           & 3.62          & 0.02                          &
-            1.5x Slower     & ***                                                                                                                                                                                                              \\
+            $latency\_p50$  & 300          & 2.37                                   & 0.01              &                                           & 3.62          & 0.02              &
+            1.5x Slower     & ***                                                                                                                                                                                                  \\
 
-            $latency\_p95$  & 300          & 3.69                                   & 0.06              &                                           & 22.11         & 0.96                          &
-            6.0x Slower     & ***                                                                                                                                                                                                              \\
+            $latency\_p95$  & 300          & 3.69                                   & 0.06              &                                           & 22.11         & 0.96              &
+            6.0x Slower     & ***                                                                                                                                                                                                  \\
 
-            $latency\_p99$  & 300          & 6.44                                   & 0.11              &                                           & 40.55         & 1.39                          &
-            6.3x Slower     & ***                                                                                                                                                                                                              \\
+            $latency\_p99$  & 300          & 6.44                                   & 0.11              &                                           & 40.55         & 1.39              &
+            6.3x Slower     & ***                                                                                                                                                                                                  \\
 
-            $latency\_avg$  & 400          & 2.56                                   & 0.01              &                                           & 17.11         & 1.53                          &
-            6.7x Slower     & ***                                                                                                                                                                                                              \\
+            $latency\_avg$  & 400          & 2.56                                   & 0.01              &                                           & 17.11         & 1.53              &
+            6.7x Slower     & ***                                                                                                                                                                                                  \\
 
-            $latency\_p50$  & 400          & 2.36                                   & 0.01              &                                           & 4.79          & 0.06                          &
-            2.0x Slower     & ***                                                                                                                                                                                                              \\
+            $latency\_p50$  & 400          & 2.36                                   & 0.01              &                                           & 4.79          & 0.06              &
+            2.0x Slower     & ***                                                                                                                                                                                                  \\
 
-            $latency\_p95$  & 400          & 3.7                                    & 0.05              &                                           & 82.88         & 12.31                         &
-            22.4x Slower    & ***                                                                                                                                                                                                              \\
+            $latency\_p95$  & 400          & 3.7                                    & 0.05              &                                           & 82.88         & 12.31             &
+            22.4x Slower    & ***                                                                                                                                                                                                  \\
 
-            $latency\_p99$  & 400          & 6.68                                   & 0.15              &                                           & 151.14        & 25.62                         &
-            22.6x Slower    & ***                                                                                                                                                                                                              \\
+            $latency\_p99$  & 400          & 6.68                                   & 0.15              &                                           & 151.14        & 25.62             &
+            22.6x Slower    & ***                                                                                                                                                                                                  \\
 
-            $latency\_avg$  & 500          & 2.65                                   & 0.01              &                                           & 178.82        & 6.77                          &
-            67.4x Slower    & ***                                                                                                                                                                                                              \\
+            $latency\_avg$  & 500          & 2.65                                   & 0.01              &                                           & 178.82        & 6.77              &
+            67.4x Slower    & ***                                                                                                                                                                                                  \\
 
-            $latency\_p50$  & 500          & 2.44                                   & 0.01              &                                           & 6.93          & 0.33                          &
-            2.8x Slower     & ***                                                                                                                                                                                                              \\
+            $latency\_p50$  & 500          & 2.44                                   & 0.01              &                                           & 6.93          & 0.33              &
+            2.8x Slower     & ***                                                                                                                                                                                                  \\
 
-            $latency\_p95$  & 500          & 3.82                                   & 0.04              &                                           & 957.33        & 38.15                         &
-            250.4x Slower   & ***                                                                                                                                                                                                              \\
+            $latency\_p95$  & 500          & 3.82                                   & 0.04              &                                           & 957.33        & 38.15             &
+            250.4x Slower   & ***                                                                                                                                                                                                  \\
 
-            $latency\_p99$  & 500          & 7.03                                   & 0.07              &                                           & 1158.17       & 27.85                         &
-            164.7x Slower   & ***                                                                                                                                                                                                              \\
+            $latency\_p99$  & 500          & 7.03                                   & 0.07              &                                           & 1158.17       & 27.85             &
+            164.7x Slower   & ***                                                                                                                                                                                                  \\
 
             \bottomrule
         \end{tabular}

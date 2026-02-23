@@ -698,6 +698,22 @@ The primary difference from a typical k6 test lies in the execution flow within 
 
 To track the success rate of this request, the script introduces a custom Rate metric named $read\_visible\_rate$. By manually adding true or false to this metric based on whether the lecture was found, indicated by a response status of 200, the script generates a percentage of "fresh" requests inside the required threshold of 100ms. This provides a clear statistical view of how reliably the ES-CQRS system maintains its "fresh" data under varying levels of load.
 
+\subsection{A Function for Scalability}
+
+Following~\cite{jogalekar_evaluating_2000}, a function to determine the scalability of applications is established in this subsection. Their scalability metric, described in \autoref{sec:quantifying-scalability-metric}, serves as a basis for the scalability metric used in this study.
+
+This cost function is used:
+
+\[C(k) = w_1 * \text{CPU} + w_2 * \text{S} + w_3 \left( \frac{T}{200} \right) ^2 + w_4 \left( \frac{D}{10} \right)^2\]
+
+The cost function is weighted, with $w_i$ being the weights for each metric. $S$ corresponds to total storage size. $T$ corresponds to $tomcat\_threads$, $D$ corresponds to $hikari\_connections$. These metrics are normalized to their respective ceilings.
+
+When testing time to consistency ("freshness"), the following term gets added to the cost function: $w_5(1 - R)^4$, with $R$ corresponding to $read\_visible\_rate$.
+
+The concrete weights are as following: $w_1=1$, $w_2=0.5$, $w_3=1$, $w_4=1$, $w_5=3$. Storage consumption is weighed less, $read\_visible\_rate$ is weighed more.
+
+Using the above cost function $C(k)$, the productivity and scalability of the applications can be calculated as described in \autoref{sec:quantifying-scalability-metric}, with throughput defined as $RPS - dropped\_iterations\_rate$ and the value function defined as $f(k) = \frac{1}{latency\_p95}$. The implementation of the scalability function is available in \javaname{scalability\_function.py}\footnote{\javaname{performance-tests/scalability\_function.py}}.
+
 \section{Static Analysis}
 \label{sec:static-analysis-impl}
 

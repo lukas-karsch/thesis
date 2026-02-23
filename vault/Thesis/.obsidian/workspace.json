@@ -13,16 +13,16 @@
             "state": {
               "type": "markdown",
               "state": {
-                "file": "Thesis - Landing Page.md",
+                "file": "Technical Design Log/2026-02-23 Scalability Metrik.md",
                 "mode": "source",
                 "source": false
               },
               "icon": "lucide-file",
-              "title": "Thesis - Landing Page"
+              "title": "2026-02-23 Scalability Metrik"
             }
           },
           {
-            "id": "2cc809e2fd01667e",
+            "id": "1dfff4b83cf3203c",
             "type": "leaf",
             "state": {
               "type": "markdown",
@@ -33,20 +33,6 @@
               },
               "icon": "lucide-file",
               "title": "TODO Tagesliste"
-            }
-          },
-          {
-            "id": "2989e9ef4df93853",
-            "type": "leaf",
-            "state": {
-              "type": "markdown",
-              "state": {
-                "file": "Technical Design Log/2026-01-29 Visualizing flexibility metrics.md",
-                "mode": "source",
-                "source": false
-              },
-              "icon": "lucide-file",
-              "title": "2026-01-29 Visualizing flexibility metrics"
             }
           }
         ],
@@ -82,7 +68,7 @@
             "state": {
               "type": "search",
               "state": {
-                "query": "OCavg",
+                "query": "tages",
                 "matchingCase": false,
                 "explainSearch": false,
                 "collapseAll": false,
@@ -103,8 +89,7 @@
               "title": "Bookmarks"
             }
           }
-        ],
-        "currentTab": 1
+        ]
       }
     ],
     "direction": "horizontal",
@@ -199,12 +184,14 @@
       "bases:Create new base": false
     }
   },
-  "active": "2cc809e2fd01667e",
+  "active": "1dfff4b83cf3203c",
   "lastOpenFiles": [
-    "Technical Design Log/2026-01-29 Visualizing flexibility metrics.md",
+    "Technical Design Log/2026-02-23 Scalability Metrik.md",
     "TODO Tagesliste.md",
-    "Writing/Discussion - performance.md",
     "Thesis - Landing Page.md",
+    "Technical Design Log/2026-01-29 Visualizing flexibility metrics.md",
+    "images/Pasted image 20260220152808.png",
+    "Writing/Discussion - performance.md",
     "Advice/VMs.md",
     "Writing/Interpret results - flexibility.md",
     "Writing/Related Work.md",
@@ -226,8 +213,6 @@
     "Writing/Axon.md",
     "Writing/Audit Log - Draft.md",
     "Writing/CRUD vs. CQRS.md",
-    "Writing/Final Discussion.md",
-    "Pasted image 20260220152808.png",
     "Untitled 1.base",
     "Untitled.base",
     "Untitled.canvas",

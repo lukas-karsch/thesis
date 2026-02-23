@@ -88,6 +88,17 @@ def parse_k6_output(folder: Path) -> pd.DataFrame:
                     "virtual_users": rps,
                 }
             )
+        elif metric_name.startswith("read_visible_rate"):
+            rows.append(
+                {
+                    "metric": "read_visible_rate",
+                    "method": "GET",
+                    "uri": uri,
+                    "value": metric_data.get("value"),
+                    "app": app,
+                    "virtual_users": rps,
+                }
+            )
 
     df = pd.DataFrame(rows)
     return df

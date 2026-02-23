@@ -43,13 +43,12 @@ def main() -> None:
     # Toggle to only filter by 'dropped_iterations_rate'
     # df = df[df["metric"] == "dropped_iterations_rate"]
 
+    # df = df[df["metric"] == "read_visible_rate"]
+
     stats_table = analyze_performance(df)
 
-    output_base_name = f"{args.base_name}_client"
-    output_path = (
-        Path(args.output_path)
-        / f"{output_base_name}_dropped_iterations_statistical_test.csv"
-    )
+    output_base_name = f"{args.base_name}_client_read_visible_rate_statistical_test"
+    output_path = Path(args.output_path) / f"{output_base_name}.csv"
 
     output_path.parent.mkdir(parents=True, exist_ok=True)
 

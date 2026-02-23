@@ -50,7 +50,7 @@ def do_analysis(
 
     summary = []
 
-    rps_list = [10, 20, 50, 100, 200, 300, 400, 500]
+    rps_list = [25, 50, 100, 200, 500, 1000, 2000, 3000, 4000, 5000]
     # Generate the full stats table
     for rps in rps_list:
         df_per_rps = aggregate_timeseries_prometheus_metrics(
