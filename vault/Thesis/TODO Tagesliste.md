@@ -3,9 +3,10 @@
 ## Montag, 23.02. 
 - Data Store -> PostgreSQL und Axon Linien separat zeigen? 
 ## Dienstag, 24.02 
-- Load test: get lecture details 
+- Run "read-all-lectures" load tests 
+- Load test nummerierung verschieben. neuer "read-all" wird L5 
+- "L4: Read Lectures" umbenennen zu "Read Lectures for Student"
 - compare for different "enrollment" levels: how much is latency when 10, 20, 50 students are enrolled? 
-- Load test: get lectures? Große Liste fetchen. 
 - $CI\pm$ in data store statistical tests: alle neu berechnen
 ## Mittwoch, 25.02 - Cleanup
 - **Tabellen**
