@@ -11,6 +11,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
 import java.util.UUID;
 
 @RequestMapping("lectures")
@@ -66,6 +67,14 @@ public interface ILecturesController {
             @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "404", description = "Lecture not found")
     })
     ResponseEntity<ApiResponse<LectureDetailDTO>> getLectureDetails(@PathVariable UUID lectureId);
+
+    @GetMapping("all")
+    @ResponseStatus(HttpStatus.OK)
+    @Operation(summary = "Get details for all lectures", description = "Retrieves detailed all lectures.")
+    @ApiResponses(value = {
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "200", description = "Successfully retrieved lecture details")
+    })
+    ResponseEntity<ApiResponse<List<LectureDetailDTO>>> getAllLectureDetails();
 
     @PostMapping("{lectureId}")
     @ResponseStatus(HttpStatus.CREATED)

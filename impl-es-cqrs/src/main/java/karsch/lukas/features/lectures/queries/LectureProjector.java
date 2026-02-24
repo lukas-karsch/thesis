@@ -254,17 +254,22 @@ class LectureProjector {
             return null;
         }
 
-        return new LectureDetailDTO(
-                lecture.getId(),
-                objectMapper.readValue(lecture.getCourseDtoJson(), CourseDTO.class),
-                lecture.getMaximumStudents(),
-                objectMapper.readerForListOf(TimeSlot.class).readValue(lecture.getDatesJson()),
-                objectMapper.readValue(lecture.getProfessorDtoJson(), ProfessorDTO.class),
-                new HashSet<>(objectMapper.readerForListOf(StudentDTO.class).readValue(lecture.getEnrolledStudentsDtoJson())),
-                objectMapper.readerForListOf(WaitlistedStudentDTO.class).readValue(lecture.getWaitingListDtoJson()),
-                lecture.getLectureStatus(),
-                new HashSet<>(objectMapper.readerForListOf(LectureAssessmentDTO.class).readValue(lecture.getAssessmentsJson()))
-        );
+        return mapToLectureDetailDto(lecture);
+    }
+
+    @QueryHandler
+    public List<LectureDetailDTO> findAll(FindAllLecturesQuery query) {
+        return lectureDetailRepository.findAll().parallelStream() //
+                .map(l -> {
+                    try {
+                        return mapToLectureDetailDto(l);
+                    } catch (JsonProcessingException e) {
+                        log.error("Could not deserialize LectureDetailProjectionEntity", e);
+                        return null;
+                    }
+                })
+                .filter(Objects::nonNull)
+                .toList();
     }
 
     @QueryHandler
@@ -312,6 +317,20 @@ class LectureProjector {
 
     private StudentDTO toStudentDto(StudentProjectionEntity student) {
         return new StudentDTO(student.getId(), student.getFirstName(), student.getLastName());
+    }
+
+    private LectureDetailDTO mapToLectureDetailDto(LectureDetailProjectionEntity lectureEntity) throws JsonProcessingException {
+        return new LectureDetailDTO(
+                lectureEntity.getId(),
+                objectMapper.readValue(lectureEntity.getCourseDtoJson(), CourseDTO.class),
+                lectureEntity.getMaximumStudents(),
+                objectMapper.readerForListOf(TimeSlot.class).readValue(lectureEntity.getDatesJson()),
+                objectMapper.readValue(lectureEntity.getProfessorDtoJson(), ProfessorDTO.class),
+                new HashSet<>(objectMapper.readerForListOf(StudentDTO.class).readValue(lectureEntity.getEnrolledStudentsDtoJson())),
+                objectMapper.readerForListOf(WaitlistedStudentDTO.class).readValue(lectureEntity.getWaitingListDtoJson()),
+                lectureEntity.getLectureStatus(),
+                new HashSet<>(objectMapper.readerForListOf(LectureAssessmentDTO.class).readValue(lectureEntity.getAssessmentsJson()))
+        );
     }
 
 }

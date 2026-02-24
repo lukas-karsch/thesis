@@ -23,6 +23,7 @@ import org.springframework.web.bind.annotation.RestController;
 import reactor.core.publisher.Mono;
 
 import java.time.Duration;
+import java.util.List;
 import java.util.UUID;
 import java.util.concurrent.ExecutionException;
 
@@ -139,6 +140,20 @@ public class LecturesController implements ILecturesController {
         } catch (InterruptedException | ExecutionException e) {
             log.error("Error fetching lecture {}", lectureId, e);
             throw new QueryException("Error fetching lecture " + lectureId);
+        }
+    }
+
+    @Override
+    public ResponseEntity<ApiResponse<List<LectureDetailDTO>>> getAllLectureDetails() {
+        try {
+            var queryResult = queryGateway.query(new FindAllLecturesQuery(), ResponseTypes.multipleInstancesOf(LectureDetailDTO.class)).get();
+            return new ResponseEntity<>(
+                    new ApiResponse<>(HttpStatus.OK, queryResult),
+                    HttpStatus.OK
+            );
+        } catch (InterruptedException | ExecutionException e) {
+            log.error("Error fetching lectures", e);
+            throw new QueryException("Error fetching lectures.");
         }
     }
 

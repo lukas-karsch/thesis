@@ -9,6 +9,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.List;
 import java.util.UUID;
 
 @RestController
@@ -72,6 +73,13 @@ public class LecturesController implements ILecturesController {
     public ResponseEntity<ApiResponse<LectureDetailDTO>> getLectureDetails(UUID lectureId) {
         return new ResponseEntity<>(
                 new ApiResponse<>(HttpStatus.OK, lecturesService.getLectureDetails(lectureId)), HttpStatus.OK
+        );
+    }
+
+    @Override
+    public ResponseEntity<ApiResponse<List<LectureDetailDTO>>> getAllLectureDetails() {
+        return new ResponseEntity<>(
+                new ApiResponse<>(HttpStatus.OK, lecturesService.getAllLectureDetails()), HttpStatus.OK
         );
     }
 

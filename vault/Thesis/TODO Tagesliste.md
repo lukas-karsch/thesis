@@ -21,6 +21,7 @@
 		- DB connections -> $hikari\_connections$ 
 	- `log_x` immer gleicher Wert (`False`)! 
 	- latency SLO in alle Grafiken einfügen! 
+- Letztes Kapitel: Discussion und Interpretation
 ## Donnerstag, 26.02 - Cleanup 
 - Alle CPU Usage Daten müssen einheitlich sein! 
 - Schauen, dass "dropped iterations" überall erwähnt wird wo iterations gedroppt wurden. 

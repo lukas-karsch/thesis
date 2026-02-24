@@ -393,4 +393,10 @@ class LecturesService {
 
         existingGrade.setGrade(assignGradeRequest.grade());
     }
+
+    public List<LectureDetailDTO> getAllLectureDetails() {
+        var lectures = lecturesRepository.findAll();
+
+        return lectureDetailDtoMapper.mapToList(lectures);
+    }
 }
