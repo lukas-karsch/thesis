@@ -1,0 +1,11 @@
+{
+  "metric": {
+    "method": "GET",
+    "uri": "/lectures/all"
+  },
+  "file": "read-all-lectures.js",
+  "metadata": {
+    "title": "Read all lectures"
+  },
+  "VUs": 50
+}

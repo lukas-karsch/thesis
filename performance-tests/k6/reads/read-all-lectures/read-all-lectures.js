@@ -1,5 +1,5 @@
 import http from 'k6/http';
-import {group} from "k6";
+import {group, sleep} from "k6";
 import {checkResponseIs200} from "../../helper/assert.js";
 import {getVUS} from "../../helper/env.js";
 import {createLecturesAndEnroll} from "../../helper/lectures-seed-data.js";
@@ -14,6 +14,7 @@ export const options = {
             executor: "ramping-arrival-rate",
             timeUnit: "1s",
             preAllocatedVUs: VUS,
+            maxVUs: VUS * 2,
             stages: [
                 {target: VUS, duration: "20s"},
                 {target: VUS, duration: "80s"},
@@ -28,19 +29,13 @@ export const options = {
 };
 
 export function setup() {
-    return createLecturesAndEnroll(50, 100, http, TARGET_HOST)
+    createLecturesAndEnroll(25, 15, http, TARGET_HOST);
+    sleep(10);
 }
 
-export default function (data) {
-    const {
-        studentIds
-    } = data
-
-    // Pick a random student
-    const pickedStudent = studentIds[Math.floor(Math.random() * studentIds.length)]
-    // Fetch lectures for this student
-    group("Read lectures for a student", () => {
-        const res = http.get(`${TARGET_HOST}/lectures?studentId=${pickedStudent}`);
+export default function () {
+    group("Read all lectures", () => {
+        const res = http.get(`${TARGET_HOST}/lectures/all`);
         checkResponseIs200(res);
     });
 }

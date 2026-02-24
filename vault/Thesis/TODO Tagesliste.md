@@ -32,10 +32,14 @@
 - L6: Time to consistency 
 	- dropped iterations hat fehlende Werte 
 	- read-visible-rate: table is missing 
+- Dropped iterations rate -> turn into result for "failed requests rate".
+	- Dropped = failed 
+	- Make sure to turn this into SLO 3 
 ## Freitag, 27.02
 - Kapitel 1: 
 	- Motivation 
 	- Structure of the thesis 
+- Describe each load test in implementation chapter (which seed data, what is checked.)
 ## Samstag, 28.02 
 - Abstract 
 - Scalability metric für alle Tests in Anhang machen 
