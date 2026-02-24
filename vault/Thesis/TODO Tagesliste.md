@@ -3,12 +3,11 @@
 ## Montag, 23.02. 
 - Data Store -> PostgreSQL und Axon Linien separat zeigen? 
 ## Dienstag, 24.02 
-- Run "read-all-lectures" load tests 
-- Load test nummerierung verschieben. neuer "read-all" wird L5 
-- "L4: Read Lectures" umbenennen zu "Read Lectures for Student"
 - compare for different "enrollment" levels: how much is latency when 10, 20, 50 students are enrolled? 
 - $CI\pm$ in data store statistical tests: alle neu berechnen
 ## Mittwoch, 25.02 - Cleanup
+- **URGENT**
+	- read-all-lectures Ergebnisse holen 
 - **Tabellen**
 	- "averaged out over..." in appendix: Wording überdenken. Vlt einfach "aggregated"
 	- "Speedup" in Tabellen -> "Ratio"

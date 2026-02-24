@@ -3,7 +3,7 @@ When using this script, make sure to adjust statistical_tests.py
 1. Change "value" to "value_ms"
 2. Change multiplier below from 1000 to 1
 
-When trying to show dropped iterations, uncomment the filter in this file'S main function.
+When trying to show dropped iterations, uncomment the filter in this file's main function.
 """
 
 from pathlib import Path
@@ -47,7 +47,7 @@ def main() -> None:
 
     stats_table = analyze_performance(df)
 
-    output_base_name = f"{args.base_name}_client_read_visible_rate_statistical_test"
+    output_base_name = f"{args.base_name}_POST_latency"
     output_path = Path(args.output_path) / f"{output_base_name}.csv"
 
     output_path.parent.mkdir(parents=True, exist_ok=True)
@@ -56,7 +56,7 @@ def main() -> None:
     render_table(
         stats_table,
         f"{args.base_name}_client",
-        f"GET /lectures/\\{{lectureId\\}}",
+        f"POST /lectures/create",
         Path(args.output_path) / f"{output_base_name}.tex",
     )
 

@@ -18,17 +18,17 @@ def analyze_performance(data: pd.DataFrame):
         crud = group[group["app"] == "crud"]["value"]
         cqrs = group[group["app"] == "es-cqrs"]["value"]
 
-        # Calculate Means
-        m_crud, m_cqrs = crud.mean(), cqrs.mean()
+        # Calculate medians
+        med_crud, med_cqrs = crud.median(), cqrs.median()
 
         # Mann-Whitney U Test (Non-parametric significance)
         u_stat, p_val = stats.mannwhitneyu(crud, cqrs)
 
         # Speedup Ratio (How many times faster is CQRS?)
-        if m_cqrs > 0:
-            ratio = m_crud / m_cqrs
+        if med_cqrs > 0:
+            ratio = med_crud / med_cqrs
         else:
-            ratio = float("inf") if m_crud > 0 else float("nan")
+            ratio = float("inf") if med_crud > 0 else float("nan")
 
         if ratio >= 1:
             comparison = f"{round(ratio, 1)}x Faster"
@@ -46,27 +46,25 @@ def analyze_performance(data: pd.DataFrame):
                 return "*"
             return "n.s."
 
-        print(f"metric={metric}")
-
-        c_mean = (
-            round(m_crud * 1000, 2)
+        med_crud = (
+            round(med_crud * 1000, 2)
             if metric != "dropped_iterations_rate"
-            else round(m_crud, 2)
+            else round(med_crud, 2)
         )
 
-        e_mean = (
-            round(m_cqrs * 1000, 2)
+        med_cqrs = (
+            round(med_cqrs * 1000, 2)
             if metric != "dropped_iterations_rate"
-            else round(m_cqrs, 2)
+            else round(med_cqrs, 2)
         )
 
         results.append(
             {
                 "metric": metric,
                 "users": users,
-                "c_mean": c_mean,
+                "c_median": med_crud,
                 "c_ci": round(get_median_ci(crud), 2),
-                "e_mean": e_mean,
+                "e_median": med_cqrs,
                 "e_ci": round(get_median_ci(cqrs), 2),
                 "speedup": comparison,
                 "sig": _get_significance(p_val),
@@ -110,7 +108,7 @@ def main():
         render_table(
             stats_table,
             f"{args.base_name}_{file}",
-            f"POST /courses ({file})",
+            f"POST /lectures/create, then GET /lectures/\\{{lectureId\\}} ({file})",
             Path(args.output_path) / f"{output_base_name}.tex",
         )
 

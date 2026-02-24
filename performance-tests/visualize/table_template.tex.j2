@@ -5,10 +5,11 @@
 \toprule
 & & \multicolumn{2}{c}{\textbf{CRUD (ms)}} & & \multicolumn{2}{c}{\textbf{ES-CQRS (ms)}} & & \\
 \cmidrule{3-4} \cmidrule{6-7}
-\textbf{Metric} & \textbf{RPS} & \textbf{Mean} & \textbf{CI $\pm$} & & \textbf{Mean} & \textbf{CI $\pm$} & \textbf{Speedup} & \textbf{Significance} \\
+\textbf{Metric} & \textbf{RPS} & \textbf{Median} & \textbf{CI $\pm$} & & \textbf{Median} & \textbf{CI $\pm$} & \textbf{Speedup} & \textbf{Significance} \\
 \midrule
 {% for row in rows %}
-    ${{ e(row.metric) }}$ & {{ row.users }} & {{ row.c_mean }} & {{ row.c_ci }} & & {{ row.e_mean }} & {{ row.e_ci }} &
+    ${{ e(row.metric) }}$ & {{ row.users }} & {{ row.c_median }} & {{ row.c_ci }} & & {{ row.e_median }} &
+    {{ row.e_ci }} &
     {{ row.speedup }} & {{ row.sig }} \\
 {% endfor %}
 \bottomrule

@@ -35,6 +35,14 @@ def get_metric_json(base_path: Path) -> Path:
 
 
 def get_median_ci(series):
+    return _get_ci(series, np.median)
+
+
+def get_mean_ci(series):
+    return _get_ci(series, np.mean)
+
+
+def _get_ci(series, fn):
     if len(series) < 20:
         print(f"Sample size is {len(series)}, returning 0 for get_median_ci")
         return 0
@@ -43,7 +51,7 @@ def get_median_ci(series):
 
     res = stats.bootstrap(
         d,
-        np.median,
+        fn,
         confidence_level=0.95,
         method="percentile",
         n_resamples=1000,
