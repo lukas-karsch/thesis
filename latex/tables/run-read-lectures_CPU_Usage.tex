@@ -1,35 +1,35 @@
 \begin{table}[H]
-\small
-\centering
-\resizebox{\columnwidth}{!}{
-\begin{tabular}{rrrcrrcc}
-\toprule
-& \multicolumn{2}{c}{\textbf{CRUD (ms)}} &                   & \multicolumn{2}{c}{\textbf{ES-CQRS (ms)}} &               &                                                            \\
-\cmidrule{2-3} \cmidrule{5-6}
-\textbf{RPS} & \textbf{Median}                          & \textbf{CI $\pm$} &                                           & \textbf{Median} & \textbf{CI $\pm$} & \textbf{Ratio} & \textbf{Significance} \\
-\midrule
+    \small
+    \centering
+    \resizebox{\columnwidth}{!}{
+        \begin{tabular}{rrrcrrcc}
+            \toprule
+                         & \multicolumn{2}{c}{\textbf{CRUD (ms)}} &                   & \multicolumn{2}{c}{\textbf{ES-CQRS (ms)}} &                 &                                                            \\
+            \cmidrule{2-3} \cmidrule{5-6}
+            \textbf{RPS} & \textbf{Median}                        & \textbf{CI $\pm$} &                                           & \textbf{Median} & \textbf{CI $\pm$} & \textbf{Ratio} & \textbf{Significance} \\
+            \midrule
 
-    25 & 0.0138 & 0.0012 & & 0.0201 & 0.0012 &  1.5x Higher & *** \\
+            25           & 0.0138                                 & 0.0012            &                                           & 0.0201          & 0.0012            & 1.5x Higher    & ***                   \\
 
-    50 & 0.0163 & 0.0013 & & 0.0277 & 0.0013 &  1.7x Higher & *** \\
+            50           & 0.0163                                 & 0.0013            &                                           & 0.0277          & 0.0013            & 1.7x Higher    & ***                   \\
 
-    100 & 0.0214 & 0.0013 & & 0.0416 & 0.002 &  1.9x Higher & *** \\
+            100          & 0.0214                                 & 0.0013            &                                           & 0.0416          & 0.002             & 1.9x Higher    & ***                   \\
 
-    200 & 0.0251 & 0.0008 & & 0.0446 & 0.002 &  1.8x Higher & *** \\
+            200          & 0.0251                                 & 0.0008            &                                           & 0.0446          & 0.002             & 1.8x Higher    & ***                   \\
 
-    500 & 0.0536 & 0.0006 & & 0.0941 & 0.0015 &  1.8x Higher & *** \\
+            500          & 0.0536                                 & 0.0006            &                                           & 0.0941          & 0.0015            & 1.8x Higher    & ***                   \\
 
-    1000 & 0.1121 & 0.0011 & & 0.1835 & 0.0013 &  1.6x Higher & *** \\
+            1000         & 0.1121                                 & 0.0011            &                                           & 0.1835          & 0.0013            & 1.6x Higher    & ***                   \\
 
-    2000 & 0.2324 & 0.0016 & & 0.3869 & 0.0025 &  1.7x Higher & *** \\
+            2000         & 0.2324                                 & 0.0016            &                                           & 0.3869          & 0.0025            & 1.7x Higher    & ***                   \\
 
-    3000 & 0.4149 & 0.0051 & & 0.5437 & 0.0024 &  1.3x Higher & *** \\
+            3000         & 0.4149                                 & 0.0051            &                                           & 0.5437          & 0.0024            & 1.3x Higher    & ***                   \\
 
-    4000 & 0.6112 & 0.0219 & & 0.6015 & 0.0062 &  1.0x Lower & n.s. \\
+            4000         & 0.6112                                 & 0.0219            &                                           & 0.6015          & 0.0062            & 1.0x Lower     & n.s.                  \\
 
-\bottomrule
-\end{tabular}
-}
-\caption{Statistical comparison of $cpu\_usage$ for GET /lectures, averaged out over at least 25 runs}
-\label{table:run-read-lectures-aggregated-CPU_Usage}
+            \bottomrule
+        \end{tabular}
+    }
+    \caption{Statistical comparison of $cpu\_usage$ for GET /lectures, aggregated over at least 25 runs}
+    \label{table:run-read-lectures-aggregated-CPU_Usage}
 \end{table}

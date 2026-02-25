@@ -1,23 +1,24 @@
 \begin{table}[H]
-    \small \centering
-    \resizebox{\columnwidth}{!}{
-        \begin{tabular}{lcrrcrrcc}
-            \toprule
-                                        &              & \multicolumn{2}{c}{\textbf{CRUD (ms)}} &                   & \multicolumn{2}{c}{\textbf{ES-CQRS (ms)}} &                 &                                                              \\
-            \cmidrule{3-4} \cmidrule{6-7}
-            \textbf{Metric}             & \textbf{RPS} & \textbf{Median}                        & \textbf{CI $\pm$} &                                           & \textbf{Median} & \textbf{CI $\pm$} & \textbf{Speedup} & \textbf{Significance} \\
-            \midrule
+    \small
+    \centering
+    \begin{tabular}{lcrrcrrcc}
+        \toprule
+                     & \multicolumn{2}{c}{\textbf{CRUD (ms)}} &                   & \multicolumn{2}{c}{\textbf{ES-CQRS (ms)}} &                 &                                                            \\
+        \cmidrule{2-3} \cmidrule{5-6}
+        \textbf{RPS} & \textbf{Median}                        & \textbf{CI $\pm$} &                                           & \textbf{Median} & \textbf{CI $\pm$} & \textbf{Ratio} & \textbf{Significance} \\
+        \midrule
 
-            $dropped\_iterations\_rate$ & 10           & 0                                      & 0                 &                                           & 0               & 0                 & NaN              & n.s.                  \\
-            $dropped\_iterations\_rate$ & 25           & 0                                      & 0                 &                                           & 0               & 0                 & NaN              & n.s.                  \\
-            $dropped\_iterations\_rate$ & 50           & 0                                      & 0                 &                                           & 0               & 0                 & NaN              & n.s.                  \\
-            $dropped\_iterations\_rate$ & 100          & 0                                      & 0                 &                                           & 0               & 0                 & NaN              & n.s.                  \\
-            $dropped\_iterations\_rate$ & 200          & 0                                      & 0                 &                                           & 0               & 0                 & NaN              & n.s.                  \\
-            $dropped\_iterations\_rate$ & 500          & 0                                      & 0                 &                                           & 8.5             & 1.12              & NaN              & n.s.                  \\
+        10           & 0                                      & 0                 &                                           & 0               & 0                 & NaN            & n.s.                  \\
+        25           & 0                                      & 0                 &                                           & 0               & 0                 & NaN            & n.s.                  \\
+        50           & 0                                      & 0                 &                                           & 0               & 0                 & NaN            & n.s.                  \\
+        100          & 0                                      & 0                 &                                           & 0               & 0                 & NaN            & n.s.                  \\
+        200          & 0                                      & 0                 &                                           & 0               & 0                 & NaN            & n.s.                  \\
+        300          & 0                                      & 0                 &                                           & 0               & 0                 & NaN            & n.s.                  \\
+        400          & 0                                      & 0                 &                                           & 0               & 0                 & NaN            & n.s.                  \\
+        500          & 0                                      & 0                 &                                           & 8.5             & 1.12              & NaN            & n.s.                  \\
 
-            \bottomrule
-        \end{tabular}
-    }
-    \caption{Statistical comparison of $dropped\_iterations\_rate$ for POST /lectures/create, then GET /lectures/\{lectureId\}, averaged out over at least 25 runs}
+        \bottomrule
+    \end{tabular}
+    \caption{Statistical comparison of $dropped\_iterations\_rate$ for POST /lectures/create, then GET /lectures/\{lectureId\}, aggregated over at least 25 runs}
     \label{table:run-create-lecture_client_dropped_iterations}
 \end{table}

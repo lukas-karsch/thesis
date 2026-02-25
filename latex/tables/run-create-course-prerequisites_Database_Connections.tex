@@ -1,29 +1,29 @@
 \begin{table}[H]
-\small
-\centering
-\resizebox{\columnwidth}{!}{
-\begin{tabular}{rrrcrrcc}
-\toprule
-& \multicolumn{2}{c}{\textbf{CRUD (ms)}} &                   & \multicolumn{2}{c}{\textbf{ES-CQRS (ms)}} &               &                                                            \\
-\cmidrule{2-3} \cmidrule{5-6}
-\textbf{RPS} & \textbf{Median}                          & \textbf{CI $\pm$} &                                           & \textbf{Median} & \textbf{CI $\pm$} & \textbf{Ratio} & \textbf{Significance} \\
-\midrule
+    \small
+    \centering
+    \resizebox{\columnwidth}{!}{
+        \begin{tabular}{rrrcrrcc}
+            \toprule
+                         & \multicolumn{2}{c}{\textbf{CRUD (ms)}} &                   & \multicolumn{2}{c}{\textbf{ES-CQRS (ms)}} &                 &                                                            \\
+            \cmidrule{2-3} \cmidrule{5-6}
+            \textbf{RPS} & \textbf{Median}                        & \textbf{CI $\pm$} &                                           & \textbf{Median} & \textbf{CI $\pm$} & \textbf{Ratio} & \textbf{Significance} \\
+            \midrule
 
-    25 & 0.0 & 0.0 & & 0.0 & 0.0 &  NaN & *** \\
+            25           & 0.0                                    & 0.0               &                                           & 0.0             & 0.0               & NaN            & ***                   \\
 
-    50 & 0.0 & 0.0 & & 0.0 & 0.0 &  NaN & *** \\
+            50           & 0.0                                    & 0.0               &                                           & 0.0             & 0.0               & NaN            & ***                   \\
 
-    100 & 0.0 & 0.0 & & 0.0 & 0.0 &  NaN & *** \\
+            100          & 0.0                                    & 0.0               &                                           & 0.0             & 0.0               & NaN            & ***                   \\
 
-    200 & 0.0 & 0.0 & & 1.0 & 0.5 &  NaN & *** \\
+            200          & 0.0                                    & 0.0               &                                           & 1.0             & 0.5               & NaN            & ***                   \\
 
-    500 & 1.0 & 0.0 & & 6.0 & 0.5 &  6.0x Higher & *** \\
+            500          & 1.0                                    & 0.0               &                                           & 6.0             & 0.5               & 6.0x Higher    & ***                   \\
 
-    1000 & 2.0 & 0.0 & & 10.0 & 0.0 &  5.0x Higher & *** \\
+            1000         & 2.0                                    & 0.0               &                                           & 10.0            & 0.0               & 5.0x Higher    & ***                   \\
 
-\bottomrule
-\end{tabular}
-}
-\caption{Statistical comparison of $hikari\_connections$ for GET /lectures, averaged out over at least 25 runs}
-\label{table:run-create-course-prerequisites-aggregated-Database_Connections}
+            \bottomrule
+        \end{tabular}
+    }
+    \caption{Statistical comparison of $hikari\_connections$ for GET /lectures, aggregated over at least 25 runs}
+    \label{table:run-create-course-prerequisites-aggregated-Database_Connections}
 \end{table}

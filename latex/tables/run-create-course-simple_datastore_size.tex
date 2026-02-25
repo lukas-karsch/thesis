@@ -1,35 +1,35 @@
 \begin{table}[H]
-\small
-\centering
-\resizebox{\columnwidth}{!}{
-\begin{tabular}{rrrcrrcc}
-\toprule
-& \multicolumn{2}{c}{\textbf{CRUD (ms)}} &                   & \multicolumn{2}{c}{\textbf{ES-CQRS (ms)}} &               &                                                            \\
-\cmidrule{2-3} \cmidrule{5-6}
-\textbf{RPS} & \textbf{Median}                          & \textbf{CI $\pm$} &                                           & \textbf{Median} & \textbf{CI $\pm$} & \textbf{Ratio} & \textbf{Significance} \\
-\midrule
+    \small
+    \centering
+    \resizebox{\columnwidth}{!}{
+        \begin{tabular}{rrrcrrcc}
+            \toprule
+                         & \multicolumn{2}{c}{\textbf{CRUD (ms)}} &                   & \multicolumn{2}{c}{\textbf{ES-CQRS (ms)}} &                 &                                                            \\
+            \cmidrule{2-3} \cmidrule{5-6}
+            \textbf{RPS} & \textbf{Median}                        & \textbf{CI $\pm$} &                                           & \textbf{Median} & \textbf{CI $\pm$} & \textbf{Ratio} & \textbf{Significance} \\
+            \midrule
 
-    25 & 9.51 & 0.0 & & 18.95 & 0.01 &
-    2.0x Higher & *** \\
+            25           & 9.51                                   & 0.0               &                                           & 18.95           & 0.01              &
+            2.0x Higher  & ***                                                                                                                                                                                   \\
 
-    50 & 11.05 & 0.0 & & 21.28 & 0.0 &
-    1.9x Higher & *** \\
+            50           & 11.05                                  & 0.0               &                                           & 21.28           & 0.0               &
+            1.9x Higher  & ***                                                                                                                                                                                   \\
 
-    100 & 14.12 & 0.0 & & 25.87 & 0.01 &
-    1.8x Higher & *** \\
+            100          & 14.12                                  & 0.0               &                                           & 25.87           & 0.01              &
+            1.8x Higher  & ***                                                                                                                                                                                   \\
 
-    200 & 20.26 & 0.0 & & 35.14 & 0.01 &
-    1.7x Higher & *** \\
+            200          & 20.26                                  & 0.0               &                                           & 35.14           & 0.01              &
+            1.7x Higher  & ***                                                                                                                                                                                   \\
 
-    500 & 38.69 & 0.01 & & 60.57 & 0.19 &
-    1.6x Higher & *** \\
+            500          & 38.69                                  & 0.01              &                                           & 60.57           & 0.19              &
+            1.6x Higher  & ***                                                                                                                                                                                   \\
 
-    1000 & 69.33 & 0.02 & & 52.91 & 0.32 &
-    1.3x Lower & *** \\
+            1000         & 69.33                                  & 0.02              &                                           & 52.91           & 0.32              &
+            1.3x Lower   & ***                                                                                                                                                                                   \\
 
-\bottomrule
-\end{tabular}
-}
-\caption{Statistical comparison of Data Store Size (MB) for run-create-course-simple, averaged out over at least 25 runs}
-\label{table:run-create-course-simple-aggregated-datastore-size}
+            \bottomrule
+        \end{tabular}
+    }
+    \caption{Statistical comparison of Data Store Size (MB) for run-create-course-simple, aggregated over at least 25 runs}
+    \label{table:run-create-course-simple-aggregated-datastore-size}
 \end{table}

@@ -38,7 +38,7 @@ It is important to clarify that a median value of zero active database connectio
 
 \subsection{Data Store Size}
 
-The size of the data store is calculated differently for both applications. The CRUD application uses PostgreSQL as its only data store. The $postgres\_size$ metric equals the application's data store size.
+The size of the data store is calculated differently for both applications. The CRUD application uses PostgreSQL as its only data store. Therefore, $postgres\_size$ equals the application's data store size.
 
 The total data store size for the ES-CQRS application is defined as the sum of the PostgreSQL projection size and the allocated Axon storage: $postgres\_size + axon\_storage\_size$. It is important to note that Axon Server allocates storage in fixed-size segments (or "pages") of 4MB. Because these segments are allocated eagerly, the total storage includes a minimum overhead of 8MB (one 4MB segment each for events and snapshots), regardless of the actual data density within those blocks. Consequently, the measured size represents the allocated capacity rather than the literal byte-count of the stored records.
 
@@ -48,14 +48,16 @@ In graphs that show latencies, the shaded areas in the line graphs represent the
 
 Graphs showing resource consumption typically show the area between the 25th and 75th percentile in the shaded area, also called \emph{\gls{iqr}}. This shows the typical range of resource usage across runs.
 
+The lines between the measured data points are interpolated, representing an estimation of performance trends across the full range of measurements. These lines help visualize the transition between different loads, though the actual values were only recorded at the marked intervals on the x-axis. In some cases, the x-axis omits intermediate labels for improved readability. However, all data points remain connected by interpolated lines to illustrate performance trends between measurements. For a complete view of every value, refer to the full results provided in \autoref{appendix:results}.
+
 \subsection{Write Performance}
 
 \subsubsection{L1: Create Courses Simple}
 \label{sec:l1}
 
-The endpoint \texttt{POST} \texttt{/courses} is used by professors to create courses. The "simple" test case tests creation of courses \emph{without prerequisites}. This means that no validation is necessary to create a new entity, making this test the raw insertion performance.
+Professors can create courses using the \texttt{POST} \texttt{/courses} endpoint. The "simple" test case tests creation of courses \emph{without prerequisites}. This means that no validation is necessary to create a new entity, making this test the raw insertion performance.
 
-\autoref{fig:l1_combined} presents line graphs using a logarithmic y-axis. The graphs describe the observed client-side and server-side latencies under varying loads of both applications by showing their $latency\_p50$ (median) and $latency\_p95$ (tail latency). \ref{slo-latency} defined the threshold for $latency\_p95$ at 100ms, meaning the ES-CQRS application failed to satisfy the \gls{slo} between 500 and 1000 \gls{rps}. Additionally, its $dropped\_iterations\_rate$ reaches a value of 51 at 1000 RPS. Meanwhile, the \gls{crud} application achieves a sub 10ms $latency\_p95$ until at least 1000 \gls{rps}.
+\autoref{fig:l1_combined} presents line graphs comparing the endpoint's latency under increasing load using a logarithmic y-axis. The graphs describe the observed client-side and server-side latencies under varying loads of both applications by showing their $latency\_p50$ (median) and $latency\_p95$ (tail latency). \ref{slo-latency} defined the threshold for $latency\_p95$ at 100ms, meaning the ES-CQRS application failed to satisfy the \gls{slo} between 500 and 1000 \gls{rps}. Additionally, its $dropped\_iterations\_rate$ reaches a value of 51 at 1000 RPS. Meanwhile, the \gls{crud} application achieves a sub 10ms $latency\_p95$ until at least 1000 \gls{rps}.
 
 It can be noted that the latency curve follows the same pattern in both the measurements made on the client and on the server, except for the ES-CQRS $latency\_p95$ which exhibits a value of over 1000ms on the client, but only around 300ms on the server.
 
@@ -464,7 +466,7 @@ These values correspond to the following scalability metrics for the CRUD applic
 \subsubsection{L7: Create Lecture, then Read}
 \label{sec:l7}
 
-This load test differs from others in the fact that each iteration executes 2 \gls{http} requests. The first request creates a lecture. After sleeping for 100ms --- the consistency threshold defined in \ref{slo-freshness} --- the script executes a request to \texttt{GET} the created lecture. If status code $404$ is returned, the write was not reflected in the read model in time. The rate of successful reads is recorded as a metric called $read\_visible\_rate$, presented in \autoref{fig:l6_read_visible_rate}. It can be seen that once exceeding 200 \gls{ips}, the ES-CQRS application failed to synchronize the read-side fast enough. \autoref{fig:l6_latency_vs_load} shows the latencies under varying loads using a logarithmic y-axis. The $latency\_p50$ remains similar for both applications, however the ES-CQRS application's $latency\_p95$ increases with rising \gls{ips}, finally violating the threshold of 100ms defined in \ref{slo-latency} once exceeding 400 \gls{ips}.
+This load test differs from others in the fact that each iteration executes 2 \gls{http} requests. The first request creates a lecture. After sleeping for 100ms --- the consistency threshold defined in \ref{slo-freshness} --- the script executes a request to \texttt{GET} the created lecture. If status code $404$ is returned, the write was not reflected in the read model in time. The rate of successful reads is recorded as a metric called $read\_visible\_rate$, presented in \autoref{fig:l7_read_visible_rate}. It can be seen that once exceeding 200 \gls{ips}, the ES-CQRS application failed to synchronize the read-side fast enough. \autoref{fig:l7_latency_vs_load} shows the latencies under varying loads using a logarithmic y-axis. $latency\_p50$ remains similar for both applications, however the ES-CQRS application's $latency\_p95$ increases with rising \gls{ips}, finally violating the threshold of 100ms defined in \ref{slo-latency} once exceeding 400 \gls{ips}.
 
 The CRUD application consistently maintains a 100\% $read\_visible\_rate$.
 
@@ -630,8 +632,16 @@ Boxplots are used to visualize the results of static analysis. They are a standa
 
 Afferent coupling ($C_a$, describing incoming connections) and Efferent coupling ($C_e$, describing outgoing connections), which were described in \autoref{sec:coupling-metrics}, are calculated by MetricsReloaded on a package-basis. The results are visualized in a boxplot. Package size influences the value of $C_a$ and $C_e$, which is why the results were normalized by class count. Therefore, the plots show this data:
 
-\[C_a\_norm = \frac{C_a}{Class\_count}\]
-\[C_e\_norm = \frac{C_e}{Class\_count}\]
+\begin{equation}
+    C_a\_norm = \frac{C_a}{Class\_count}
+    \label{eq:c_a_normalized}
+\end{equation}
+
+
+\begin{equation}
+    C_e\_norm = \frac{C_e}{Class\_count}
+    \label{eq:c_e_normalized}
+\end{equation}
 
 \autoref{fig:combined_ca} presents the normalized $C_a$ per application. The CRUD application generally has higher Afferent coupling across its packages (a 33\% higher median and higher 75th \gls{percentile}). Most packages in the ES-CQRS architecture have low Afferent coupling, but some packages areas are more coupled than any package found in the CRUD app.
 
@@ -679,9 +689,9 @@ Regarding Efferent coupling, the two architectures show more similarity. The med
 
 \subsection{Instability and Abstractness}
 
-Instability $I$ is defined as the ratio of Efferent coupling to the total coupling of a package: $I = \frac{C_e}{C_e + C_a}$. Therefore, it can take values between 0 and 1. It is visualized using a boxplot in \autoref{fig:instability}. The plot highlights a wide \gls{iqr} and a median value around 0.5 to 0.6 for both architectures.
+Instability $I$ is defined as the ratio of Efferent coupling to the total coupling of a package, as shown in \autoref{eq:instability}. Therefore, it can take values between 0 and 1. It is visualized using a boxplot in \autoref{fig:instability}. The plot highlights a wide \gls{iqr} and a median value around 0.5 to 0.6 for both architectures.
 
-Abstractness $A$ measures the ratio of abstract classes and interfaces to the total number of classes in a package: $A = \frac{Abstract Classes + Interfaces}{Total Classes}$. Therefore, it can take values between 0 and 1. Its visualization in \autoref{fig:abstractness} shows that the typical package in both applications has an Abstractness of 0. The \gls{iqr} of the CRUD architecture reaches from 0 to 0.2; the \gls{iqr} of the ES-CQRS architecture reaches from 0 to 0.4.
+Abstractness $A$ measures the ratio of abstract classes and interfaces to the total number of classes in a package, as presented in \autoref{eq:abstractness}. Therefore, it can take values between 0 and 1. Its visualization in \autoref{fig:abstractness} shows that the typical package in both applications has an Abstractness of 0. The \gls{iqr} of the CRUD architecture reaches from 0 to 0.2; the \gls{iqr} of the ES-CQRS architecture reaches from 0 to $0.4$.
 
 \autoref{fig:main-sequence} shows a scatter plot which visualizes $A$ and $I$, as well as the "Main Sequence" (gray diagonal line). The concept of the "Main Sequence" was explained in \autoref{sec:instability}. The distribution shows two prominent large clusters of the ES-CQRS architecture located at the corners of (0, 0) and (1, 0), while the remaining smaller points are scattered primarily in the lower half of the graph below the diagonal line. Generally, it can be seen that ES-CQRS has more packages than CRUD and is more abstract. The ES-CQRS architecture exhibits a slightly lower median Distance from the Main Sequence $D$ (\autoref{fig:distance-main-sequence-per-package}) with a value of around 0.4, opposed to around 0.5 for the CRUD architecture. However, both \glspl{iqr} for $D$ have a wide spread, with the ES-CQRS architecture spanning from 0.1 to almost~1.
 

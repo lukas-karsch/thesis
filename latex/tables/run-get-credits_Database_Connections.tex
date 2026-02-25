@@ -1,47 +1,47 @@
 \begin{table}[H]
-\small
-\centering
-\resizebox{\columnwidth}{!}{
-\begin{tabular}{rrrcrrcc}
-\toprule
-& \multicolumn{2}{c}{\textbf{CRUD (ms)}} &                   & \multicolumn{2}{c}{\textbf{ES-CQRS (ms)}} &               &                                                            \\
-\cmidrule{2-3} \cmidrule{5-6}
-\textbf{RPS} & \textbf{Median}                          & \textbf{CI $\pm$} &                                           & \textbf{Median} & \textbf{CI $\pm$} & \textbf{Ratio} & \textbf{Significance} \\
-\midrule
+    \small
+    \centering
+    \resizebox{\columnwidth}{!}{
+        \begin{tabular}{rrrcrrcc}
+            \toprule
+                         & \multicolumn{2}{c}{\textbf{CRUD (ms)}} &                   & \multicolumn{2}{c}{\textbf{ES-CQRS (ms)}} &                 &                                                            \\
+            \cmidrule{2-3} \cmidrule{5-6}
+            \textbf{RPS} & \textbf{Median}                        & \textbf{CI $\pm$} &                                           & \textbf{Median} & \textbf{CI $\pm$} & \textbf{Ratio} & \textbf{Significance} \\
+            \midrule
 
-    25 & 0.0 & 0.0 & & 0.0 & 0.0 &
-    NaN & n.s. \\
+            25           & 0.0                                    & 0.0               &                                           & 0.0             & 0.0               &
+            NaN          & n.s.                                                                                                                                                                                  \\
 
-    50 & 0.0 & 0.0 & & 0.0 & 0.0 &
-    NaN & n.s. \\
+            50           & 0.0                                    & 0.0               &                                           & 0.0             & 0.0               &
+            NaN          & n.s.                                                                                                                                                                                  \\
 
-    100 & 0.0 & 0.0 & & 0.0 & 0.0 &
-    NaN & *** \\
+            100          & 0.0                                    & 0.0               &                                           & 0.0             & 0.0               &
+            NaN          & ***                                                                                                                                                                                   \\
 
-    200 & 0.0 & 0.0 & & 0.0 & 0.0 &
-    NaN & *** \\
+            200          & 0.0                                    & 0.0               &                                           & 0.0             & 0.0               &
+            NaN          & ***                                                                                                                                                                                   \\
 
-    500 & 0.0 & 0.5 & & 0.0 & 0.0 &
-    NaN & *** \\
+            500          & 0.0                                    & 0.5               &                                           & 0.0             & 0.0               &
+            NaN          & ***                                                                                                                                                                                   \\
 
-    1000 & 1.0 & 0.0 & & 0.0 & 0.0 &
-    NaN & *** \\
+            1000         & 1.0                                    & 0.0               &                                           & 0.0             & 0.0               &
+            NaN          & ***                                                                                                                                                                                   \\
 
-    2000 & 3.0 & 0.0 & & 0.0 & 0.0 &
-    NaN & *** \\
+            2000         & 3.0                                    & 0.0               &                                           & 0.0             & 0.0               &
+            NaN          & ***                                                                                                                                                                                   \\
 
-    3000 & 10.0 & 0.0 & & 1.0 & 0.0 &
-    10.0x Lower & *** \\
+            3000         & 10.0                                   & 0.0               &                                           & 1.0             & 0.0               &
+            10.0x Lower  & ***                                                                                                                                                                                   \\
 
-    4000 & 10.0 & 0.0 & & 2.0 & 0.5 &
-    5.0x Lower & *** \\
+            4000         & 10.0                                   & 0.0               &                                           & 2.0             & 0.5               &
+            5.0x Lower   & ***                                                                                                                                                                                   \\
 
-    5000 & 9.0 & 1.0 & & 7.0 & 0.5 &
-    1.3x Lower & ** \\
+            5000         & 9.0                                    & 1.0               &                                           & 7.0             & 0.5               &
+            1.3x Lower   & **                                                                                                                                                                                    \\
 
-\bottomrule
-\end{tabular}
-}
-\caption{Statistical comparison of $hikari\_connections$ for POST /lectures/create; then /GET/\{lectureId\}, averaged out over at least 25 runs}
-\label{table:run-get-credits-aggregated-Database_Connections}
+            \bottomrule
+        \end{tabular}
+    }
+    \caption{Statistical comparison of $hikari\_connections$ for POST /lectures/create; then /GET/\{lectureId\}, aggregated over at least 25 runs}
+    \label{table:run-get-credits-aggregated-Database_Connections}
 \end{table}

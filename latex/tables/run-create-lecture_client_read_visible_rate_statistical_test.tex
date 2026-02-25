@@ -1,32 +1,31 @@
 \begin{table}[H]
-    \small \centering
-    \resizebox{\columnwidth}{!}{
-        \begin{tabular}{lcrrcrrcc}
-            \toprule
-                                  &              & \multicolumn{2}{c}{\textbf{CRUD (ms)}} &                   & \multicolumn{2}{c}{\textbf{ES-CQRS (ms)}} &                 &                                                              \\
-            \cmidrule{3-4} \cmidrule{6-7}
-            \textbf{Metric}       & \textbf{RPS} & \textbf{Median}                        & \textbf{CI $\pm$} &                                           & \textbf{Median} & \textbf{CI $\pm$} & \textbf{Speedup} & \textbf{Significance} \\
-            \midrule
+    \small
+    \centering
+    \begin{tabular}{lcrrcrrcc}
+        \toprule
+                     & \multicolumn{2}{c}{\textbf{CRUD (ms)}} &                   & \multicolumn{2}{c}{\textbf{ES-CQRS (ms)}} &                 &                                                              \\
+        \cmidrule{2-3} \cmidrule{5-6}
+        \textbf{RPS} & \textbf{Median}                        & \textbf{CI $\pm$} &                                           & \textbf{Median} & \textbf{CI $\pm$} & \textbf{Speedup} & \textbf{Significance} \\
+        \midrule
 
-            $read\_visible\_rate$ & 10           & 1.0                                    & 0.0               &                                           & 1.0             & 0.0               & 1.0x             & n.s.                  \\
+        10           & 1.0                                    & 0.0               &                                           & 1.0             & 0.0               & 1.0x             & n.s.                  \\
 
-            $read\_visible\_rate$ & 20           & 1.0                                    & 0.0               &                                           & 1.0             & 0.0               & 1.0x             & n.s.                  \\
+        20           & 1.0                                    & 0.0               &                                           & 1.0             & 0.0               & 1.0x             & n.s.                  \\
 
-            $read\_visible\_rate$ & 50           & 1.0                                    & 0.0               &                                           & 1.0             & 0.0               & 1.0x             & n.s.                  \\
+        50           & 1.0                                    & 0.0               &                                           & 1.0             & 0.0               & 1.0x             & n.s.                  \\
 
-            $read\_visible\_rate$ & 100          & 1.0                                    & 0.0               &                                           & 1.0             & 0.0               & 1.0x             & n.s.                  \\
+        100          & 1.0                                    & 0.0               &                                           & 1.0             & 0.0               & 1.0x             & n.s.                  \\
 
-            $read\_visible\_rate$ & 200          & 1.0                                    & 0.0               &                                           & 1.0             & 0.0               & 1.0x             & n.s.                  \\
+        200          & 1.0                                    & 0.0               &                                           & 1.0             & 0.0               & 1.0x             & n.s.                  \\
 
-            $read\_visible\_rate$ & 300          & 1.0                                    & 0.0               &                                           & 0.75            & 0.01              & 1.3x Lower       & ***                   \\
+        300          & 1.0                                    & 0.0               &                                           & 0.75            & 0.01              & 1.3x Lower       & ***                   \\
 
-            $read\_visible\_rate$ & 400          & 1.0                                    & 0.0               &                                           & 0.02            & 0.0               & 53.3x Lower      & ***                   \\
+        400          & 1.0                                    & 0.0               &                                           & 0.02            & 0.0               & 53.3x Lower      & ***                   \\
 
-            $read\_visible\_rate$ & 500          & 1.0                                    & 0.0               &                                           & 0.01            & 0.0               & 126.8x Lower     & ***                   \\
+        500          & 1.0                                    & 0.0               &                                           & 0.01            & 0.0               & 126.8x Lower     & ***                   \\
 
-            \bottomrule
-        \end{tabular}
-    }
-    \caption{Statistical comparison of $read\_visible\_rate$ for GET /lectures/\{lectureId\}, averaged out over at least 25 runs}
+        \bottomrule
+    \end{tabular}
+    \caption{Statistical comparison of $read\_visible\_rate$ for GET /lectures/\{lectureId\}, aggregated over at least 25 runs}
     \label{table:run-create-lecture_client_read_visible_rate}
 \end{table}

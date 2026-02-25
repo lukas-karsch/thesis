@@ -19,6 +19,8 @@ It should be noted that the results of L8 --- the historic reconstruction load t
 
 TODO: higher Overhead in ES-CQRS in general.
 
+TODO: Identify bottlenecks.
+
 \subsection{Architectural Flexibility}
 
 \subsection{Traceability}
@@ -32,7 +34,7 @@ TODO
 \section{Limitations}
 
 \begin{itemize}
-    \item As soon as the services live on the network, instead of localhost, the latencies would change. Especially in the ES-CQRS application, it might be noticable because of more round trips: data goes client -> server -> command bus -> aggregate -> event store -> back to the server to projectors -> postgres
+    \item As soon as the services live on the network instead of localhost, the latencies would change. Especially in the ES-CQRS application, it might be noticable because of more round trips: data goes client -> server -> command bus -> aggregate -> event store -> back to the server to projectors -> postgres
     \item JSON overhead: projections in ES-CQRS have JSON serialization overhead --- CPU bound instead of I/O bound
     \item Measurements: to get more accurate / detailed information about performance, other things should be measured. Garbage collection pauses, scaling payload itself instead of load (fetching more / less data at once), TODO: find more.
     \item CPU Sharing. all dependencies use the same CPU, but only SpringBoot's CPU Usage was measured. This is maybe why the maximum CPU usage never hit 100\% -> threat to validity
@@ -88,11 +90,35 @@ Fix limitations, basically
 \end{itemize}
 
 \subsection{Optimizations and Further Work}
+\label{sec:optimizations-and-further-work}
 
-This subsection presents optimizations which could be made to the existing applications. Furthermore, potential for future work is presented.
+This subsection outlines potential technical refinements for the existing implementations and identifies opportunities for future work. While the current results establish a baseline for both architectures, several optimization strategies could be applied to reduce the performance bottlenecks in both applications.
 
-\begin{itemize}
-    \item Split into microservices
-    \item Use optimized projections: direct JDBC mapping and multi-table, no JSON. Using Protobuf / Kryo.
-    \item Profiling to determine real JSON overhead.
-\end{itemize}
+Beyond architectural changes, the underlying infrastructure and framework configurations offer room for improvement. While no tuning was done for this thesis on purpose to make "out-of-the-box" performance comparable, \autoref{tab:system-tuning} summarizes parameters that could be tuned to resolve the resource saturation and latency bottlenecks observed in the ES-CQRS and CRUD applications. Before doing any tuning, further profiling would be necessary to identify bottlenecks in function calls or queries.
+
+\begin{table}[H]
+    \centering
+    \small
+    \begin{tabularx}{\linewidth}{lXX}
+        \toprule
+        \textbf{Keyword}          & \textbf{Action}                                                                                                                                               & \textbf{Goal}                                                                       \\ \midrule
+        \textbf{Pool Tuning}      & Adjust Tomcat thread counts and HikariDB connection limits.                                                                                                   & Reduce queueing delays.                                                             \\ \addlinespace
+        \textbf{Event Store}      & Tune Axon page sizes and set different snapshot thresholds.                                                                                                   & Reduce the number of expensive \gls{io} operations when reading long event streams. \\ \addlinespace
+        \textbf{Reactivity}       & Implement Spring WebFlux\footnotemark[1] and reative JPA repositories\footnotemark[2].                                                                        & Free up worker threads while waiting for database or network responses.             \\ \addlinespace
+        \textbf{Query Refinement} & Replace auto-generated Hibernate queries with custom JPQL queries, optimize further using \texttt{@BatchSize} and EAGER fetching options.                     & Eliminate inefficient queries and reduce the total number of database round-trips.  \\ \addlinespace
+        \textbf{Serialization}    & Tune Jackson's serialization options. In ES-CQRS, JSON projections could be replaced by binary formats like Protobuf\footnotemark[3] or Kryo\footnotemark[4]. & Minimize CPU overhead, reduce projection storage size.                              \\ \addlinespace
+        \textbf{Projections}      & Transition from JSON-based projections to flat, denormalized SQL-native tables.                                                                               & Eliminate serialization overhead and enable high-performance JDBC mapping.          \\
+        \bottomrule
+    \end{tabularx}
+    \caption{Proposed System Tuning and Optimization Strategies}
+    \label{tab:system-tuning}
+\end{table}
+
+\footnotetext[1]{\url{https://docs.spring.io/spring-framework/reference/web/webflux.html}}
+\footnotetext[2]{\url{https://docs.spring.io/spring-data/jpa/reference/data-commons/api/java/org/springframework/data/repository/reactive/ReactiveCrudRepository.html}}
+\footnotetext[3]{\url{https://protobuf.dev/}}
+\footnotetext[4]{\url{https://github.com/EsotericSoftware/kryo}}
+
+Additional performance gains could be achieved through the implementation of caching. Introducing a cache for frequently accessed student data could provide the CRUD application with read speeds comparable to \gls{cqrs} without the structural complexity of \acrlong{es}, though this introduces its own challenges regarding cache invalidation.
+
+Furthermore, as this study evaluated both applications on a single machine, the assessment of scalability and architectural flexibility remains primarily theoretical. To provide empirical evidence for these scalability claims, it would be necessary to physically transition the systems into microservices and perform horizontal scaling. Only by implementing these structural changes can the practical performance limits and the true decoupling of the ES-CQRS pattern be fully validated. Additionally, the effort required to transform the monolithic structure into microservices would serve as a practical benchmark to validate the accuracy of the static analysis results.

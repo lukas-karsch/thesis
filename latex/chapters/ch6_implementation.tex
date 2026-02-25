@@ -702,9 +702,12 @@ To track the success rate of this request, the script introduces a custom Rate m
 
 Following~\cite{jogalekar_evaluating_2000}, a function to determine the scalability of applications is established in this subsection. Their scalability metric, described in \autoref{sec:quantifying-scalability-metric}, serves as a basis for the scalability metric used in this study.
 
-This cost function is used:
+The cost function described in \autoref{eq:thesis-cost-function} is used.
 
-\[C(k) = w_1 * \text{CPU} + w_2 * \text{S} + w_3 \left( \frac{T}{200} \right) ^2 + w_4 \left( \frac{D}{10} \right)^2\]
+\begin{equation}
+    C(k) = w_1 * \text{CPU} + w_2 * \text{S} + w_3 \left( \frac{T}{200} \right) ^2 + w_4 \left( \frac{D}{10} \right)^2
+    \label{eq:thesis-cost-function}
+\end{equation}
 
 The cost function is weighted, with $w_i$ being the weights for each metric. $S$ corresponds to storage size. More precisely, this value is calculated using a ratio of the two applications: the application with the larger storage consumption receives a cost penalty (e.g., 2.0 for twice the usage), while the smaller footprint is "rewarded", e.g. a value of 0.5 for half the usage. Furthermore, $T$ corresponds to $tomcat\_threads$, and $D$ corresponds to $hikari\_connections$. These metrics are normalized to their respective ceilings.
 

@@ -61,7 +61,7 @@ While internal metrics, like CPU usage, RAM usage, the number of database connec
 
 Even though latencies are measured on both the client and the server, the client latency will be used primarily when visualizing results, as it is the latency users perceive when interacting with the applications. The server latency is recorded because it can help identify queueing delays by exposing differences in server and client latencies which exceed a factor of 1.1x.
 
-$axon\_event\_size$ and $axon\_snapshot\_size$ are metrics extracted from the event store (Axon Server). It is only recorded for the ES-CQRS application. $postgres\_size$, the size of the relational database can be recorded for both applications. The CRUD implementation stores its entities and audit log in PostgreSQL, while the ES-CQRS implementation uses PostgreSQL as a secondary data store for denormalized projections and lookup tables. These metrics are relevant when assessing a system's long-term performance, scalability and maintainability.
+$axon\_event\_size$ and $axon\_snapshot\_size$ are metrics extracted from the event store (Axon Server). They are only recorded for the ES-CQRS application. $postgres\_size$, the size of the relational database can be recorded for both applications. The CRUD implementation stores its entities and audit log in PostgreSQL, while the ES-CQRS implementation uses PostgreSQL as a secondary data store for denormalized projections and lookup tables. These metrics are relevant when assessing a system's long-term performance, scalability and maintainability.
 
 \begin{table}[htp!]
     \small
@@ -114,14 +114,21 @@ This section outlines the dimensions of scalability, ranging from mathematical p
 
 \textcite{jogalekar_evaluating_2000} propose measuring scalability by looking at a system's "productivity" $F(k)$ at different scale factors $k_i$. They argue that productivity is a measure of value versus cost.
 
-This is their proposed productivity metric:
-\[F(k)=\lambda(k) \cdot f(k) / C(k)\]
+Their proposed productivity metric is presented in \autoref{eq:productivitiy}.
+
+\begin{equation}
+    F(k)=\lambda(k) \cdot f(k) / C(k)
+    \label{eq:productivitiy}
+\end{equation}
 
 Here, $k$ is the scale factor. This may be  the number of processors or number of users. $\lambda(k)$ is the system's throughput, measured in responses per second. $f(k)$ is the average value of each response. The value of a response must be determined per system. For this thesis, it will be based on \acrshortpl{slo} defined in \autoref{sec:slo}. $C(k)$ is the system's running cost per second at scale $k$. The running cost can be defined through resource consumption, e.g. CPU and RAM usage. The authors mention that several factors can be used for the cost function, they also propose the actual cost of hardware, e.g. when running on the cloud.
 
 From the given productivity metric, a scalability metric can be calculated. To determine if a system is scalable, its productivity at two different scales is compared.
 
-\[ \psi(k_1, k_2) = \frac{F(k_2)}{F(k_1)} \]
+\begin{equation}
+    \psi(k_1, k_2) = \frac{F(k_2)}{F(k_1)}
+    \label{eq:scalability}
+\end{equation}
 
 When $\psi$ is close to or greater than 1, the system is considered to be scalable. \cite[4-6]{jogalekar_evaluating_2000}
 
@@ -158,7 +165,21 @@ Coupling metrics are based on graph theory. They are used to measure how depende
 \subsubsection{Instability and Abstractness}
 \label{sec:instability}
 
-\emph{Instability} assesses the volatility of a code base by calculating the ratio of efferent coupling to the sum of all coupling, indicating how easily a component breaks when changed. \emph{Abstractness} determines the ratio of abstract artifacts, such as interfaces and abstract classes, to concrete implementations within a module. Finally, the \emph{Distance from the Main Sequence} combines abstractness and instability to determine if a component is optimally balanced or falls into problematic "Zones of Uselessness or Pain"~\cite[261-268]{martin_agile_2003}. Martin considers a stable, concrete package to fall into the "Zone of Pain", while instable, highly abstract packages fall into the "Zone of Uselessness". The Main Sequence is illustrated in \autoref{fig:method-main-sequence}.
+\emph{Instability} assesses the volatility of a code base by calculating the ratio of efferent coupling to the sum of all coupling (\autoref{eq:instability}), indicating how easily a component breaks when changed.
+
+\begin{equation}
+    I = \frac{C_e}{C_e + C_a}
+    \label{eq:instability}
+\end{equation}
+
+\emph{Abstractness} determines the ratio of abstract artifacts, such as interfaces and abstract classes, to concrete implementations within a module.
+
+\begin{equation}
+    A = \frac{Abstract Classes + Interfaces}{Total Classes}
+    \label{eq:abstractness}
+\end{equation}
+
+Finally, the \emph{Distance from the Main Sequence} combines abstractness and instability to determine if a component is optimally balanced or falls into problematic "Zones of Uselessness or Pain"~\cite[261-268]{martin_agile_2003}. Martin considers a stable, concrete package to fall into the "Zone of Pain", while instable, highly abstract packages fall into the "Zone of Uselessness". The Main Sequence is illustrated in \autoref{fig:method-main-sequence}.
 
 \begin{figure}[h]
     \centering

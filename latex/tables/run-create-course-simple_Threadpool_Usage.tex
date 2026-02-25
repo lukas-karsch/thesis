@@ -1,29 +1,29 @@
 \begin{table}[H]
-\small
-\centering
-\resizebox{\columnwidth}{!}{
-\begin{tabular}{rrrcrrcc}
-\toprule
-& \multicolumn{2}{c}{\textbf{CRUD (ms)}} &                   & \multicolumn{2}{c}{\textbf{ES-CQRS (ms)}} &               &                                                            \\
-\cmidrule{2-3} \cmidrule{5-6}
-\textbf{RPS} & \textbf{Median}                          & \textbf{CI $\pm$} &                                           & \textbf{Median} & \textbf{CI $\pm$} & \textbf{Ratio} & \textbf{Significance} \\
-\midrule
+    \small
+    \centering
+    \resizebox{\columnwidth}{!}{
+        \begin{tabular}{rrrcrrcc}
+            \toprule
+                         & \multicolumn{2}{c}{\textbf{CRUD (ms)}} &                   & \multicolumn{2}{c}{\textbf{ES-CQRS (ms)}} &                 &                                                            \\
+            \cmidrule{2-3} \cmidrule{5-6}
+            \textbf{RPS} & \textbf{Median}                        & \textbf{CI $\pm$} &                                           & \textbf{Median} & \textbf{CI $\pm$} & \textbf{Ratio} & \textbf{Significance} \\
+            \midrule
 
-    25 & 10.0 & 0.0 & & 10.0 & 0.0 &  1.0x Lower & n.s. \\
+            25           & 10.0                                   & 0.0               &                                           & 10.0            & 0.0               & 1.0x Lower     & n.s.                  \\
 
-    50 & 10.0 & 0.0 & & 10.0 & 0.0 &  1.0x Lower & n.s. \\
+            50           & 10.0                                   & 0.0               &                                           & 10.0            & 0.0               & 1.0x Lower     & n.s.                  \\
 
-    100 & 10.0 & 0.0 & & 10.0 & 0.0 &  1.0x Lower & n.s. \\
+            100          & 10.0                                   & 0.0               &                                           & 10.0            & 0.0               & 1.0x Lower     & n.s.                  \\
 
-    200 & 10.0 & 0.0 & & 10.0 & 0.0 &  1.0x Lower & *** \\
+            200          & 10.0                                   & 0.0               &                                           & 10.0            & 0.0               & 1.0x Lower     & ***                   \\
 
-    500 & 11.0 & 0.0 & & 38.0 & 3.5 &  3.5x Higher & *** \\
+            500          & 11.0                                   & 0.0               &                                           & 38.0            & 3.5               & 3.5x Higher    & ***                   \\
 
-    1000 & 23.0 & 0.5 & & 200.0 & 0.0 &  8.7x Higher & *** \\
+            1000         & 23.0                                   & 0.5               &                                           & 200.0           & 0.0               & 8.7x Higher    & ***                   \\
 
-\bottomrule
-\end{tabular}
-}
-\caption{Statistical comparison of $tomcat\_threads$ for GET /lectures, averaged out over at least 25 runs}
-\label{table:run-create-course-simple-aggregated-Threadpool_Usage}
+            \bottomrule
+        \end{tabular}
+    }
+    \caption{Statistical comparison of $tomcat\_threads$ for GET /lectures, aggregated over at least 25 runs}
+    \label{table:run-create-course-simple-aggregated-Threadpool_Usage}
 \end{table}

@@ -4,9 +4,10 @@ $latency\_p50$
 $latency\_p95$
 $latency\_p99$
 $cpu\_usage$
-$ram\_usage\_heap$
-$ram\_usage\_total$
 $hikari\_connections$
 $tomcat\_threads$
 $postgres\_size$
+$axon\_event\_size$ 
+$axon\_snapshot\_size$
+$axon\_storage\_size$
 $dropped\_iterations\_rate$ 
