@@ -1,8 +1,10 @@
 % !TeX root = ../main.tex
-\chapter{Discussion (TODO)}
+\chapter{Discussion}
 \label{ch:discussion}
 
 \section{Interpretation of Results}
+
+TODO: explain this section. First, interpret results for each research question, finally give "recommendations" --- when is which architecture better suited?
 
 \subsection{Performance and Scalability}
 \label{sec:interpretation-performance}
@@ -19,62 +21,90 @@ It should be noted that the results of L8 --- the historic reconstruction load t
 
 TODO: higher Overhead in ES-CQRS in general.
 
-TODO: Identify bottlenecks.
+TODO: Bottlenecks / headroom.
 
 \subsection{Architectural Flexibility}
+\label{sec:architectural-flexibility}
 
-\subsection{Traceability}
+The static analysis results reveal distinct characteristics of the \gls{crud} and \gls{es}-\gls{cqrs} implementations. While metric suites like \gls{mood} and \acrlong{ck} provide a broad overview of code quality, the most insightful data for evaluating architectural flexibility results from the coupling and dependency metrics. These metrics provide a direct representation of how components interact and the extent to which a change in one area of the system propagates through others.
 
-See "Discussion - traceability".
+\subsubsection{Evaluation of Metric Utility}
 
-\subsection{Architectural Trade-offs and Recommendations}
+The analysis indicates that transitive dependency metrics ($Dpt^*$ and $Dcy^*$), described in \autoref{sec:results-dependency}, are more useful than their direct counterparts ($Dpt$ and $Dcy$) for assessing the quality and coupling of an architecture. While the median values for direct dependencies are similar across both architectures, the \gls{es}-\gls{cqrs} approach shows a significantly narrower \gls{iqr} for transitive dependencies. In the \gls{crud} application, 50\% of classes have between 2 and 33 transitive dependents, whereas at least 75\% of \gls{es}-\gls{cqrs} classes have 7 or fewer. This suggests that the \gls{es}-\gls{cqrs} architecture more effectively isolates components, preventing a "rippling effect" of changes common in highly coupled architectures.
 
-TODO
+In contrast, the Distance from the Main Sequence ($D$), composed of Abstractness ($A$) and Instability ($I$), appears to be less accurate in this specific context. It is especially worth noting that a high Abstractness score does not inherently equate to a high level of \emph{functional abstraction}. For instance, the \gls{es}-\gls{cqrs} architecture utilizes many \gls{jpa} repositories on its Query side. These components are technically interfaces. This inflates the Abstractness score without necessarily having an architectural impact. Furthermore, these metrics are highly sensitive to the chosen package layout rather than the logic itself. A prime example is the \texttt{api} package in the \gls{es}-\gls{cqrs} application. It serves as a vital decoupling point between the Command and Query side, but because the classes are not abstract and highly depended upon, they appear "poor" according to traditional instability metrics despite their arguably high architectural value. Similarly, colocating Controller, Service and Repository classes in the same package in the CRUD application results in improved Instability values, even though the dependencies between classes are still present in the same way.
 
-\section{Limitations}
+\subsubsection{Architectural Impact on Evolution and Scalability}
 
-\begin{itemize}
-    \item As soon as the services live on the network instead of localhost, the latencies would change. Especially in the ES-CQRS application, it might be noticable because of more round trips: data goes client -> server -> command bus -> aggregate -> event store -> back to the server to projectors -> postgres
-    \item JSON overhead: projections in ES-CQRS have JSON serialization overhead --- CPU bound instead of I/O bound
-    \item Measurements: to get more accurate / detailed information about performance, other things should be measured. Garbage collection pauses, scaling payload itself instead of load (fetching more / less data at once), TODO: find more.
-    \item CPU Sharing. all dependencies use the same CPU, but only SpringBoot's CPU Usage was measured. This is maybe why the maximum CPU usage never hit 100\% -> threat to validity
-    \item Hidden threads: $tomcat\_threads$ = servlet threads. other threads, e.g. parallel threads, not measured
-          \subitem But $tomcat\_threads$ is the real bottleneck as it limits the amount of concurrent requests
-    \item Dropped iterations during testing skew results. It should be made sure that no iterations are dropped by always providing k6 with an appropriate amount of VUs.
-\end{itemize}
+The structural differences between the two approaches have an impact regarding long-term flexibility and evolution. The \gls{crud} architecture displays higher \gls{cbo}, higher coupling ($C_a$, $C_e$) and more dependencies ($Dcy^*$, $Dpt^*$), and a larger "surface area" in the \gls{mood} metrics. This increased coupling implies that as the codebase grows, the complexity of making changes increases non-linearly, as each class is transitively linked to a larger portion of the system.
+
+In contrast, the \gls{es}-\gls{cqrs} architecture demonstrates a structural advantage for scalability and evolution. The primary difference lies in the separation of concerns between writes and reads. By decoupling the Command and Query sides, the architecture maintains lower transitive coupling across the majority of the system.
+
+Consequently, the \gls{es}-\gls{cqrs} approach likely provides a more seamless transition to horizontal scaling. Because the dependencies are already logically and physically partitioned (shown by the lower $Dcy^*$ and $PDcy$ values), the effort required to split the monolith into independent microservices is significantly reduced. This allows for specific parts of the system, such as high-traffic read models, to be scaled horizontally on separate infrastructure without requiring the entire application to be replicated. Additionally, Axon Framework provides location transparency, reducing the need to write additional boilerplate code when attempting to split the system into separate services. Therefore, while the \gls{es}-\gls{cqrs} architecture may have more outliers in package coupling, its fundamental structure provides the necessary isolation for the long-term scalability and independent evolution of system components.
+
+\subsection{Traceability (TODO)}
+
+TODO: schema evolution (maybe remove?), incorporate some "related work" findings.
+
+The findings presented in this section are primarily derived from a synthesis of existing literature regarding system architecture and data integrity that was previously presented in \autoref{sec:basics-traceability-and-auditing} and \autoref{sec:traceability-related-work}. The performance data used to evaluate reconstruction efficiency was collected in L8 (\autoref{sec:l8}), but the qualitative comparison of reconstruction accuracy relies on the established literature.
+
+The comparison between \gls{crud} and \gls{es}-\gls{cqrs} systems reveals a trade-off between the reliability of historical data and the speed of accessing it. In traditional \gls{crud} systems, the audit log acts as a secondary observer that records changes to a database. This architecture may suffer from the dual-write problem where the database update succeeds but the log entry fails. Consequently, the audit trail can diverge from reality, which may undermine the integrity required for strict legal compliance. Furthermore, \gls{crud} audit logs often capture the fact that data changed without preserving the specific business intent behind that change. Capturing and reconstructing intent requires additional measures in \gls{crud} systems, while in \gls{es}-\gls{cqrs}, events carry inherent metadata which contain intent.
+
+Event-sourced systems address these accuracy concerns by treating the event stream as the sole source of truth. Because every state change is recorded as an immutable event, the system preserves the exact domain context and intent. This makes the reconstruction process deterministic and eliminates the risk of silent data divergence. Even if read-side projections do get out of sync, it is trivial to fix any bugs in their implementation and rebuild them afterward. However, the efficiency of historic reconstruction remains a challenge. While \gls{crud} systems can use indexed database tables and date filters to quickly retrieve specific historical snapshots, an \gls{es}-\gls{cqrs} system typically needs to replay the entire sequence of relevant events to reach a desired point in time.
+
+Load testing results (L8) confirm that \gls{crud} architectures are significantly faster for simple history queries. Reconstructing a student's grade history, for example, proved more efficient in the \gls{crud} model, likely because it avoided the computational overhead of replaying event logs. While snapshots in \gls{es} can speed up the rehydration of Aggregates (current state), they are not applicable when replaying the full history for a time-travel query. Therefore, while \gls{es}-\gls{cqrs} provides superior accuracy and schema resilience for forensic auditing, the \gls{crud} approach remains more performant for frequent or high-volume historical lookups.
+
+It should also be mentioned that frequent lookups of historic state are likely uncommon in typical applications. If a high volume of time-travel queries was a real use-case in an application, architects would most likely adopt an entirely different approach in storing current and historic state, such as time-series databases or creating specific database tables with validity ranges.
+
+\subsection{Architectural Trade-offs and Recommendations (TODO)}
+
+Abcdefg.
+
+\section{Limitations of the Study}
+\label{sec:limitations-of-the-study}
+
+This research provides an empirical, quantifiable comparison between \gls{crud} and \gls{es}-\gls{cqrs} architectures. However, several technical and methodological limitations must be acknowledged when interpreting the results. One of these limitations is the infrastructure environment used for testing. Because both the load generation and the server-side components were hosted on \glspl{vm} running on the same physical machine, the observed network latency does not accurately reflect a distributed production environment. In a real-world scenario, services typically communicate across a physical network rather than on a single host. Particularly the ES-CQRS architecture involves a more complex chain of communication, including the command and query bus, aggregate handling, projections and event storage. In a distributed environment, the cumulative network "round trips" required for these steps would likely result in higher latencies than those recorded in this study's test setup.
+
+Except for Axon Server's storage size, the server-side metrics were only collected from the SpringBoot application. Because the \gls{vm} also hosted PostgreSQL and Axon Server, the collected CPU metric ($process\_cpu\_usage$) does not capture the total system load. It is likely that the overall system CPU was fully saturated even when the server's CPU usage suggested remaining overhead. This is a threat to the validity of the performance data.
+
+The accuracy of the benchmarking results was further affected by the testing configuration. In some load tests, a significant number of iterations was dropped at high RPS because the maximum number of \glspl{VU} in the k6 configuration was insufficient for the load. This means the results do not reflect the real performance under the respective load, as the actual load on the system was lower in these cases. Additionally, a more granular analysis would require measuring garbage collection pauses, memory allocation rates, and other system metrics. Furthermore, without profiling, the "root causes" of specific bottlenecks remain theoretical, as the collected data shows the \emph{results} of system stress rather than a detailed breakdown of internal execution delays. The performance analysis is also limited because the tests only varied the number of requests per second. Other factors, such as the size of the data being sent in POST requests or the volume of data fetched in queries, remained constant per test and were not evaluated.
+
+Furthermore, although both applications were developed following industry standards and common best practices, it cannot be formally guaranteed that the implementations are entirely free of defects or suboptimal coding practices. Consequently, the observed performance metrics may be influenced by unidentified implementation errors rather than being representative of the underlying architecture.
+
+Beyond the technical measurements, the given architectural evaluation is limited as it is simply a synthesis of static analysis. This study did not investigate the topic of schema evolution, which is the process of managing how data structures, such as events or database tables, change over time. In a long-running production system, the difficulty of evolving an event store's schema is an additional factor in the total cost of ownership and flexibility of an ES-CQRS system. Similarly, managing complex database migrations in coupled \gls{crud} architectures without data-loss may introduce additional challenges.
+
+Because the use case and the load patterns used in this study were artificially generated, they may not capture the unpredictable nature of real-world user behavior or specific business requirements.
+
+While a load test was developed and executed for a simple history query (L8), the potential use-cases for time-travel queries are far wider. More complex historical queries involving several entities would have been a different challenge, and could have shown different results for the two architectures, both in implementation complexity and latencies.
+
+Finally, the emphasis placed on certain architectural benefits, such as traceability or scalability, is inherently subjective. Different organizations or developers might prioritize \glspl{slo} or compliance requirements differently, which would alter the perceived value of one architecture over the other.
 
 \section{Answering the Research Questions}
 
-This section will provide a conclusive answer to the three sub-research questions, before providing a holistic answer to the main research question.
+This section will provide a conclusive answer to the three sub-research questions, before providing a holistic answer to the main \glslink{rq}{research question}.
 
-\subsection{RQ 1: Performance and Scalability}
+\subsection{RQ 1: Performance and Scalability (TODO)}
 \label{sec:answering-rq-1}
 
 \begin{quote}
     \textit{How do CRUD and ES-CQRS implementations perform under increasing load, and what are the resulting implications for system scalability and resource efficiency?}
 \end{quote}
 
-TODO
-
-\subsection{RQ 2: Architectural Complexity and Flexibility}
+\subsection{RQ 2: Architectural Complexity and Flexibility (TODO)}
 \label{sec:answering-rq-2}
 
 \begin{quote}
     \textit{What are the fundamental structural differences between the two approaches, and how do these impact the long-term flexibility and evolution of the codebase?}
 \end{quote}
 
-TODO
-
-\subsection{RQ 3: Historical Traceability}
+\subsection{RQ 3: Historical Traceability (TODO)}
 \label{sec:answering-rq-3}
 
 \begin{quote}
     \textit{To what extent can CRUD and ES-CQRS systems accurately and efficiently reconstruct historical states to satisfy business intent and compliance requirements?}
 \end{quote}
 
-TODO
-
-\subsection{Conclusion}
+\subsection{Conclusion (TODO)}
 
 Here, provide a final, holistic answer to the main research question.
 
@@ -97,7 +127,7 @@ This subsection outlines potential technical refinements for the existing implem
 
 Beyond architectural changes, the underlying infrastructure and framework configurations offer room for improvement. While no tuning was done for this thesis on purpose to make "out-of-the-box" performance comparable, \autoref{tab:system-tuning} summarizes parameters that could be tuned to resolve the resource saturation and latency bottlenecks observed in the ES-CQRS and CRUD applications. Before doing any tuning, further profiling would be necessary to identify bottlenecks in function calls or queries.
 
-\begin{table}[H]
+\begin{table}[h!]
     \centering
     \small
     \begin{tabularx}{\linewidth}{lXX}

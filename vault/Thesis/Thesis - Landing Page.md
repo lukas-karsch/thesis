@@ -12,5 +12,4 @@ Three sub-questions:
 - [GitLab Repository](https://gitlab.mi.hdm-stuttgart.de/lk224/thesis)
 ## Dates
 Start on 01.12.2025
-Meeting [[2026-02-04 Fragen fürs nächste Meeting]]
 End on 02.03.2026

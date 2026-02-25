@@ -5,9 +5,9 @@ To provide a comprehensive framework for the technical implementation discussed 
 
 \section{WWW, Web APIs, REST}
 
-The \acrfull{www} is a connected information network used to exchange data. Resources are can be accessed via \glspl{uri} which are transferred using formats like \acrshort{json} or \acrshort{html} via protocols like \gls{http}. \gls{http} is a stateless protocol based on a request-response structure. It supports standardized request types, such as \texttt{GET} and \texttt{POST}, which convey a semantic meaning \cite{jacobs_architecture_2004}.
+The \acrfull{www} is a connected information network used to exchange data. Resources are can be accessed via \glspl{uri} which are transferred using formats like \acrshort{json} or \acrshort{html} via protocols like \gls{http}. \gls{http} is a stateless protocol based on a request-response structure. It supports standardized request types, such as \texttt{GET} and \texttt{POST}, which convey a semantic meaning~\cite{jacobs_architecture_2004}.
 
-Web \acrshortpl{api} are interfaces that enable applications to communicate. They use \gls{http} as a network-based \acrshort{api} \cite[138]{fielding_architectural_2000}. Modern \acrshortpl{api} typically follow \gls{rest} principles. \gls{rest} stands for "Representational State Transfer" and describes an architectural style for distributed hypermedia systems \cite[76]{fielding_architectural_2000}.
+Web \acrshortpl{api} are interfaces that enable applications to communicate. They use \gls{http} as a network-based \acrshort{api}~\cite[138]{fielding_architectural_2000}. Modern \acrshortpl{api} typically follow \gls{rest} principles. \gls{rest} stands for "Representational State Transfer" and describes an architectural style for distributed hypermedia systems~\cite[76]{fielding_architectural_2000}.
 
 \gls{rest} \acrshortpl{api} adhere to principles derived from a set of constraints imposed by the \gls{http} protocol, for example. One such constraint is "stateless communication": Communication between clients and the server must be \emph{stateless}, meaning the client must provide all the necessary information for the server to fully understand the request.
 
@@ -30,7 +30,7 @@ Furthermore, every resource in \gls{rest} applications must be addressable via a
 
 Every resource must support the same interface, usually \gls{http} methods (GET, POST, PUT, etc.) where operations on the resource correspond to one method of the interface. For example, a POST operation on a customer might map to the \texttt{createCustomer()} operation on a service.
 
-In \gls{rest}, Resources are decoupled from their representations. Clients can request different representations of a resource, depending on their needs \cite{fielding_architectural_2000}. For example, a web browser might request \acrshort{html}, while another server or application might request \acrshort{xml} or \acrshort{json}.
+In \gls{rest}, Resources are decoupled from their representations. Clients can request different representations of a resource, depending on their needs~\cite{fielding_architectural_2000}. For example, a web browser might request \acrshort{html}, while another server or application might request \acrshort{xml} or \acrshort{json}.
 
 \section{Layered Architecture}
 \label{sec:layered}
@@ -209,6 +209,7 @@ To optimize the reconstruction of state, developers often employ \textit{rolling
 \end{figure}
 
 \section{Traceability and Auditing in IT Systems}
+\label{sec:basics-traceability-and-auditing}
 
 Traceability and auditing are legal requirements across various sectors, as they are derived from federal laws and regulations intended to protect the integrity and confidentiality of sensitive data. Organizations implement these mechanisms to stay compliant with mandates that require a verifiable, time-sequenced history of system activities to support oversight and forensic reviews~\cite[4,17]{maier_audit_2006}. In the U.S. financial sector, for example, 17 CFR § 242.613 requires the establishment of a consolidated audit trail to track the complete lifecycle of securities orders, documenting every stage from origination and routing to final execution~\cite{us_securities_and_exchange_commission_17_2012}.
 

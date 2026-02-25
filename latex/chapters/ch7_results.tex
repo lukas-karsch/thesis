@@ -10,7 +10,7 @@ For all load tests, the primary results are visualized through diagrams like lat
 
 \subsection{Significance}
 
-The significance levels indicated in the tables inside the appendix are calculated using the \emph{Mann-Whitney U} significance test. This test is used because it doesn't require normally distributed samples and compares the \emph{rankings} of results rather than the averages, making it more resistant to outliers\cite[Chapter 13.3]{triola_elementary_2012}. In load testing, outliers (tail latencies) can create \emph{skewing} that would incorrectly bias a standard average-based test.
+The significance levels indicated in the tables inside the appendix are calculated using the \emph{Mann-Whitney U} significance test. This test is used because it doesn't require normally distributed samples and compares the \emph{rankings} of results rather than the averages, making it more resistant to outliers\cite[Chapter 13.3]{triola_elementary_2012}. In load testing, outliers (\glspl{tail-latency}) can create \emph{skewing} that would incorrectly bias a standard average-based test.
 
 \subsection{Steady-state performance}
 
@@ -23,8 +23,6 @@ When comparing the CRUD and ES-CQRS applications' performance, a "speedup" facto
 \subsection{Dropped Iterations}
 
 In some tests, iterations were dropped, meaning that k6 skipped iterations and did not send requests to the server. This occurs if an iteration takes longer than 1 second and no more \glspl{VU}, which act as request processors, are available to k6. The fact that iterations were dropped during testing is mentioned when describing results, and the rate of dropped iterations per second ($dropped\_iterations\_rate$) is available in the results tables inside the appendix.
-
-The consequence of dropped iterations on test results will be outlined in \autoref{ch:discussion}. (TODO)
 
 \subsection{Threadpool}
 

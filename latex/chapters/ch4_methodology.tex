@@ -29,13 +29,13 @@ To answer \hyperref[rs-performance-scalability]{\acrshort{rq} 1}, the performanc
 \subsubsection{Theoretical Load Testing Foundations}
 \label{sec:load-test-theory}
 
-To provide accurate performance metrics, load testing is performed on both implementations based on the methodology defined by \textcite[10-17]{kleppmann_designing_2017}. Load is generally characterized using "load parameters," which vary depending on the system's nature. For this thesis, the primary load parameter is the number of concurrent requests to the web server. \cite[11]{kleppmann_designing_2017}
+To provide accurate performance metrics, load testing is performed on both implementations based on the methodology defined by \textcite[10-17]{kleppmann_designing_2017}. Load is generally characterized using "load parameters," which vary depending on the system's nature. For this thesis, the primary load parameter is the number of concurrent requests to the web server~\cite[11]{kleppmann_designing_2017}
 
 The tests measure \textbf{\acrfull{rps}} and client-side response times. \textcite[15,16]{kleppmann_designing_2017} emphasizes the importance of client-side measurement to account for "queueing delays." As server-side processing is limited by hardware resources (e.g., CPU cores), requests may be stalled before processing begins. Server-side metrics typically measure latencies by executing request filters which only run once the request starts being processed. Therefore, server-side latency metrics often exclude the "waiting time" a request spent in the queue, leading to an overly optimistic view of performance. Consequently, the client-side latencies are more relevant to measure user-perceived performance.
 
 \textcite[16]{kleppmann_designing_2017} also mentions that the load-generating client must continuously send requests without waiting for previous ones to complete, to simulate realistic concurrent user behavior. In load-testing frameworks, this is often called an "open model". If a client waits for its request to complete before sending the next one, queues on the server are kept artificially short. This is typically called "closed model".
 
-This thesis adopts the approach of keeping system resources constant while measuring performance fluctuations under varying load intensities, as opposed increasing system resources to keep unchanged performance. These two perspectives are described by \textcite[13]{kleppmann_designing_2017}
+This thesis adopts the approach of keeping system resources constant while measuring performance fluctuations under varying load intensities, as opposed increasing system resources to keep unchanged performance. These two perspectives are described by \textcite[13]{kleppmann_designing_2017}.
 
 \textcite[264]{abbott_art_2009} mention another way of looking at load testing: In \emph{positive testing}, load is increased until an application is overwhelmed, while \emph{negative testing} takes away system resources such as memory, threads or connections, until the application degrades.
 
@@ -44,11 +44,11 @@ To evaluate results, the arithmetic mean is avoided as it obscures the experienc
 \subsubsection{Test Execution}
 \label{sec:test-execution-method}
 
-To obtain significant results, each \emph{test configuration} (the combination of a test script and target \acrshort{rps}) should be executed a sufficient number of times. \cite[259]{abbott_art_2009} Between each execution, the application and its dependencies should be restarted to ensure independent results.
+To obtain significant results, each \emph{test configuration} (the combination of a test script and target \acrshort{rps}) should be executed a sufficient number of times~\cite[259]{abbott_art_2009}. Between each execution, the application and its dependencies should be restarted to ensure independent results.
 
 \subsubsection{Comparability and Environment}
 
-\hyperref[sec:test-execution-method]{Section \ref*{sec:test-execution-method}} describes that \glspl{test-configuration} must be repeated an appropriate number of times to achieve accurate results. Additionally, the environment in which the tests are run must be controlled. It should be reproducible, identical for each test run and experience no disturbances like system updates while tests are being executed. \cite[Chapter 17]{abbott_art_2009}
+\hyperref[sec:test-execution-method]{Section \ref*{sec:test-execution-method}} describes that \glspl{test-configuration} must be repeated an appropriate number of times to achieve accurate results. Additionally, the environment in which the tests are run must be controlled. It should be reproducible, identical for each test run and experience no disturbances like system updates while tests are being executed~\cite[Chapter 17]{abbott_art_2009}.
 
 \subsubsection{Collected Metrics}
 \label{sec:collected-metrics}
@@ -215,11 +215,8 @@ Regarding long-term flexibility and evolution, metrics that evaluate stability a
 
 \textcite{drotbohm_instability-abstractness-relationship_2024}, a Spring engineer, offers his critique on the \emph{abstractness} metric, highlighting that it mistakes the existence of interfaces with actual, useful abstractions.
 
-\subsubsection{Schema Evolution TODO}
-
-TODO: Finally, talk about schema evolution a little bit. Can we determine methods to decide which architecture is more flexible regarding schemas?
-
 \subsection{Traceability}
+\label{sec:traceability-method}
 
 This section describes how traceability will be compared; it serves as a basis to answer \hyperref[rs-traceability]{\acrshort{rq} 3}. The traceability aspect will be compared via two perspectives. First, the \emph{accuracy} of historic reconstruction is compared. Then, \emph{efficiency} of reconstructions is evaluated and compared.
 
@@ -229,7 +226,7 @@ Several qualitative criteria for the accuracy of an historic reconstruction can 
 
 \emph{Intent preservation} assesses the ability of a system to distinguish between different business reasons for the same data change.
 
-\emph{Schema resilience} examines how historical data survives the evolution of the application's data structure. As business rules change, entities and database schemas evolve. The history must remain readable without being corrupted by modifications to schemas.
+\emph{Schema resilience} examines how historical data survives the evolution of the application's data structure. As business rules change, entities and database schemas evolve. The history must remain readable without being corrupted by modifications to schemas. TODO: remove this?? -> then also in discussion
 
 \subsubsection{Efficiency}
 

@@ -1,5 +1,6 @@
 %LTeX: enabled=false
 \documentclass[11pt,a4paper]{report}
+\usepackage[a4paper, margin=3cm]{geometry}
 \usepackage{array}
 \usepackage[utf8]{inputenc}
 \usepackage[T1]{fontenc}
@@ -249,6 +250,7 @@
 {
     name={Tail Latency},
     text={tail latency},
+    plural={tail latencies},
     description={The response times observed at high percentiles (such as P95, P99, or P99.9), representing the slowest requests in a distribution. These "outliers" are critical to monitor because they often affect the most data-intensive operations or represent the worst-case user experience}
 }
 

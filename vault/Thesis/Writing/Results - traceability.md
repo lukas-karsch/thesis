@@ -12,10 +12,10 @@ given the architectural constraints, an event log can perfectly recreate histori
 - mention that when using a singular database, with the audit trail on that same DB (e.g. while using Envers), this does not happen 
 **Schema evolution**
 - this is more a topic for flexibility
-- BUT, it also has implications for accuracy of ES reconstruction 
+- BUT, it also has implications for accuracy of ES reconstruction: 
 - not only does current state need to be migrated, it needs to be made sure that past state can be read correctly
-	- Audit log: JSON blobs, old / outdated audit tables 
-	- ES: Events need to be upcast 
+	- Audit log: potentially outdated audit tables / auditing tables also need to be migrated 
+	- ES: Events need to be upcasted  
 
 **Business metrics** 
 - literature suggests reduced time to debug when using event sourcing (root cause analysis)
@@ -28,3 +28,4 @@ Event sourcing is NOT sufficient when trying to audit read operations
 ## Efficiency 
 - assumption: fetching data from audit log tables may be more efficient, because date filters can be used on indexed tables
 - ES system has to play ALL events. (Snapshots can not be used when replaying events, they are only used when rehydrating aggregates. $\rightarrow$ this part probably belongs in result)
+- Results: the "reconstruct grade history" load test proved this. CRUD was a lot faster here. 
