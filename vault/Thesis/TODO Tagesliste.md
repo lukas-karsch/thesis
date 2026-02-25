@@ -1,18 +1,12 @@
-## Dienstag, 17.02 
-- API Endpunkte anpassen, wie in TODO beschrieben 
 ## Montag, 23.02. 
 - Data Store -> PostgreSQL und Axon Linien separat zeigen? 
-## Dienstag, 24.02 
-- compare for different "enrollment" levels: how much is latency when 10, 20, 50 students are enrolled? 
-- $CI\pm$ in data store statistical tests: alle neu berechnen
 ## Mittwoch, 25.02 - Cleanup
 - **URGENT**
 	- read-all-lectures Ergebnisse holen 
 - **Tabellen**
 	- "averaged out over..." in appendix: Wording überdenken. Vlt einfach "aggregated"
 	- "Speedup" in Tabellen -> "Ratio"
-	- Schauen, dass $dropped\_iterations\_rate$ überall drin ist 
-	- `timeseries_aggregated_statistical_tests` nochmal für alle laufen lassen. 
+	- `timeseries_aggregated_statistical_tests` nochmal für alle laufen lassen 
 - **Visualizations**
 	- recreate ALL visualizations because i changed "sd" to CI
 	- mention that values are interpolated between the markers! 

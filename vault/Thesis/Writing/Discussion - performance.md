@@ -8,6 +8,8 @@ lookup projectors can be used outside of aggregates (message interceptor) to avo
 	- e.g. read-all-lectures: 20 lectures to be read vs. 50 lectures to be read. 
 ## CPU Usage 
 Axon server and springboot share same CPU -> springboot usage shows "only" 60%, but axon server might take the rest -> in total, the system is overwhelmed. Should separate each service for better measurements. 
+
+Threads: $tomcat\_threads$ shows only servlet threads. these can create more threads (e.g. parallel streams), which are not present in the metric. 
 ## Database connections 
 - Why median of 0? 
 ### Get grade history

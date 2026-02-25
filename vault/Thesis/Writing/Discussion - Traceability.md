@@ -1,2 +1,2 @@
-ES-CQRS is not sufficient when trying to audit read operations. 
-ES-CQRS: Events are explicit. They DID happen. Even later changes in business logic do not change what happened. Later "changes" are only possible by emitting new events. 
+- ES-CQRS is not sufficient when trying to audit read operations. 
+- ES-CQRS: Events are explicit. They DID happen. Even later changes in business logic do not change what happened. Later "changes" are only possible by emitting new events. 

@@ -2,6 +2,97 @@
 \chapter{Discussion (TODO)}
 \label{ch:discussion}
 
-\section{Analysis of results}
+\section{Interpretation of Results}
 
-\section{Conclusion \& Further work (TODO)}
+\subsection{Performance and Scalability}
+\label{sec:interpretation-performance}
+
+The results obtained during load testing reveal a significant tradeoff between the two architectural patterns. The CRUD application excels in write throughput and resource efficiency, while the ES-CQRS application offers specialized advantages for complex read queries at the cost of higher overhead. In most write-heavy scenarios like \hyperref[sec:l1]{L1}, \hyperref[sec:l2]{L2}, and \hyperref[sec:l2]{L3}, the CRUD system maintains significantly lower latency and consumes fewer resources. In contrast, the ES-CQRS system frequently hits resource saturation --- reaching 200 threads and 10 database connections --- and violates latency thresholds as load increases. This divergence is especially visible in the enrollment test (L3), where the CRUD application manages much higher request volumes before performance degrades. Across nearly all tests, the ES-CQRS architecture requires more CPU and storage, often using double the disk space due to the overhead of storing both events and projections.
+
+These differences are reflected in the calculated scalability metric $\psi$. While the CRUD application often exhibits values above 1.0, indicating efficient scaling where throughput increases outpace cost, the ES-CQRS application frequently shows values near zero under high load (e.g., $\psi \approx 0.01$ in L1). This metric serves as a useful tool for evaluating "productivity" by balancing throughput against resource costs like CPU and thread saturation. However, its usability is sensitive to how the "cost" function is weighted. For instance, the inclusion of a high penalty for projection lag (weighted at 3.0 in the model) heavily penalizes the ES-CQRS application's scalability score when consistency thresholds are missed.
+
+However, the ES-CQRS application demonstrates its strength in specific read-heavy scenarios such as retrieving student credits (L6), where it provides a significant speedup compared to the CRUD application. While the CRUD application struggles with complex aggregations at high loads, reaching a scalability of $\psi \approx 0.00$ as its threadpool saturates, ES-CQRS benefits from pre-calculated read models that keep latencies low even at 3000 \gls{rps}. A similar advantage can be observed in L5 (reading a list of all lectures), because \gls{cqrs} is specifically designed to optimize these types of data retrievals. In these read-intensive contexts, the ES-CQRS application maintains a higher scalability factor (e.g., $\psi \approx 1.1$ at 2000 RPS) because the low latency and lack of complex DB joins compensate for its higher idle resource usage.
+
+A critical drawback of \acrlong{es} and \gls{cqrs} is the projection lag observed in the freshness test (L7), where the application fails to reflect new writes on the read side within the required 100ms window (\ref{slo-freshness}) under heavy load. This eventual consistency means that even if reads have low latencies, they are not guaranteed to be up-to-date. Represented by the $read\_visible\_rate$ metric, this \emph{freshness} drops as low as $0.02$ for ES-CQRS at 400 \gls{ips}. This highlights a tradeoff for systems that require immediate data freshness: the mechanism that enables fast and scalable reads in ES-CQRS can also lead to stale data being served when the system is under pressure.
+
+It should be noted that the results of L8 --- the historic reconstruction load test presented in \autoref{sec:l8} --- yielded a rather surprising result in terms of active database connections. Despite only using the database for two indexed ID lookups before streaming events from Axon's Event Store, the ES-CQRS application saturated the connection pool with a median of 10 active connections. This behavior is counter-intuitive compared to the CRUD implementation, which consistently maintains fewer active connections even though it performs more complex data fetching directly from the relational database through Envers.
+
+TODO: higher Overhead in ES-CQRS in general.
+
+\subsection{Architectural Flexibility}
+
+\subsection{Traceability}
+
+See "Discussion - traceability".
+
+\subsection{Architectural Trade-offs and Recommendations}
+
+TODO
+
+\section{Limitations}
+
+\begin{itemize}
+    \item As soon as the services live on the network, instead of localhost, the latencies would change. Especially in the ES-CQRS application, it might be noticable because of more round trips: data goes client -> server -> command bus -> aggregate -> event store -> back to the server to projectors -> postgres
+    \item JSON overhead: projections in ES-CQRS have JSON serialization overhead --- CPU bound instead of I/O bound
+    \item Measurements: to get more accurate / detailed information about performance, other things should be measured. Garbage collection pauses, scaling payload itself instead of load (fetching more / less data at once), TODO: find more.
+    \item CPU Sharing. all dependencies use the same CPU, but only SpringBoot's CPU Usage was measured. This is maybe why the maximum CPU usage never hit 100\% -> threat to validity
+    \item Hidden threads: $tomcat\_threads$ = servlet threads. other threads, e.g. parallel threads, not measured
+          \subitem But $tomcat\_threads$ is the real bottleneck as it limits the amount of concurrent requests
+\end{itemize}
+
+\section{Answering the Research Questions}
+
+This section will provide a conclusive answer to the three sub-research questions, before providing a holistic answer to the main research question.
+
+\subsection{RQ 1: Performance and Scalability}
+\label{sec:answering-rq-1}
+
+\begin{quote}
+    \textit{How do CRUD and ES-CQRS implementations perform under increasing load, and what are the resulting implications for system scalability and resource efficiency?}
+\end{quote}
+
+TODO
+
+\subsection{RQ 2: Architectural Complexity and Flexibility}
+\label{sec:answering-rq-2}
+
+\begin{quote}
+    \textit{What are the fundamental structural differences between the two approaches, and how do these impact the long-term flexibility and evolution of the codebase?}
+\end{quote}
+
+TODO
+
+\subsection{RQ 3: Historical Traceability}
+\label{sec:answering-rq-3}
+
+\begin{quote}
+    \textit{To what extent can CRUD and ES-CQRS systems accurately and efficiently reconstruct historical states to satisfy business intent and compliance requirements?}
+\end{quote}
+
+TODO
+
+\subsection{Conclusion}
+
+Here, provide a final, holistic answer to the main research question.
+
+\section{Further work}
+\label{sec:further-work}
+
+\subsection{Improvements to the Method}
+
+Fix limitations, basically
+
+\begin{itemize}
+    \item Run on the network
+    \item Fix code: e.g. potential N+1 queries in CRUD, moving blocking lookups in ES-CQRS to external command handlers / interceptors
+\end{itemize}
+
+\subsection{Optimizations and Further Work}
+
+This subsection presents optimizations which could be made to the existing applications. Furthermore, potential for future work is presented.
+
+\begin{itemize}
+    \item Split into microservices
+    \item Use optimized projections: direct JDBC mapping and multi-table, no JSON. Using Protobuf / Kryo.
+    \item Profiling to determine real JSON overhead.
+\end{itemize}

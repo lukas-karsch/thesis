@@ -34,6 +34,8 @@ Each load test shows the threadpool usage ($tomcat\_threads$) of the application
 
 Each load test presents the number of used database connections of the application under test --- $hikari\_connections$. The maximum value this metric can take in these tests is 10, which can again be attributed to SpringBoot's default configuration.
 
+It is important to clarify that a median value of zero active database connections does not imply a lack of database activity. Instead, this result is an artifact of the metric collection frequency and the statistical properties of the median. Resource consumption metrics were sampled at two-second intervals. In scenarios where database interactions completed within milliseconds, the majority of these snapshots captured the connection pool in an idle state. Consequently, while the database was used during request handling, a high rate of zero-value samples drives the median to zero.
+
 \subsection{Data Store Size}
 
 The size of the data store is calculated differently for both applications. The CRUD application uses PostgreSQL as its only data store. The $postgres\_size$ metric equals the application's data store size.
@@ -366,7 +368,7 @@ These values correspond to the following scalability metric for the CRUD applica
 
 The \texttt{GET} \texttt{/lectures/all} endpoint returns a list of all lectures, including details.
 
-Latency here.
+Latency here. Most likely, the ES-CQRS app will be faster, which i have shown in local testing.
 
 CPU Usage here.
 
@@ -455,7 +457,7 @@ The size of the data store is presented in \autoref{fig:l6_data_size}. At 19.6MB
 
 These values correspond to the following scalability metrics for the CRUD application: $\psi(1000, 2000)\approx 0.4$, $\psi(2000, 3000)\approx 0.00$; and the following scalability metrics for the ES-CQRS application: $\psi(1000, 2000)\approx 1.1$, $\psi(2000, 3000)\approx 0.3$.
 
-\subsection{Time to Consistency}
+\subsection{Time to Consistency / Freshness}
 
 \ref{slo-freshness} defined a threshold of 100ms inside which all writes shall be reflected on the read-side. This "freshness" is measured in the following test.
 
@@ -539,6 +541,7 @@ These values correspond to the following scalability metric for the CRUD applica
 This subsection presents load tests which evaluate the performance of endpoints reconstructing historical state.
 
 \subsubsection{L8: Grade History}
+\label{sec:l8}
 
 The endpoint \texttt{GET} \texttt{/stats/grades/history} returns the historical states of a grade. Its client-side and server-side latencies are presented in \autoref{fig:l6_combined}. Up to a load of 1000 \gls{rps}, both applications maintain a sub-10ms $latency\_p50$ and $latency\_p95$. Beyond that point, though, the ES-CQRS application's latencies increase sharply, reaching values above 1000ms. This marks the point at which the ES-CQRS application fails \ref{slo-latency}. The CRUD application, on the other hand, remains at a $latency\_p95$ of just around 2ms at the final tested load of 2000\gls{rps}.
 
@@ -603,7 +606,7 @@ $tomcat\_threads$ is visualized in \autoref{fig:l8_threadpool_usage}. Both appli
         \centering
         \small
         \input{tables/run-grade-history_datastore_size.tex}
-        \caption{Data Store Size vs. Load}
+        \caption{Data Store Size}
         \label{tab:l8_data_size}
     \end{subfigure}
     \caption[L8 Database Usage, load measured in \gls{rps}]{L8 Database Usage: Load measured in \gls{rps}. Detailed results in \ref{results:l8}.}

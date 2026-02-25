@@ -1,9 +1,7 @@
 - **Literature**
     - Evolutionary Architectures lesen 
 - **Code**
-	- Change the API:
-		- make GET /lectures return ALL lectures 
-		- create GET /lectures-for-student
+	- **Change the API:**
 		- introduce new endpoint to kick students out of a lecture 
 		  reasoning: distinguish in audits if student disenrolled or was kicked out 
     - CRUD
