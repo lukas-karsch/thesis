@@ -16,15 +16,15 @@ The significance levels indicated in the tables inside the appendix are calculat
 
 To capture the system's median CPU usage under load, the initial usage spike ("transient"), exhibited across all runs, was excluded. This approach mitigates the influence of startup spikes and resource initialization overhead, instead focusing on the steady-state performance. This process is called \emph{transient removal}~\cite{jain_art_1991}.
 
-\subsection{Speedup / Ratios}
+\subsection{Ratios}
 
-When comparing the CRUD and ES-CQRS applications' performance, a "speedup" factor or ratio is calculated per metric and \gls{rps}. This ratio may be mentioned for textual descriptions of the resulting graphs, and is always present in the tables inside the appendix. The term "speedup" is used when comparing latencies, while the term "ratio" is used for resource consumption metrics like $cpu\_usage$. The given values are calculated like this: $\frac{metric_{crud}}{metric_{es\_cqrs}}$. Therefore, a $latency\_p95$ of 100ms for the CRUD application and a $latency\_p95$ of 50ms for the ES-CQRS application would result in a speedup of 2x for that specific metric at the respective \gls{rps}.
+When comparing the CRUD and ES-CQRS applications' performance, a "speedup" factor or ratio is calculated per metric and \gls{rps}. This ratio may be mentioned for textual descriptions of the resulting graphs, and is always present in the tables inside the appendix. The term "speedup" is used when comparing latencies, while the term "ratio" is used for other metrics. The given values are calculated like this: $\frac{metric_{crud}}{metric_{es\_cqrs}}$. Therefore, a $latency\_p95$ of 100ms for the CRUD application and a $latency\_p95$ of 50ms for the ES-CQRS application would result in a speedup of 2x for that specific metric at the respective \gls{rps}. Ratios involving the value zero for either application are marked as \emph{N/A}.
 
 \subsection{Dropped Iterations}
 
-In some tests, iterations were dropped. This occurs if an iteration takes longer than 1 second and no more \glspl{VU}, which act as request processors, are available to k6. The fact that iterations were dropped during testing is mentioned when describing results, and the rate of dropped iterations per second ($dropped\_iterations\_rate$) is available in the results tables inside the appendix.
+In some tests, iterations were dropped, meaning that k6 skipped iterations and did not send requests to the server. This occurs if an iteration takes longer than 1 second and no more \glspl{VU}, which act as request processors, are available to k6. The fact that iterations were dropped during testing is mentioned when describing results, and the rate of dropped iterations per second ($dropped\_iterations\_rate$) is available in the results tables inside the appendix.
 
-The consequence of dropped iterations on test results will be outlined in \autoref{ch:discussion}.
+The consequence of dropped iterations on test results will be outlined in \autoref{ch:discussion}. (TODO)
 
 \subsection{Threadpool}
 
@@ -376,7 +376,7 @@ CPU Usage here.
 
 Database connections here.
 
-\subsubsection{L6: Get credits}
+\subsubsection{L6: Get Credits}
 \label{sec:l6}
 
 The \texttt{GET} \texttt{/stats/credits} endpoint retrieves a student's total collected credits. \autoref{fig:l6_combined} presents the endpoint's client-side and server-side latencies using a logarithmic y-axis.
@@ -386,6 +386,8 @@ The \texttt{GET} \texttt{/stats/credits} endpoint retrieves a student's total co
 Between 2000 \gls{rps} and 3000 \gls{rps}, a performance divergence occurs: the CRUD application's $latency\_p50$ and $latency\_p95$ increase to more than 1000ms, violating \ref{slo-latency} beyond 2000 \gls{rps}. On the other hand, the ES-CQRS application still exhibits a $latency\_p95$ of less than 10ms at 3000 \gls{rps}. This represents a speedup of around 200x. At 4000 \gls{rps}, the ES-CQRS application exhibits a $latency\_p95$ of around 80ms, a 20x speedup. Beyond 4000 \gls{rps}, the ES-CQRS app's latencies also begin to violate \ref{slo-latency}, reaching latencies around 1000ms.
 
 It can be noted that starting at 3000 \gls{rps}, the CRUD application's latencies seem to reach a plateau, with identical observed latencies at 3000, 4000 and 5000 \gls{rps}. Meanwhile, the ES-CQRS application's latencies keep increasing up to a load of 5000 \gls{rps}. At this load, the ES-CQRS application's $latency\_p95$ is about 2.4x lower than the CRUD application's.
+
+At 3000 RPS, the CRUD application has a $dropped\_iterations\_rate$ of around 360. Until 5000 RPS, the value reaches 1581. Dropping iterations artificially keeps queues on the server shorter, which could explain the observed latency plateau in CRUD. It should also be noted that at 5000 RPS, ES-CQRS begins to drop some iterations with $dropped\_iterations\_rate\approx38$.
 
 The server latencies, displayed in \autoref{fig:l6_latency_vs_load_server}, differ from client latencies at higher loads. Starting at 3000 \gls{rps}, the measured latencies do not increase as strongly as observed on the client. At 5000 \gls{rps}, the $latency\_p95$ of the CRUD app resides around 260ms, while the ES-CQRS app has a $latency\_p95$ of around 50ms.
 

@@ -40,6 +40,7 @@ TODO
     \item CPU Sharing. all dependencies use the same CPU, but only SpringBoot's CPU Usage was measured. This is maybe why the maximum CPU usage never hit 100\% -> threat to validity
     \item Hidden threads: $tomcat\_threads$ = servlet threads. other threads, e.g. parallel threads, not measured
           \subitem But $tomcat\_threads$ is the real bottleneck as it limits the amount of concurrent requests
+    \item Dropped iterations during testing skew results. It should be made sure that no iterations are dropped by always providing k6 with an appropriate amount of VUs.
 \end{itemize}
 
 \section{Answering the Research Questions}

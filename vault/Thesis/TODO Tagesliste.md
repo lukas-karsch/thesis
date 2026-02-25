@@ -6,16 +6,14 @@
 - **Tabellen**
 	- "Speedup" in Tabellen -> "Ratio"
 	- `timeseries_aggregated_statistical_tests` nochmal für alle laufen lassen 
-- **Visualizations**
-	- recreate ALL visualizations because i changed "sd" to CI
-	- latency SLO in alle Grafiken einfügen! 
 - Letztes Kapitel: **Discussion und Interpretation**
 ## Donnerstag, 26.02 - Cleanup 
 - Alle CPU Usage Daten müssen einheitlich sein! 
-- Schauen, dass "dropped iterations" überall erwähnt wird wo iterations gedroppt wurden. 
-- Dropped iterations rate -> turn into result for "failed requests rate".
-	- Dropped = failed 
-	- Make sure to turn this into SLO 3 
+- dropped_iterations_rate
+	- Überall erwähnen! (TODO: L6 get credits) 
+	- Dropped iterations rate -> turn into result for "failed requests rate".
+		- Dropped = failed 
+		- Make sure to turn this into SLO 3 
 - Scalability metric in "basics" schieben
 - Schauen, ob man andere Sachen aus der Methodik auch in Basics schieben sollte 
 	- z.B Static analysis metrics 
@@ -32,3 +30,4 @@
 - Tabellen im Anhang aufhübschen 
 - ist read_visible_rate früh genug erklärt? 
 - insgesamt Logik überprüfen 
+- \addlinespace in Result Tabellen zwischen RPS 
