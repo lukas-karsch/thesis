@@ -1,29 +1,27 @@
 \begin{table}[H]
     \small
     \centering
-    \resizebox{\columnwidth}{!}{
-        \begin{tabular}{rrrcrrcc}
-            \toprule
-                         & \multicolumn{2}{c}{\textbf{CRUD (ms)}} &                   & \multicolumn{2}{c}{\textbf{ES-CQRS (ms)}} &                 &                                                            \\
-            \cmidrule{2-3} \cmidrule{5-6}
-            \textbf{RPS} & \textbf{Median}                        & \textbf{CI $\pm$} &                                           & \textbf{Median} & \textbf{CI $\pm$} & \textbf{Ratio} & \textbf{Significance} \\
-            \midrule
+    \begin{tabular}{rrrcrrcc}
+        \toprule
+                     & \multicolumn{2}{c}{\textbf{CRUD (ms)}} &                   & \multicolumn{2}{c}{\textbf{ES-CQRS (ms)}} &                 &                                                            \\
+        \cmidrule{2-3} \cmidrule{5-6}
+        \textbf{RPS} & \textbf{Median}                        & \textbf{CI $\pm$} &                                           & \textbf{Median} & \textbf{CI $\pm$} & \textbf{Ratio} & \textbf{Significance} \\
+        \midrule
 
-            25           & 0.02                                   & 0.0019            &                                           & 0.0391          & 0.0024            & 2.0x Higher    & ***                   \\
+        25           & 0.02                                   & 0.0019            &                                           & 0.0391          & 0.0024            & 2.0x Higher    & ***                   \\
 
-            50           & 0.0237                                 & 0.0019            &                                           & 0.0544          & 0.0032            & 2.3x Higher    & ***                   \\
+        50           & 0.0237                                 & 0.0019            &                                           & 0.0544          & 0.0032            & 2.3x Higher    & ***                   \\
 
-            100          & 0.0328                                 & 0.0031            &                                           & 0.0913          & 0.0046            & 2.8x Higher    & ***                   \\
+        100          & 0.0328                                 & 0.0031            &                                           & 0.0913          & 0.0046            & 2.8x Higher    & ***                   \\
 
-            200          & 0.0404                                 & 0.0051            &                                           & 0.1531          & 0.0061            & 3.8x Higher    & ***                   \\
+        200          & 0.0404                                 & 0.0051            &                                           & 0.1531          & 0.0061            & 3.8x Higher    & ***                   \\
 
-            500          & 0.0677                                 & 0.0006            &                                           & 0.3424          & 0.0036            & 5.1x Higher    & ***                   \\
+        500          & 0.0677                                 & 0.0006            &                                           & 0.3424          & 0.0036            & 5.1x Higher    & ***                   \\
 
-            1000         & 0.1423                                 & 0.0012            &                                           & 0.4594          & 0.0025            & 3.2x Higher    & ***                   \\
+        1000         & 0.1423                                 & 0.0012            &                                           & 0.4594          & 0.0025            & 3.2x Higher    & ***                   \\
 
-            \bottomrule
-        \end{tabular}
-    }
+        \bottomrule
+    \end{tabular}
     \caption{Statistical comparison of $cpu\_usage$ for GET /lectures, aggregated over at least 25 runs}
     \label{table:run-create-course-prerequisites-aggregated-CPU_Usage}
 \end{table}

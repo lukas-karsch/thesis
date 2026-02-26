@@ -1,31 +1,29 @@
 \begin{table}[H]
     \small
     \centering
-    \resizebox{\columnwidth}{!}{
-        \begin{tabular}{rrrcrrcc}
-            \toprule
-                         & \multicolumn{2}{c}{\textbf{CRUD (ms)}} &                   & \multicolumn{2}{c}{\textbf{ES-CQRS (ms)}} &                 &                                                            \\
-            \cmidrule{2-3} \cmidrule{5-6}
-            \textbf{RPS} & \textbf{Median}                        & \textbf{CI $\pm$} &                                           & \textbf{Median} & \textbf{CI $\pm$} & \textbf{Ratio} & \textbf{Significance} \\
-            \midrule
+    \begin{tabular}{rrrcrrcc}
+        \toprule
+                     & \multicolumn{2}{c}{\textbf{CRUD (ms)}} &                   & \multicolumn{2}{c}{\textbf{ES-CQRS (ms)}} &                 &                                                            \\
+        \cmidrule{2-3} \cmidrule{5-6}
+        \textbf{RPS} & \textbf{Median}                        & \textbf{CI $\pm$} &                                           & \textbf{Median} & \textbf{CI $\pm$} & \textbf{Ratio} & \textbf{Significance} \\
+        \midrule
 
-            25           & 1.0                                    & 0.0               &                                           & 0.0             & 0.0               & NaN            & ***                   \\
+        25           & 1.0                                    & 0.0               &                                           & 0.0             & 0.0               & NaN            & ***                   \\
 
-            50           & 1.0                                    & 0.0               &                                           & 0.0             & 0.0               & NaN            & ***                   \\
+        50           & 1.0                                    & 0.0               &                                           & 0.0             & 0.0               & NaN            & ***                   \\
 
-            100          & 3.0                                    & 0.0               &                                           & 0.0             & 0.0               & NaN            & ***                   \\
+        100          & 3.0                                    & 0.0               &                                           & 0.0             & 0.0               & NaN            & ***                   \\
 
-            200          & 10.0                                   & 0.5               &                                           & 0.0             & 0.0               & NaN            & ***                   \\
+        200          & 10.0                                   & 0.5               &                                           & 0.0             & 0.0               & NaN            & ***                   \\
 
-            250          & 3.0                                    & 1.0               &                                           & 0.0             & 0.0               & NaN            & ***                   \\
+        250          & 3.0                                    & 1.0               &                                           & 0.0             & 0.0               & NaN            & ***                   \\
 
-            500          & 10.0                                   & 0.5               &                                           & 0.0             & 0.0               & NaN            & ***                   \\
+        500          & 10.0                                   & 0.5               &                                           & 0.0             & 0.0               & NaN            & ***                   \\
 
-            1000         & 10.0                                   & 5.0               &                                           & 0.0             & 0.0               & NaN            & ***                   \\
+        1000         & 10.0                                   & 5.0               &                                           & 0.0             & 0.0               & NaN            & ***                   \\
 
-            \bottomrule
-        \end{tabular}
-    }
+        \bottomrule
+    \end{tabular}
     \caption{Statistical comparison of $hikari\_connections$ for GET /lectures/all, aggregated over at least 20 runs}
     \label{table:run-read-all-lectures-aggregated-Database_Connections}
 \end{table}

@@ -37,7 +37,7 @@ Both implementations use the same underlying technologies:
 
 ### ES-CQRS App
 
-The es-cqrs app additionally uses the Axon server and the Axon framework for command handling, event sourcing and CQRS.
+The ES-CQRS app additionally uses the Axon server and the Axon framework for command handling, event sourcing and CQRS.
 
 ## Get started
 
@@ -70,6 +70,8 @@ application running.
 
 [This](impl-es-cqrs/src/test/java/karsch/lukas/TestEsCqrsApplication.java) is where the `es-cqrs` app can be started.
 
+When running the applications using Testcontainers, they both start at port `8080`.
+
 #### Running with docker-compose
 
 The applications can also be started using `docker compose`. When using IntelliJ, the apps can be started using the
@@ -84,7 +86,7 @@ Otherwise, here are step-by-step instructions:
 2. Build the docker image:
    ```bash
    cd impl-crud
-   docker build -t lkarsch/impl-crud-docker .
+   docker build -t lkarsch/impl-crud-docker . 
    ```
 3. Run docker compose
    ```bash
@@ -92,8 +94,10 @@ Otherwise, here are step-by-step instructions:
    docker-compose up -d crud-app # "es-cqrs-app" | "crud-app"
    ```
 
-- **crud-app** will start at port **8080**
-- **es-cqrs-app** will start at port **8081**
+When running with docker-compose:
+
+- **crud-app** will start at port `8080`
+- **es-cqrs-app** will start at port `8081`
 
 ## Technical Documentation, Architectural Decisions
 
@@ -101,9 +105,9 @@ Otherwise, here are step-by-step instructions:
 architectural desicions are documented [here](vault/Thesis/Technical%20Design%20Log). Best viewed inside
 of [Obsidian](https://obsidian.md/).
 
-## LaTeX
+## Thesis
 
-The latex file for the thesis can be found [here](latex/main.tex).
+The latex file for the thesis can be found [here](latex/main.tex); the pdf file is [here](latex/main.pdf).
 
 ## Further Links
 

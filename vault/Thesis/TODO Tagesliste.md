@@ -3,16 +3,16 @@
 ## Mittwoch, 25.02
 - **Tabellen**
 	- `timeseries_aggregated_statistical_tests` nochmal für alle laufen lassen 
-## Donnerstag, 26.02
-- TODOs erledigen
-- **Discussion und Interpretation**  fertig schreiben
-	- Traceability 
-	- "Suggestions"
-	- RQs beantworten
 ## Freitag, 27.02
 - Dropped iterations rate -> turn into result for "failed requests rate".
 	- Dropped = failed 
 	- Make sure to turn this into SLO 3 
+-
+    - TODOs erledigen
+- **Discussion und Interpretation**  fertig schreiben
+    - Traceability
+    - "Suggestions"
+    - RQs beantworten
 ## Samstag, 28.02 
 - Abstract 
 - Scalability metric für alle Tests in Anhang machen 

@@ -1,7 +1,6 @@
 \begin{table}[H]
     \small
     \centering
-    \resizebox{\columnwidth}{!}{
         \begin{tabular}{rrrcrrcc}
             \toprule
                          & \multicolumn{2}{c}{\textbf{CRUD (ms)}} &                   & \multicolumn{2}{c}{\textbf{ES-CQRS (ms)}} &                 &                                                            \\
@@ -27,7 +26,6 @@
 
             \bottomrule
         \end{tabular}
-    }
     \caption{Statistical comparison of $hikari\_connections$ for POST /lectures/create; then /GET/\{lectureId\}, aggregated over at least 25 runs}
     \label{table:run-create-lecture-aggregated-Database_Connections}
 \end{table}

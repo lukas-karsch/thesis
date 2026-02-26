@@ -1,33 +1,31 @@
 \begin{table}[H]
     \small
     \centering
-    \resizebox{\columnwidth}{!}{
-        \begin{tabular}{rrrcrrcc}
-            \toprule
-                         & \multicolumn{2}{c}{\textbf{CRUD (ms)}} &                   & \multicolumn{2}{c}{\textbf{ES-CQRS (ms)}} &                 &                                                            \\
-            \cmidrule{2-3} \cmidrule{5-6}
-            \textbf{RPS} & \textbf{Median}                        & \textbf{CI $\pm$} &                                           & \textbf{Median} & \textbf{CI $\pm$} & \textbf{Ratio} & \textbf{Significance} \\
-            \midrule
+    \begin{tabular}{rrrcrrcc}
+        \toprule
+                     & \multicolumn{2}{c}{\textbf{CRUD (ms)}} &                   & \multicolumn{2}{c}{\textbf{ES-CQRS (ms)}} &                 &                                                            \\
+        \cmidrule{2-3} \cmidrule{5-6}
+        \textbf{RPS} & \textbf{Median}                        & \textbf{CI $\pm$} &                                           & \textbf{Median} & \textbf{CI $\pm$} & \textbf{Ratio} & \textbf{Significance} \\
+        \midrule
 
-            10           & 9.27                                   & 0.01              &                                           & 17.97           & 0.01              & 1.9x Higher    & ***                   \\
+        10           & 9.27                                   & 0.01              &                                           & 17.97           & 0.01              & 1.9x Higher    & ***                   \\
 
-            20           & 10.02                                  & 0.02              &                                           & 19.08           & 0.01              & 1.9x Higher    & ***                   \\
+        20           & 10.02                                  & 0.02              &                                           & 19.08           & 0.01              & 1.9x Higher    & ***                   \\
 
-            50           & 12.33                                  & 0.02              &                                           & 22.51           & 0.01              & 1.8x Higher    & ***                   \\
+        50           & 12.33                                  & 0.02              &                                           & 22.51           & 0.01              & 1.8x Higher    & ***                   \\
 
-            100          & 16.11                                  & 0.01              &                                           & 28.15           & 0.01              & 1.7x Higher    & ***                   \\
+        100          & 16.11                                  & 0.01              &                                           & 28.15           & 0.01              & 1.7x Higher    & ***                   \\
 
-            200          & 23.69                                  & 0.01              &                                           & 39.5            & 0.01              & 1.7x Higher    & ***                   \\
+        200          & 23.69                                  & 0.01              &                                           & 39.5            & 0.01              & 1.7x Higher    & ***                   \\
 
-            300          & 31.26                                  & 0.01              &                                           & 50.89           & 0.02              & 1.6x Higher    & ***                   \\
+        300          & 31.26                                  & 0.01              &                                           & 50.89           & 0.02              & 1.6x Higher    & ***                   \\
 
-            400          & 38.78                                  & 0.01              &                                           & 60.11           & 0.23              & 1.6x Higher    & ***                   \\
+        400          & 38.78                                  & 0.01              &                                           & 60.11           & 0.23              & 1.6x Higher    & ***                   \\
 
-            500          & 46.29                                  & 0.02              &                                           & 57.78           & 0.57              & 1.2x Higher    & ***                   \\
+        500          & 46.29                                  & 0.02              &                                           & 57.78           & 0.57              & 1.2x Higher    & ***                   \\
 
-            \bottomrule
-        \end{tabular}
-    }
+        \bottomrule
+    \end{tabular}
     \caption{Statistical comparison of Data Store Size (MB) for POST /lectures/create; then /GET/\{lectureId\}, aggregated over at least 25 runs}
     \label{table:run-create-lecture-aggregated-datastore-size}
 \end{table}

@@ -9,8 +9,7 @@
 \midrule
 {% for row in rows %}
     ${{ e(row.metric) }}$ & {{ row.users }} & {{ row.c_median }} & {{ row.c_ci }} & & {{ row.e_median }} &
-    {{ row.e_ci }} &
-    {{ row.speedup }} & {{ row.sig }} \\
+    {{ row.e_ci }} & {{ row.speedup }} & {{ row.sig }} \\
 {% endfor %}
 \bottomrule
 \end{tabular}
