@@ -316,7 +316,7 @@ Finally, the \emph{Distance from the Main Sequence} combines abstractness and in
 
 \begin{figure}[h]
     \centering
-    \includegraphics[width=0.8\textwidth]{images/Abstractness-Instability-Main_Sequence.png}
+    \includegraphics[width=0.7\textwidth]{images/Abstractness-Instability-Main_Sequence.png}
     \caption[Main Sequence, Zones of Pain and Uselessness]{Main Sequence, Zones of Pain and Uselessness. Adapted from \cite[266]{martin_agile_2003}}
     \label{fig:method-main-sequence}
 \end{figure}
@@ -333,6 +333,6 @@ Finally, the \emph{Distance from the Main Sequence} combines abstractness and in
 
 \subsection{Usefulness of Static Analysis}
 
-These metrics offer a quantitative method to identify fundamental structural differences between architectures by measuring how components are organized and connected. Metrics such as \emph{\gls{cbo}} and \emph{Afferent/Efferent coupling} reveal the degree of dependence between modules. High coupling suggests a structure where changes in one area may have affects on large parts of the system, while low coupling indicates better modularity and isolation, leading to easier maintenance~\cite{chawla_comparative_2013}. Additionally, cohesion metrics like \emph{\gls{lcom}} and complexity measures such as \emph{\gls{wmc}} help determine if an architecture is composed of focused, manageable components or large, complex classes that attempt to do too much~\cite{chawla_comparative_2013}.
+The described metrics offer a quantitative method to identify fundamental structural differences between architectures by measuring how components are organized and connected. Metrics such as \emph{\gls{cbo}} and \emph{Afferent/Efferent coupling} reveal the degree of dependence between modules. High coupling suggests a structure where changes in one area may have affects on large parts of the system, while low coupling indicates better modularity and isolation, leading to easier maintenance~\cite{chawla_comparative_2013}. Additionally, cohesion metrics like \emph{\gls{lcom}} and complexity measures such as \emph{\gls{wmc}} help to determine if an architecture is composed of focused, manageable components or large, complex classes that attempt to do too much~\cite{chawla_comparative_2013}.
 
 Regarding long-term flexibility and evolution, metrics that evaluate stability and abstraction provide insights into how easily a codebase may change over time. For example, calculating \emph{Instability} and \emph{Abstractness} allows architects to visualize their \emph{"Distance from the Main Sequence,"} highlighting which parts of the system may be becoming too rigid to change or too abstract to be useful~\cite[45-47]{richards_fundamentals_2020}.

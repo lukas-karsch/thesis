@@ -6,10 +6,21 @@
 
 TODO: explain this section. First, interpret results for each research question, finally give "recommendations" --- when is which architecture better suited?
 
-\subsection{Identifying Bottlenecks (TODO)}
+\subsection{Identifying Bottlenecks}
 \label{sec:identifying-bottlenecks}
 
-Group tests which show the same bottlenecks per application and present them here. Zusammenhang von $\psi$ und Headroom?
+In general, the bottlenecks of either application lie in threadpool saturation or database contention. These two metrics are intrinsically linked, with database connection contention acting as a back-pressure mechanism that blocks threads from being freed up. Each request is processed in a thread ($tomcat\_threads$), and most requests make at least one database round-trip. When the database is heavily used ($hikari\_connections$ close to 10), each thread has to wait longer to get access to a connection. This in turn fills up the threadpool. As soon as the threadpool is saturated ($tomcat\_threads=200$), any further requests are queued before they can be processed. This can be seen in most load tests, as the two metrics often reach their ceiling at the same load (\hyperref[sec:l1]{L1}, \hyperref[sec:l2]{L2}, \hyperref[sec:l4]{L4}, \hyperref[sec:l5]{L5}, \hyperref[sec:l6]{L6}, \hyperref[sec:l8]{L8}). As soon as either of these resources is \emph{saturated}, meaning no headroom is left, the latencies typically increase sharply, due to the queueing which occurs before a request can be processed. Before that point, enough resources are available to concurrently handle most incoming requests.
+
+A clear correlation exists between the Scalability Metric ($\psi$) and resource headroom. For example, in L1 and L2, $\psi$ for ES-CQRS approaches 0.01 as the threadpool reaches saturation (zero headroom), indicating that the system can no longer effectively convert additional resource expenditure into performance gains.
+
+During enrollment (\hyperref[sec:l3]{L3}), the bottleneck is not visible immediately from the resource consumption metrics. The ES-CQRS application shows a sharp increase in latency at 100 \gls{rps}. At this point, neither the threadpool nor the database connections are saturated. The issue here most likely stems from the subscription query which is used in the implementation. It blocks until the read-side projector updated the student's enrollment status. The point at which the latencies start increasing sharply can be assumed to be the moment in which the projector can not handle incoming events quickly enough. While enough worker threads would be available, the existing requests need to wait for a longer time until the request finishes processing.
+
+\subsection{Projection Lags}
+\label{sec:projection-lag}
+
+Projection lag is the delay between the moment an event is published by the write-side and the moment that change is reflected in the read-side (projections). In a \gls{cqrs} architecture, the read-side is updated asynchronously by event processors (projectors). When the system is under high load, the event processor may become a bottleneck, when it is unable to keep up with the new events being published. This results in eventual consistency, where a user might successfully save data but receive an "old" or "not found" response when querying the read-side immediately afterward, as the background synchronization has not yet caught up.
+
+Several tests showed a decrease in storage size for the ES-CQRS application under increased load, which was attributed to projection lag. The projection lag is a very likely explanation, however no metrics were taken during the load tests which can definitely confirm this as the root cause. Furthermore, even projection lag does not fully explain why the storage taken at higher load is \emph{lower} than at a previous load. One explanation for this could be that the higher load on the system takes up more system resources to handle the incoming requests, taking away CPU cycles from the event processor. However, this is only a theoretical conclusion that would require detailed profiling to confirm.
 
 \subsection{Performance and Scalability}
 \label{sec:interpretation-performance}
@@ -25,8 +36,6 @@ A critical drawback of \acrlong{es} and \gls{cqrs} is the projection lag observe
 It should be noted that the results of L8 --- the historic reconstruction load test presented in \autoref{sec:l8} --- yielded a rather surprising result in terms of active database connections. Despite only using the database for two indexed ID lookups before streaming events from Axon's Event Store, the ES-CQRS application saturated the connection pool with a median of 10 active connections. This behavior is counter-intuitive compared to the CRUD implementation, which consistently maintains fewer active connections even though it performs more complex data fetching directly from the relational database through Envers.
 
 Beyond the specific resource metrics, the ES-CQRS implementation adds an inherent architectural overhead due to the abstraction layers provided by Axon Framework and Axon Server. While these tools offer benefits like location transparency and automated message routing, they introduce a more complex data flow compared to the direct function calls inside a standard Layered Architecture. Theoretically, the process of wrapping, routing, and handling command messages and events through the framework adds a latency penalty and increases CPU demand. However, as no profiling was conducted to isolate these specific costs during program execution, this point remains theoretical.
-
-TODO: Fazit ziehen zu Scalability, scalability Metrik erwähnen (was kann sie, was nicht). -> ist schon im Text erwähnt, vlt noch etwas expliziter machen.
 
 \subsection{Architectural Flexibility}
 \label{sec:architectural-flexibility}
@@ -78,7 +87,9 @@ Additionally, the server-side metrics collected through Actuator and Prometheus 
 
 Furthermore, although both applications were developed following industry standards and common best practices, it cannot be formally guaranteed that the implementations are entirely free of defects or suboptimal coding practices. Consequently, the observed performance metrics may be influenced by unidentified implementation errors rather than being representative of the underlying architecture.
 
-Beyond the technical measurements, the given architectural evaluation is limited as it is simply a synthesis of static analysis. This study did not investigate the topic of schema evolution, which is the process of managing how data structures, such as events or database tables, change over time. In a long-running production system, the difficulty of evolving an event store's schema is an additional factor in the total cost of ownership and flexibility of an \gls{es}-\gls{cqrs} system. Similarly, managing complex database migrations in coupled \gls{crud} architectures without data-loss may introduce additional challenges.
+One such implementation error which likely influenced the load testing measurements is a specific oversight in the ES-CQRS implementation regarding resource contention. In the current setup, both the synchronous lookup projectors --- which belong solely to the write-side and are used to ensure immediate consistency --- and the asynchronous query-side projections share the same underlying database instance and connection pool. This creates a bottleneck where the lookup projectors, which should ideally be very low-latency, must compete for database connections and \gls{io} cycles with the query-side event processors. This shared resource dependency undermines the theoretical decoupling of the command and query sides, as heavy query-side projection activity directly introduces latency into the command-handling pipeline.
+
+Beyond the technical measurements, the given architectural evaluation is limited as it is simply a synthesis of static analysis. This study did not investigate the topic of \gls{schema-evolution}, which is the process of managing how data structures, such as events or database tables, change over time. In a long-running production system, the difficulty of evolving an event store's schema is an additional factor in the total cost of ownership and flexibility of an \gls{es}-\gls{cqrs} system. Similarly, managing complex database migrations in coupled \gls{crud} architectures without data-loss may introduce additional challenges.
 
 Because the use case and the load patterns used in this study were artificially generated, they may not capture the unpredictable nature of real-world user behavior or specific business requirements.
 

@@ -10,14 +10,14 @@
 - TODOs erledigen
 - Letztes Kapitel fertig machen: **Discussion und Interpretation** 
 	- CI bei read-only load tests sollte eigentlich 0 sein. Ist aber 0.01 bei ES-CQRS in `read-all-lectures` -> **muss in Interpretation erwähnt werden** 
-- Alle captions zu $metric\_name$ ändern
 ## Freitag, 27.02
 - Alle CPU Usage Daten müssen einheitlich sein! 
 - dropped_iterations_rate
-	- Überall erwähnen! (TODO: L6 get credits, L5 read all lectures) 
+	- Überall erwähnen! (TODO: L5 read all lectures) 
 	- Dropped iterations rate -> turn into result for "failed requests rate".
 		- Dropped = failed 
 		- Make sure to turn this into SLO 3 
+- Enrollment: requests fail because of timeout. 
 ## Samstag, 28.02 
 - Abstract 
 - Scalability metric für alle Tests in Anhang machen 
@@ -27,7 +27,9 @@
 - pom.xml -> alle Versionen pinnen 
 ## Sonntag, 01.03 
 - Tabellen im Anhang aufhübschen 
+	- resizebox entfernen, wann immer möglich 
 - ist read_visible_rate früh genug erklärt? 
 - insgesamt Logik überprüfen 
-- \addlinespace in Result Tabellen zwischen RPS 
+- `\addlinespace` in Result Tabellen zwischen RPS 
 - Unterschrift 
+- Alle captions zu $metric\_name$ ändern

@@ -110,8 +110,8 @@ Scalability (ψ): 0.0013
 **ES-CQRS**
 Productivity at k1 (F1): 118.7532
 Productivity at k2 (F2): 6.7533
-Scalability (ψ): 0.0568
 Scalability (ψ): 0.0569
+
 ---
 ### L5: Read all lectures 
 

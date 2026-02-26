@@ -62,9 +62,23 @@
               "icon": "lucide-file",
               "title": "2026-02-23 Scalability Metrik"
             }
+          },
+          {
+            "id": "9941c111761595be",
+            "type": "leaf",
+            "state": {
+              "type": "markdown",
+              "state": {
+                "file": "Advice/VMs.md",
+                "mode": "source",
+                "source": false
+              },
+              "icon": "lucide-file",
+              "title": "VMs"
+            }
           }
         ],
-        "currentTab": 3
+        "currentTab": 4
       }
     ],
     "direction": "vertical"
@@ -117,7 +131,8 @@
               "title": "Bookmarks"
             }
           }
-        ]
+        ],
+        "currentTab": 1
       }
     ],
     "direction": "horizontal",
@@ -212,7 +227,7 @@
       "bases:Create new base": false
     }
   },
-  "active": "6543e5239173dca0",
+  "active": "9941c111761595be",
   "lastOpenFiles": [
     "TODO Tagesliste.md",
     "Technical Design Log/2026-02-26 Regex for double whitespace.md",

@@ -2,7 +2,7 @@
 \chapter{Implementation}
 \label{ch:implementation}
 
-After defining functional and non-functional requirements, the two applications can be implemented. The implementation phase will be detailed in this chapter. After describing the utilized technologies, the \glspl{contract-test} executed on both applications are outlined. Next, implementation details of \acrshort{crud} and \acrshort{es}-\acrshort{cqrs} are given. Finally, the load tests are presented.
+After defining functional and non-functional requirements, the two applications can be implemented. The implementation phase will be detailed in this chapter. After describing the utilized technologies, the \glspl{contract-test} executed on both applications are outlined. Next, implementation details of \gls{crud} and \gls{es}-\gls{cqrs} are given. Finally, the load tests are presented.
 
 \section{Endpoints}
 \label{sec:endpoints}
@@ -19,7 +19,7 @@ Table \autoref{table:endpoints} presents a feature matrix, mapping \acrshort{htt
         \addlinespace
         \texttt{GET /lectures/all}            & Returns details for all lectures                            & 200               \\
         \addlinespace
-        \texttt{POST /courses/create}         & Creates a course                                            & 201               \\
+        \texttt{POST /courses}         & Creates a course                                            & 201               \\
         \addlinespace
         \texttt{POST /lectures/\{id\}/enroll} & Enroll to a lecture                                         & 201               \\
         \addlinespace
