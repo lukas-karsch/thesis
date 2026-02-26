@@ -374,7 +374,7 @@ These values correspond to the following scalability metrics for the CRUD applic
 
 The \texttt{GET} \texttt{/lectures/all} endpoint returns a list of all lecture details. \ref{fig:l5_latency_vs_load_client} shows the client-side latency of the endpoint under increasing load using a logarithmic y-axis. The ES-CQRS application consistently maintains a sub 10ms $latency\_p95$, while the CRUD application violates \autoref{slo-latency} at 100 \gls{rps} and higher, reaching latencies beyond 10.000ms.
 
-TODO: mention dropped iterations.
+At 150 RPS and higher, the CRUD application starts dropping iterations. At 1000 RPS, $dropped\_iterations\_rate$ reaches a value of more than 560, meaning that 56\% of all iterations were not executed.
 
 \begin{figure}[H]
     \centering
@@ -395,7 +395,7 @@ TODO: mention dropped iterations.
     \label{fig:l5_combined}
 \end{figure}
 
-CPU Usage here (TODO).
+In \autoref{fig:l5_cpu_usage}, CPU usage of the SpringBoot application is presented under increasing load. The ES-CQRS application shows a linear increase. In CRUD, the CPU usage also starts to increase linearly, before a smaller value is observed from 150 RPS to 200 RPS. After 200 RPS, no further values could be collected using Prometheus. Potential reasons for this are mentioned in \autoref{sec:anomalies}. \autoref{fig:l5_threadpool_usage} shows threadpool usage of both applications. The ES-CQRS application remains at 10 threads for most of the load, reaching its highest value of 20 at a load of 1000 RPS. In contrast, the CRUD application shows a sharp increase in thread usage at 150 RPS, before the values at 200 RPS and 250 RPS show a sharp decline, reaching the minimum of 10 threads. At the same time, the \gls{iqr} (shaded blue area) shows that many of the samples still fell close to the ceiling of 200 threads. At 500 RPS and further, the median of $tomcat\_threads$ stabilizes at 200.
 
 \begin{figure}[H]
     \centering
@@ -416,7 +416,7 @@ CPU Usage here (TODO).
     \label{fig:l5_resource_usage_cpu}
 \end{figure}
 
-\autoref{fig:l5_db_connections} presents the median of used database connections ($hikari\_connections$) under increasing load. The ES-CQRS application maintains a median of 0, while CRUD quickly rises to the ceiling of 10 concurrent connections, reaching its peak at 200 \gls{rps}.
+\autoref{fig:l5_db_connections} presents the median of used database connections ($hikari\_connections$) under increasing load. The ES-CQRS application maintains a median of 0, while CRUD quickly rises to the ceiling of 10 concurrent connections, reaching its peak at 200 \gls{rps}. However, similarly to the threadpool usage, the number of database connections is lower at 250 RPS before increasing back to 10 at 500 RPS.
 
 In terms of data store size, presented in \autoref{tab:l5_data_size}, the ES-CQRS application uses around 17MB to store its events and projections, twice as much storage as CRUD at 8MB.
 
@@ -441,6 +441,8 @@ In terms of data store size, presented in \autoref{tab:l5_data_size}, the ES-CQR
     \caption[L5 Database Usage, load measured in \gls{rps}]{L5 Database Usage: Load measured in \gls{rps}. Detailed results in \ref{results:l5}.}
     \label{fig:l5_database}
 \end{figure}
+
+The observed collapse in resource consumption in the CRUD application between 200 \gls{rps} and 250 \gls{rps} represents an anomaly, as the metrics drop substantially despite the increasing load. These results were confirmed through repeated test executions. An attempt at further analysis will be given in \autoref{sec:anomalies}.
 
 \subsubsection{L6: Get Credits}
 \label{sec:l6}
