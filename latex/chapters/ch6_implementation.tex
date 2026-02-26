@@ -14,16 +14,18 @@ Table \autoref{table:endpoints} presents a feature matrix, mapping \acrshort{htt
     \centering
     \begin{tabularx}{\linewidth}{lXc}
         \toprule
-        \textbf{Endpoint}                     & \textbf{Description}                                     & \textbf{Response} \\ \midrule
-        \texttt{GET /lectures}                & Gets all lectures a student is enrolled or waitlisted in & 200               \\
+        \textbf{Endpoint}                     & \textbf{Description}                                        & \textbf{Response} \\ \midrule
+        \texttt{GET /lectures}                & Returns all lectures a student is enrolled or waitlisted in & 200               \\
         \addlinespace
-        \texttt{POST /courses/create}         & Creates a course                                         & 201               \\
+        \texttt{GET /lectures/all}            & Returns details for all lectures                            & 200               \\
         \addlinespace
-        \texttt{POST /lectures/\{id\}/enroll} & Enroll to a lecture                                      & 201               \\
+        \texttt{POST /courses/create}         & Creates a course                                            & 201               \\
         \addlinespace
-        \texttt{GET /stats/credits}           & Gets a student's current credits                         & 201               \\
+        \texttt{POST /lectures/\{id\}/enroll} & Enroll to a lecture                                         & 201               \\
         \addlinespace
-        \texttt{GET /stats/grades/history}    & Gets the grade history for an assessment                 & 201               \\
+        \texttt{GET /stats/credits}           & Returns a student's current credits                         & 201               \\
+        \addlinespace
+        \texttt{GET /stats/grades/history}    & Returns the grade history for an assessment                 & 201               \\
         \bottomrule
     \end{tabularx}
     \caption{Endpoints which will be load-tested}
@@ -730,6 +732,40 @@ Using the above cost function $C(k)$ and the following throughput function \auto
 \end{equation}
 
 The implementation of this scalability function is available in \javaname{scalability\_function.py}\footnote{\javaname{performance-tests/scalability\_function.py}}.
+
+\subsection{All Implemented Load Tests}
+\label{sec:all-load-tests}
+
+Each \gls{l} is listed in table \autoref{tab:all-load-tests}.
+
+\begin{table}[H]
+    \small
+    \centering
+    \begin{tabularx}{\linewidth}{clXX}
+        \toprule
+        \textbf{Test}                & \textbf{Endpoint(s)}                            & \textbf{Name}                & \textbf{Seed Data}                                                                                                      \\
+        \midrule
+        \gls{l}1                     & POST /courses                                   & Create Courses Simple        & N/A                                                                                                                     \\
+        \addlinespace
+        \gls{l}2                     & POST /courses                                   & Create Courses Prerequisites & 10 courses                                                                                                              \\
+        \addlinespace
+        \gls{l}3                     & POST /lectures/\{lectureId\}/enroll             & Enrollment                   & Professor, one student per RPS, 100 courses and lectures                                                                \\
+        \addlinespace
+        \gls{l}4                     & GET /lectures                                   & Read lectures for student    & Professor, 50 courses and lectures, 100 students. Enroll each student in a lecture                                      \\
+        \addlinespace
+        \gls{l}5                     & GET /lectures/all                               & Read all lectures            & Same as L4                                                                                                              \\
+        \addlinespace
+        \gls{l}6                     & GET /stats/credits                              & Get credits                  & Professor, 50 students, 10 courses and lectures. Enroll each student in each lecture \& assign grade twice (one update) \\
+        \addlinespace
+        \gls{l}7                     & \makecell[tl]{POST /lectures/create,                                                                                                                                                                     \\
+        GET /lectures/\{lectureId\}} & Time to consistency / Create lecture, then read & Professor, 50 courses                                                                                                                                  \\
+        \addlinespace
+        \gls{l}8                     & GET /stats/grades/history                       & Grade history                & Same as L6                                                                                                              \\
+        \bottomrule
+    \end{tabularx}
+    \caption{All load tests}
+    \label{tab:all-load-tests}
+\end{table}
 
 \section{Static Analysis}
 \label{sec:static-analysis-impl}

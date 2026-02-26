@@ -30,7 +30,7 @@ Productivity at k1 (F1): 15.09
 Productivity at k2 (F2): 0.1956
 Scalability (ψ): 0.013
 
----
+
 k1: 200 RPS
 k2: 500 RPS
 
@@ -42,6 +42,8 @@ Scalability (ψ): 5.3952 # ridiculously high because latency_p95 goes down betwe
 Productivity at k1 (F1): 24.1983
 Productivity at k2 (F2): 15.0921
 Scalability (ψ): 0.6237
+
+---
 ### L2 - Create Lecture Prerequisites 
 k1: 500 RPS 
 k2: 1000RPS 
@@ -55,7 +57,7 @@ Productivity at k1 (F1): 8.0627
 Productivity at k2 (F2): 0.1858
 Scalability (ψ): 0.0230
 
----
+
 
 k1: 200 RPS
 k2: 500 RPS
@@ -68,6 +70,8 @@ Scalability (ψ): 2.5074
 Productivity at k1 (F1): 22.9884
 Productivity at k2 (F2): 8.0627
 Scalability (ψ): 0.3507
+
+---
 ### L3 - Enrollment 
 k1: 50 RPS 
 k2: 100 RPS 
@@ -80,7 +84,9 @@ Scalability (ψ): 2.7632
 Productivity at k1 (F1): 1.3843
 Productivity at k2 (F2): 0.2699
 Scalability (ψ): 0.1950
-## L4: Read lectures 
+
+---
+### L4: Read lectures for student
 k1: 2000 RPS 
 k2: 3000 RPS 
 
@@ -90,10 +96,28 @@ Productivity at k2 (F2): 2121.4689
 Scalability (ψ): 0.5913
 **ES-CQRS**
 Productivity at k1 (F1): 428.0378
-Productivity at k2 (F2): 122.4477
-Scalability (ψ): 0.2861
-#todo für mehr RPS
-### L5: Get  Credits 
+Productivity at k2 (F2): 118.7532
+Scalability (ψ): 0.2774
+
+
+k1: 3000 RPS
+k2: 4000 RPS
+
+**CRUD**
+Productivity at k1 (F1): 2121.4689
+Productivity at k2 (F2): 2.7861
+Scalability (ψ): 0.0013
+**ES-CQRS**
+Productivity at k1 (F1): 118.7532
+Productivity at k2 (F2): 6.7533
+Scalability (ψ): 0.0568
+Scalability (ψ): 0.0569
+---
+### L5: Read all lectures 
+
+
+---
+### L6: Get  Credits 
 k1: 1000
 k2: 2000
 
@@ -106,7 +130,7 @@ Productivity at k1 (F1): 618.6817
 Productivity at k2 (F2): 697.0280
 Scalability (ψ): 1.1266
 
----
+
 
 k1: 2000
 k2: 3000
@@ -119,7 +143,9 @@ Scalability (ψ): 0.0013
 Productivity at k1 (F1): 697.0280
 Productivity at k2 (F2): 214.2646
 Scalability (ψ): 0.3074
-### L6: Time to consistency 
+
+---
+### L7: Time to consistency 
 Cost formula gets a slight adjustment: 
 $R$ = visible read rate 
 $w_5=3$
@@ -136,7 +162,9 @@ Scalability (ψ): 1.1759
 Productivity at k1 (F1): 40.1250
 Productivity at k2 (F2): 14.0060
 Scalability (ψ): 0.3491
-### L7: Reconstruction 
+
+---
+### L8: Reconstruction 
 k1: 500 RPS 
 k2: 1000 RPS 
 
@@ -149,7 +177,6 @@ Productivity at k1 (F1): 159.8456
 Productivity at k2 (F2): 186.3937
 Scalability (ψ): 1.1661
 
----
 
 k1: 1000 RPS 
 k2: 2000 RPS

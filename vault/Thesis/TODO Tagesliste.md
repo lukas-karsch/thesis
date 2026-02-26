@@ -6,14 +6,15 @@
 ## Donnerstag, 26.02
 - **read-all-lectures**
 	- Ergebnisse präsentieren
-	- noch ein test bei 150; und dann alle Metriken für CRUD abschneiden ab 200 RPS. Danach nur noch ES-CQRS zeigen 
-- Describe each load test in implementation chapter (which seed data, what is checked.)
-- TODOs erledigen 
-- Letztes Kapitel fertig machen: **Discussion und Interpretation**
+	- weitere Tests für 150 RPS, 200 RPS. Dann alle Metriken für CRUD abschneiden ab 250 RPS. 
+- TODOs erledigen
+- Letztes Kapitel fertig machen: **Discussion und Interpretation** 
+	- CI bei read-only load tests sollte eigentlich 0 sein. Ist aber 0.01 bei ES-CQRS in `read-all-lectures` -> **muss in Interpretation erwähnt werden** 
+- Alle captions zu $metric\_name$ ändern
 ## Freitag, 27.02
 - Alle CPU Usage Daten müssen einheitlich sein! 
 - dropped_iterations_rate
-	- Überall erwähnen! (TODO: L6 get credits) 
+	- Überall erwähnen! (TODO: L6 get credits, L5 read all lectures) 
 	- Dropped iterations rate -> turn into result for "failed requests rate".
 		- Dropped = failed 
 		- Make sure to turn this into SLO 3 
@@ -23,6 +24,7 @@
 - Short caption für alle Tabellen überprüfen / hinzufügen 
 - Anforderungen den Technologien zuordnen? 
 - Related work > hervorheben, welche Teile relevant sind für meine Thesis / später wieder aufgreifen 
+- pom.xml -> alle Versionen pinnen 
 ## Sonntag, 01.03 
 - Tabellen im Anhang aufhübschen 
 - ist read_visible_rate früh genug erklärt? 

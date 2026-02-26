@@ -55,16 +55,16 @@
             "state": {
               "type": "markdown",
               "state": {
-                "file": "Advice/VMs.md",
+                "file": "Technical Design Log/2026-02-23 Scalability Metrik.md",
                 "mode": "source",
                 "source": false
               },
               "icon": "lucide-file",
-              "title": "VMs"
+              "title": "2026-02-23 Scalability Metrik"
             }
           }
         ],
-        "currentTab": 2
+        "currentTab": 3
       }
     ],
     "direction": "vertical"
@@ -212,11 +212,12 @@
       "bases:Create new base": false
     }
   },
-  "active": "667cd544b701f5e6",
+  "active": "6543e5239173dca0",
   "lastOpenFiles": [
-    "Advice/VMs.md",
     "TODO Tagesliste.md",
     "Technical Design Log/2026-02-26 Regex for double whitespace.md",
+    "Technical Design Log/2026-02-23 Scalability Metrik.md",
+    "Advice/VMs.md",
     "Writing/Results - traceability.md",
     "Thesis - Landing Page.md",
     "TODOs.md",
@@ -231,7 +232,6 @@
     "Technical Design Log/2026-01-31 Big performance issue exposed.md",
     "Technical Design Log/2026-02-02 Latex indentation problem.md",
     "Technical Design Log/2026-02-03 Run enrollment test.md",
-    "Technical Design Log/2026-02-23 Scalability Metrik.md",
     "Technical Design Log/2026-02-24 Adding a new, heavy endpoint.md",
     "Writing/Discussion - flexibility.md",
     "Writing/Discussion - performance.md",

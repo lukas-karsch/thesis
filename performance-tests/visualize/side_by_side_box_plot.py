@@ -124,6 +124,7 @@ def _lineplot_latency_vs_users(
                     color=APP_COLORS[app],
                     label=f"{pretty_name(app)} {label}",
                     errorbar="ci",
+                    estimator="median",
                     ax=ax,
                 )
 
@@ -146,6 +147,7 @@ def _lineplot_latency_vs_users(
                     color=APP_COLORS[app],
                     label=f"{pretty_name(app)} visible rate",
                     ax=ax_rate,
+                    estimator="median",
                 )
 
         # ---- axis config (latency axis) ----
@@ -156,7 +158,7 @@ def _lineplot_latency_vs_users(
             ax.get_xaxis().set_major_formatter(ScalarFormatter())
 
         ax.set_xticks(sorted(df["virtual_users"].unique()))
-        # ax.set_xticks([25, 200, 500, 1000, 2000])
+        # ax.set_xticks([25, 200, 500, 1000, 2000, 3000, 4000, 5000])
         ax.tick_params(axis="x", labelrotation=45)
 
         if log_y:
