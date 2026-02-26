@@ -1,5 +1,3 @@
-- **Literature**
-    - Evolutionary Architectures lesen 
 - **Code**
 	- **Change the API:**
 		- introduce new endpoint to kick students out of a lecture 
@@ -21,20 +19,13 @@
 		- add @Version to projection entities; retry on OptimisticLockException 
 	- **Tests**
 		- Introduce a more complex / arbitrary historic query? 
-		- Enroll student to more courses in "read-lectures" 
-		- another really complex load test (most JOINs i can find)
-		- historical reconstruction load test 
-		- read lecture details 
-- Statistical significance: https://de.wikipedia.org/wiki/Wilcoxon-Mann-Whitney-Test
 - **Writing** 
 	- Unify naming of load vs performance testing 
 	- [[2026-02-04 Fragen fürs nächste Meeting]]
 	- "load testing" vs "stress testing"?
-	- Feedback von Jordine einarbeiten 
 	- Technologien den Anforderungen zuordnen 
 	- Move metrics and load testing basics from Methodology to Basics?
 	- Fix ER diagram of CRUD app, simplify explanation 
-	- Tabellen: Mean durch Median ersetzen 
 ## Before Finishing
 - Check READMES 
 - Clone repo in blank folder, check everything works

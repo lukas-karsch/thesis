@@ -287,7 +287,7 @@ When measuring read performance, no data is created during load generation. Ther
 
 \texttt{GET} \texttt{/lectures} returns all lectures a student is enrolled or waitlisted in. \autoref{fig:l4_combined} presents client-side and server-side latencies for this endpoint using a logarithmic y-axis.
 
-In the client-side graph (\autoref{fig:l4_latency_vs_load_client}), both applications maintain $latency\_p50$ and $latency\_p95$ of below 10ms up to 3000 \gls{rps}. At 3000 \gls{rps}, the ES-CQRS application exhibits an around 6x higher $latency\_p95$ than the CRUD app. Beyond 3000 \gls{rps}, though, the CRUD latencies overtake the ES-CQRS latencies. At 4000 \gls{rps}, the ES-CQRS application exhibits a $latency\_p95$ of around 370ms, which is around 1.7x faster than  the CRUD application at 620ms and a $latency\_p50$ of 20ms, around a 6x speedup compared to CRUD. Both applications violate \ref{slo-latency} beyond 3000 \gls{rps}.
+In the client-side graph (\autoref{fig:l4_latency_vs_load_client}), both applications maintain $latency\_p50$ and $latency\_p95$ of below 10ms up to 3000 \gls{rps}. At 3000 \gls{rps}, the ES-CQRS application exhibits an around 6x higher $latency\_p95$ than the CRUD app. Beyond 3000 \gls{rps}, though, the CRUD latencies overtake the ES-CQRS latencies. At 4000 \gls{rps}, the ES-CQRS application exhibits a $latency\_p95$ of around 370ms, which is around 1.7x faster than the CRUD application at 620ms and a $latency\_p50$ of 20ms, around a 6x speedup compared to CRUD. Both applications violate \ref{slo-latency} beyond 3000 \gls{rps}.
 
 It should be noted that at 4000 RPS, tests on both applications dropped some iterations with a $dropped\_iterations\_rate$ of roughly 2, meaning about 2 iterations, or about 0.05\% of iterations, were dropped per second. However, this metric exhibits high variance. Because the confidence intervals exceed the mean values, the results for this specific metric are not statistically significant (see \autoref{table:run-read-lectures_client}).
 
@@ -366,9 +366,26 @@ These values correspond to the following scalability metric for the CRUD applica
 \subsubsection{L5: Read All Lectures (TODO)}
 \label{sec:l5}
 
-The \texttt{GET} \texttt{/lectures/all} endpoint returns a list of all lectures, including details.
+The \texttt{GET} \texttt{/lectures/all} endpoint returns a list of all lecture details. \autoref{fig:l5_latency_vs_load_client} shows the client-side latency of the endpoint under increasing load using a logarithmic y-axis. The ES-CQRS application consistently maintains a sub 10ms $latency\_p95$, while the CRUD application violates \autoref{slo-latency} at 100 \gls{rps} and higher, reaching latencies beyond 10.000ms.
 
-Latency here. Most likely, the ES-CQRS app will be faster, which i have shown in local testing.
+\begin{figure}[H]
+    \centering
+    \begin{subfigure}[t]{0.49\textwidth}
+        \centering
+        \includegraphics[width=\textwidth]{images/results/read-all-lectures/read-all-lectures__latency_vs_load__CLIENT.png}
+        \caption{Latency vs. Load measured on the client}
+        \label{fig:l5_latency_vs_load_client}
+    \end{subfigure}
+    \hfill
+    \begin{subfigure}[t]{0.49\textwidth}
+        \centering
+        \includegraphics[width=\textwidth]{images/results/read-all-lectures/read-all-lectures__latency_vs_load__SERVER.png}
+        \caption{Latency vs. Load measured on the server}
+        \label{fig:l5_latency_vs_load_server}
+    \end{subfigure}
+    \caption[L5 Performance Metrics, load measured in \gls{rps}]{L5 Performance Metrics: Load measured in \gls{rps}. Detailed results in \ref{results:l5}.}
+    \label{fig:l5_combined}
+\end{figure}
 
 CPU Usage here.
 
@@ -620,7 +637,7 @@ These values correspond to the following scalability metrics for the CRUD applic
 \section{Static Analysis}
 \label{sec:statc-analysis-results}
 
-\acrshort{rq} 2 attempts to evaluate the architectural flexibility of the architectural styles \gls{crud} and \gls{es}-\gls{cqrs}. In \autoref{sec:flexibility-architectural-metrics}, several static analysis methods were established. This section presents results and visualizations for these metrics.
+\acrshort{rq} 2 attempts to evaluate the architectural flexibility of the architectural styles \gls{crud} and \gls{es}-\gls{cqrs}. In \autoref{sec:static-analysis-metrics}, several static analysis methods were established. This section presents results and visualizations for these metrics.
 
 \subsection{Graphs}
 \label{sec:static-graphs}
@@ -888,11 +905,6 @@ It is worth noting that the \gls{pf} of both architectures is not present in the
     \caption{MOOD metrics presented in a spider diagram. Results in \ref{table:mood}}
     \label{fig:mood-results}
 \end{figure}
-
-% \subsection{Complexity Metrics}
-% \label{sec:results-complexity}
-
-% Commented out: Ergebnisse sind sehr nichtssagend. In Methodik ebenfalls auskommentiert. 
 
 \subsection{Chidamber Kemerer Metrics}
 

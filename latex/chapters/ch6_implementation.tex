@@ -610,7 +610,7 @@ The test environment and scenarios are defined as code to ensure reproducibility
 
 The physical host provisions two \glspl{vm}: the "client VM" for load generation and the "server VM" for the application and its dependencies (PostgreSQL and Axon Server). While hosting both on one physical machine makes network latency negligible, the "queueing delay" remains measurable at the client level, allowing for the identification of request queues building up on the server, indicating bottlenecks.
 
-\section{Load Tests}
+\section{Performance Evaluation through Load Tests}
 
 This section describes the implementation of load tests.
 
@@ -699,8 +699,9 @@ The primary difference from a typical k6 test lies in the execution flow within 
 To track the success rate of this request, the script introduces a custom Rate metric named $read\_visible\_rate$. By manually adding true or false to this metric based on whether the lecture was found, indicated by a response status of 200, the script generates a percentage of "fresh" requests inside the required threshold of 100ms. This provides a clear statistical view of how reliably the ES-CQRS system maintains its "fresh" data under varying levels of load.
 
 \subsection{A Function for Scalability}
+\label{sec:my-scalability-function}
 
-Following~\cite{jogalekar_evaluating_2000}, a function to determine the scalability of applications is established in this subsection. Their scalability metric, described in \autoref{sec:quantifying-scalability-metric}, serves as a basis for the scalability metric used in this study.
+Following~\cite{jogalekar_evaluating_2000}, a function to determine the scalability of applications is established in this subsection. Their scalability metric, previously described in \autoref{sec:quantifying-scalability-metric}, serves as a basis for the scalability metric used in this study.
 
 The cost function described in \autoref{eq:thesis-cost-function} is used.
 
@@ -709,13 +710,25 @@ The cost function described in \autoref{eq:thesis-cost-function} is used.
     \label{eq:thesis-cost-function}
 \end{equation}
 
-The cost function is weighted, with $w_i$ being the weights for each metric. $S$ corresponds to storage size. More precisely, this value is calculated using a ratio of the two applications: the application with the larger storage consumption receives a cost penalty (e.g., 2.0 for twice the usage), while the smaller footprint is "rewarded", e.g. a value of 0.5 for half the usage. Furthermore, $T$ corresponds to $tomcat\_threads$, and $D$ corresponds to $hikari\_connections$. These metrics are normalized to their respective ceilings.
+This cost function is weighted, with $w_i$ being the weights for each metric. $S$ corresponds to storage size. More precisely, this value is calculated using a ratio of the two applications: the application with the larger storage consumption receives a cost penalty (e.g., 2.0 for twice the usage), while the smaller footprint is "rewarded", e.g. a value of 0.5 for half the usage. Furthermore, $T$ corresponds to $tomcat\_threads$, and $D$ corresponds to $hikari\_connections$. These metrics are normalized to their respective ceilings.
 
 When testing time to consistency ("freshness"), the following term gets added to the cost function: $w_5(1 - R)^4$, with $R$ corresponding to $read\_visible\_rate$.
 
 The concrete weights are as following: $w_1=1$, $w_2=0.5$, $w_3=1$, $w_4=1$, $w_5=3$. Storage consumption is weighed less, $read\_visible\_rate$ is weighed more.
 
-Using the above cost function $C(k)$, the productivity and scalability of the applications can be calculated as described in \autoref{sec:quantifying-scalability-metric}, with throughput defined as $RPS - dropped\_iterations\_rate$ and the value function defined as $f(k) = \frac{1}{latency\_p95}$. The implementation of the scalability function is available in \javaname{scalability\_function.py}\footnote{\javaname{performance-tests/scalability\_function.py}}.
+Using the above cost function $C(k)$ and the following throughput function \autoref{eq:thesis-throughput} and the value function \autoref{eq:thesis-value-function}, a scalability metric can be calculated.
+
+\begin{equation}
+    \lambda(k) = RPS - dropped\_iterations\_rate
+    \label{eq:thesis-throughput}
+\end{equation}
+
+\begin{equation}
+    f(k) = \frac{1}{latency\_p95}
+    \label{eq:thesis-value-function}
+\end{equation}
+
+The implementation of this scalability function is available in \javaname{scalability\_function.py}\footnote{\javaname{performance-tests/scalability\_function.py}}.
 
 \section{Static Analysis}
 \label{sec:static-analysis-impl}
@@ -748,4 +761,4 @@ The afferent ($C_a$) and efferent ($C_e$) coupling metrics, previously described
     \label{table:dependency-metrics}
 \end{table}
 
-Other metrics outlined in \autoref{sec:flexibility-architectural-metrics} are also supported by MetricsReloaded, such as \gls{mood}, \gls{ck} and the stability metrics described in~\cite{martin_agile_2003}. It should be noted that the \gls{mood} metrics are only partly implemented, missing calculations for \gls{clf} and \gls{rf}, which is why no results will be presented for those metrics.
+Other metrics outlined in \autoref{sec:static-analysis-metrics} are also supported by MetricsReloaded, such as \gls{mood}, \gls{ck} and the stability metrics described in~\cite{martin_agile_2003}. It should be noted that the \gls{mood} metrics are only partly implemented, missing calculations for \gls{clf} and \gls{rf}, which is why no results will be presented for those metrics.

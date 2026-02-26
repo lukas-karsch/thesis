@@ -69,9 +69,11 @@ Except for Axon Server's storage size, the server-side metrics were only collect
 
 The accuracy of the benchmarking results was further affected by the testing configuration. In some load tests, a significant number of iterations was dropped at high RPS because the maximum number of \glspl{VU} in the k6 configuration was insufficient for the load. This means the results do not reflect the real performance under the respective load, as the actual load on the system was lower in these cases. Additionally, a more granular analysis would require measuring garbage collection pauses, memory allocation rates, and other system metrics. Furthermore, without profiling, the "root causes" of specific bottlenecks remain theoretical, as the collected data shows the \emph{results} of system stress rather than a detailed breakdown of internal execution delays. The performance analysis is also limited because the tests only varied the number of requests per second. Other factors, such as the size of the data being sent in POST requests or the volume of data fetched in queries, remained constant per test and were not evaluated.
 
+The accuracy of server-side metrics collected through Actuator and Prometheus may be reduced under very high load because the metric collection in itself is bound to system resources and may start slowing down under high load. Also, the actuator endpoints themselves experience the same queueing delay as other requests.
+
 Furthermore, although both applications were developed following industry standards and common best practices, it cannot be formally guaranteed that the implementations are entirely free of defects or suboptimal coding practices. Consequently, the observed performance metrics may be influenced by unidentified implementation errors rather than being representative of the underlying architecture.
 
-Beyond the technical measurements, the given architectural evaluation is limited as it is simply a synthesis of static analysis. This study did not investigate the topic of schema evolution, which is the process of managing how data structures, such as events or database tables, change over time. In a long-running production system, the difficulty of evolving an event store's schema is an additional factor in the total cost of ownership and flexibility of an ES-CQRS system. Similarly, managing complex database migrations in coupled \gls{crud} architectures without data-loss may introduce additional challenges.
+Beyond the technical measurements, the given architectural evaluation is limited as it is simply a synthesis of static analysis. This study did not investigate the topic of schema evolution, which is the process of managing how data structures, such as events or database tables, change over time. In a long-running production system, the difficulty of evolving an event store's schema is an additional factor in the total cost of ownership and flexibility of an \gls{es}-\gls{cqrs} system. Similarly, managing complex database migrations in coupled \gls{crud} architectures without data-loss may introduce additional challenges.
 
 Because the use case and the load patterns used in this study were artificially generated, they may not capture the unpredictable nature of real-world user behavior or specific business requirements.
 
@@ -108,10 +110,10 @@ This section will provide a conclusive answer to the three sub-research question
 
 Here, provide a final, holistic answer to the main research question.
 
-\section{Further work}
+\section{Further Work}
 \label{sec:further-work}
 
-\subsection{Improvements to the Method}
+\subsection{Improvements to the Method --- TODO remove this section?}
 
 Fix limitations, basically
 

@@ -1,17 +1,18 @@
 ## Montag, 23.02. 
 - Data Store -> PostgreSQL und Axon Linien separat zeigen? 
 ## Mittwoch, 25.02
-- **URGENT**
-	- read-all-lectures Ergebnisse holen 
 - **Tabellen**
 	- `timeseries_aggregated_statistical_tests` nochmal für alle laufen lassen 
 - Letztes Kapitel: **Discussion und Interpretation**
 ## Donnerstag, 26.02
-- Kapitel 1: 
+- **read-all-lectures**
+	- Ergebnisse präsentieren
+	- noch ein test bei 150; und dann alle Metriken für CRUD abschneiden ab 200 RPS. Danach nur noch ES-CQRS zeigen 
+- **Kapitel 1:** 
 	- Motivation 
 	- Structure of the thesis 
 - Describe each load test in implementation chapter (which seed data, what is checked.)
-- TODOs machen 
+- TODOs erledigen 
 ## Freitag, 27.02
 - Alle CPU Usage Daten müssen einheitlich sein! 
 - dropped_iterations_rate
@@ -27,8 +28,8 @@
 - Abstract 
 - Scalability metric für alle Tests in Anhang machen 
 - Short caption für alle Tabellen überprüfen / hinzufügen 
-- Link some things from basics / methodology to results / interpretation 
-	- "Headroom and resource saturation"
+- Anforderungen den Technologien zuordnen? 
+- Related work > hervorheben, welche Teile relevant sind für meine Thesis / später wieder aufgreifen 
 ## Sonntag, 01.03 
 - Tabellen im Anhang aufhübschen 
 - ist read_visible_rate früh genug erklärt? 

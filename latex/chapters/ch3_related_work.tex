@@ -26,6 +26,10 @@ While Kleppmann emphasizes the architectural freedom to evolve views on existing
 
 In terms of maintainability, while \textcite{jayaraman_implementing_2024} noted increased performance and scalability when using \gls{cqrs} with \acrlong{es}, they also found higher maintenance complexity and higher operational costs.
 
+\autoref{sec:static-analysis-metrics} outlined several static analysis methods. While these metrics give quantified insights into the architecture of an application, different critiques can be found in literature. \textcite[44]{richards_fundamentals_2020} offer a strong critique of the \gls{lcom} metric. They argue that the metric possesses "serious deficiencies" because it only measures the structural lack of cohesion (how methods and fields physically interact). The metric cannot determine if the pieces of code logically fit together. They also criticize complexity metrics like cyclomatic complexity, calling them "blunt". Their primary critique is that complexity metrics can not distinguish between essential complexity (complexity necessary for the domain) and accidental complexity introduced through poor coding practices~\cite[48]{richards_fundamentals_2020}. Finally, the authors express their critique of connascence, mentioning that it focuses too much on the low-level details of software coupling. They argue that developers should care more about \emph{how} components are coupled (e.g. synchronous or asynchronous)~\cite[53]{richards_fundamentals_2020}.
+
+\textcite{drotbohm_instability-abstractness-relationship_2024}, a Spring engineer, offers his critique on the \emph{abstractness} metric, highlighting that it mistakes the existence of interfaces with actual, useful abstractions.
+
 \section{RQ 3: Historical Traceability}
 \label{sec:traceability-related-work}
 
