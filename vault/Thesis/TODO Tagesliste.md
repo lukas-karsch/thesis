@@ -25,6 +25,7 @@
 - Anforderungen den Technologien zuordnen? 
 - Related work > hervorheben, welche Teile relevant sind für meine Thesis / später wieder aufgreifen 
 - pom.xml -> alle Versionen pinnen 
+- unbedingt nochmal schauen, ob das mit dem signifikanztest so passt. zB read-all-lectures, tomcat_threads...
 ## Sonntag, 01.03 
 - Tabellen im Anhang aufhübschen 
 	- resizebox entfernen, wann immer möglich 

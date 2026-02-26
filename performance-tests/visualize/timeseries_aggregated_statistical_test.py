@@ -50,7 +50,7 @@ def do_analysis(
 
     summary = []
 
-    rps_list = [25, 50, 100, 200, 500, 1000, 2000, 3000, 4000, 5000]
+    rps_list = [25, 50, 100, 200, 250, 500, 1000]
     # Generate the full stats table
     for rps in rps_list:
         df_per_rps = aggregate_timeseries_prometheus_metrics(
@@ -98,7 +98,7 @@ def main():
             args.base_name,
             Path(args.output_path),
             option,
-            "POST /lectures/create; then /GET/\\{lectureId\\}",
+            "GET /lectures/all",
         )
 
     print("Done. Make sure 'rps_list' is correct!")

@@ -78,7 +78,7 @@
             }
           }
         ],
-        "currentTab": 4
+        "currentTab": 1
       }
     ],
     "direction": "vertical"
@@ -227,12 +227,12 @@
       "bases:Create new base": false
     }
   },
-  "active": "9941c111761595be",
+  "active": "f815e751aff11571",
   "lastOpenFiles": [
+    "Advice/VMs.md",
     "TODO Tagesliste.md",
     "Technical Design Log/2026-02-26 Regex for double whitespace.md",
     "Technical Design Log/2026-02-23 Scalability Metrik.md",
-    "Advice/VMs.md",
     "Writing/Results - traceability.md",
     "Thesis - Landing Page.md",
     "TODOs.md",

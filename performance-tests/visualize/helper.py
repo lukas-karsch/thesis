@@ -5,7 +5,11 @@ import pandas as pd
 from scipy import stats
 
 
-def load_csv(path: Path) -> pd.DataFrame:
+def load_csv(path: Path) -> pd.DataFrame | None:
+    if not path.is_file():
+        print(f"load_csv: missing file at {path}")
+        return None
+
     df = pd.read_csv(path)
 
     required_cols = {"app", "metric", "method", "uri", "value"}
@@ -43,19 +47,20 @@ def get_mean_ci(series):
 
 
 def _get_ci(series, fn):
-    if len(series) < 20:
-        print(f"Sample size is {len(series)}, returning 0 for get_median_ci")
-        return 0
-
     d = (series.values,)
 
-    res = stats.bootstrap(
-        d,
-        fn,
-        confidence_level=0.95,
-        method="percentile",
-        n_resamples=1000,
-    )
+    try:
+        res = stats.bootstrap(
+            d,
+            fn,
+            confidence_level=0.95,
+            method="percentile",
+            n_resamples=1000,
+        )
+    except Exception as e:
+        print(e)
+        print("-> Returning NaN from _get_ci")
+        return float("NaN")
 
     return (res.confidence_interval.high - res.confidence_interval.low) / 2
 

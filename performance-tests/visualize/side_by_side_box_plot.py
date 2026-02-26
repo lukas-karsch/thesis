@@ -178,7 +178,7 @@ def _lineplot_latency_vs_users(
             handles += h2
             labels += l2
 
-        ax.legend(handles, labels, loc="upper left")
+        ax.legend(handles, labels, loc="center right")
 
         if show_slo:
             ax.axhline(100, ls="--", color="gray", alpha=0.5)

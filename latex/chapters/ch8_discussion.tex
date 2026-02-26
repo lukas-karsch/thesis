@@ -15,6 +15,8 @@ A clear correlation exists between the Scalability Metric ($\psi$) and resource 
 
 During enrollment (\hyperref[sec:l3]{L3}), the bottleneck is not visible immediately from the resource consumption metrics. The ES-CQRS application shows a sharp increase in latency at 100 \gls{rps}. At this point, neither the threadpool nor the database connections are saturated. The issue here most likely stems from the subscription query which is used in the implementation. It blocks until the read-side projector updated the student's enrollment status. The point at which the latencies start increasing sharply can be assumed to be the moment in which the projector can not handle incoming events quickly enough. While enough worker threads would be available, the existing requests need to wait for a longer time until the request finishes processing.
 
+TODO: shared resources as bottleneck: heavy work in dependency infrastructure (aoxn server, postgres) -> Springboot app may get less no CPU time. difficult to pin point root causes, but possibly because postgres has to work so heavily with the joins. -> basically, this is just an implementation / infrastructure mistake.
+
 \subsection{Projection Lags}
 \label{sec:projection-lag}
 
@@ -126,24 +128,14 @@ This section will provide a conclusive answer to the three sub-research question
 
 Here, provide a final, holistic answer to the main research question.
 
-\section{Further Work}
-\label{sec:further-work}
-
-\subsection{Improvements to the Method --- TODO remove this section?}
-
-Fix limitations, basically
-
-\begin{itemize}
-    \item Run on the network
-    \item Fix code: e.g. potential N+1 queries in CRUD, moving blocking lookups in ES-CQRS to external command handlers / interceptors
-\end{itemize}
-
-\subsection{Optimizations and Further Work}
+\section{Optimizations and Further Work}
 \label{sec:optimizations-and-further-work}
 
 This subsection outlines potential technical refinements for the existing implementations and identifies opportunities for future work. While the current results establish a baseline for both architectures, several optimization strategies could be applied to reduce the performance bottlenecks in both applications.
 
-Beyond architectural changes, the underlying infrastructure and framework configurations offer room for improvement. While no tuning was done for this thesis on purpose to make "out-of-the-box" performance comparable, \autoref{tab:system-tuning} summarizes parameters that could be tuned to resolve the resource saturation and latency bottlenecks observed in the ES-CQRS and CRUD applications. Before doing any tuning, further profiling would be necessary to identify bottlenecks in function calls or queries.
+Firstly, the performance of both applications could be optimized by investigating their source code and identifying bottlenecks through profiling. As previously mentioned in \autoref{sec:limitations-of-the-study}, several implementation details likely influenced measurements. Improving on these aspects would be the first step towards an increased performance.
+
+The underlying infrastructure and framework configurations offer room for improvement. While no tuning was done for this thesis on purpose to make "out-of-the-box" performance comparable, \autoref{tab:system-tuning} summarizes parameters that could be tuned to resolve the resource saturation and latency bottlenecks observed in the ES-CQRS and CRUD applications. Before doing any tuning, further profiling would be necessary to identify bottlenecks in function calls or queries.
 
 \begin{table}[h!]
     \centering
@@ -170,4 +162,4 @@ Beyond architectural changes, the underlying infrastructure and framework config
 
 Additional performance gains could be achieved through the implementation of caching. Introducing a cache for frequently accessed student data could provide the CRUD application with read speeds comparable to \gls{cqrs} without the structural complexity of \acrlong{es}, though this introduces its own challenges regarding cache invalidation.
 
-Furthermore, as this study evaluated both applications on a single machine, the assessment of scalability and architectural flexibility remains primarily theoretical. To provide empirical evidence for these scalability claims, it would be necessary to physically transition the systems into microservices and perform horizontal scaling. Only by implementing these structural changes can the practical performance limits and the true decoupling of the ES-CQRS pattern be fully validated. Additionally, the effort required to transform the monolithic structure into microservices would serve as a practical benchmark to validate the accuracy of the static analysis results.
+Furthermore, as this study evaluated both applications on a single machine, the assessment of scalability and architectural flexibility remains primarily theoretical. To provide empirical evidence for these claims, a follow-up study would be appropriate, which physically transitions the systems into microservices and performs horizontal scaling. By implementing these structural changes, the practical performance limits and the true decoupling of the ES-CQRS pattern could be validated further. Additionally, the effort required to transform the monolithic structure into microservices would serve as a practical benchmark to validate the accuracy of the static analysis results.

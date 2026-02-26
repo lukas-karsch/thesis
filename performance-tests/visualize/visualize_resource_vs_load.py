@@ -11,9 +11,7 @@ from visualize.helper import get_metric_json
 from visualize.metrics import OPTIONS
 from visualize.style import APP_COLORS
 
-THREADPOOL_LIMIT = 200
-
-rps_list = [10, 20, 50, 100, 200, 300, 400, 500]
+rps_list = [25, 50, 100, 150, 200, 250, 500, 1000]
 
 
 def visualize_metric(METRIC: dict, base_path: Path, base_name: str) -> None:
