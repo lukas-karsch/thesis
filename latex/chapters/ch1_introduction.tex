@@ -1,8 +1,21 @@
 % !TeX root = ../main.tex
-\chapter{Introduction (TODO)}
+\chapter{Introduction}
 \label{ch:introduction}
 
-\section{Motivation (TODO)}
+\section{Motivation}
+\label{sec:motivation}
+
+Many enterprise applications are built as classic \acrshort{crud} systems with a Layered Architecture, because this structure is widely used and straightforward to implement~\cite[Chapter 1]{richards_software_2015}. Despite its simplicity, many requirements could arise that require a more careful selection of the architecture. The chosen architecture affects how fast the system stays under load, how easy an application is to change, and how well it can explain its past. This thesis therefore compares two different ways to build the same backend: a traditional \acrshort{crud} system with an independent audit log, and an Event Sourcing system combined with \acrshort{cqrs}.
+
+A big factor in selecting the appropriate architecture is traceability. In many domains, applications must keep a verifiable, ordered history of actions for auditing. This requirement often emerges from legal requirements. In a \acrshort{crud} system, this can be addressed by adding an audit log that records changes over time. Audit logs can be simple to write, but they are harder to read and process when you want to reconstruct complex historical states~\cite{fowler_audit_2004}, and they can become fragile when the system has to write to both the main database and the log~\cite[452,453]{kleppmann_designing_2017}.
+
+\acrlong{es} approaches the same problem from the opposite direction: instead of overwriting state, it stores every state change in an immutable, append-only event stream that becomes the system's \emph{primary source of truth}~\cite{helland_immutability_2015}. This can preserve the intent behind changes through meaningful event types and enables temporal queries that reconstruct past states from the recorded history. When paired with \acrshort{cqrs}, reads and writes are separated, which allows read models to be updated asynchronously.
+
+Previous scientific work reports that \acrshort{cqrs} (often together with \acrlong{es}) can improve throughput and response times in certain scenarios. However, it can also increase infrastructure complexity and introduce new challenges such as eventual consistency.
+
+These trade-offs motivate this thesis, which employs several quantitative methods to provide an accurate comparison of performance, architectural flexibility, and traceability under identical conditions and requirements.
+
+To make the comparison concrete and fair, the thesis implements two prototypes that expose the same public API and follow the same functional contract: a course enrollment and grading system with deliberately complex relationships and validation rules. Both systems must be fully auditable, and the evaluation uses explicit \acrshortpl{slo} to define meaningful breaking points. Finally, the work combines load testing for performance and scalability with static analysis metrics to discuss architectural flexibility and evolution.
 
 \section{Research questions}
 
@@ -40,3 +53,9 @@ From a technical standpoint, the implementations do not include mechanics to sup
 Furthermore, it is not a goal of this thesis to demonstrate real horizontal scaling or to run the applications on distributed servers, as the study focuses on architectural behavior within a controlled environment.
 
 \section{Structure of the thesis (TODO)}
+
+This thesis is divided into eight chapters, going from the basics of REST APIs and server architectures to a concrete implementation, finally closing with a comparison of the two architectures and a conclusion to the given research questions.
+
+After this initial introduction that defines the research goals and questions, \autoref{ch:basics} (Basics) establishes the technical groundwork by explaining \acrshort{rest} principles, Layered Architecture, \gls{ddd}, and the mechanics of \acrlong{es} and \acrshort{cqrs}. \autoref{ch:related-work} reviews Related Work to situate the study within the existing knowledge regarding performance, flexibility, and traceability in distributed systems.
+
+The practical work begins in \autoref{ch:methodology} (Methodology), where the study's three-phase research design is described. After the Requirement Analysis in \autoref{ch:requirement-analysis}, \autoref{ch:implementation} describes the technical Implementation of both the traditional \acrshort{crud}-based system and the \acrshort{es}-\acrshort{cqrs} prototype. Finally, \autoref{ch:results} presents the results of load tests and static analysis, which are then interpreted in \autoref{ch:discussion} (Discussion) to provide a holistic answer to the research questions and present opportunities for future work.
