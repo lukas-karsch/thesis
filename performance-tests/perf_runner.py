@@ -465,8 +465,10 @@ def extract_k6_summary_to_csv(
     vus = metric_def.get("VUs", "unknown")
     target_method = metric_def["metric"]["method"]
 
-    group_metrics = summary.get("metrics", {}).get("group_duration", {})
-    dropped = summary.get("metrics", {}).get("dropped_iterations", {})
+    metrics = summary.get("metrics", {})
+    group_metrics = metrics.get("group_duration", {})
+    dropped = metrics.get("dropped_iterations", {})
+    checks = metrics.get("checks", {})
     if not group_metrics:
         print("⚠️ No group_duration metrics found in summary.")
         return
@@ -507,6 +509,17 @@ def extract_k6_summary_to_csv(
             "method": target_method,
             "uri": uri,
             "value": dropped.get("rate", 0),
+            "virtual_users": vus,
+        }
+    )
+
+    rows.append(
+        {
+            "app": app,
+            "metric": "failure_rate",
+            "method": target_method,
+            "uri": uri,
+            "value": 1 - checks.get("value", 1),
             "virtual_users": vus,
         }
     )

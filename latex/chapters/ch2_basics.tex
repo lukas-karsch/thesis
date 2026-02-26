@@ -82,8 +82,6 @@ The core idea of \acrshort{ddd} is that the primary focus of a software project 
 
 This domain model is built from a \emph{ubiquitous language} which is a language shared between domain experts and software experts. This ubiquitous language is built directly from the real domain and must be used in all communications regarding the software~\cite[24-26]{evans_domain-driven_2004}.
 
-%s TODO here, talk about model driven design -> way from the language to the code 
-
 The software must always reflect the way that the domain is talked about. Changes to the domain and the ubiquitous language must result in an immediate change to the domain model.
 
 When modeling the domain model, the aim should not be to create a perfect replica of the real world. While it should carefully be chosen, the domain model is artificial and forms a selective abstraction which should be chosen for its utility~\cite[12, 13]{evans_domain-driven_2004}.
@@ -132,7 +130,7 @@ Aggregates are clusters of associated objects (Entities and Value Objects) that 
 
 The state of domain objects in a \acrshort{crud} architecture is often mapped to tables in a relational database, though other storage mechanisms maybe used. The application acts on the current state of the data, with all actions (reads and writes) acting on the same data~\cite[Chapter 21]{martin_managing_1983}.
 
-\acrshort{acid} (\acrlong{acid}) are an important feature of \acrshort{crud} applications. They can be guaranteed using transactions, ensuring that data stays consistent and operations are \glslink{atomicity}{atomic}~\cite[10,11]{bernstein_principles_2009}. % TODO more explanation: what is a transaction, commit, rollback, etc 
+\acrshort{acid} (\acrlong{acid}) are an important feature of \acrshort{crud} applications. They can be guaranteed using transactions, ensuring that data stays consistent and operations are \glslink{atomicity}{atomic}~\cite[10,11]{bernstein_principles_2009}.
 
 Databases in CRUD systems are typically normalized. Normalization is a process of organizing data into separate tables, removing redundancies and creating relationships through "foreign keys". It is the best practice for relational databases. There are several normal forms that can be achieved, each form building on the previous one: to achieve the second normal form, the first normal form has to be achieved first~\cite[203]{martin_managing_1983}.
 

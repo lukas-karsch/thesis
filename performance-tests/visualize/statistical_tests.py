@@ -48,13 +48,13 @@ def analyze_performance(data: pd.DataFrame):
 
         med_crud = (
             round(med_crud * 1000, 2)
-            if metric != "dropped_iterations_rate"
+            if metric != "dropped_iterations_rate" and metric != "failure_rate"
             else round(med_crud, 2)
         )
 
         med_cqrs = (
             round(med_cqrs * 1000, 2)
-            if metric != "dropped_iterations_rate"
+            if metric != "dropped_iterations_rate" and metric != "failure_rate"
             else round(med_cqrs, 2)
         )
 

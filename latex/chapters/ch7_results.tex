@@ -23,7 +23,11 @@ When comparing the CRUD and ES-CQRS applications' performance, a "speedup" facto
 
 \subsection{Dropped Iterations}
 
-In some tests, iterations were dropped, meaning that k6 skipped iterations and did not send requests to the server. This occurs if an iteration takes longer than 1 second and no more \glspl{VU}, which act as request processors, are available to k6. The fact that iterations were dropped during testing is mentioned when describing results, and the rate of dropped iterations per second ($dropped\_iterations\_rate$) is available in the results tables inside the appendix.
+In some tests, iterations were dropped, meaning that k6 skipped iterations and did not send requests to the server. When iterations take more than 1 second, eventually no more \glspl{VU} (which act as request processors) are available to k6. The fact that iterations were dropped during testing is mentioned when describing results, and the rate of dropped iterations per second ($dropped\_iterations\_rate$) is available in the results tables inside the appendix.
+
+\subsection{Failure Rate}
+
+The $failure\_rate$ metric was recorded for all tests. However, in most cases, the failure rate was 0\%. Therefore, the values of this metric are not present in most tables. The only exception to this is \autoref{sec:l3}.
 
 \subsection{Threadpool}
 
@@ -210,7 +214,9 @@ The endpoint \texttt{POST /lectures/\{lectureId\}/enroll} enrolls students to a 
 
 The ES-CQRS application's $latency\_p95$ rises above 100ms between 50 and 100 \gls{rps}, violating \ref{slo-latency}. The CRUD application's $latency\_p95$ and $latency\_p50$ remain below 10ms until 200 \gls{rps}, representing more than a 100x slowdown for the ES-CQRS application. Between 200 and 500 \gls{rps}, CRUD's P95 latency rises to over 1000ms, violating \ref{slo-latency}. At 500 \gls{rps}, ES-CQRS' $latency\_p95$ exceeds 10.000ms.
 
-It is worth noting that starting from 200 \gls{rps}, the ES-CQRS's load tests started dropping iterations. $dropped\_iterations\_rate$ reached a value of roughly 240 at 500 \gls{rps}, at which point the CRUD application also exhibited dropped iterations with a rate of around 36.
+It is worth noting that starting from 200 \gls{rps}, the ES-CQRS's load tests started dropping iterations. $dropped\_iterations\_rate$ reached a peak value of roughly 240 at 500 \gls{rps}, at which point the CRUD application also exhibited dropped iterations with a rate of around 36.
+
+Additionally, ES-CQRS also shows a failure rate of around 6\% at 500 \gls{rps}. This can be attributed to the subscription query which is used in this endpoint: if the read-side fails to respond to this query in time (the threshold are 10 seconds), the request fails.
 
 \begin{figure}[H]
     \centering
@@ -360,7 +366,7 @@ In terms of data store size for seed data, shown in \autoref{fig:l4_data_size}, 
     \label{fig:l4_database}
 \end{figure}
 
-These values correspond to the following scalability metric for the CRUD application: $\psi(2000, 3000)\approx 0.6$, $\psi(3000, 4000)\approx 0.00$; and the following scalability metric for the ES-CQRS application: $\psi(2000, 3000)\approx 0.3$, $\psi(3000, 4000)\approx 0.05$.
+These values correspond to the following scalability metrics for the CRUD application: $\psi(2000, 3000)\approx 0.6$, $\psi(3000, 4000)\approx 0.00$; and the following scalability metrics for the ES-CQRS application: $\psi(2000, 3000)\approx 0.3$, $\psi(3000, 4000)\approx 0.05$.
 
 \subsubsection{L5: Read All Lectures (TODO)}
 \label{sec:l5}

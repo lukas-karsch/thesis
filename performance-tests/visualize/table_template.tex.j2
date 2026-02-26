@@ -5,7 +5,7 @@
 \toprule
 & & \multicolumn{2}{c}{\textbf{CRUD (ms)}} & & \multicolumn{2}{c}{\textbf{ES-CQRS (ms)}} & & \\
 \cmidrule{3-4} \cmidrule{6-7}
-\textbf{Metric} & \textbf{RPS} & \textbf{Median} & \textbf{CI $\pm$} & & \textbf{Median} & \textbf{CI $\pm$} & \textbf{Speedup} & \textbf{Significance} \\
+\textbf{Metric} & \textbf{RPS} & \textbf{Median} & \textbf{CI $\pm$} & & \textbf{Median} & \textbf{CI $\pm$} & \textbf{Ratio} & \textbf{Significance} \\
 \midrule
 {% for row in rows %}
     ${{ e(row.metric) }}$ & {{ row.users }} & {{ row.c_median }} & {{ row.c_ci }} & & {{ row.e_median }} &
@@ -15,6 +15,6 @@
 \bottomrule
 \end{tabular}
 }
-\caption{Statistical comparison for {{ caption }}, averaged out over at least 25 runs}
+\caption{Statistical comparison for {{ caption }}, aggregated over at least 25 runs}
 \label{table:{{ label }}}
 \end{table}

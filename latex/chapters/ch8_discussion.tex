@@ -6,10 +6,15 @@
 
 TODO: explain this section. First, interpret results for each research question, finally give "recommendations" --- when is which architecture better suited?
 
+\subsection{Identifying Bottlenecks (TODO)}
+\label{sec:identifying-bottlenecks}
+
+Group tests which show the same bottlenecks per application and present them here. Zusammenhang von $\psi$ und Headroom?
+
 \subsection{Performance and Scalability}
 \label{sec:interpretation-performance}
 
-The results obtained during load testing reveal a significant tradeoff between the two architectural patterns. The CRUD application excels in write throughput and resource efficiency, while the ES-CQRS application offers specialized advantages for complex read queries at the cost of higher overhead. In most write-heavy scenarios like \hyperref[sec:l1]{L1}, \hyperref[sec:l2]{L2}, and \hyperref[sec:l2]{L3}, the CRUD system maintains significantly lower latency and consumes fewer resources. In contrast, the ES-CQRS system frequently hits resource saturation --- reaching 200 threads and 10 database connections --- and violates latency thresholds as load increases. This divergence is especially visible in the enrollment test (L3), where the CRUD application manages much higher request volumes before performance degrades. Across nearly all tests, the ES-CQRS architecture requires more CPU and storage, often using double the disk space due to the overhead of storing both events and projections.
+The results obtained during load testing reveal a substantial tradeoff between the two architectural patterns. The CRUD application excels in write throughput and resource efficiency, while the ES-CQRS application offers specialized advantages for complex read queries at the cost of higher overhead. In most write-heavy scenarios like \hyperref[sec:l1]{L1}, \hyperref[sec:l2]{L2}, and \hyperref[sec:l2]{L3}, the CRUD system maintains significantly lower latency and consumes fewer resources. In contrast, the ES-CQRS system frequently hits resource saturation --- reaching 200 threads and 10 database connections --- and violates latency thresholds as load increases. This divergence is especially visible in the enrollment test (L3), where the CRUD application manages much higher request volumes before performance degrades. Across nearly all tests, the ES-CQRS architecture requires more CPU and storage, often using double the disk space due to the overhead of storing both events and projections.
 
 These differences are reflected in the calculated scalability metric $\psi$. While the CRUD application often exhibits values above 1.0, indicating efficient scaling where throughput increases outpace cost, the ES-CQRS application frequently shows values near zero under high load (e.g., $\psi \approx 0.01$ in L1). This metric serves as a useful tool for evaluating "productivity" by balancing throughput against resource costs like CPU and thread saturation. However, its usability is sensitive to how the "cost" function is weighted. For instance, the inclusion of a high penalty for projection lag (weighted at 3.0 in the model) heavily penalizes the ES-CQRS application's scalability score when consistency thresholds are missed.
 
@@ -19,9 +24,9 @@ A critical drawback of \acrlong{es} and \gls{cqrs} is the projection lag observe
 
 It should be noted that the results of L8 --- the historic reconstruction load test presented in \autoref{sec:l8} --- yielded a rather surprising result in terms of active database connections. Despite only using the database for two indexed ID lookups before streaming events from Axon's Event Store, the ES-CQRS application saturated the connection pool with a median of 10 active connections. This behavior is counter-intuitive compared to the CRUD implementation, which consistently maintains fewer active connections even though it performs more complex data fetching directly from the relational database through Envers.
 
-TODO: higher Overhead in ES-CQRS in general.
+Beyond the specific resource metrics, the ES-CQRS implementation adds an inherent architectural overhead due to the abstraction layers provided by Axon Framework and Axon Server. While these tools offer benefits like location transparency and automated message routing, they introduce a more complex data flow compared to the direct function calls inside a standard Layered Architecture. Theoretically, the process of wrapping, routing, and handling command messages and events through the framework adds a latency penalty and increases CPU demand. However, as no profiling was conducted to isolate these specific costs during program execution, this point remains theoretical.
 
-TODO: Bottlenecks / headroom.
+TODO: Fazit ziehen zu Scalability, scalability Metrik erwähnen (was kann sie, was nicht). -> ist schon im Text erwähnt, vlt noch etwas expliziter machen.
 
 \subsection{Architectural Flexibility}
 \label{sec:architectural-flexibility}
@@ -44,7 +49,7 @@ Consequently, the \gls{es}-\gls{cqrs} approach likely provides a more seamless t
 
 \subsection{Traceability (TODO)}
 
-TODO: schema evolution (maybe remove?), incorporate some "related work" findings.
+TODO: incorporate some "related work" findings.
 
 The findings presented in this section are primarily derived from a synthesis of existing literature regarding system architecture and data integrity that was previously presented in \autoref{sec:basics-traceability-and-auditing} and \autoref{sec:traceability-related-work}. The performance data used to evaluate reconstruction efficiency was collected in L8 (\autoref{sec:l8}), but the qualitative comparison of reconstruction accuracy relies on the established literature.
 
@@ -52,9 +57,9 @@ The comparison between \gls{crud} and \gls{es}-\gls{cqrs} systems reveals a trad
 
 Event-sourced systems address these accuracy concerns by treating the event stream as the sole source of truth. Because every state change is recorded as an immutable event, the system preserves the exact domain context and intent. This makes the reconstruction process deterministic and eliminates the risk of silent data divergence. Even if read-side projections do get out of sync, it is trivial to fix any bugs in their implementation and rebuild them afterward. However, the efficiency of historic reconstruction remains a challenge. While \gls{crud} systems can use indexed database tables and date filters to quickly retrieve specific historical snapshots, an \gls{es}-\gls{cqrs} system typically needs to replay the entire sequence of relevant events to reach a desired point in time.
 
-Load testing results (L8) confirm that \gls{crud} architectures are significantly faster for simple history queries. Reconstructing a student's grade history, for example, proved more efficient in the \gls{crud} model, likely because it avoided the computational overhead of replaying event logs. While snapshots in \gls{es} can speed up the rehydration of Aggregates (current state), they are not applicable when replaying the full history for a time-travel query. Therefore, while \gls{es}-\gls{cqrs} provides superior accuracy and schema resilience for forensic auditing, the \gls{crud} approach remains more performant for frequent or high-volume historical lookups.
+Load testing results (L8) confirm that \gls{crud} architectures are significantly faster for simple history queries. Reconstructing a student's grade history, for example, proved more efficient in the \gls{crud} model, likely because it avoided the computational overhead of replaying event logs. While snapshots in \gls{es} can speed up the rehydration of Aggregates (current state), they are not applicable when replaying the full history for a time-travel query. Therefore, while \gls{es}-\gls{cqrs} provides superior accuracy for forensic or legal auditing, the \gls{crud} approach remains more performant for frequent or high-volume historical lookups.
 
-It should also be mentioned that frequent lookups of historic state are likely uncommon in typical applications. If a high volume of time-travel queries was a real use-case in an application, architects would most likely adopt an entirely different approach in storing current and historic state, such as time-series databases or creating specific database tables with validity ranges.
+It should also be mentioned that frequent lookups of historic state are likely uncommon in typical applications. If a high volume of time-travel queries was a real use-case in an application, architects may want to adopt an entirely different approach in storing current and historic state, such as time-series databases.
 
 \subsection{Architectural Trade-offs and Recommendations (TODO)}
 

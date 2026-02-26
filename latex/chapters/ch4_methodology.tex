@@ -59,7 +59,7 @@ As described in \autoref{sec:load-test-theory}, not just the average latency is 
 
 While internal metrics, like CPU usage, RAM usage, the number of database connections ($hikari\_connections$) and the number of Tomcat worker threads are not measures for user-perceived performance, they can give an indicator about bottlenecks inside the applications.
 
-Even though latencies are measured on both the client and the server, the client latency will be used primarily when visualizing results, as it is the latency users perceive when interacting with the applications. The server latency is recorded because it can help identify queueing delays by exposing differences in server and client latencies which exceed a factor of 1.1x.
+Even though latencies are measured on both the client and the server, the client latency will be mentioned primarily when visualizing and describing results, as it is the latency users perceive when interacting with the applications. The server latency is recorded because it can help identify queueing delays by exposing differences in server and client latencies.
 
 $axon\_event\_size$ and $axon\_snapshot\_size$ are metrics extracted from the event store (Axon Server). They are only recorded for the ES-CQRS application. $postgres\_size$, the size of the relational database can be recorded for both applications. The CRUD implementation stores its entities and audit log in PostgreSQL, while the ES-CQRS implementation uses PostgreSQL as a secondary data store for denormalized projections and lookup tables. These metrics are relevant when assessing a system's long-term performance, scalability and maintainability.
 
@@ -68,32 +68,36 @@ $axon\_event\_size$ and $axon\_snapshot\_size$ are metrics extracted from the ev
     \centering
     \begin{tabularx}{\linewidth}{lXl}
         \toprule
-        \textbf{Metric}        & \textbf{Description}                         & \textbf{Location} \\ \midrule
-        $latency\_avg$         & Average (arithmetic mean) latency            & Server, Client    \\
+        \textbf{Metric}             & \textbf{Description}                         & \textbf{Location} \\ \midrule
+        $latency\_avg$              & Average (arithmetic mean) latency            & Server, Client    \\
         \addlinespace
-        $latency\_p50$         & 50th \gls{percentile} Latency (\gls{median}) & Server, Client    \\
+        $latency\_p50$              & 50th \gls{percentile} Latency (\gls{median}) & Server, Client    \\
         \addlinespace
-        $latency\_p95$         & 95th \gls{percentile} Latency                & Server, Client    \\
+        $latency\_p95$              & 95th \gls{percentile} Latency                & Server, Client    \\
         \addlinespace
-        $latency\_p99$         & 99th \gls{percentile} Latency                & Server, Client    \\
+        $latency\_p99$              & 99th \gls{percentile} Latency                & Server, Client    \\
         \addlinespace
-        $cpu\_usage$           & CPU usage of the Server process              & Server            \\
+        $cpu\_usage$                & CPU usage of the Server process              & Server            \\
         \addlinespace
-        $ram\_usage\_heap$     & Usage of Heap memory                         & Server            \\
+        $ram\_usage\_heap$          & Usage of Heap memory                         & Server            \\
         \addlinespace
-        $ram\_usage\_total$    & Usage of total memory                        & Server            \\
+        $ram\_usage\_total$         & Usage of total memory                        & Server            \\
         \addlinespace
-        $hikari\_connections$  & Number of Data Source connections            & Server            \\
+        $hikari\_connections$       & Number of Data Source connections            & Server            \\
         \addlinespace
-        $tomcat\_threads$      & Number of Tomcat worker threads              & Server            \\
+        $tomcat\_threads$           & Number of Tomcat worker threads              & Server            \\
         \addlinespace
-        $postgres\_size$       & Size of PostgreSQL database                  & Server            \\
+        $postgres\_size$            & Size of PostgreSQL database                  & Server            \\
         \addlinespace
-        $axon\_event\_size$    & Size of Axon's Event store                   & Axon Server       \\
+        $axon\_event\_size$         & Size of Axon's Event store                   & Axon Server       \\
         \addlinespace
-        $axon\_snapshot\_size$ & Size of Axon's Snapshot store                & Axon Server       \\
+        $axon\_snapshot\_size$      & Size of Axon's Snapshot store                & Axon Server       \\
         \addlinespace
-        $axon\_storage\_size$  & $axon\_event\_size + axon\_storage\_size$    & Axon Server       \\
+        $axon\_storage\_size$       & $axon\_event\_size + axon\_storage\_size$    & Axon Server       \\
+        \addlinespace
+        $dropped\_iterations\_rate$ & Dropped iterations per second                & Client            \\
+        \addlinespace
+        $failure\_rate$             & Rate of failed requests (in \%)              & Client            \\
         \bottomrule
     \end{tabularx}
     \caption{All metrics collected during load testing}
@@ -123,7 +127,7 @@ Several qualitative criteria for the accuracy of an historic reconstruction can 
 
 \emph{Intent preservation} assesses the ability of a system to distinguish between different business reasons for the same data change.
 
-\emph{Schema resilience} examines how historical data survives the evolution of the application's data structure. As business rules change, entities and database schemas evolve. The history must remain readable without being corrupted by modifications to schemas. TODO: remove this?? -> then also in discussion
+Another interesting perspective in this scope would be \emph{schema resilience}, which examines how historical data survives the evolution of the application's data structure. As business rules change, entities and database schemas evolve. The history must remain readable without being corrupted by schema modifications. However, as schema evolution is not a goal of the study, this perspective will not be pursued further.
 
 \subsubsection{Efficiency}
 
