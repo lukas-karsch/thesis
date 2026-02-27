@@ -19,7 +19,7 @@ Table \autoref{table:endpoints} presents a feature matrix, mapping \acrshort{htt
         \addlinespace
         \texttt{GET /lectures/all}            & Returns details for all lectures                            & 200               \\
         \addlinespace
-        \texttt{POST /courses}         & Creates a course                                            & 201               \\
+        \texttt{POST /courses}                & Creates a course                                            & 201               \\
         \addlinespace
         \texttt{POST /lectures/\{id\}/enroll} & Enroll to a lecture                                         & 201               \\
         \addlinespace
@@ -75,60 +75,47 @@ Jackson \footnote{\url{https://github.com/FasterXML/jackson}} is a high-performa
 \subsection{Axon}
 \label{sec:axon}
 
-Axon Framework \footnote{\url{https://www.axoniq.io/framework}} is an open-source Java framework for building event-driven applications. Following the \acrshort{cqrs} and event-sourcing pattern, Commands, Events and Queries are the three core message types any Axon application is centered around. Commands are used to describe an intent to change the application's state. Events communicate a change that happened in the application. Queries are used to request information from the application.
+TODO: Sources here
+
+Axon Framework \footnote{\url{https://www.axoniq.io/framework}} is an open-source Java framework for building event-driven applications. Following the \acrshort{cqrs} and \acrlong{es} pattern, Commands, Events and Queries are the three core message types any Axon application is centered around. Commands are used to describe an intent to change the application's state. Events communicate a change that happened in the application. Queries are used to request information from the application.
 
 Axon also supports \acrlong{ddd} by providing tools to manage entities and domain logic~\cite{axoniq_introduction_2025,axoniq_messaging_2025}.
 
 Axon Server \footnote{\url{https://www.axoniq.io/server}} is a platform designed specifically for event-driven systems. It functions as both a high-performance Event Store and a dedicated Message Router for commands, queries, and events. By bundling these responsibilities into a single service, Axon Server replaces the need for separate infrastructures such as a relational database for events and a message broker like Kafka or RabbitMQ for communication. Axon Server is designed to seamlessly integrate with Axon Framework. When using the Axon Server Connector, the application automatically finds and connects to the Axon Server. It is then possible to use the Axon server without further configuration~\cite{axoniq_introduction_2025-1,axoniq_axon_2025}.
 
-\subsubsection*{Command dispatching}
+This subsection describes core concepts of Axon. Diagrams illustrating the data flow through an application built with Axon are available in \autoref{sec:es-cqrs-tracing-request-flow}.
 
-Command dispatching is the starting point for handling a command message in Axon. Axon handles commands by routing them to the appropriate command handler. The command dispatching infrastructure can be interacted with using the low-level \keyw{CommandBus} and a more convenient \keyw{CommandGateway} which is a wrapper around the \keyw{CommandBus}.
+\subsubsection*{Command Dispatching}
+Command dispatching is the starting point for handling a command message in Axon. Axon handles commands by routing them to the appropriate command handler. The command dispatching infrastructure can be interacted with using the low-level \keyw{CommandBus} and a more convenient \keyw{CommandGateway}.
 
 \keyw{CommandBus} is the infrastructure mechanism responsible for finding and invoking the correct command handler. At most one handler is invoked for each command; if no handler is found, an exception is thrown.
 
-Using \keyw{CommandGateway} simplifies command dispatching by hiding the manual creation of \keyw{CommandMessages}. The gateway offers two main methods for synchronous and asynchronous patterns. The \keyw{send} method returns a \keyw{CompletableFuture}, which is an asynchronous mechanism in Java. If the thread needs to wait for the command result, the \keyw{sendAndWait} method can be used.
+% Using \keyw{CommandGateway} simplifies command dispatching by hiding the manual creation of \keyw{CommandMessages}. The gateway offers two main methods for synchronous and asynchronous patterns. The \keyw{send} method returns a \keyw{CompletableFuture}, which is an asynchronous mechanism in Java. If the thread needs to wait for the command result, the \keyw{sendAndWait} method can be used.
 
-In general, a handled command returns \keyw{null}, if handling was successful. Otherwise, a \keyw{CommandExecutionException} is propagated to the caller. While returning values from a command handler is not forbidden, it is used sparsely as it contradicts with CQRS semantics. One exception: command handlers which \emph{create} an aggregate typically return the aggregate identifier~\cite{axoniq_command_2025,axoniq_infrastructure_2025}.
+In general, command handling functions return \keyw{null} if handling was successful, except for command handlers which \emph{create} Aggregates. These return the Aggregate identifier. Otherwise, a \keyw{CommandExecutionException} is propagated to the caller. While returning values from a command handler is not forbidden, it is used sparsely as it contradicts with \gls{cqrs} semantics~\cite{axoniq_command_2025,axoniq_infrastructure_2025}.
 
 \subsubsection*{Query Handling}
-Before a query is handled, Axon dispatches it through its messaging infrastructure. Just like the command infrastructure, Axon offers a low-level \keyw{QueryBus} which requires manual query message creation and a more high-level \keyw{QueryGateway}.
+Axon dispatches Queries through its messaging infrastructure. Just like the command infrastructure, Axon offers a low-level \keyw{QueryBus} which requires manual query message creation and a more high-level \keyw{QueryGateway}. When no query handler is found, an exception is thrown.
 
-In contrast to command handling, multiple query handlers can be invoked for a given query. When dispatching a query, callers can decide whether they want a single result or results from all handlers. When no query handler is found, an exception is thrown.
+The \keyw{QueryGateway} includes different dispatching methods. For regular "point-to-point" queries, the \keyw{query} method can be used. For large result sets, streaming queries should be used. All query methods are asynchronous by nature and return Java's \keyw{CompletableFuture}~\cite{axoniq_query_2025}.
 
-The \keyw{QueryGateway} includes different dispatching methods. For regular "point-to-point" queries, the \keyw{query} method can be used. Subscription queries are queries where callers expect an initial result and continuous updates as data changes. These queries work well with reactive programming. For large result sets, streaming queries should be used. The response returned by the query handler is split into chunks and streamed back to the caller.
-All query methods are asynchronous by nature and return Java's \keyw{CompletableFuture}~\cite{axoniq_query_2025}.
+Subscription Queries provide an initial result and continuous updates as data changes. These queries work well with reactive programming. By using a subscription query inside a web controller, a synchronous interface can be provided to clients, while keeping the internal command and event handling process asynchronous. While this approach does provide the desired synchronous user experience, it has the downside of coupling the client to the event processing flow. Alternatively, developers might employ WebSockets or other client-side notification mechanisms to inform the user about the result of their action asynchronously, after the initial request was accepted.
 
 \subsubsection*{Aggregates}
 \label{sec:aggregates}
+Aggregates are a core concept of \gls{ddd}, which was described in \autoref{sec:ddd}. They define command handlers using the \keyw{@CommandHandler} annotation. These handlers receive commands and decide whether they are valid according to domain rules. If a command is accepted, the aggregate emits one or more domain events describing \emph{what} happened. Command handlers are responsible only for decision-making; they must not directly mutate the aggregate’s state. Instead, all state changes must occur as a result of applying events.
 
-An aggregate is a core concept of \gls{ddd}. In Axon, an aggregate defines a consistency boundary around domain state and encapsulates business logic. Aggregates are the primary place where domain invariants are enforced and where commands that intend to change domain state are handled.
+Every Aggregate is annotated with \keyw{@Aggregate} and must declare exactly one field annotated with \keyw{@AggregateIdentifier}. This identifier uniquely identifies the Aggregate instance. Axon uses it to route incoming commands to the correct Aggregate and to load the corresponding event stream when rebuilding Aggregate state.
 
-Aggregates define command handlers using methods or constructors annotated with \keyw{@CommandHandler}. These handlers receive commands and decide whether they are valid according to domain rules. If a command is accepted, the aggregate emits one or more domain events describing \emph{what} happened. Command handlers are responsible only for decision-making; they must not directly mutate the aggregate’s state. Instead, all state changes must occur as a result of applying events.
+By default, Axon uses Event-sourced Aggregates. This means that Aggregates are not persisted as a snapshot of their fields. Instead, their current state is reconstructed by replaying all previously stored events. Methods annotated with \keyw{@EventSourcingHandler} are called by Axon during this replay process to update the aggregate’s internal state based on event data. Since events represent facts that already occurred, event sourcing handlers must not contain business logic or make decisions.
 
-Every aggregate is typically annotated with \keyw{@Aggregate} and must declare exactly one field annotated with \keyw{@AggregateIdentifier}. This identifier uniquely identifies the aggregate instance. Axon uses it to route incoming commands to the correct aggregate and to load the corresponding event stream when rebuilding aggregate state.
-
-By default, Axon uses event-sourced aggregates. This means that aggregates are not persisted as a snapshot of their fields. Instead, their current state is reconstructed by replaying all previously stored events. Methods annotated with \keyw{@EventSourcingHandler} are called by Axon during this replay process to update the aggregate’s internal state based on event data. Since events represent facts that already occurred, event sourcing handlers must not contain business logic or make decisions.
-
-Axon also supports multi-entity aggregates. In this model, an aggregate may contain child entities that participate in command handling. Such entities are registered using \keyw{@AggregateMember}, and each entity must define a unique identifier annotated with \keyw{@EntityId}. Based on this identifier, Axon is able to route commands to the correct entity instance within the aggregate~\cite{axoniq_multi-entity_2025}.
+Axon also supports multi-entity Aggregates, where an Aggregate may contain child entities that participate in command handling. Such entities are registered using \keyw{@AggregateMember}, and each entity must define a unique identifier annotated with \keyw{@EntityId}. Based on this identifier, Axon is able to route commands to the correct entity instance within the Aggregate~\cite{axoniq_multi-entity_2025}.
 
 \subsubsection*{External Command Handlers}
 \label{sec:external-command-handlers}
+Often, command handling functions are placed directly inside the Aggregate. However, this is not required and in some cases it may not be desirable or possible to directly route a command to an Aggregate. Thus, any object can be used as a command handler by including methods annotated with \keyw{@CommandHandler}. One instance of this command handling object will be responsible for handling \emph{all} commands of the command types it declares in its methods.
 
-Often, command handling functions are placed directly inside the aggregate. However, this is not required and in some cases it may not be desirable or possible to directly route a command to an aggregate. Thus, any object can be used as a command handler by including methods annotated with \keyw{@CommandHandler}. One instance of this command handling object will be responsible for handling \emph{all} commands of the command types it declares in its methods.
-
-In these external command handlers, aggregates can be loaded manually from Axon's repositories using the aggregate's ID. Afterward, the \keyw{execute} function can be used to execute commands on the loaded aggregate~\cite{axoniq_command_2025-1}.
-
-\subsubsection*{Set-based validation}
-\label{sec:set-based-validation}
-
-When receiving a command, aggregates handle it by validating their internal state inside command handlers and either rejecting the command or publishing an event. However, validation across a set of aggregates, called "set-based validation", is not possible inside a single aggregate. A business requirement like "Usernames must be unique" can only be implemented using set-based validation, as the entire set of aggregates must be inspected before making a decision.
-
-Set-based implementation in Axon can be implemented by using lookup tables. This approach utilizes a dedicated command-side projection, often referred to as a lookup projector, to maintain a specialized view of the system state. While projectors are typically associated with the read-side of a \acrshort{cqrs} architecture, a lookup projector is specifically designed to support the command side. It maintains a highly optimized and consistent dataset, such as a registry of unique identifiers, which can be queried during the validation phase of a command.
-
-To ensure that this lookup table remains synchronized and provides the necessary consistency for validation, Axon employs subscribing event processors, which are described in \autoref{sec:axon-events}. Unlike tracking event processors which operate asynchronously and introduce eventual consistency, subscribing event processors execute within the same thread and transaction as the event publication. This mechanism ensures that the lookup table is updated immediately after an event is applied to the aggregate. Consequently, if the update to the lookup table fails due to a constraint violation or database error, the entire transaction is rolled back, preventing the system from reaching an inconsistent state.
-
-In practice, this validation logic is often encapsulated within a domain service or a validator interface that is injected directly into the aggregate's command handler. This service interacts with the lookup table repository to verify global invariants before the aggregate state is modified. By separating the lookup logic from the read-model, the system avoids the latency of eventual consistency while maintaining the architectural integrity of the aggregate as a boundary for consistency. This pattern effectively bridges the gap between the isolated nature of individual aggregates and the necessity for global state verification in complex domain models~\cite{ceelie_set_2020}.
+In these external command handlers, Aggregates can be loaded manually from Axon's repositories using the Aggregate's ID. Afterward, the \keyw{execute} function can be used to execute commands on the loaded Aggregate~\cite{axoniq_command_2025-1}.
 
 \subsubsection*{Events}
 \label{sec:axon-events}
@@ -141,7 +128,15 @@ Event processors take care of the technical part aspects of event processing. Ax
 
 Tracking event processors, which a type of streaming event processors, read (pull) events to be processed from an event source. They run decoupled from the publishing thread, making them parallelizable. These event processors use tracking tokens track their position in the event stream. Tracking tokens can be reset and events can be replayed and reprocessed. Tracking event processors are the default in Axon and recommended for most ES-CQRS use cases~\cite{axoniq_streaming_2025}.
 
-Subscribing event processors can be configured using SpringBoot's \javaname{application.properties} file or through Java configuration classes.
+\subsubsection*{Set-based Validation}
+\label{sec:set-based-validation}
+When receiving a command, Aggregates handle it by validating their internal state inside command handlers and either rejecting the command or publishing an event. However, validation across a set of Aggregates, called "set-based validation", is not possible inside a single Aggregate. A business requirement like "Usernames must be unique" can only be implemented using set-based validation, as the entire set of Aggregates must be inspected before making a decision.
+
+Set-based implementation in Axon can be implemented using \emph{lookup tables}. This approach utilizes a dedicated command-side projection, often referred to as a lookup projector, to maintain a specialized view of the system state. While projectors are typically associated with the read-side of a \acrshort{cqrs} architecture, a lookup projector is specifically designed to support the command side. It maintains an optimized and consistent dataset, such as a registry of unique IDs, which can be queried during the validation phase of a command.
+
+To ensure that this lookup table remains synchronized and provides the necessary consistency for validation, Axon employs subscribing event processors, which are described in \autoref{sec:axon-events}. Unlike tracking event processors which operate asynchronously and introduce eventual consistency, subscribing event processors execute within the same thread and transaction as the event publication. This mechanism ensures that the lookup table is updated immediately after an event is applied to the Aggregate. Consequently, if the update to the lookup table fails due to a constraint violation or database error, the entire transaction is rolled back, preventing the system from reaching an inconsistent state.
+
+In practice, this validation logic is often encapsulated within a domain service or a validator interface that is injected directly into the Aggregate's command handler. This service interacts with the lookup table repository to verify global invariants before the Aggregate state is modified. By separating the lookup logic from the read-model, the system avoids the latency of eventual consistency while maintaining the architectural integrity of the Aggregate as a boundary for consistency. This pattern helps to enforce validation across individual aggregates and allows for global state verification~\cite{ceelie_set_2020}.
 
 \subsubsection*{Sagas}
 \label{sec:sagas}
@@ -151,10 +146,6 @@ In Axon, Sagas are long-running, stateful event handlers which not just react to
 The way Sagas manage business transactions is by sending commands upon receiving events. They can be used when workflows across several aggregates should be implemented; or to handle long-running processes that may span over any amount of time~\cite{axoniq_saga_2025}. For example, the lifecycle of an order, from being processed, to being shipped and paid, is a process that usually takes multiple days. A use case like this is typically implemented using Sagas.
 
 A Saga is associated with one or more association values, which are key-value pairs used to route events to the correct Saga instance. A \keyw{@StartSaga} method together with the \keyw{@SagaEventHandler(associationProperty="aggregateId")} automatically associates the Saga with that identifier. Additional associations can be made programmatically, by calling \keyw{SagaLifecycle.associateWith()}. Any matching events are then routed to the Saga~\cite{axoniq_saga_2025-1}.
-
-For example, a Saga managing an order's lifecycle may be started by an \keyw{@OrderPlaced} event and associated with the \keyw{orderId}. It can then issue a \keyw{CreateInvoiceCommand} using an \keyw{invoiceId} generated inside the event handler. The Saga then associates itself with this ID to be notified of further events regarding this invoice, such as an \keyw{InvoicePaidEvent}.
-
-TODO Show command and query gateway and illustrate example flow through an Axon application? -> refer to "Tracing request flow"
 
 \subsection{SpringBoot Actuator}
 \label{sec:actuator}
@@ -307,8 +298,8 @@ public class CourseEntity extends AuditableEntity {
 } 
 \end{lstlisting}
 {
-\captionof{lstlisting}{Auditing configuration for the Course entity (\javaname{impl-crud/src/main/java/karsch.lukas.courses.}\keyw{CourseEntity}})
-\label{lst:audited-entity}
+\captionof{lstlisting}[Auditing configuration for CourseEntity]{Auditing configuration for \keyw{CourseEntity} (\javaname{impl-crud/src/main/java/karsch.lukas.courses.}\keyw{CourseEntity}})
+    \label{lst:audited-entity}
 }
 
 \subsubsection*{Custom Revision Entity and Listener}
@@ -430,7 +421,7 @@ As reads pass through the same components as writes, a subsequent read request i
     \label{fig:crud-diagram}
 \end{figure}
 
-\section{ES/CQRS implementation}
+\section{ES/CQRS implementation TODO: refine language}
 \label{sec:es-cqrs-implementation}
 
 \subsection{Architectural Overview}
@@ -438,56 +429,43 @@ As reads pass through the same components as writes, a subsequent read request i
 
 The architecture of the \texttt{impl-es-cqrs} application \footnote{\javaname{impl-es-cqrs/src/main/java/karsch.lukas}} differs from the traditional layered architecture seen in the \texttt{impl-crud} application. While the CRUD implementation also has some vertical slicing, the ES-CQRS implementation is much more explicit about it. The code is organized into "features", each representing a vertical slice of the application's functionality (e.g., \texttt{course}, \texttt{enrollment}, \texttt{lectures}). Each feature is self-contained and includes its own command handlers, event sourcing handlers, query handlers, and its own web controller, if needed.
 
-An architecture like this is descriptive and able to communicate the features of a project at a glance. As clean architecture is not in the scope of this thesis, the separation into features with clear naming conventions for command and query components is sufficient. It should be mentioned that in many "vertical slice" architectures, the separation goes even further than described here, creating separate packages for each use-case, such as \keyw{GetOrder}, \keyw{PlaceOrder}, and so on.
+An architecture like this is descriptive and able to communicate the features of a project at a glance. As clean architecture is not in the scope of this thesis, the separation into features with clear naming conventions for command and query components is sufficient. It should be mentioned that in many "vertical slice" architectures, the separation goes even further than described here, creating separate packages for each use-case, such as \keyw{GetLecture}, \keyw{CreateCourse}, and so on.
 
 \subsection{Data Modeling}
+\label{sec:cqrs-data-modeling}
 
-TODO: Aggregates, Sagas, Commands and Events. Projections and Lookup tables.
+In CRUD, \emph{Data Modeling} refers to relational modeling. All data is present in the form of database tables which are written to and read from by all the components. In the ES-CQRS application, data is separated into writes and reads. The "data model" in ES-CQRS consists not of tables and rows, but of event types and an event stream, such as \keyw{CourseCreatedEvent}.
+
+The ES-CQRS application's Aggregates, which are central to Command handling in ES-CQRS, are \keyw{CourseAggregate}\footnote{\javaname{impl-es-cqrs/src/main/java/}\keyw{karsch.lukas.features.course.commands.CourseAggregate}}, \keyw{LectureAggregate}\footnote{\javaname{impl-es-cqrs/src/main/java/}\keyw{karsch.lukas.features.lectures.commands.LectureAggregate}}, \keyw{EnrollmentAggregate}\footnote{\javaname{impl-es-cqrs/src/main/java/}\keyw{karsch.lukas.features.enrollment.commands.EnrollmentAggregate}}, \keyw{StudentAggregate}\footnote{\javaname{impl-es-cqrs/src/main/java/}\keyw{karsch.lukas.features.student.commands.StudentAggregate}} and \keyw{ProfessorAggregate}\footnote{\javaname{impl-es-cqrs/src/main/java/}\keyw{karsch.lukas.features.professor.commands.ProfessorAggregate}}. Unlike CRUD's ER model where \keyw{LectureEntity} has a foreign key to a professor, the \keyw{LectureAggregate} stores only a \keyw{professorId}. This ensures that each aggregate can be loaded and versioned independently in the Event Store.
+
+Sagas act as process managers, but they are also data. For each process requiring a Saga, a new instance of that Saga is created. The Sagas are long-running and serializable; they store all data that is relevant to their business logic.
+
+Data flow between components is decoupled through the use of Events, Commands and Queries. These message types facilitate all communication in the application.
+
+Events, which carry facts about what happened in the system, are emitted by the command side and can be received and processed by the read-side, which then builds its projections. Projections can be seen as "derived data" which is built from events. Each Query use-case can --- and should --- create its own projections which contain exactly the data that is relevant to answer the respective Query.
+
+An example of a projector that stores data for efficient querying is the \keyw{LectureProjector}\footnote{\javaname{impl-es-cqrs/src/main/java/}\keyw{karsch.lukas.features.lectures.queries.LectureProjector}}. It demonstrates the fact that each projector maintains its own view of the system. Projectors must not query the system using Axon's \keyw{QueryGateway} to get access to any data needed for the projection. One reason for that is the fact that when \emph{rebuilding} projections, a common use case in event sourcing, the projectors should be able to run in parallel. If projectors depend on each other, this can result in one projection attempting to query data from another projection that is not yet up to date. This is why the \keyw{LectureProjector} not only maintains a view of lectures, but also of courses, professors and students, which are then used when building the lecture's projection.
+
+The projector also illustrates how the projection's database entities are designed: they are built in the same way as the DTO which is returned from the query handler. Arrays and associated objects are not stored via foreign keys but are instead serialized to \acrshort{json}. This allows the retrieval of all the necessary data to respond to a query with a single \texttt{SELECT} statement. The same concepts apply to all other projectors in the ES-CQRS implementation.
 
 \subsection{Request Handling}
 \label{sec:es-cqrs-request-handling}
 
-This section describes how different components of the ES-CQRS application handle request. Diagrams illustrating the flow of both commands and queries are available in \autoref{sec:es-cqrs-tracing-request-flow}.
+This section describes how different components of the ES-CQRS application handle requests. Diagrams illustrating the flow of both commands and queries are available in \autoref{sec:es-cqrs-tracing-request-flow}.
 
 \subsubsection{Command Side}
 \label{sec:command-side}
 
-The command side is responsible for handling state changes in the application. It is implemented using Axon's Aggregates, Command Handlers, and Sagas. This section goes in detail about the implementation aspects, using the courses feature as an example.
+Command (or write) requests are received by a SpringBoot controller. The controller transforms the request into a Command message which is dispatched to the Command side using the \keyw{CommandGateway}. The Command side is responsible for handling all state changes in the application. It is implemented using the Aggregates and Sagas described in \autoref{sec:cqrs-data-modeling}.
 
-\paragraph{Aggregates and Set-Based Validation}
-\label{sec:aggregates-and-set-based-validation}
+Most command handling occurs inside the Aggregates, however the enrollment of students is a use-case spanning across two Aggregates. This required the external Command handler \keyw{EnrollmentCommandHandler} to be implemented.
 
-Aggregates are the core components of the command side. They represent a consistency boundary for state changes. In this implementation, an example of an aggregate is the \keyw{CourseAggregate}\footnote{\javaname{impl-es-cqrs/src/main/java/karsch.lukas.features.course.commands.CourseAggregate}}. It handles the \keyw{CreateCourseCommand}, validates it, and if successful, emits a \keyw{CourseCreatedEvent}.
-
-Before creating a course, the system must verify that all the specified prerequisite courses actually exist. This is handled by the \keyw{ICourseValidator},\footnote{\javaname{impl-es-cqrs/src/main/java/karsch.lukas.features.course.commands.ICourseValidator}} which is injected into the aggregate's command handler. The validator employs set-based validation as described in \autoref{sec:set-based-validation}. Once the prerequisite courses are validated, a \keyw{CourseCreatedEvent} is emitted. Otherwise, a specific \keyw{MissingCoursesException} is thrown, indicating that command handling was rejected.
-
-\paragraph{External Command Handlers}
-\label{sec:impl-external-command-handlers}
-
-Not all commands can be handled by a single aggregate. For instance, assigning a grade to a student for a specific lecture involves the \texttt{EnrollmentAggregate} and the \texttt{LectureAggregate}. In such cases, a dedicated command handler, \texttt{Enrollment{\allowbreak}Command{\allowbreak}Handler}, is used. This handler coordinates the interaction between the aggregates. It loads the \texttt{EnrollmentAggregate} from the event sourcing repository, validates the command (e.g., checking if the professor is allowed to assign a grade for the lecture), and then executes the command on the aggregate.
-
-\paragraph{Sagas for Process Management}
-\label{sec:sagas-for-process-management}
-
-Sagas are used to manage long-running business processes that span multiple aggregates. The \texttt{AwardCreditsSaga} is a prime example. It is initiated when an \keyw{EnrollmentCreatedEvent} occurs. The saga then waits for a \keyw{LectureLifecycleAdvancedEvent} with the status \texttt{FINISHED}. Once this event is received, the saga sends an \keyw{AwardCreditsCommand} to the \keyw{EnrollmentAggregate}. The saga ends when it receives a \keyw{CreditsAwardedEvent}. This ensures that credits are only awarded after a lecture is finished, and all assessments have been graded. It should be noted that while the CRUD application calculates awarded credits based on the current state of a lecture, in the ES-CQRS implementation, the fact that credits are awarded after finishing a lecture is explicit. Even when changing the logic of the Saga later on, credits which have already been awarded will not be revoked, unless additional, explicit logic is implemented (e.g. by applying a \keyw{CreditsRevokedEvent}).
+\keyw{AwardCreditsSaga} is a Saga which was manages the process of awarding credits to students. The Saga is initiated when an \keyw{EnrollmentCreatedEvent} occurs. It then waits for a \keyw{LectureLifecycleAdvancedEvent} with the status \texttt{FINISHED}. Once this event is received, the saga sends an \keyw{AwardCreditsCommand} to the \keyw{EnrollmentAggregate}. The saga ends when it receives a \keyw{CreditsAwardedEvent}. This ensures that credits are only awarded after a lecture is finished, and all assessments have been graded. Unlike the CRUD application, which calculates awarded credits based on the current state of a lecture, the ES-CQRS implementation makes the fact that credits are awarded explicit through an event. Even when changing the logic of the Saga later on, credits which have already been awarded will not be revoked, unless additional, explicit logic is implemented (e.g. by applying a \keyw{CreditsRevokedEvent}).
 
 \subsubsection{Read Side}
 \label{sec:read-side}
 
-The read side listens to events asynchronously and builds read models, called "projections", which are views of the system. A component that listens for events and maintains projections is called a "projector". Projections are designed to answer specific questions about the system: each projector saves exactly the necessary information. This is achieved by using denormalized data models, a contrast to typical CRUD systems that follow normalization rules.
-
-When the system is queried, the queries are routed to the read side. The read side can efficiently fetch data from the projections, usually without \texttt{JOINs}. This makes reads simple. It is important to keep in mind that projections are built asynchronously, meaning they are eventually consistent and may not always reflect the latest changes applied by the command side.
-
-In the context of the ES-CQRS implementation, a good example of a projector that stores denormalized data for efficient querying is the \keyw{LectureProjector}. It demonstrates the fact that each projector maintains its own view of the system. Projectors must not query the system using Axon's \keyw{QueryGateway} to get access to any data needed for the projection. One reason for that is the fact that when \emph{rebuilding} projections, a common use case in event sourcing, the projectors should be able to run in parallel. If projectors depend on each other, this can result in one projection attempting to query data from another projection that is not yet up to date. This is why the \keyw{LectureProjector} not only maintains a view of lectures, but also of courses, professors and students, which are then used when building the lecture's projection.
-
-The projector also illustrates how the projection's database entities are designed: they are built in the same way as the DTO which is returned from the query handler. Arrays and associated objects are not stored via foreign keys but are instead serialized to \acrshort{json}. This allows the retrieval of all the necessary data to respond to a query with a single \texttt{SELECT} statement. The same concepts apply to all other projectors in the ES-CQRS implementation.
-
-\subsubsection{Synchronous Responses with Subscription Queries}
-\label{sec:synchronous-responses-with-subscription-queries}
-
-A common challenge in \acrshort{cqrs} and event-driven architectures is providing synchronous feedback to users. For example, when a student enrolls in a lecture, they expect an immediate response indicating whether they were successfully enrolled or placed on a waitlist. However, commands are usually handled asynchronously. In \acrshort{cqrs}, commands are also not intended to return data.
-
-To solve this, the \keyw{LecturesController} uses Axon's subscription queries. When an enrollment request is received, it sends the \keyw{EnrollStudentCommand} and simultaneously opens a subscription query (\keyw{EnrollmentStatusQuery}). This query waits for an \keyw{EnrollmentStatusUpdate} event. The read-side projector responsible for processing enrollments publishes this update after processing the respective \keyw{StudentEnrolledEvent} or \keyw{StudentWaitlistedEvent}. The controller blocks for a short period, waiting for this update to be published, and then returns the result to the user. This approach makes the user interface synchronous, while not contradicting with the asynchronous nature of \acrshort{cqrs} systems, as the command handling process is unchanged. While this approach provides the desired synchronous user experience, it has the downside of coupling the client to the event processing flow. In a typical scenario, developers might employ WebSockets or other client-side notification mechanisms to inform the user about the result of their action. However, for the context of this thesis, where the primary goal is to implement two applications with an identical interface, this solution is a pragmatic compromise. TODO improve this section
+Read requests (Queries) are also received by a SpringBoot controller, which creates a Query object and dispatches it to the \keyw{QueryGateway}. The queries are routed to query handlers which can efficiently fetch data from their dedicated projections, usually without \texttt{JOINs}. It is important to keep in mind that projections are built asynchronously, meaning they are eventually consistent and may not always reflect the latest changes applied by the command side.
 
 \subsection{Encapsulation and API Boundaries}
 \label{sec:cqrs-encapsulation-and-api-boundaries}

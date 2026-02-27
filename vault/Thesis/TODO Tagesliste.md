@@ -4,15 +4,16 @@
 - **Tabellen**
 	- `timeseries_aggregated_statistical_tests` nochmal für alle laufen lassen 
 ## Freitag, 27.02
-- Dropped iterations rate -> turn into result for "failed requests rate".
-	- Dropped = failed 
-	- Make sure to turn this into SLO 3 
--
-    - TODOs erledigen
-- **Discussion und Interpretation**  fertig schreiben
-    - Traceability
-    - "Suggestions"
-    - RQs beantworten
+- TODOs erledigen 
+- **Discussion und Interpretation** fertig schreiben 
+    - "Suggestions" 
+    - RQs beantworten 
+    - Arbeit als "Ergebnis" / Vergleich unter "realen" Bedingungen. Nicht nur rohe Benchmarks: 
+	    - "Reines" CQRS gibt es eigentlich nicht 
+	    - die Write-Seite muss sich idR auf zusäzliche Mechanmsmen verlassen 
+	    - "Append-only" event log, der sehr schnell sein sollte -> ja, append-only. aber zusätzlicher Overhead, z.B. durch validation, vor allem cross-aggregate. Das einfache schreiben ist NICHT der bottleneck --- gleich wie bei CRUD auch
+	- Insgesamt hat CQRS mehr Pitfalls. Datenfluss ist nicht so nachvollziehbar 
+	- Testumgebung hat Schwächen, ja. Aber Ergebnisse sind reproduzierbar, inkl. Anomalies 
 ## Samstag, 28.02 
 - Abstract 
 - Scalability metric für alle Tests in Anhang machen 
@@ -22,6 +23,7 @@
 - pom.xml -> alle Versionen pinnen 
 - unbedingt nochmal schauen, ob das mit dem signifikanztest so passt. zB read-all-lectures, tomcat_threads...
 - Erklären, wie ich entschieden habe bis zu welcher load ich teste?
+- Discussion > **Strengths of the Study** hinzufügen? 
 ## Sonntag, 01.03 
 - Tabellen im Anhang aufhübschen 
 	- resizebox entfernen, wann immer möglich 
@@ -30,3 +32,4 @@
 - `\addlinespace` in Result Tabellen zwischen RPS 
 - Unterschrift 
 - Alle captions zu $metric\_name$ ändern
+- LICENSE

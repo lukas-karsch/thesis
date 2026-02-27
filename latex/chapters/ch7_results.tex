@@ -369,7 +369,7 @@ In terms of data store size for seed data, shown in \autoref{fig:l4_data_size}, 
 
 These values correspond to the following scalability metrics for the CRUD application: $\psi(2000, 3000)\approx 0.6$, $\psi(3000, 4000)\approx 0.00$; and the following scalability metrics for the ES-CQRS application: $\psi(2000, 3000)\approx 0.3$, $\psi(3000, 4000)\approx 0.05$.
 
-\subsubsection{L5: Read All Lectures (TODO)}
+\subsubsection{L5: Read All Lectures}
 \label{sec:l5}
 
 The \texttt{GET} \texttt{/lectures/all} endpoint returns a list of all lecture details. \ref{fig:l5_latency_vs_load_client} shows the client-side latency of the endpoint under increasing load using a logarithmic y-axis. The ES-CQRS application consistently maintains a sub 10ms $latency\_p95$, while the CRUD application violates \autoref{slo-latency} at 100 \gls{rps} and higher, reaching latencies beyond 10.000ms.
@@ -661,7 +661,7 @@ $tomcat\_threads$ is visualized in \autoref{fig:l8_threadpool_usage}. Both appli
     \label{fig:l8_resource_usage_cpu}
 \end{figure}
 
-\autoref{fig:l8_db_connections} shows the median number of utilized database connections --- $hikari\_connections$ --- under increasing load. Up to 1000 \gls{rps}, both applications show identical behavior, staying at a median of 0 until 500 \gls{rps}, before increasing to 1 at 1000 \gls{rps}. Afterward, however, the ES-CQRS application shows a sharp increase, reaching a median of 10 at 2000 \gls{rps} with a wide \gls{iqr} spannin from 4 to 10. At this load, the CRUD application still remains at a median of 1.
+\autoref{fig:l8_db_connections} shows the median number of utilized database connections --- $hikari\_connections$ --- under increasing load. Up to 1000 \gls{rps}, both applications show identical behavior, staying at a median of 0 until 500 \gls{rps}, before increasing to 1 at 1000 \gls{rps}. Afterward, however, the ES-CQRS application shows a sharp increase, reaching a median of 10 at 2000 \gls{rps} with a wide \gls{iqr} spanning from 4 to 10. At this load, the CRUD application still remains at a median of 1.
 
 \autoref{tab:l8_data_size} shows the storage taken up by the test's seed data. The ES-CQRS application takes up twice the amount of storage at $\approx$19.7MB, while CRUD uses around 9.8MB.
 
