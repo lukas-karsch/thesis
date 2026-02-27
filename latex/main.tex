@@ -430,7 +430,6 @@
 \end{titlepage}
 
 \newpage
-
 \pagenumbering{roman}
 %LTeX: language=de-DE
 \section*{Ehrenwörtliche Erklärung}
@@ -444,12 +443,15 @@ Hiermit versichere ich, Lukas Karsch, ehrenwörtlich, dass ich die vorliegende B
 %LTeX: language=en-US
 
 \newpage
+\include{chapters/ch0_abstract}
+
+\newpage
 \tableofcontents
 
 \newpage
 \listoffigures
 \listoftables
-\lstlistoflistings % TODO fix 
+\lstlistoflistings
 
 \newpage
 \printglossaries
@@ -484,7 +486,7 @@ The full source code for this thesis, including both applications, performance t
 
 \begin{itemize}
     \item \url{https://gitlab.mi.hdm-stuttgart.de/lk224/thesis}
-    \item TODO: GitHub link
+    \item \url{https://github.com/lukas-karsch/thesis}
 \end{itemize}
 
 The repository contains \texttt{README} files with instructions on how to launch the applications, execute load tests and how to reproduce the \acrshort{vm} environments.
