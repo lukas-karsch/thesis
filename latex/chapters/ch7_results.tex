@@ -47,11 +47,11 @@ The total data store size for the ES-CQRS application is defined as the sum of t
 
 \subsection{Graphs}
 
-In graphs that show latencies, the shaded areas in the line graphs represent the \emph{confidence interval (CI)} of the latency measurements. The confidence interval is the range of values that is likely to contain the true answer. It estimates the level of uncertainty by providing a margin of error around a specific result.
+In graphs that show latencies, the shaded areas in the line graphs represent the \emph{confidence interval (CI)} of the latency measurements. The confidence interval is the range of values that is likely to contain the true answer. It estimates the level of uncertainty by providing a margin of error around a specific result. Furthermore, latency graphs use a logarithmic y-axis, unless mentioned otherwise.
 
 Graphs showing resource consumption typically show the area between the 25th and 75th percentile in the shaded area, also called \emph{\gls{iqr}}. This shows the typical range of resource usage across runs.
 
-The lines between the measured data points are interpolated, representing an estimation of performance trends across the full range of measurements. These lines help visualize the transition between different loads, though the actual values were only recorded at the marked intervals on the x-axis. In some cases, the x-axis omits intermediate labels for improved readability. However, all data points remain connected by interpolated lines to illustrate performance trends between measurements. For a complete view of every value, refer to the full results provided in \autoref{appendix:results}.
+The lines between the measured data points are interpolated, representing an estimation of performance trends across the full range of measurements. These lines help visualize the transition between different loads, though the actual values were only recorded at the marked intervals on the x-axis. In some cases, the x-axis omits intermediate labels for improved readability. For a complete view of every value, refer to the full results provided in \autoref{appendix:results}.
 
 \subsection{Write Performance}
 
@@ -60,7 +60,7 @@ The lines between the measured data points are interpolated, representing an est
 
 Professors can create courses using the \texttt{POST} \texttt{/courses} endpoint. The "simple" test case tests creation of courses \emph{without prerequisites}. This means that no validation is necessary to create a new entity, making this test the raw insertion performance.
 
-\autoref{fig:l1_combined} presents line graphs comparing the endpoint's latency under increasing load using a logarithmic y-axis. The graphs describe the observed client-side and server-side latencies under varying loads of both applications by showing their $latency\_p50$ (median) and $latency\_p95$ (tail latency). \ref{slo-latency} defined the threshold for $latency\_p95$ at 100ms, meaning the ES-CQRS application failed to satisfy the \gls{slo} between 500 and 1000 \gls{rps}. Additionally, its $dropped\_iterations\_rate$ reaches a value of 52 at 1000 RPS. Meanwhile, the \gls{crud} application achieves a sub 10ms $latency\_p95$ until at least 1000 \gls{rps}.
+\autoref{fig:l1_combined} presents line graphs comparing the endpoint's latency under increasing load. The graphs describe the observed client-side and server-side latencies under varying loads of both applications by showing their $latency\_p50$ (median) and $latency\_p95$ (tail latency). \ref{slo-latency} defined the threshold for $latency\_p95$ at 100ms, meaning the ES-CQRS application failed to satisfy the \gls{slo} between 500 and 1000 \gls{rps}. Additionally, its $dropped\_iterations\_rate$ reaches a value of 52 at 1000 RPS. Meanwhile, the \gls{crud} application achieves a sub 10ms $latency\_p95$ until at least 1000 \gls{rps}.
 
 It can be noted that the latency curve follows the same pattern in both the measurements made on the client and on the server, except for the ES-CQRS $latency\_p95$ which exhibits a value of over 1000ms on the client, but only around 300ms on the server.
 
@@ -133,7 +133,7 @@ These values correspond to the following scalability metrics for the CRUD applic
 
 This test also evaluates the performance of the endpoint described in \autoref{sec:l1}. However, before executing the load generation, a set of "prerequisite" courses are generated. Each iteration, a random number of these courses (0 to 5) are selected which are referenced during load generation. This creates the necessity to do additional checks on existing data, verifying whether the referenced courses actually exist.
 
-The endpoint's performance, presented in \autoref{fig:l2_combined} using a logarithmic y-axis, is similar to the observations made in \hyperref[sec:l1]{L1}. Once the load exceeds 500 \gls{rps}, the ES-CQRS application fails to satisfy \ref{slo-latency} with a $latency\_p95$ crossing the threshold of 100ms. Additionally, its $dropped\_iterations\_rate$ reaches a value of around 60. The CRUD application, on the other hand, is able to fulfill the latency threshold up to at least 1000 \gls{rps} without dropping iterations.
+The endpoint's performance, presented in \autoref{fig:l2_combined}, is similar to the observations made in \hyperref[sec:l1]{L1}. Once the load exceeds 500 \gls{rps}, the ES-CQRS application fails to satisfy \ref{slo-latency} with a $latency\_p95$ crossing the threshold of 100ms. Additionally, its $dropped\_iterations\_rate$ reaches a value of around 60. The CRUD application, on the other hand, is able to fulfill the latency threshold up to at least 1000 \gls{rps} without dropping iterations.
 
 It can be noted that the latency curve follows the same pattern in both the measurements made on the client and on the server, except for the ES-CQRS $latency\_p95$ which exhibits a value of over 1000ms on the client, but only $\approx$360ms on the server at 1000 \gls{rps}.
 
@@ -211,7 +211,7 @@ These values correspond to the following scalability metrics for the CRUD applic
 \subsubsection{L3: Enrollment}
 \label{sec:l3}
 
-The endpoint \texttt{POST /lectures/\{lectureId\}/enroll} enrolls students to a lecture. Its performance under load up to 500 \gls{rps} is visualized in \autoref{fig:l3_combined} using a logarithmic y-axis.
+The endpoint \texttt{POST /lectures/\{lectureId\}/enroll} enrolls students to a lecture. Its performance under load up to 500 \gls{rps} is visualized in \autoref{fig:l3_combined}.
 
 The ES-CQRS application's $latency\_p95$ rises above 100ms between 50 and 100 \gls{rps}, violating \ref{slo-latency}. The CRUD application's $latency\_p95$ and $latency\_p50$ remain below 10ms until 200 \gls{rps}, representing more than a 100x slowdown for the ES-CQRS application. Between 200 and 500 \gls{rps}, CRUD's P95 latency rises to over 1000ms, violating \ref{slo-latency}. At 500 \gls{rps}, ES-CQRS' $latency\_p95$ exceeds 10.000ms.
 
@@ -293,7 +293,7 @@ When measuring read performance, no data is created during load generation. Ther
 \subsubsection{L4: Read Lectures for Student}
 \label{sec:l4}
 
-\texttt{GET} \texttt{/lectures} returns all lectures a student is enrolled or waitlisted in. \autoref{fig:l4_combined} presents client-side and server-side latencies for this endpoint using a logarithmic y-axis.
+\texttt{GET} \texttt{/lectures} returns all lectures a student is enrolled or waitlisted in. \autoref{fig:l4_combined} presents client-side and server-side latencies for this endpoint.
 
 In the client-side graph, shown in \autoref{fig:l4_latency_vs_load_client}, both applications maintain a $latency\_p50$ and $latency\_p95$ of 10ms or less up to 3000 \gls{rps}. At 3000 \gls{rps}, the ES-CQRS application exhibits an around 6x higher $latency\_p95$ than the CRUD app. Beyond 3000 \gls{rps}, though, the CRUD's $latency\_p95$ overtakes ES-CQRS. At 4000 \gls{rps}, the ES-CQRS application exhibits a $latency\_p95$ of around 200ms, which is around 2.9x faster than the CRUD application at 620ms. However, CRUD's $latency\_p50$ stays lower than the one of ES-CQRS, even though the data shows a large confidence interval, meaning the results are unstable and exhibit high variance. Both applications violate \ref{slo-latency} beyond 3000 \gls{rps}.
 
@@ -372,7 +372,7 @@ These values correspond to the following scalability metrics for the CRUD applic
 \subsubsection{L5: Read All Lectures}
 \label{sec:l5}
 
-The \texttt{GET} \texttt{/lectures/all} endpoint returns a list of all lecture details. \ref{fig:l5_latency_vs_load_client} shows the client-side latency of the endpoint under increasing load using a logarithmic y-axis. The ES-CQRS application consistently maintains a sub 10ms $latency\_p95$, while the CRUD application violates \autoref{slo-latency} at 100 \gls{rps} and higher, reaching latencies beyond 10.000ms.
+The \texttt{GET} \texttt{/lectures/all} endpoint returns a list of all lecture details. \ref{fig:l5_latency_vs_load_client} shows the client-side latency of the endpoint under increasing load. The ES-CQRS application consistently maintains a sub 10ms $latency\_p95$, while the CRUD application violates \autoref{slo-latency} at 100 \gls{rps} and higher, reaching latencies beyond 10.000ms.
 
 At 150 RPS and higher, the CRUD application starts dropping iterations. At 1000 RPS, $dropped\_iterations\_rate$ reaches a value of more than 560, meaning that 56\% of all iterations were not executed.
 
@@ -447,7 +447,7 @@ The observed collapse in resource consumption in the CRUD application between 20
 \subsubsection{L6: Get Credits}
 \label{sec:l6}
 
-The \texttt{GET} \texttt{/stats/credits} endpoint retrieves a student's total collected credits. \autoref{fig:l6_combined} presents the endpoint's client-side and server-side latencies using a logarithmic y-axis.
+The \texttt{GET} \texttt{/stats/credits} endpoint retrieves a student's total collected credits. \autoref{fig:l6_combined} presents the endpoint's client-side and server-side latencies.
 
 \autoref{fig:l6_latency_vs_load_client} presents the client-side latency under increasing load. It can be seen that the $latency\_p95$ remains below 10ms for both applications until around 2000 \gls{rps}.
 
@@ -536,7 +536,7 @@ These values correspond to the following scalability metrics for the CRUD applic
 \subsubsection{L7: Create Lecture, then Read}
 \label{sec:l7}
 
-This load test differs from others in the fact that each iteration executes 2 \gls{http} requests. The first request creates a lecture. After sleeping for 100ms --- the consistency threshold defined in \ref{slo-freshness} --- the script executes a request to \texttt{GET} the created lecture. If status code $404$ is returned, the write was not reflected in the read model in time. The rate of successful reads is recorded as a metric called $read\_visible\_rate$, presented in \autoref{fig:l7_read_visible_rate}. It can be seen that once exceeding 200 \gls{ips}, the ES-CQRS application failed to synchronize the read-side fast enough. \autoref{fig:l7_latency_vs_load} shows the latencies under varying loads using a logarithmic y-axis. $latency\_p50$ remains similar for both applications, however the ES-CQRS application's $latency\_p95$ increases with rising \gls{ips}, finally violating the threshold of 100ms defined in \ref{slo-latency} once exceeding 400 \gls{ips}.
+This load test differs from others in the fact that each iteration executes 2 \gls{http} requests. The first request creates a lecture. After sleeping for 100ms --- the consistency threshold defined in \ref{slo-freshness} --- the script executes a request to \texttt{GET} the created lecture. If status code $404$ is returned, the write was not reflected in the read model in time. The rate of successful reads is recorded as a metric called $read\_visible\_rate$, presented in \autoref{fig:l7_read_visible_rate}. It can be seen that once exceeding 200 \gls{ips}, the ES-CQRS application failed to synchronize the read-side fast enough. \autoref{fig:l7_latency_vs_load} shows the latencies under varying loads. $latency\_p50$ remains similar for both applications, however the ES-CQRS application's $latency\_p95$ increases with rising \gls{ips}, finally violating the threshold of 100ms defined in \ref{slo-latency} once exceeding 400 \gls{ips}.
 
 The CRUD application consistently maintains a 100\% $read\_visible\_rate$.
 

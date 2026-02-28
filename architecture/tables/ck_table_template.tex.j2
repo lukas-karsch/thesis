@@ -4,8 +4,7 @@
 \textbf{Class}  & \textbf{CBO} & \textbf{DIT} & \textbf{LCOM} & \textbf{NOC} & \textbf{RFC} & \textbf{WMC} \\
 \midrule
 {% for row in rows %}
-    {{ e(row.Class) }} & {{ row.CBO }} & {{ row.DIT }} & {{ row.LCOM }} & {{ row.NOC }} & {{ row.RFC }} & {{ row.WMC }}
-    \\
+    {{ e(row.Class) }} & {{ row.CBO }} & {{ row.DIT }} & {{ row.LCOM }} & {{ row.NOC }} & {{ row.RFC }} & {{ row.WMC }} \\
 {% endfor %}
 \bottomrule
 \caption{CK Metrics for {{ caption }}. \emph{k.l} used as abbreviation for \emph{karsch.lukas}}

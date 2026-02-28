@@ -7,17 +7,6 @@
 - TODOs erledigen 
 - **Discussion und Interpretation** fertig schreiben 
     - "Suggestions" 
-    - RQs beantworten 
-  - related work: andere sagen, write-performance schnell? (da append-only log)?
-      - kann nicht repliziert werden
-    - Arbeit als "Ergebnis" / Vergleich unter "realen" Bedingungen. Nicht nur rohe Benchmarks: 
-	    - "Reines" CQRS gibt es eigentlich nicht 
-      - die Write-Seite muss sich idR auf zusäzliche Mechanimsmen verlassen
-          - "Append-only" event log, der sehr schnell sein sollte -> ja, append-only. aber zusätzlicher Overhead, z.B.
-            durch validation, vor allem cross-aggregate. Das einfache schreiben ist NICHT der bottleneck --- gleich wie
-            bei CRUD auch
-	- Insgesamt hat CQRS mehr Pitfalls. Datenfluss ist nicht so nachvollziehbar 
-	- Testumgebung hat Schwächen, ja. Aber Ergebnisse sind reproduzierbar, inkl. Anomalies 
 ## Samstag, 28.02 
 - Abstract 
 - Scalability metric für alle Tests in Anhang machen 

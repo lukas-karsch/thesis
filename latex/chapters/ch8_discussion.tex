@@ -4,7 +4,7 @@
 
 \section{Interpretation of Results}
 
-TODO: explain this section. First, interpret results for each research question, finally give "recommendations" --- when is which architecture better suited?
+TODO: explain this section. First, bottlenecks and anomalies are described, then interpret results per research question. Finally give "recommendations" --- when may which architecture better suited?
 
 \subsection{Identifying Bottlenecks}
 \label{sec:identifying-bottlenecks}
@@ -63,6 +63,8 @@ In contrast, the \gls{es}-\gls{cqrs} architecture demonstrates a structural adva
 
 Consequently, the \gls{es}-\gls{cqrs} approach likely provides a more seamless transition to horizontal scaling. Because the dependencies are already logically and physically partitioned (shown by the lower $Dcy^*$ and $PDcy$ values), the effort required to split the monolith into independent microservices is significantly reduced. This allows for specific parts of the system, such as high-traffic read models, to be scaled horizontally on separate infrastructure without requiring the entire application to be replicated. Additionally, Axon Framework provides location transparency, reducing the need to write additional boilerplate code when attempting to split the system into separate services. Therefore, while the \gls{es}-\gls{cqrs} architecture may have more outliers in package coupling, its fundamental structure provides the necessary isolation for the long-term scalability and independent evolution of system components.
 
+It can be noted that the ES-CQRS pattern introduces unique challenges regarding developer experience and code clarity. The indirection introduced by Axon's message buses leads to transparency and decoupling, which is reflected by the dependency and coupling metrics. However, this makes the execution flow less explicit than the direct method calls found in a standard Layered Architecture. The application logic becomes more difficult to follow through static analysis alone. This fragmented data flow may increase the cognitive load on developers and make debugging harder as stack traces become less explicit.
+
 \subsection{Traceability}
 
 The findings presented in this section are primarily derived from a synthesis of existing literature regarding system architecture and data integrity previously presented in \autoref{sec:traceability-related-work}, alongside empirical performance data collected in L8 (\autoref{sec:l8}).
@@ -71,7 +73,7 @@ The comparison between \gls{crud} and \gls{es}-\gls{cqrs} systems reveals a trad
 
 Furthermore, \gls{crud} logs often capture \emph{what} changed without preserving the \emph{why}. As \textcite[531]{kleppmann_designing_2017} argues, the application logic in \gls{crud} is transient, meaning business context is often lost over time. Capturing and reconstructing intent is possible in \gls{crud} systems. It was also implemented in this study, though it requires additional effort to attach the context to changes. In contrast, events in \gls{es} carry inherent metadata which contain intent.
 
-However, the efficiency of this reconstruction remains a challenge. While \textcite{monagari_demystifying_2026} cites a dramatic reduction in incident resolution time for financial institutions using \gls{es}, this study's load testing results (L8) provide contrasting empirical results. The results show that \gls{crud} architectures are significantly faster in reconstructing historic state, at least for simple history queries. Reconstructing a student's grade history, for example, proved more efficient in the \gls{crud} model.
+However, the efficiency of this reconstruction remains a challenge when using \acrlong{es}. While \textcite{monagari_demystifying_2026} cites a dramatic reduction in incident resolution time for financial institutions using \gls{es}, this study's load testing results (L8) provide contrasting empirical results. The results show that \gls{crud} architectures are significantly faster in reconstructing historic state, at least for simple history queries. Reconstructing a student's grade history, for example, proved more efficient in the \gls{crud} model.
 
 Ultimately, while \gls{es}-\gls{cqrs} provides the "superior evidence" required for forensic or legal auditing \cite[17]{maier_audit_2006}, the \gls{crud} approach remains more performant for frequent, high-volume historical lookups. As historical state lookups are likely uncommon in typical applications, the choice of architecture should be guided by whether the priority lies in the speed of retrieval or the absolute integrity of the audit trail.
 
@@ -88,15 +90,17 @@ This research provides an empirical, quantifiable comparison between \gls{crud} 
 
 Except for Axon Server's storage size, the server-side metrics were only collected from the SpringBoot application. Because the \gls{vm} also hosted PostgreSQL and Axon Server, the collected CPU metric ($process\_cpu\_usage$) does not capture the total system load. It is likely that the overall system CPU was fully saturated even when the server's CPU usage suggested remaining overhead. This is a threat to the validity of the performance data.
 
-The accuracy of the benchmarking results was further affected by the testing configuration. In some load tests, a significant number of iterations was dropped at high RPS because the maximum number of \glspl{VU} in the k6 configuration was insufficient for the load. This means the results do not reflect the real performance under the respective load, as the actual load on the system was lower in these cases. Additionally, a more granular analysis would require measuring garbage collection pauses, memory allocation rates, database time, and other system metrics. Furthermore, without profiling, the "root causes" of specific bottlenecks remain theoretical, as the collected data shows the \emph{results} of system stress rather than a detailed breakdown of internal execution delays. The performance analysis is also limited because the tests only varied the number of requests per second. Other factors, such as the size of the data being sent in POST requests or the volume of data fetched in queries, remained constant per test and were not evaluated.
+The accuracy of the benchmarking results was further affected by the testing configuration. In some load tests, a significant number of iterations was dropped at high RPS because the maximum number of \glspl{VU} in the k6 configuration was insufficient for the load. This means the results do not reflect the real performance under the respective load, but instead the load of $RPS - dropped\_iterations\_rate$.
 
-Additionally, the server-side metrics collected through Actuator and Prometheus may have a reduced accuracy under very high load because the metric collection in itself is bound to system resources and may start slowing down under high load. Also, the actuator endpoints themselves experience the same queueing delay as other requests.
+Additionally, a more granular performance analysis would require measuring garbage collection pauses, memory allocation rates, database time, and other system metrics. Furthermore, without profiling, the "root causes" of specific bottlenecks remain theoretical, as the collected data shows the \emph{results} of system stress rather than a detailed breakdown of internal execution delays. The performance analysis is also limited because the tests only varied the number of requests per second. Other factors, such as the size of the data being sent in POST requests or the volume of data fetched in queries, remained constant per test and were not evaluated.
+
+Next, the server-side metrics collected through Actuator and Prometheus may have a reduced accuracy under very high load because the metric collection in itself is bound to system resources and may start slowing down under high load. Also, the actuator endpoints themselves experience the same queueing delay as other requests.
 
 Furthermore, although both applications were developed following industry standards and common best practices, it cannot be formally guaranteed that the implementations are entirely free of defects or suboptimal coding practices. Consequently, the observed performance metrics may be influenced by unidentified implementation errors rather than being representative of the underlying architecture.
 
 One such implementation error which likely influenced the load testing measurements is a specific oversight in the ES-CQRS implementation regarding resource contention. In the current setup, both the synchronous lookup projectors --- which belong solely to the write-side and are used to ensure immediate consistency --- and the asynchronous query-side projections share the same underlying database instance and connection pool. This creates a bottleneck where the lookup projectors, which should ideally be very low-latency, must compete for database connections and \gls{io} cycles with the query-side event processors. This shared resource dependency undermines the theoretical decoupling of the command and query sides, as heavy query-side projection activity directly introduces latency into the command-handling pipeline.
 
-Beyond the technical measurements, the given architectural evaluation is limited as it is simply a synthesis of static analysis. This study did not investigate the topic of \gls{schema-evolution}, which is the process of managing how data structures, such as events or database tables, change over time. In a long-running production system, the difficulty of evolving an event store's schema is an additional factor in the total cost of ownership and flexibility of an \gls{es}-\gls{cqrs} system. Similarly, managing complex database migrations in coupled \gls{crud} architectures without data-loss may introduce additional challenges.
+Beyond the technical measurements, the given architectural evaluation is limited as it is simply a synthesis of static analysis. This study did not investigate the topic of \gls{schema-evolution}, which is the process of managing how data structures, such as events or database tables, change over time. In a long-running production system, the difficulty of evolving an event store's schema is an additional factor in the total cost of ownership and flexibility of an ES-CQRS system. Similarly, managing complex database migrations in coupled \gls{crud} architectures without data-loss may introduce additional challenges.
 
 Because the use case and the load patterns used in this study were artificially generated, they may not capture the unpredictable nature of real-world user behavior or specific business requirements.
 
@@ -123,30 +127,50 @@ In summary, ES-CQRS offers a specialized performance trade-off: it provides high
 
 In conclusion, this study demonstrates that architectural choices dictates a system's performance and scalability limits. CRUD remains resource efficient and performant under write-heavy scenarios. Conversely, ES-CQRS effectively "pre-pays" for performance through higher storage taken up by projections, enabling a substantially higher scalability ceiling for intensive read operations. These findings suggest that the value of ES-CQRS is not universal, but rather highly dependent on a domain's specific ratio of reads to writes and its tolerance for eventual consistency.
 
-\subsection{RQ 2: Architectural Complexity and Flexibility (TODO)}
+\subsection{RQ 2: Architectural Complexity and Flexibility}
 \label{sec:answering-rq-2}
 
 \begin{quote}
     \textit{What are the fundamental structural differences between the two approaches, and how do these impact the long-term flexibility and evolution of the codebase?}
 \end{quote}
 
-\subsection{RQ 3: Historical Traceability (TODO)}
+The fundamental structural difference between the two approaches lies in the degree of component isolation, with the ES-CQRS architecture maintaining lower transitive coupling than the CRUD model. The CRUD application suffers from high dependency counts, which could cause "ripple effects" where changes propagate across the system. This confirms the concerns raised by \textcite{singh_object_2018} regarding \gls{cbo} as a primary detractor of quality, as the CRUD model's higher coupling creates a non-linear increase in change complexity. In contrast, ES-CQRS effectively separates read and write concerns, leading to a reduced dependency count and high separation of concerns. This structural decoupling suggests enhanced long-term flexibility by allowing for independent evolution of features and modules, and a more seamless transition towards horizontal scaling or microservices. Conversely, the CRUD application's higher coupling suggests that as the codebase grows, the complexity of making changes will increase non-linearly. Ultimately, the architectural isolation in ES-CQRS provides a more robust foundation for system scalability and maintenance.
+
+Schema evolution is a topic that was not evaluated in the thesis, but it plays a substantial role in how a system can evolve over time. Literature, such as \cite{overeem_empirical_2021}, suggest that schema evolution is challenging, particularly in ES-CQRS systems.
+
+\subsection{RQ 3: Historical Traceability}
 \label{sec:answering-rq-3}
 
 \begin{quote}
     \textit{To what extent can CRUD and ES-CQRS systems accurately and efficiently reconstruct historical states to satisfy business intent and compliance requirements?}
 \end{quote}
 
-\subsection{Conclusion (TODO)}
+CRUD systems offer higher performance for high-volume historical lookups. However, they are susceptible to the "dual-write" problem, which can lead to a divergence between the application state and the audit trail. This divergence undermines the reliability of the system's "evidence," which \textcite[155]{gantz_basics_2014} identifies as the critical factor for successful IT auditing and compliance.
 
-Here, provide a final, holistic answer to the main research question.
+In contrast, \acrlong{es} guarantees data integrity by treating the immutable event log as the singular "truth" of the system~\cite{helland_immutability_2015}, capturing both system state and business intent. While this event-driven approach facilitates deterministic reconstruction for forensic auditing, empirical results from this study (\gls{l}8) indicate significantly lower performance in historic reconstruction compared to traditional audit logs stored in SQL tables.
+
+Ultimately, the CRUD application provides higher efficiency for simple historic state retrieval, whereas ES-CQRS offers the "superior evidence"~\cite[17]{maier_audit_2006} required for rigorous legal requirements. Furthermore, as suggested by \cites[531]{kleppmann_designing_2017}{monagari_demystifying_2026}, the event log simplifies bug reproduction and incident diagnosis by allowing developers to replay exact system states. Therefore, the choice between these architectures requires developers to make a trade-off between the required speed of access and the guaranteed accuracy of the historical record.
+
+\subsection{Conclusion}
+
+\begin{quote}
+    \textit{How does an Event Sourcing architecture compare to CRUD systems with an independent audit log regarding performance, scalability, flexibility and traceability?}
+\end{quote}
+
+While the CRUD implementation demonstrates superior write performance and lower CPU and storage overhead, it suffers from higher transitive coupling that may hinder the system's architectural evolution. In contrast, the combination of \gls{es} and \gls{cqrs} provides improved latencies for read-heavy scenarios and appears to be more flexible in terms of architectural evolution. However, it introduces additional challenges such as eventual consistency, added infrastructure complexity and increased storage requirements.
+
+Regarding traceability, the CRUD application offers faster retrieval of historical states but remains vulnerable to data divergence, whereas \acrlong{es} ensures data integrity by treating the event log as the immutable source of truth.
+
+Ultimately, the choice between these architectures should be driven by the specific domain requirements: CRUD is better suited for write-heavy applications with simple data relations, while ES-CQRS excels in complex, read-intensive environments, and domains requiring valuing high traceability. Implementing \acrlong{es} and \gls{cqrs} can therefore be seen as a strategic investment in flexibility and data reliability at the potential expense of raw write throughput.
 
 \section{Optimizations and Further Work}
 \label{sec:optimizations-and-further-work}
 
-This subsection outlines potential technical refinements for the existing implementations and identifies opportunities for future work. While the current results establish a baseline for both architectures, several optimization strategies could be applied to reduce the performance bottlenecks in both applications.
+This section outlines potential technical refinements for the existing implementations and identifies opportunities for future work. While the current results establish a baseline for both architectures, several optimization strategies could be applied to reduce the performance bottlenecks in both applications.
 
-Firstly, the performance of both applications could be optimized by investigating their source code and identifying bottlenecks through profiling. As previously mentioned in \autoref{sec:limitations-of-the-study}, several implementation details likely influenced measurements. Improving on these aspects would be the first step towards an increased performance.
+Firstly, as described in \autoref{sec:limitations-of-the-study}, several issues can be identified in the testing setup. To collect more meaningful results during load testing, these should be eliminated.
+
+Next, the performance of both applications could be optimized by investigating their source code and accurately identifying bottlenecks through profiling. As previously mentioned in \autoref{sec:limitations-of-the-study}, several implementation details likely influenced measurements. Improving on these aspects would be the first step towards an increased performance.
 
 The underlying infrastructure and framework configurations offer room for improvement. While no tuning was done for this thesis on purpose to make "out-of-the-box" performance comparable, \autoref{tab:system-tuning} summarizes parameters that could be tuned to resolve the resource saturation and latency bottlenecks observed in the ES-CQRS and CRUD applications. Before doing any tuning, further profiling would be necessary to identify bottlenecks in function calls or queries.
 
@@ -155,13 +179,13 @@ The underlying infrastructure and framework configurations offer room for improv
     \small
     \begin{tabularx}{\linewidth}{lXX}
         \toprule
-        \textbf{Keyword}          & \textbf{Action}                                                                                                                                                                    & \textbf{Goal}                                                                                              \\ \midrule
-        \textbf{Pool Tuning}      & Adjust Tomcat thread counts and HikariDB connection limits.                                                                                                                        & Reduce queueing delays.                                                                                    \\ \addlinespace
-        \textbf{Event Store}      & Tune Axon page sizes and set different snapshot thresholds.                                                                                                                        & Reduce the number of expensive \gls{io} operations when reading long event streams.                        \\ \addlinespace
-        \textbf{Reactivity}       & Implement Spring WebFlux\footnotemark[1] and reative JPA repositories\footnotemark[2].                                                                                             & Free up worker threads while waiting for database or network responses.                                    \\ \addlinespace
-        \textbf{Query Refinement} & Replace auto-generated Hibernate queries with custom JPQL queries, optimize further using \texttt{@BatchSize} and EAGER fetching options.                                          & Eliminate inefficient queries and reduce the total number of database round-trips.                         \\ \addlinespace
-        \textbf{Serialization}    & Tune Jackson's serialization options                                                                                                                                               & Minimize CPU overhead.                                                                                     \\ \addlinespace
-        \textbf{Projections}      & Transition from JSON-based projections to flat, denormalized SQL-native tables, or attempt to replace JSON by binary formats like Protobuf\footnotemark[3] or Kryo\footnotemark[4] & Eliminate serialization overhead, reduce projection storage size and enable high-performance JDBC mapping. \\
+        \textbf{Keyword}          & \textbf{Action}                                                                                                                                                                    & \textbf{Goal}                                                                                               \\ \midrule
+        \textbf{Pool Tuning}      & Adjust Tomcat thread counts and database connection limits.                                                                                                                        & Reduce queueing delays.                                                                                     \\ \addlinespace
+        \textbf{Event Store}      & Tune Axon page sizes and set different snapshot thresholds.                                                                                                                        & Reduce the number of expensive \gls{io} operations when reading long event streams.                         \\ \addlinespace
+        \textbf{Reactivity}       & Use reactive programming paradigms by implementing Spring WebFlux\footnotemark[1] and reactive JPA repositories\footnotemark[2].                                                   & Free up worker threads while waiting for database or network responses.                                     \\ \addlinespace
+        \textbf{Query Refinement} & Replace auto-generated Hibernate queries with custom JPQL queries, optimize further using \texttt{@BatchSize} and EAGER fetching options.                                          & Eliminate inefficient queries and reduce the total number of database round-trips to minimize database time \\ \addlinespace
+        \textbf{Serialization}    & Tune Jackson's serialization options                                                                                                                                               & Minimize CPU overhead.                                                                                      \\ \addlinespace
+        \textbf{Projections}      & Transition from JSON-based projections to flat, denormalized SQL-native tables, or attempt to replace JSON by binary formats like Protobuf\footnotemark[3] or Kryo\footnotemark[4] & Eliminate serialization overhead, reduce projection storage size and enable high-performance JDBC mapping.  \\
         \bottomrule
     \end{tabularx}
     \caption{Proposed System Tuning and Optimization Strategies}
@@ -178,3 +202,5 @@ Additional performance gains could be achieved through the implementation of cac
 The need for synchronous lookup tables to enable consistent writes in ES-CQRS likely added substantial overhead, drastically reducing write performance. This need emerged from the non-functional requirements defined for this study. However, in high-traffic environments where immediate consistency during writes may not be valued as highly, the system could also implement eventual consistency on the write-side, avoiding the overhead of global set-based validation. Instead, the read-side could be queried as a heuristic before issuing a Command, and process managers (Sagas) could be applied to later correct any illegal states. This would likely increase write performance, while taking the risk of temporary inconsistencies. Therefore, future research should explore how different domain requirements influence technical performance, specifically evaluating how the prioritization of immediate versus eventual consistency changes the scalability and resource efficiency of each architectural style.
 
 Furthermore, as this study evaluated both applications on a single machine, the assessment of scalability and architectural flexibility remains primarily theoretical. To provide empirical evidence for these claims, a follow-up study would be appropriate, which physically transitions the systems into microservices and performs horizontal scaling. By implementing these structural changes, the practical performance limits and the true decoupling of the ES-CQRS pattern could be validated further. Additionally, the effort required to transform the monolithic structure into microservices would serve as a practical benchmark to validate the accuracy of the static analysis results.
+
+Another point that could be evaluated in future work is schema evolution. This topic was only briefly mentioned in this study, but an empirical comparison of schema evolution methods in both CRUD and ES-CQRS systems could be worth researching.

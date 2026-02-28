@@ -8,8 +8,7 @@
 \textbf{Metric} & \textbf{RPS} & \textbf{Median} & \textbf{CI $\pm$} & & \textbf{Median} & \textbf{CI $\pm$} & \textbf{Ratio} & \textbf{Significance} \\
 \midrule
 {% for row in rows %}
-    ${{ e(row.metric) }}$ & {{ row.users }} & {{ row.c_median }} & {{ row.c_ci }} & & {{ row.e_median }} &
-    {{ row.e_ci }} & {{ row.speedup }} & {{ row.sig }} \\
+    ${{ e(row.metric) }}$ & {{ row.users }} & {{ row.c_median }} & {{ row.c_ci }} & & {{ row.e_median }} & {{ row.e_ci }} & {{ row.speedup }} & {{ row.sig }} \\
 {% endfor %}
 \bottomrule
 \end{tabular}

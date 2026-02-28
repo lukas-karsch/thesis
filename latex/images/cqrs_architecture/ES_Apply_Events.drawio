@@ -1,28 +1,28 @@
-<mxfile host="app.diagrams.net" agent="Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/145.0.0.0 Safari/537.36" version="29.3.8">
+<mxfile host="app.diagrams.net" agent="Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/145.0.0.0 Safari/537.36" version="29.6.0">
   <diagram name="Seite-1" id="RTM1o1HjN4SH1GjgEkPF">
-    <mxGraphModel dx="1243" dy="680" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="827" pageHeight="1169" math="0" shadow="0">
+    <mxGraphModel dx="983" dy="536" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="827" pageHeight="1169" math="0" shadow="0">
       <root>
         <mxCell id="0" />
         <mxCell id="1" parent="0" />
-        <mxCell id="G49WUM3o28csZEp7Op0N-1" parent="1" style="rounded=1;arcSize=20;strokeWidth=1;fillColor=#ECECFE;strokeColor=#8E72D7;fontFamily=Consolas;" value="Initial Blank State" vertex="1">
-          <mxGeometry height="54" width="199.5" x="260" y="90" as="geometry" />
+        <mxCell id="G49WUM3o28csZEp7Op0N-1" parent="1" style="rounded=1;arcSize=20;strokeWidth=1;fillColor=#ECECFE;strokeColor=#8E72D7;fontFamily=Consolas;" value="Empty Event Stream" vertex="1">
+          <mxGeometry height="54" width="189.5" x="30" y="40" as="geometry" />
         </mxCell>
         <mxCell id="G49WUM3o28csZEp7Op0N-2" parent="1" style="rounded=1;arcSize=20;strokeWidth=1;fillColor=#ECECFE;strokeColor=#8E72D7;fontFamily=Consolas;" value="CartCreatedEvent&#xa;aggregateId=1" vertex="1">
-          <mxGeometry height="54" width="200" x="260" y="194" as="geometry" />
+          <mxGeometry height="54" width="190" x="30" y="144" as="geometry" />
         </mxCell>
-        <mxCell id="G49WUM3o28csZEp7Op0N-10" edge="1" parent="1" source="G49WUM3o28csZEp7Op0N-3" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" target="G49WUM3o28csZEp7Op0N-9">
+        <mxCell id="G49WUM3o28csZEp7Op0N-10" edge="1" parent="1" source="G49WUM3o28csZEp7Op0N-3" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;entryX=0.5;entryY=0;entryDx=0;entryDy=0;fontFamily=Consolas;" target="G49WUM3o28csZEp7Op0N-9" value="">
           <mxGeometry relative="1" as="geometry" />
         </mxCell>
-        <mxCell id="G49WUM3o28csZEp7Op0N-3" parent="1" style="rounded=1;arcSize=20;strokeWidth=1;fillColor=#ECECFE;strokeColor=#8E72D7;fontFamily=Consolas;" value="ItemAddedEvent&#xa;aggregateId=2" vertex="1">
-          <mxGeometry height="54" width="200" x="260" y="310" as="geometry" />
+        <mxCell id="G49WUM3o28csZEp7Op0N-3" parent="1" style="rounded=1;arcSize=20;strokeWidth=1;fillColor=#DDDDDD;strokeColor=#999999;fontFamily=Consolas;" value="ItemAddedEvent&#xa;aggregateId=2" vertex="1">
+          <mxGeometry height="54" width="190" x="30" y="260" as="geometry" />
         </mxCell>
         <mxCell id="G49WUM3o28csZEp7Op0N-4" parent="1" style="rounded=0;arcSize=20;strokeWidth=1;strokeColor=#D79995;fillColor=#FEF4F3;fontFamily=Consolas;" value="Aggregate&#xa;id=1" vertex="1">
-          <mxGeometry height="120" width="102" x="690" y="270" as="geometry" />
+          <mxGeometry height="280" width="102" x="450" y="150" as="geometry" />
         </mxCell>
         <mxCell id="G49WUM3o28csZEp7Op0N-5" edge="1" parent="1" source="G49WUM3o28csZEp7Op0N-1" style="curved=1;startArrow=none;endArrow=block;exitX=0.5;exitY=1;rounded=0;fontFamily=Consolas;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" target="G49WUM3o28csZEp7Op0N-2" value="">
           <mxGeometry relative="1" as="geometry">
             <Array as="points" />
-            <mxPoint x="350" y="194" as="targetPoint" />
+            <mxPoint x="110" y="144" as="targetPoint" />
           </mxGeometry>
         </mxCell>
         <mxCell id="G49WUM3o28csZEp7Op0N-6" edge="1" parent="1" source="G49WUM3o28csZEp7Op0N-2" style="curved=1;startArrow=none;endArrow=block;exitX=0.5;exitY=1;entryX=0.5;entryY=0;rounded=0;fontFamily=Consolas;exitDx=0;exitDy=0;entryDx=0;entryDy=0;" target="G49WUM3o28csZEp7Op0N-3" value="">
@@ -42,7 +42,7 @@
           </mxGeometry>
         </mxCell>
         <mxCell id="G49WUM3o28csZEp7Op0N-9" parent="1" style="rounded=1;arcSize=20;strokeWidth=1;fillColor=#ECECFE;strokeColor=#8E72D7;fontFamily=Consolas;" value="ItemAddedEvent&#xa;aggregateId=1" vertex="1">
-          <mxGeometry height="54" width="200" x="260" y="430" as="geometry" />
+          <mxGeometry height="54" width="170" x="40" y="380" as="geometry" />
         </mxCell>
       </root>
     </mxGraphModel>

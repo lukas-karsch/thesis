@@ -26,20 +26,14 @@ After implementing the prototypes, they can be compared and evaluated based on t
 
 To answer \hyperref[rs-performance-scalability]{\acrshort{rq} 1}, the performance characteristics of both architectural patterns will be evaluated and compared. To achieve this, load tests are executed on selected endpoints. The theoretical foundations of load testing, environmental constraints, and the data collection methodology are described in this subsection. Finally, perspectives on scalability are presented, which can be derived by analyzing results of load tests.
 
-\subsubsection{Theoretical Load Testing Foundations}
-\label{sec:load-test-theory}
+\subsubsection{Load Testing}
+\label{sec:load-test-methodology}
 
-To provide accurate performance metrics, load testing is performed on both implementations based on the methodology defined by \textcite[10-17]{kleppmann_designing_2017}. Load is generally characterized using "load parameters," which vary depending on the system's nature. For this thesis, the primary load parameter is the number of concurrent requests to the web server~\cite[11]{kleppmann_designing_2017}
+Based on the theoretical foundations laid out in \autoref{sec:evaluating-performance-through-load-testing}, this thesis performs load testing on both implementations. The primary load parameter used is the number of concurrent requests to the web server~\cite[11]{kleppmann_designing_2017}. The tests measure \textbf{\acrfull{rps}}, and server- and client-side response times to ensure that queueing delays are accurately captured and user-perceived performance is reflected.
 
-The tests measure \textbf{\acrfull{rps}} and client-side response times. \textcite[15,16]{kleppmann_designing_2017} emphasizes the importance of client-side measurement to account for "queueing delays." As server-side processing is limited by hardware resources (e.g., CPU cores), requests may be stalled before processing begins. Server-side metrics typically measure latencies by executing request filters which only run once the request starts being processed. Therefore, server-side latency metrics often exclude the "waiting time" a request spent in the queue, leading to an overly optimistic view of performance. Consequently, the client-side latencies are more relevant to measure user-perceived performance.
+Following the "open model" principle, the load-generation setup ensures that requests are sent continuously to simulate realistic concurrency. This thesis adopts the approach of keeping system resources constant while measuring performance fluctuations under varying load intensities.
 
-\textcite[16]{kleppmann_designing_2017} also mentions that the load-generating client must continuously send requests without waiting for previous ones to complete, to simulate realistic concurrent user behavior. In load-testing frameworks, this is often called an "open model". If a client waits for its request to complete before sending the next one, queues on the server are kept artificially short. This is typically called "closed model".
-
-This thesis adopts the approach of keeping system resources constant while measuring performance fluctuations under varying load intensities, as opposed increasing system resources to keep unchanged performance. These two perspectives are described by \textcite[13]{kleppmann_designing_2017}.
-
-\textcite[264]{abbott_art_2009} mention another way of looking at load testing: In \emph{positive testing}, load is increased until an application is overwhelmed, while \emph{negative testing} takes away system resources such as memory, threads or connections, until the application degrades.
-
-To evaluate results, the arithmetic mean is avoided as it obscures the experience of typical users and the impact of outliers. Instead, this thesis uses \glspl{percentile}. The \gls{median} (P50) serves as the metric for "typical" response time. Exactly 50\% of requests experience the median latency or less, while the other half experiences a higher latency. However, to capture the experience of users facing high delays, it is critical to measure "\glspl{tail-latency}" via a high percentile like P95 or P99. High percentiles identify the performance of outliers which, despite being a numerical minority, often represent the most valuable or complex operations. \cite[14-16]{kleppmann_designing_2017}
+In the analysis of the results, the arithmetic mean is avoided in favor of \glspl{percentile}. The \gls{median} (P50) is used to determine the typical response time, while P95 and P99 percentiles are utilized to measure tail latency and identify the performance of outliers.
 
 \subsubsection{Test Execution}
 \label{sec:test-execution-method}

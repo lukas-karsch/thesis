@@ -175,7 +175,7 @@ Docker Compose is a tool used to define and manage applications consisting of mu
 
 Grafana k6\footnote{\url{https://grafana.com/docs/k6/latest/}} is an open-source performance testing tool designed to evaluate the reliability and performance of a system. It simulates various traffic patterns, such as constant load, sudden stress spikes, and long-term soak tests, to identify slow response times and system failures during development and continuous integration. Metrics are collected during execution and can be visualized through platforms like Grafana or exported to various data backends for detailed reporting~\cite{k6-overview}.
 
-k6 allows tests to be written in JavaScript, making it accessible and easy to integrate into existing codebases. Every k6 test follows a common structure. The main component is a function that contains the core logic of the test. This function should be the default export of the JavaScript file. It is executed concurrently for each \acrlong{VU} (\acrshort{VU}), which act as independent execution threads to repeatedly apply the test logic. The tests can be enhanced using k6's lifecycle functions, such as a setup function, which is executed only once and may be utilized to insert seed data into the system. The test execution can be configured using an "options" object, where VUs, test duration and performance thresholds can be set~\cite{k6-write-your-first-test}.
+k6 allows tests to be written in JavaScript, making it accessible and easy to integrate into existing codebases. Every k6 test follows a common structure. The main component is a function that contains the core logic of the test. This function should be the default export of the JavaScript file. It is executed concurrently for each \acrlong{VU} (\acrshort{VU}), which act as independent execution threads to repeatedly apply the test logic. The tests can be enhanced using k6's lifecycle functions, such as a setup function, which is executed only once and may be utilized to insert seed data into the system. The test execution can be configured using an "options" object, where \acrshortpl{VU}, test duration and performance thresholds can be set~\cite{k6-write-your-first-test}.
 
 \section{Contract Test Implementation}
 \label{sec:contract-test-implementation}
@@ -419,7 +419,7 @@ As reads pass through the same components as writes, a subsequent read request i
     \label{fig:crud-diagram}
 \end{figure}
 
-\section{ES/CQRS implementation TODO: refine language}
+\section{ES-CQRS implementation TODO: refine language}
 \label{sec:es-cqrs-implementation}
 
 \subsection{Architectural Overview}
@@ -427,7 +427,7 @@ As reads pass through the same components as writes, a subsequent read request i
 
 The architecture of the \texttt{impl-es-cqrs} application\footnote{\javaname{impl-es-cqrs/src/main/java/karsch.lukas}} differs from the traditional layered architecture seen in the \texttt{impl-crud} application. While the CRUD implementation also has some vertical slicing, the ES-CQRS implementation is much more explicit about it. The code is organized into "features", each representing a vertical slice of the application's functionality (e.g., \texttt{course}, \texttt{enrollment}, \texttt{lectures}). Each feature is self-contained and includes its own command handlers, event sourcing handlers, query handlers, and its own web controller, if needed.
 
-An architecture like this is descriptive and able to communicate the features of a project at a glance. As clean architecture is not in the scope of this thesis, the separation into features with clear naming conventions for command and query components is sufficient. It should be mentioned that in many "vertical slice" architectures, the separation goes even further than described here, creating separate packages for each use-case, such as \keyw{GetLecture}, \keyw{CreateCourse}, and so on.
+An architecture like this is descriptive and able to communicate the features of a project at a glance. As clean architecture is not in the scope of this thesis, the separation into features with clear naming conventions for Command and Query components is sufficient. It should be mentioned that in many "vertical slice" architectures, the separation goes even further than described here, creating separate packages for each use-case, such as \keyw{GetLecture}, \keyw{CreateCourse}, and so on.
 
 \subsection{Data Modeling}
 \label{sec:cqrs-data-modeling}
@@ -675,7 +675,7 @@ After extracting data from the k6 output and Prometheus, it is consolidated into
 
 To assess the eventual consistency of the ES-CQRS architecture, a specialized test for the \hyperref[slo-freshness]{Freshness \acrshort{slo}} was developed.\footnote{\keyw{performance-tests/k6/time-to-consistency/create-lecture/create-lecture.js}} Unlike standard performance scripts, which measure the speed of isolated requests, this script is specifically designed to measure the synchronization delay between the command and query sides of the application. This delay, called eventual consistency, occurs because the write-side (Command) and read-side (Query) are strictly separated in \acrshort{cqrs}.
 
-The primary difference from a typical k6 test lies in the execution flow within the default function. Rather than executing a single \gls{http} call, this test executes two calls to the application. First, it performs a POST request to create a lecture and captures the resulting ID. After creating the lecture, the script performs sleeps for exactly 0.1 seconds, the threshold defined in the Freshness \acrshort{slo}. After this threshold, the application is expected to have synchronized the write- and read-side. Once the script wakes up from its sleep, it performs a GET request, attempting to fetch the newly created lecture.
+The primary difference from a typical k6 test lies in the execution flow within the default function. Rather than executing a single \gls{http} call, this test executes two calls to the application. First, it performs a POST request to create a lecture and captures the resulting ID. After creating the lecture, the script performs sleeps for exactly 0.1 seconds, the freshnessthreshold defined in the \ref{slo-freshness}. After this threshold, the application is expected to have synchronized the write- and read-side. Once the script wakes up again, it performs a GET request, attempting to fetch the newly created lecture.
 
 To track the success rate of this request, the script introduces a custom Rate metric named $read\_visible\_rate$. By manually adding true or false to this metric based on whether the lecture was found, indicated by a response status of 200, the script generates a percentage of "fresh" requests inside the required threshold of 100ms. This provides a clear statistical view of how reliably the ES-CQRS system maintains its "fresh" data under varying levels of load.
 
