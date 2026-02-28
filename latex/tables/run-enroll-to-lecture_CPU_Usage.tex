@@ -1,30 +1,30 @@
 \begin{table}[H]
     \small
     \centering
-        \begin{tabular}{rrrcrrcc}
-            \toprule
-                         & \multicolumn{2}{c}{\textbf{CRUD (ms)}} &                   & \multicolumn{2}{c}{\textbf{ES-CQRS (ms)}} &                 &                                                            \\
-            \cmidrule{2-3} \cmidrule{5-6}
-            \textbf{RPS} & \textbf{Median}                        & \textbf{CI $\pm$} &                                           & \textbf{Median} & \textbf{CI $\pm$} & \textbf{Ratio} & \textbf{Significance} \\
-            \midrule
+    \begin{tabular}{rrrcrrcc}
+        \toprule
+                     & \multicolumn{2}{c}{\textbf{CRUD (ms)}} &                   & \multicolumn{2}{c}{\textbf{ES-CQRS (ms)}} &                 &                                                            \\
+        \cmidrule{2-3} \cmidrule{5-6}
+        \textbf{RPS} & \textbf{Median}                        & \textbf{CI $\pm$} &                                           & \textbf{Median} & \textbf{CI $\pm$} & \textbf{Ratio} & \textbf{Significance} \\
+        \midrule
 
-            25           & 0.0338                                 & 0.0017            &                                           & 0.0914          & 0.0035            &
-            2.5x Higher  & ***                                                                                                                                                                                   \\
+        25           & 0.0338                                 & 0.0017            &                                           & 0.0914          & 0.0035            &
+        2.5x Higher  & ***                                                                                                                                                                                   \\
 
-            50           & 0.0416                                 & 0.002             &                                           & 0.1481          & 0.005             &
-            3.2x Higher  & ***                                                                                                                                                                                   \\
+        50           & 0.0416                                 & 0.002             &                                           & 0.1481          & 0.005             &
+        3.2x Higher  & ***                                                                                                                                                                                   \\
 
-            100          & 0.0639                                 & 0.0022            &                                           & 0.284           & 0.0087            &
-            4.2x Higher  & ***                                                                                                                                                                                   \\
+        100          & 0.0639                                 & 0.0022            &                                           & 0.284           & 0.0087            &
+        4.2x Higher  & ***                                                                                                                                                                                   \\
 
-            200          & 0.1146                                 & 0.0032            &                                           & 0.4198          & 0.0113            &
-            3.5x Higher  & ***                                                                                                                                                                                   \\
+        200          & 0.1146                                 & 0.0032            &                                           & 0.4198          & 0.0113            &
+        3.5x Higher  & ***                                                                                                                                                                                   \\
 
-            500          & 0.3566                                 & 0.0066            &                                           & 0.4033          & 0.0124            &
-            1.1x Higher  & ***                                                                                                                                                                                   \\
+        500          & 0.3566                                 & 0.0066            &                                           & 0.4033          & 0.0124            &
+        1.1x Higher  & ***                                                                                                                                                                                   \\
 
-            \bottomrule
-        \end{tabular}
-    \caption{Statistical comparison of $cpu\_usage$ for POST /lectures/\{lectureId\}/enroll, aggregated over at least 25 runs}
+        \bottomrule
+    \end{tabular}
+    \caption[Comparison of $cpu\_usage$ for POST /lectures/\{lectureId\}/enroll]{Statistical comparison of $cpu\_usage$ for POST /lectures/\{lectureId\}/enroll, aggregated over at least 25 runs}
     \label{table:run-enroll-to-lecture-aggregated-cpu-usage}
 \end{table}

@@ -1,25 +1,25 @@
 \begin{table}[H]
     \small
     \centering
-        \begin{tabular}{rrrcrrcc}
-            \toprule
-                         & \multicolumn{2}{c}{\textbf{CRUD (ms)}} &                   & \multicolumn{2}{c}{\textbf{ES-CQRS (ms)}} &                 &                                                            \\
-            \cmidrule{2-3} \cmidrule{5-6}
-            \textbf{RPS} & \textbf{Median}                        & \textbf{CI $\pm$} &                                           & \textbf{Median} & \textbf{CI $\pm$} & \textbf{Ratio} & \textbf{Significance} \\
-            \midrule
+    \begin{tabular}{rrrcrrcc}
+        \toprule
+                     & \multicolumn{2}{c}{\textbf{CRUD (ms)}} &                   & \multicolumn{2}{c}{\textbf{ES-CQRS (ms)}} &                 &                                                            \\
+        \cmidrule{2-3} \cmidrule{5-6}
+        \textbf{RPS} & \textbf{Median}                        & \textbf{CI $\pm$} &                                           & \textbf{Median} & \textbf{CI $\pm$} & \textbf{Ratio} & \textbf{Significance} \\
+        \midrule
 
-            25           & 0.0                                    & 0.0312            &                                           & 0.0             & 0.081             & 3.3x Higher    & ***                   \\
+        25           & 0.0                                    & 0.0312            &                                           & 0.0             & 0.081             & 3.3x Higher    & ***                   \\
 
-            50           & 0.0                                    & 0.0352            &                                           & 1.0             & 0.0898            & 3.6x Higher    & ***                   \\
+        50           & 0.0                                    & 0.0352            &                                           & 1.0             & 0.0898            & 3.6x Higher    & ***                   \\
 
-            100          & 0.0                                    & 0.0385            &                                           & 2.0             & 0.1316            & 5.3x Higher    & ***                   \\
+        100          & 0.0                                    & 0.0385            &                                           & 2.0             & 0.1316            & 5.3x Higher    & ***                   \\
 
-            200          & 1.0                                    & 0.0414            &                                           & 4.0             & 0.1711            & 4.7x Higher    & ***                   \\
+        200          & 1.0                                    & 0.0414            &                                           & 4.0             & 0.1711            & 4.7x Higher    & ***                   \\
 
-            500          & 4.0                                    & 0.3303            &                                           & 4.0             & 0.1692            & 1.4x Lower     & ***                   \\
+        500          & 4.0                                    & 0.3303            &                                           & 4.0             & 0.1692            & 1.4x Lower     & ***                   \\
 
-            \bottomrule
-        \end{tabular}
-    \caption{Statistical comparison of $hikari\_connections$ for POST /lectures/\{lectureId\}/enroll, aggregated over at least 25 runs}
+        \bottomrule
+    \end{tabular}
+    \caption[Comparison of $hikari\_connections$ for POST /lectures/\{lectureId\}/enroll]{Statistical comparison of $hikari\_connections$ for POST /lectures/\{lectureId\}/enroll, aggregated over at least 25 runs}
     \label{table:run-enroll-to-lecture-aggregated-database-connections}
 \end{table}

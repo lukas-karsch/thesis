@@ -1,29 +1,29 @@
 \begin{table}[H]
     \small
     \centering
-        \begin{tabular}{rrrcrrcc}
-            \toprule
-                         & \multicolumn{2}{c}{\textbf{CRUD (ms)}} &                   & \multicolumn{2}{c}{\textbf{ES-CQRS (ms)}} &                 &                                                            \\
-            \cmidrule{2-3} \cmidrule{5-6}
-            \textbf{RPS} & \textbf{Median}                        & \textbf{CI $\pm$} &                                           & \textbf{Median} & \textbf{CI $\pm$} & \textbf{Ratio} & \textbf{Significance} \\
-            \midrule
+    \begin{tabular}{rrrcrrcc}
+        \toprule
+                     & \multicolumn{2}{c}{\textbf{CRUD (ms)}} &                   & \multicolumn{2}{c}{\textbf{ES-CQRS (ms)}} &                 &                                                            \\
+        \cmidrule{2-3} \cmidrule{5-6}
+        \textbf{RPS} & \textbf{Median}                        & \textbf{CI $\pm$} &                                           & \textbf{Median} & \textbf{CI $\pm$} & \textbf{Ratio} & \textbf{Significance} \\
+        \midrule
 
-            25           & 10.0                                   & 0.0               &                                           & 10.0            & 0.0               & 1.0x           & n.s.                  \\
+        25           & 10.0                                   & 0.0               &                                           & 10.0            & 0.0               & 1.0x           & n.s.                  \\
 
-            50           & 10.0                                   & 0.0               &                                           & 10.0            & 0.0               & 1.0x           & n.s.                  \\
+        50           & 10.0                                   & 0.0               &                                           & 10.0            & 0.0               & 1.0x           & n.s.                  \\
 
-            100          & 15.0                                   & 0.5               &                                           & 10.0            & 0.0               & 1.5x Lower     & ***                   \\
+        100          & 15.0                                   & 0.5               &                                           & 10.0            & 0.0               & 1.5x Lower     & ***                   \\
 
-            200          & 96.0                                   & 87.0              &                                           & 10.0            & 0.0               & 9.6x Lower     & ***                   \\
+        200          & 96.0                                   & 87.0              &                                           & 10.0            & 0.0               & 9.6x Lower     & ***                   \\
 
-            250          & 10.0                                   & 6.5               &                                           & 10.0            & 0.0               & 1.0x           & ***                   \\
+        250          & 10.0                                   & 6.5               &                                           & 10.0            & 0.0               & 1.0x           & ***                   \\
 
-            500          & 200.0                                  & 31.0              &                                           & 10.0            & 0.0               & 20.0x Lower    & ***                   \\
+        500          & 200.0                                  & 31.0              &                                           & 10.0            & 0.0               & 20.0x Lower    & ***                   \\
 
-            1000         & 200.0                                  & 0.0               &                                           & 20.0            & 1.0               & 10.0x Lower    & ***                   \\
+        1000         & 200.0                                  & 0.0               &                                           & 20.0            & 1.0               & 10.0x Lower    & ***                   \\
 
-            \bottomrule
-        \end{tabular}
-    \caption{Statistical comparison of $tomcat\_threads$ for GET /lectures/all, aggregated over at least 20 runs}
+        \bottomrule
+    \end{tabular}
+    \caption[Comparison of $tomcat\_threads$ for GET /lectures/all]{Statistical comparison of $tomcat\_threads$ for GET /lectures/all, aggregated over at least 20 runs}
     \label{table:run-read-all-lectures-aggregated-Threadpool_Usage}
 \end{table}
