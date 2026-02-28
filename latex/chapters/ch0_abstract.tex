@@ -1,16 +1,26 @@
 % !TeX root = ../main.tex
 \begin{abstract}
-    This is my abstract.
+    This thesis provides an empirical comparison of traditional Layered CRUD Architectures and applications using Command Query Responsibility Segregation (CQRS) paired with Event Sourcing in terms of performance, scalability, and long-term flexibility. The study addresses these topics by evaluating two functional prototypes of a course enrollment and grading system, one built on a standard Layered Architecture with a relational audit log, and the other on an Event-driven approach using CQRS with Axon Framework. A high degree of comparability is achieved by implementing both applications against an identical contract and requirements.
 
+    Performance metrics taken through load testing reveal that the CRUD application generally maintains higher write performance and resource efficiency, while the ES-CQRS application excels in complex, read-heavy scenarios through its use of denormalized, pre-computed projections. However, this read optimization introduces new challenges, such as eventual consistency. Static analysis was applied to evaluate the architectural flexibility of the applications. It further highlights that while CRUD systems may be simpler to implement, they exhibit higher transitive coupling that could hinder the codebase's long-term evolution. In contrast, the isolation provided by CQRS facilitates suggests the possibility of a more seamless transition towards a distributed architecture.
+
+    The study also examines how these architectures satisfy requirements for historical traceability. How reliably can a system reconstruct its past while maintaining data integrity? Findings indicate that while CRUD audit logs offer faster retrieval of historc state, they are vulnerable to data divergence. By treating its immutable event log as the primary source of truth, Event Sourcing provides superior integrity and accuracy, additionally preserving business intent. Ultimately, the choice between these patterns depends on the specific domain requirements in terms of read-to-write ratios, its tolerance for consistency delays, and its requirements regarding auditing.
+
+    \vspace{0.2cm}
     \noindent\textbf{Keywords:} CQRS, CRUD, Architecture, Load Testing, Scalability, Traceability, Static Analysis
 
     \vspace{5em}
 
     %LTeX: language=de-DE
     \noindent
-    Das ist mein Abstrakt. Es geht um einen Vergleich zwischen Softwarearchitekturen: typische Schichtenarchitektur vs. CQRS und Event Sourcing.
+    Diese Arbeit bietet einen empirischen Vergleich zwischen traditionellen CRUD-Schichtenarchitekturen und Anwendungen, die Command Query Responsibility Segregation (CQRS) mit Event Sourcing nutzen, hinsichtlich Leistung, Skalierbarkeit und langfristiger Flexibilität. Die Thesis befasst sich mit diesen Themen, indem sie zwei funktionale Prototypen eines Kursanmelde- und Benotungssystems bewertet. Von diesen Prototypen basiert einer auf einer traditionellen Schichtenarchitektur mit einem relationalen Audit-Log, und der andere auf einer Event-getriebenen Architektur unter Verwendung von CQRS mit Axon Framework. Beide Anwendungen werden gegen denselben Vertrag und dieselben Anforderungen implementiert, um einen hohen Grad an Vergleichbarkeit zu erreichen.
 
-    \noindent\textbf{Keywords:} CQRS, CRUD, Architektur, Stresstests, Skalierbarkeit, Rückverfolgbarkiet, Statische Analyse
+    Um Leistungsdaten zu sammeln, wurden Stresstests durchgeführt. Die Ergebnisse zeigen, dass die CRUD-Anwendung im Allgemeinen eine höhere Leistung bei Schreibvorgängen, sowie bessere Ressourceneffizienz besitzt, während die ES-CQRS-Anwendung durch die Verwendung von denormalisierten, vorberechneten "Projektionen" in intensiven und komplexen Lesevorgängen bessere Leistung zeigt. Diese Optimierung der Lesevorgänge bringt jedoch neue Herausforderungen mit sich, wie z.B. eventuelle Konsistenz. Um die Flexibilität der beiden Architekturen zu bewerten, wurde statische Codeanalyse verwendet. Diese unterstreicht zusätzlich, dass CRUD-Systeme zwar einfacher zu implementieren sind, jedoch eine höhere transitive Kopplung aufweisen, welche die langfristige Weiterentwicklung der Codebasis behindern könnte. Im Gegensatz dazu ermöglicht die erhöhte Isolation durch CQRS einen nahtloseren Übergang zu einer verteilten Architektur.
+
+    Die Arbeit untersucht auch, inwiefern diese Architekturen verschiedene Anforderungen an historische Rückverfolgbarkeit erfüllen. Wie zuverlässig kann ein System seine Vergangenheit rekonstruieren und dabei die Datenintegrität gewährleisten? Die Ergebnisse zeigen, dass Audit-Logs in CRUD zwar einen schnelleren Abruf historischer Zustände ermöglichen, jedoch potenziell anfällig für Datenabweichungen sind. Indem Event Sourcing ein unveränderliches "Ereignisprotokoll" (Event Log) als zentrale Datenquelle verwendet, bietet es eine bessere Integrität und Genauigkeit, und bewahrt zusätzlich die Absicht von Aktionen. Letztendlich hängt die Wahl zwischen den beiden Architekturen von den spezifischen Anforderungen des Anwendungsbereichs in Bezug auf das Verhältnis zwischen Lese- und Schreibvorgängen, seiner Toleranz gegenüber Konsistenzverzögerungen und seinen Anforderungen hinsichtlich Auditing ab.
+
+    \vspace{0.2cm}
+    \noindent\textbf{Keywords:} CQRS, CRUD, Architektur, Stresstests, Skalierbarkeit, Rückverfolgbarkeit, Statische Codeanalyse
 
 \end{abstract}
 

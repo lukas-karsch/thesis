@@ -435,7 +435,7 @@
 \section*{Ehrenwörtliche Erklärung}
 Hiermit versichere ich, Lukas Karsch, ehrenwörtlich, dass ich die vorliegende Bachelorarbeit mit dem Titel: "Performance, flexibility and traceability: Evaluating the impact of Event Sourcing and CQRS compared to traditional systems with an audit log" selbstständig und ohne fremde Hilfe verfasst und keine anderen als die angegebenen Hilfsmittel benutzt habe. Die Stellen der Arbeit, die dem Wortlaut oder dem Sinn nach anderen Werken entnommen wurden, sind in jedem Fall unter Angabe der Quelle kenntlich gemacht. Ebenso sind alle Stellen, die mit Hilfe eines KI-basierten Schreibwerkzeugs erstellt oder überarbeitet wurden, kenntlich gemacht. Die im Anhang aufgelisteten KI-Werkzeuge wurden ausschließlich zum Lektorat verwendet. Anschließend wurde sichergestellt, dass der Inhalt mit den intendierten Aussagen noch übereinstimmt. Die Arbeit ist noch nicht veröffentlicht oder in anderer Form als Prüfungsleistung vorgelegt worden. Ich habe die Bedeutung der ehrenwörtlichen Versicherung und die prüfungsrechtlichen Folgen (§ 24 Abs. 2 Bachelor-SPO) einer unrichtigen oder unvollständigen ehrenwörtlichen Versicherung zur Kenntnis genommen.
 
-\vspace{1.8cm} % Space for signature
+\vspace{1.0cm} % Space for signature
 
 \noindent\rule{7cm}{0.4pt} \\
 \noindent \small{Lukas Karsch, 02.03.2026}
@@ -670,14 +670,16 @@ This chapter lists tables containing the full results of static analysis metrics
     \centering
     \begin{tabularx}{\linewidth}{llX}
         \toprule
-        \textbf{Kapitel / Codemodul} & \textbf{Tool(s)} & \textbf{Beschreibung und Begründung Einsatzzweck}                                                     \\ \midrule
-        Alle Kapitel                 & Gemini           & LaTeX Syntax-Unterstützung bei Tabellen, figures, listings                                            \\
+        \textbf{Kapitel / Codemodul} & \textbf{Tool(s)} & \textbf{Beschreibung \& Begründung Einsatzzweck}                                                             \\ \midrule
+        Alle Kapitel                 & Gemini           & LaTeX Syntax-Unterstützung bei Tabellen, figures, listings                                                   \\
         \addlinespace
-        Alle Kapitel                 & DeepL Write      & Grammatikalische und stilistische Überarbeitung von Textsegmenten                                     \\
+        Alle Kapitel                 & DeepL Write      & Grammatikalische und stilistische Überarbeitung von Textsegmenten                                            \\
         \addlinespace
-        Alle Kapitel                 & DeepL Translate  & Übersetzung von Wörtern und Formulierungen                                                            \\
+        Alle Kapitel                 & DeepL Translate  & Übersetzung von Wörtern und Formulierungen                                                                   \\
         \addlinespace
-        Kapitel 7 (Results)          & Gemini           & Hilfe bei der Visualisierung \& statistischen Auswertung der Ergebnisse (matplotlib, pandas, seaborn) \\
+        Kapitel 7 (Results)          & Gemini           & Hilfe bei der Visualisierung \& statistischen Auswertung der Ergebnisse (matplotlib, pandas, seaborn, numpy) \\
+        \addlinespace
+        \texttt{api} Modul           & Gemini           & Generierung von Swagger-Dokumentation                                                                        \\
         \bottomrule
     \end{tabularx}
     \caption{AI tools used throughout the thesis}
