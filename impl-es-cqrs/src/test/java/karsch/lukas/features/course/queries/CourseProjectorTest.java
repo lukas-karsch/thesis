@@ -1,14 +1,15 @@
 package karsch.lukas.features.course.queries;
 
+import karsch.lukas.core.queries.CourseMapper;
 import karsch.lukas.course.CourseDTO;
 import karsch.lukas.course.SimpleCourseDTO;
 import karsch.lukas.features.course.api.CourseCreatedEvent;
 import karsch.lukas.features.course.api.FindAllCoursesQuery;
 import karsch.lukas.features.course.api.FindCourseByIdQuery;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentCaptor;
-import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
@@ -25,8 +26,14 @@ class CourseProjectorTest {
     @Mock
     private CourseRepository courseRepository;
 
-    @InjectMocks
+    private final CourseMapper courseMapper = new CourseMapper();
+
     private CourseProjector courseProjector;
+
+    @BeforeEach
+    void setup() {
+        courseProjector = new CourseProjector(courseRepository, courseMapper);
+    }
 
     @Test
     void onCourseCreatedEvent_shouldSaveCourseProjectionEntity() {

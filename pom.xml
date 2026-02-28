@@ -38,8 +38,8 @@
             <dependency>
                 <groupId>org.assertj</groupId>
                 <artifactId>assertj-bom</artifactId>
-                <version>3.27.6</version>
-                <type>bom</type>
+                <version>3.27.7</version>
+                <type>pom</type>
                 <scope>import</scope>
             </dependency>
 
@@ -51,7 +51,6 @@
                 <scope>import</scope>
             </dependency>
 
-            <!-- Testcontainers dependencies -->
             <dependency>
                 <groupId>org.testcontainers</groupId>
                 <artifactId>testcontainers-bom</artifactId>
@@ -60,23 +59,16 @@
                 <scope>import</scope>
             </dependency>
 
-            <!-- Testcontainer specific modules -->
-            <dependency>
-                <groupId>org.testcontainers</groupId>
-                <artifactId>postgresql</artifactId>
-                <version>1.19.7</version>
-            </dependency>
-            <dependency>
-                <groupId>org.testcontainers</groupId>
-                <artifactId>junit-jupiter</artifactId>
-                <version>1.19.7</version>
-            </dependency>
-
-            <!-- Database Driver -->
             <dependency>
                 <groupId>org.postgresql</groupId>
                 <artifactId>postgresql</artifactId>
-                <version>${postgresql.version}</version>
+                <version>42.7.8</version>
+            </dependency>
+
+            <dependency>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-starter-aspectj</artifactId>
+                <version>4.0.1</version>
             </dependency>
         </dependencies>
     </dependencyManagement>
@@ -86,7 +78,6 @@
             <artifactId>junit-jupiter-api</artifactId>
             <scope>test</scope>
         </dependency>
-        <!-- Optionally: parameterized tests support -->
         <dependency>
             <groupId>org.junit.jupiter</groupId>
             <artifactId>junit-jupiter-params</artifactId>
