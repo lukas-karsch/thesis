@@ -2,7 +2,7 @@
 \chapter{Basics}
 \label{ch:basics}
 
-To provide a comprehensive framework for the technical implementation discussed in this thesis, this chapter outlines the foundations of modern web architecture, domain-driven design, and the mechanisms facilitating consistency and auditing in event-driven systems.
+To provide a comprehensive framework for the technical implementation discussed in this thesis, this chapter outlines the foundations of modern web architecture, domain-driven design, and the mechanisms facilitating consistency and auditing in Event-driven systems.
 
 \section{WWW, Web APIs, REST}
 
@@ -286,7 +286,7 @@ When $\psi$ is close to or greater than 1, the system is considered to be scalab
 
 \subsection{Headroom and Resource Saturation}
 
-\textcite[Chapter 11]{abbott_art_2009} defines headroom as the amount of free capacity existing within a system before it begins to suffer from performance degradation or outages. To accurately calculate headroom, one must subtract the current usage from the "ideal usage" of a component's maximum capacity, while also factoring in expected future growth and any planned optimization projects. This metric is used to ensure a system can handle future increases in load without failure.
+\textcite[Chapter 11]{abbott_art_2009} define headroom as the amount of free capacity existing within a system before it begins to suffer from performance degradation or outages. To accurately calculate headroom, one must subtract the current usage from the "ideal usage" of a component's maximum capacity, while also factoring in expected future growth and any planned optimization projects. This metric is used to ensure a system can handle future increases in load without failure.
 
 Resource saturation occurs when a system approaches its maximum capacity, a state that should be avoided because system behavior becomes unpredictable near 100\% utilization. As resources saturate, issues such as "thrashing" (excessive swapping of data between memory and disk) emerge, causing performance to plummet dramatically rather than degrade linearly. To prevent saturation and maintain stability, Abbott suggests adhering to an "ideal usage percentage," generally recommending that systems run at only 50\% to 75\% of their total capacity to account for demand variability and estimation errors.
 
