@@ -1,5 +1,5 @@
 %LTeX: enabled=false
-\documentclass[11pt,a4paper]{report}
+\documentclass[10pt,a4paper]{report}
 \usepackage[a4paper, margin=3cm]{geometry}
 \usepackage{array}
 \usepackage[utf8]{inputenc}
@@ -78,9 +78,8 @@
 
 \usepackage{setspace}
 \usepackage{etoolbox}
-% 1.5 Zeilenabstand
-\onehalfspacing
-% außer für Listings 
+\setstretch{1.1}
+% Listings mit singlespace: 
 \BeforeBeginEnvironment{lstlisting}{\begin{singlespace}}
 \AfterEndEnvironment{lstlisting}{\end{singlespace}}
 

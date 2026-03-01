@@ -93,11 +93,11 @@ Command dispatching is the starting point for handling a command message in Axon
 In general, command handling functions return \keyw{null} if handling was successful, except for command handlers which \emph{create} Aggregates. These return the Aggregate identifier. Otherwise, a \keyw{CommandExecutionException} is propagated to the caller. While returning values from a command handler is not forbidden, it is used sparsely as it contradicts with \gls{cqrs} semantics~\cite{axoniq_command_2025,axoniq_infrastructure_2025}.
 
 \subsubsection*{Query Handling}
-Axon dispatches Queries through its messaging infrastructure. Just like the command infrastructure, Axon offers a low-level \keyw{QueryBus} which requires manual query message creation and a more high-level \keyw{QueryGateway}. When no query handler is found, an exception is thrown~\cite{axoniq_query_2025}.
+Axon dispatches queries through its messaging infrastructure. Just like the command infrastructure, Axon offers a low-level \keyw{QueryBus} which requires manual query message creation and a more high-level \keyw{QueryGateway}. When no query handler is found, an exception is thrown~\cite{axoniq_query_2025}.
 
 The \keyw{QueryGateway} includes different dispatching methods. For regular "point-to-point" queries, the \keyw{query} method can be used. For large result sets, streaming queries should be used. All query methods are asynchronous by nature and return Java's \keyw{CompletableFuture}~\cite{axoniq_query_2025}.
 
-Subscription Queries provide an initial result and continuous updates as data changes. These queries work well with reactive programming. By using a subscription query inside a web controller, a synchronous interface can be provided to clients, while keeping the internal command and event handling process asynchronous. While this approach does provide the desired synchronous user experience, it has the downside of coupling the client to the event processing flow. Alternatively, developers might employ WebSockets or other client-side notification mechanisms to inform the user about the result of their action asynchronously, after the initial request was accepted~\cite{axoniq_query_2025}.
+Subscription queries provide an initial result and continuous updates as data changes. These queries work well with reactive programming. By using a subscription query inside a web controller, a synchronous interface can be provided to clients, while keeping the internal command and event handling process asynchronous. While this approach does provide the desired synchronous user experience, it has the downside of coupling the client to the event processing flow. Alternatively, developers might employ WebSockets or other client-side notification mechanisms to inform the user about the result of their action asynchronously, after the initial request was accepted~\cite{axoniq_query_2025}.
 
 \subsubsection*{Aggregates}
 \label{sec:aggregates}
@@ -458,14 +458,14 @@ As reads pass through the same components as writes, a subsequent read request i
     \label{fig:crud-diagram}
 \end{figure}
 
-\section{ES-CQRS implementation TODO: refine language}
+\section{ES-CQRS implementation}
 \label{sec:es-cqrs-implementation}
 
 \subsection{Architectural Overview}
 
 The architecture of the \texttt{impl-es-cqrs} application\footnote{\javaname{impl-es-cqrs/src/main/java/karsch.lukas}} differs from the traditional Layered Architecture seen in the \texttt{impl-crud} application. While the CRUD implementation also has some vertical slicing, the ES-CQRS implementation is much more explicit about it. The code is organized into "features", each representing a vertical slice of the application's functionality (e.g., \texttt{course}, \texttt{enrollment}, \texttt{lectures}). Each feature is self-contained and includes its own command handlers, event sourcing handlers, query handlers, and its own web controller, if needed.
 
-An architecture like this is descriptive and able to communicate the features of a project at a glance. As clean architecture is not in the scope of this thesis, the separation into features with clear naming conventions for Command and Query components is sufficient. It should be mentioned that in many "vertical slice" architectures, the separation goes even further than described here, creating separate packages for each use-case, such as \keyw{GetLecture}, \keyw{CreateCourse}, and so on.
+An architecture like this is descriptive and able to communicate the features of a project at a glance. As clean architecture is not in the scope of this thesis, the separation into features with clear naming conventions for command and query components is sufficient. It should be mentioned that in many "vertical slice" architectures, the separation goes even further than described here, creating separate packages for each use-case, such as \keyw{GetLecture}, \keyw{CreateCourse}, and so on.
 
 \subsection{Data Modeling}
 \label{sec:cqrs-data-modeling}
@@ -474,13 +474,13 @@ In the CRUD application, \emph{Data Modeling} simply referred to relational mode
 
 Data flow between components is decoupled through the use of Events, Commands and Queries. These message types facilitate all communication in the application.
 
-The ES-CQRS application's Aggregates, which are central to Command handling in CQRS, are \keyw{CourseAggregate}\footnote{\javaname{impl-es-cqrs/src/main/java/}\keyw{karsch.lukas.features.course.commands.CourseAggregate}}, \keyw{LectureAggregate}\footnote{\javaname{impl-es-cqrs/src/main/java/}\keyw{karsch.lukas.features.lectures.commands.LectureAggregate}}, \keyw{EnrollmentAggregate}\footnote{\javaname{impl-es-cqrs/src/main/java/}\keyw{karsch.lukas.features.enrollment.commands.EnrollmentAggregate}}, \keyw{StudentAggregate}\footnote{\javaname{impl-es-cqrs/src/main/java/}\keyw{karsch.lukas.features.student.commands.StudentAggregate}} and \keyw{ProfessorAggregate}\footnote{\javaname{impl-es-cqrs/src/main/java/}\keyw{karsch.lukas.features.professor.commands.ProfessorAggregate}}. Unlike CRUD's \gls{er} model where \keyw{LectureEntity} has a foreign key to a professor, the \keyw{LectureAggregate} stores only a \keyw{professorId}. This ensures that each aggregate can be loaded and versioned independently in the Event Store.
+The ES-CQRS application's Aggregates, which are central to command handling in CQRS, are \keyw{CourseAggregate}\footnote{\javaname{impl-es-cqrs/src/main/java/}\keyw{karsch.lukas.features.course.commands.CourseAggregate}}, \keyw{LectureAggregate}\footnote{\javaname{impl-es-cqrs/src/main/java/}\keyw{karsch.lukas.features.lectures.commands.LectureAggregate}}, \keyw{EnrollmentAggregate}\footnote{\javaname{impl-es-cqrs/src/main/java/}\keyw{karsch.lukas.features.enrollment.commands.EnrollmentAggregate}}, \keyw{StudentAggregate}\footnote{\javaname{impl-es-cqrs/src/main/java/}\keyw{karsch.lukas.features.student.commands.StudentAggregate}} and \keyw{ProfessorAggregate}\footnote{\javaname{impl-es-cqrs/src/main/java/}\keyw{karsch.lukas.features.professor.commands.ProfessorAggregate}}. Unlike CRUD's \gls{er} model where \keyw{LectureEntity} has a foreign key to a professor, the \keyw{LectureAggregate} stores only a \keyw{professorId}. This ensures that each aggregate can be loaded and versioned independently in the Event Store.
 
 Sagas act as process managers, but they are also data. For each process requiring a Saga, a new instance of that Saga is created. Sagas are long-running and serializable, storing all data that is relevant to their business logic.
 
-Events, which carry facts about what happened in the system, are emitted by the command side and can be received and processed by the read-side, which then builds its projections. Projections can be seen as "derived data" which is built from events. Each Query use-case can and should create its own projections which contain exactly the data that is relevant to answer the respective Query.
+Events, which carry facts about what happened in the system, are emitted by the command side and can be received and processed by the read-side, which then builds its projections. Projections can be seen as "derived data" which is built from events. Each query use-case can and should create its own projections which contain exactly the data that is relevant to answer the respective query.
 
-Projections maintain specialized, denormalized datasets that are optimized for read performance. To eliminate the need for JOINs during querying, relationships are persisted inside JSON columns rather than relational foreign keys. This alignment ensures that projection schemas mirror the structure of the \glspl{dto} they serve, allowing the Query handler to return data with minimal transformation and using just one simple SELECT statement.
+Projections maintain specialized, denormalized datasets that are optimized for read performance. To eliminate the need for JOINs during querying, relationships are persisted inside JSON columns rather than relational foreign keys. This alignment ensures that projection schemas mirror the structure of the \glspl{dto} they serve, allowing the query handler to return data with minimal transformation and using just one simple SELECT statement.
 
 An example of a projector that stores data in such a way is the \keyw{LectureProjector}\footnote{\javaname{impl-es-cqrs/src/main/java/}\keyw{karsch.lukas.features.lectures.queries.LectureProjector}}. It demonstrates the fact that each projector maintains its own view of the system. Projectors must not use Axon's \keyw{QueryGateway} to get access to any data needed for the projection. One reason for that is the fact that when \emph{rebuilding} projections, a common use case in event sourcing, the projectors should be able to run in parallel. If projectors depend on each other, this can result in one projection attempting to query data from another projection that is not yet up to date. This is why the \keyw{LectureProjector} not only maintains a view of lectures, but also of courses, professors and students, which are then used when building the lecture's projection.
 
@@ -492,9 +492,9 @@ This section describes how different components of the ES-CQRS application handl
 \subsubsection{Command Side}
 \label{sec:command-side}
 
-Write requests (Commands) are received by a SpringBoot controller. The controller transforms the request into a Command message which is dispatched to the Command side using the \keyw{CommandGateway}. The Command side is responsible for handling all state changes in the application. It is implemented using the Aggregates and Sagas described in \autoref{sec:cqrs-data-modeling}.
+Write requests (Commands) are received by a SpringBoot controller. The controller transforms the request into a command message which is dispatched to the command side using the \keyw{CommandGateway}. The command side is responsible for handling all state changes in the application. It is implemented using the Aggregates and Sagas described in \autoref{sec:cqrs-data-modeling}.
 
-Most command handling occurs inside the Aggregates, however the enrollment of students is a use-case spanning across two Aggregates. This required the external Command handler \keyw{EnrollmentCommandHandler} to be implemented.
+Most command handling occurs inside the Aggregates, however the enrollment of students is a use-case spanning across two Aggregates. This required the external command handler \keyw{EnrollmentCommandHandler} to be implemented.
 
 \keyw{AwardCreditsSaga} is a Saga which was manages the process of awarding credits to students. The Saga is initiated when an \keyw{EnrollmentCreatedEvent} occurs. It then waits for a \keyw{LectureLifecycleAdvancedEvent} with the status \texttt{FINISHED}. Once this event is received, the saga sends an \keyw{AwardCreditsCommand} to the \keyw{EnrollmentAggregate}. The saga ends when it receives a \keyw{CreditsAwardedEvent}. This ensures that credits are only awarded after a lecture is finished, and all assessments have been graded.
 
@@ -503,18 +503,18 @@ Unlike the CRUD application, which calculates awarded credits based on the curre
 \subsubsection{Read Side}
 \label{sec:read-side}
 
-Read requests (Queries) are also received by a SpringBoot controller, which creates a Query object and dispatches it to the \keyw{QueryGateway}. The queries are routed to query handlers which can efficiently fetch data from their dedicated projections, as described in \autoref{sec:cqrs-data-modeling}. It is important to keep in mind that projections are built asynchronously, meaning they are eventually consistent and may not always reflect the latest changes applied by the command side.
+Read requests (Queries) are also received by a SpringBoot controller, which creates a query object and dispatches it to the \keyw{QueryGateway}. The queries are routed to query handlers which can efficiently fetch data from their dedicated projections, as described in \autoref{sec:cqrs-data-modeling}. It is important to keep in mind that projections are built asynchronously, meaning they are eventually consistent and may not always reflect the latest changes applied by the command side.
 
 \subsection{Encapsulation and API Boundaries}
 \label{sec:cqrs-encapsulation-and-api-boundaries}
 
-Like the \acrshort{crud} application, this prototype also implements Controller interfaces defined by the shared \texttt{api} module. However, each feature slice contains its own \texttt{api} package that is shared between web controllers, command side and read side. This "internal" \gls{api} maps the application's public interface to \gls{cqrs} semantics by defining specific Command and Query classes which target Command and Query Handlers. These feature-specific \texttt{api} packages are the only public packages in a feature slice, meaning communication across package boundaries is only possible using the defined Commands and Queries.
+Like the \acrshort{crud} application, this prototype also implements Controller interfaces defined by the shared \texttt{api} module. However, each feature slice contains its own \texttt{api} package that is shared between web controllers, command side and read side. This "internal" \gls{api} maps the application's public interface to \gls{cqrs} semantics by defining specific command and query classes which target command and query Handlers. These feature-specific \texttt{api} packages are the only public packages in a feature slice, meaning communication across package boundaries is only possible using the defined \gls{api} classes.
 
 The public \gls{api} of the application is exposed through its Controllers, which only interact with the \keyw{CommandGateway} and \keyw{QueryGateway}. This ensures that all interactions with the system internals go through the proper channels and that underlying implementations can be changed without affecting the clients.
 
 \subsection{Auditing and Temporal Queries}
 
-As described in \autoref{sec:event-sourcing}, no additional audit log has to be implemented when using \acrlong{es}. The application's state can be reconstructed using the Event Stream by rehydrating Aggregates (Command-side) and by replaying projections (Read-side), if desired.
+As described in \autoref{sec:event-sourcing}, no additional audit log has to be implemented when using \acrlong{es}. The application's state can be reconstructed using the Event Stream by rehydrating Aggregates (write-side) and by replaying projections (read-side), if desired.
 
 Temporal queries are implemented differently than in the \acrshort{crud} prototype. Using Envers, it is possible to select a specific range of revisions based on indexed columns, for example a "date" column. When using \acrlong{es}, all events have to be replayed from the Event Stream. Axon offers a method to read all events emitted by one Aggregate. The Event Stream returned from this function then has to be filtered to match the relevant events. These events can be applied to temporary projections or collected into a list. \autoref{lst:temporal-query-cqrs} presents how this workflow is used to query the grade history for a student.
 
@@ -546,7 +546,7 @@ public GradeHistoryResponse getGradeHistory(
 }
 \end{lstlisting}
 {
-\captionof{lstlisting}[Temporal Query in ES-CQRS implementation]{Simplified code for a Temporal Query in the ES-CQRS implementation. Adapted from {\javaname{impl-es-cqrs/src/main/java/karsch.lukas.features.stats.queries.gradeHistory.GradeHistoryProjector}}}
+\captionof{lstlisting}[Temporal query in ES-CQRS implementation]{Simplified code for a temporal query in the ES-CQRS implementation. Adapted from {\javaname{impl-es-cqrs/src/main/java/karsch.lukas.features.stats.queries.gradeHistory.GradeHistoryProjector}}}
 \label{lst:temporal-query-cqrs}
 }
 
@@ -577,7 +577,7 @@ After being applied, Axon routes the event to all subscribed handlers. The aggre
 
 \begin{figure}[H]
     \includegraphics[width=\textwidth, inner]{images/improved_diagrams_cqrs/mermaid-diagram-2026-02-09-140344.png}
-    \caption{Sequence Diagram: Query Flow inside the ES-CQRS application}
+    \caption{Sequence Diagram: Query flow inside the ES-CQRS application}
     \label{fig:es-cqrs-query-flow}
 \end{figure}
 

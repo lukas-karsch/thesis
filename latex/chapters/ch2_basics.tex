@@ -157,9 +157,9 @@ Consistency guarantees described by \textcite{terry_session_1994} such as \emph{
 \section{CQRS Architecture}
 \label{sec:cqrs}
 
-\gls{cqrs} is an architectural pattern based on the fundamental idea that the models used to update information should be separate from the models used to read information. This approach originated as an extension of Bertrand Meyer’s \gls{cqs} principle, which states that a method should either perform an action (a command) or return data (a query), but never both~\cite[148]{meyer_standard_2006}.
+\gls{cqrs} is an architectural pattern based on the fundamental idea that the models used to update information should be separate from the models used to read information. This approach originated as an extension of Bertrand Meyer’s \gls{cqs} principle, which states that a method should either perform an action (Command) or return data (Query), but never both~\cite[148]{meyer_standard_2006}.
 
-\gls{cqrs} is different from \gls{cqs} in the fact that in \gls{cqrs}, objects are split into two objects, one containing commands, one containing queries~\cite[17]{young_cqrs_2010}.
+\gls{cqrs} is different from \gls{cqs} in the fact that in \gls{cqrs}, objects are physically split into one object containing commands, and one object containing queries~\cite[17]{young_cqrs_2010}.
 
 \gls{cqrs} applications are typically structured by splitting the application into two paths:
 
@@ -230,7 +230,7 @@ While \hyperref[sec:audit-log]{traditional audit logs} are often implemented as 
 
 As established in \autoref{sec:event-sourcing}, every state change is captured as a discrete event. Because these events are immutable and append-only, they provide a natural foundation for the principle of traceability. Unlike traditional "state-based" auditing, where the system might only record that a value changed from $A$ to $B$, an event stream captures the specific domain context~\cite[457,531]{kleppmann_designing_2017}. The \emph{intent} behind a change is semantically conveyed through the event type. For example, while a traditional audit log might simply record a status update to \texttt{CLOSED}, an event-sourced system distinguishes between an \texttt{AccountDeletedByUser} event and an \texttt{AccountTerminatedForInactivity} event. This intent preservation provides an exhaustive audit trail without the need for additional logging logic.
 
-\textcite{fowler_event_2005} notes that because the event log is complete, the system can perform \emph{Temporal Queries}, effectively "time-traveling" to reconstruct the exact state of the system at any historical checkpoint. This makes event streams particularly robust for forensic reviews and legal compliance, as they eliminate the "information loss" associated with traditional database overwrites. In the context of the legal requirements discussed previously, the event stream serves as a sequence of actions that satisfies the need for a verifiable history~\cite[531]{kleppmann_designing_2017}.
+\textcite{fowler_event_2005} notes that because the event log is complete, the system can perform \emph{temporal queries}, effectively "time-traveling" to reconstruct the exact state of the system at any historical checkpoint. This makes event streams particularly robust for forensic reviews and legal compliance, as they eliminate the "information loss" associated with traditional database overwrites. In the context of the legal requirements discussed previously, the event stream serves as a sequence of actions that satisfies the need for a verifiable history~\cite[531]{kleppmann_designing_2017}.
 
 \subsection{Rebuilding State From an Audit Log and an Event Stream}
 
