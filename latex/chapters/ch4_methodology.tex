@@ -65,17 +65,13 @@ $axon\_event\_size$ and $axon\_snapshot\_size$ are metrics extracted from the ev
         \textbf{Metric}             & \textbf{Description}                         & \textbf{Location} \\ \midrule
         $latency\_avg$              & Average (arithmetic mean) latency            & Server, Client    \\
         \addlinespace
-        $latency\_p50$              & 50th \gls{percentile} Latency (\gls{median}) & Server, Client    \\
+        $latency\_p50$              & 50th \gls{percentile} latency (\gls{median}) & Server, Client    \\
         \addlinespace
-        $latency\_p95$              & 95th \gls{percentile} Latency                & Server, Client    \\
+        $latency\_p95$              & 95th \gls{percentile} latency                & Server, Client    \\
         \addlinespace
-        $latency\_p99$              & 99th \gls{percentile} Latency                & Server, Client    \\
+        $latency\_p99$              & 99th \gls{percentile} latency                & Server, Client    \\
         \addlinespace
-        $cpu\_usage$                & CPU usage of the Server process              & Server            \\
-        \addlinespace
-        $ram\_usage\_heap$          & Usage of Heap memory                         & Server            \\
-        \addlinespace
-        $ram\_usage\_total$         & Usage of total memory                        & Server            \\
+        $cpu\_usage$                & Process CPU usage                            & Server            \\
         \addlinespace
         $hikari\_connections$       & Number of Data Source connections            & Server            \\
         \addlinespace
@@ -89,7 +85,7 @@ $axon\_event\_size$ and $axon\_snapshot\_size$ are metrics extracted from the ev
         \addlinespace
         $axon\_storage\_size$       & $axon\_event\_size + axon\_storage\_size$    & Axon Server       \\
         \addlinespace
-        $dropped\_iterations\_rate$ & Dropped iterations per second                & Client            \\
+        $dropped\_iterations\_rate$ & Dropped iterations (per second)              & Client            \\
         \addlinespace
         $failure\_rate$             & Rate of failed requests (in \%)              & Client            \\
         \bottomrule
@@ -104,11 +100,11 @@ Data is visualized using box plots and line graphs. Box plots are used to show t
 
 \subsubsection{Scalability}
 
-As outline above, load tests are used to collect latencies and system metrics. From these results, \autoref{sec:scalability-dimensions} serves as a basis to define a scalability function specific to this thesis. Results from the scalability function can then be used to assess the scalability of each application.
+As outlined above, load tests are used to collect latencies and system metrics. From these results, \autoref{sec:scalability-dimensions} serves as a basis to define a scalability function specific to this thesis. Results from the scalability function can then be used to assess the scalability of each application.
 
 \subsection{Flexibility}
 
-\autoref{sec:static-analysis-metrics} described a set of static analysis metrics. These serve as a basis to answer \hyperref[rs-architecture]{\acrshort{rq} 2}, using the results to compare the applications' architectures and their potential for flexibility and evolution over time.
+\hyperref[sec:static-analysis-metrics]{Section \ref*{sec:static-analysis-metrics}} described a set of static analysis metrics. These serve as a basis to answer \hyperref[rs-architecture]{\acrshort{rq} 2}, using the results to compare the applications' architectures and their potential for flexibility and evolution over time.
 
 \subsection{Traceability}
 \label{sec:traceability-method}
@@ -117,7 +113,7 @@ This section describes how traceability will be compared; it serves as a basis t
 
 \subsubsection{Accuracy of reconstruction}
 
-Several qualitative criteria for the accuracy of an historic reconstruction can be defined. \emph{Source of truth integrity} defines how the system guarantees that the historic records match the current state. When a system needs to write state changes to two separate data stores, this creates a problem called "dual-write" problem in distributed systems.
+Several qualitative criteria for the accuracy of a historic reconstruction can be defined. \emph{Source of truth integrity} defines how the system guarantees that the historic records match the current state. When a system needs to write state changes to two separate data stores, this creates a problem called "dual-write" problem in distributed systems.
 
 \emph{Intent preservation} assesses the ability of a system to distinguish between different business reasons for the same data change.
 

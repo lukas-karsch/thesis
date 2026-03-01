@@ -37,7 +37,7 @@ Based on the domain described in \autoref{sec:project-description}, the followin
     \item The system shall prevent conflicts such as time slot overlaps.
     \item When a student tries enrolling to a lecture which is already full, they shall be put on a waitlist.
     \item When a student disenrolls from a lecture, the next eligible student (higher semesters are preferred) shall be enrolled.
-    \item Actions on a lecture shall only be performed during the appropriate lifecycle state. For example, enrolling shall only be possible during a lifecycle of "open for enrollment". Grades shall only be assigned when the lecture is "finished".
+    \item Actions on a lecture shall only be performed during the appropriate lifecycle state. For example, enrolling shall only be possible during a lifecycle of "open for enrollment." Grades shall only be assigned when the lecture is "finished."
 \end{itemize}
 
 \section{Non-functional Requirements}
@@ -46,6 +46,11 @@ Based on the domain described in \autoref{sec:project-description}, the followin
 A non-functional requirement, often referred to as a \emph{quality attribute}, describes the quality or performance characteristics of a solution~\cite[4]{wiegers_software_2023}. Rather than defining \emph{what} the product does, these requirements focus on \emph{how well it functions}. They establish specific goals or constraints for the design and implementation, such as targets for security, availability, or response time, to ensure the system satisfies user expectations~\cite[67]{wiegers_software_2023}.
 
 The following non-functional requirements (quality attributes) are defined.
+
+\subsection{Public Interface}
+\label{sec:functional-public-interface}
+
+The system shall provide a RESTful Web \gls{api} that clients can interact with. All functional capabilities shall be accessible via standard \gls{http} methods and \gls{json} payloads.
 
 \subsection{Service Level Objectives}
 \label{sec:slo}
@@ -84,3 +89,8 @@ To ensure the integrity of the operations, the following consistency requirement
 \label{sec:contract}
 
 Both implementations must follow the same contract regarding endpoints, request and response schemas and state transitions. To ensure this, an extensive test suite shall be set up. While the internals of the implementations will be vastly different architecturally, they will both have the same public \gls{api}, making it possible to send requests and verify the responses. Therefore, one test suite shall be developed which can be executed on both applications. The test suite should include integration tests for all \gls{api} endpoints covering both regular and edge-case (error) scenarios to ensure that both implementations behave identically.
+
+\subsection{Environment}
+\label{sec:environment}
+
+To ensure a fair and valid comparison, both implementations shall be hosted within an identical, isolated environment which can consistently be reproduced.

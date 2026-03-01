@@ -297,7 +297,7 @@ When measuring read performance, no data is created during load generation. Ther
 
 In the client-side graph, shown in \autoref{fig:l4_latency_vs_load_client}, both applications maintain a $latency\_p50$ and $latency\_p95$ of 10ms or less up to 3000 \gls{rps}. At 3000 \gls{rps}, the ES-CQRS application exhibits an around 6x higher $latency\_p95$ than the CRUD app. Beyond 3000 \gls{rps}, though, the CRUD's $latency\_p95$ overtakes ES-CQRS. At 4000 \gls{rps}, the ES-CQRS application exhibits a $latency\_p95$ of around 200ms, which is around 2.9x faster than the CRUD application at 620ms. However, CRUD's $latency\_p50$ stays lower than the one of ES-CQRS, even though the data shows a large confidence interval, meaning the results are unstable and exhibit high variance. Both applications violate \ref{slo-latency} beyond 3000 \gls{rps}.
 
-The server-side graph, presented in \autoref{fig:l6_latency_vs_load_server}, initially shows a similar pattern. Once exceeding 3000 \gls{rps}, the latencies also start increasing, however, the observed increase is not as strong as in the client-side latencies. At 4000 \gls{rps}, the ES-CQRS application shows a $latency\_p95$ of around 60ms, the CRUD application has a $latency\_p95$ of around 130ms. This indicates a queueing delay which occurs before the request starts being processed on the server.
+The server-side graph, presented in \autoref{fig:l4_latency_vs_load_server}, initially shows a similar pattern. Once exceeding 3000 \gls{rps}, the latencies also start increasing, however, the observed increase is not as strong as in the client-side latencies. At 4000 \gls{rps}, the ES-CQRS application shows a $latency\_p95$ of around 60ms, the CRUD application has a $latency\_p95$ of around 130ms. This indicates a queueing delay which occurs before the request starts being processed on the server.
 
 \begin{figure}[H]
     \centering
@@ -700,18 +700,18 @@ Boxplots are used to visualize the results of static analysis. They are a standa
 \subsection{Coupling Metrics}
 \label{sec:results-coupling}
 
-Afferent coupling ($C_a$, describing incoming connections) and Efferent coupling ($C_e$, describing outgoing connections), which were described in \autoref{sec:coupling-metrics}, are calculated by MetricsReloaded on a package-basis. The results are visualized in a boxplot. Package size influences the value of $C_a$ and $C_e$, which is why the results were normalized by class count. Therefore, the plots show this data:
+Afferent coupling ($C_a$, describing incoming connections) and Efferent coupling ($C_e$, describing outgoing connections), which were described in \autoref{sec:coupling-metrics}, are calculated by MetricsReloaded on a package-basis. The results are visualized in a boxplot. Package size influences the value of $C_a$ and $C_e$, which is why the results were normalized by class count. % Therefore, the plots show this data:
 
-\begin{equation}
-    C_a\_norm = \frac{C_a}{Class\_count}
-    \label{eq:c_a_normalized}
-\end{equation}
+% \begin{equation}
+%     C_a\_norm = \frac{C_a}{Class\_count}
+%     \label{eq:c_a_normalized}
+% \end{equation}
 
 
-\begin{equation}
-    C_e\_norm = \frac{C_e}{Class\_count}
-    \label{eq:c_e_normalized}
-\end{equation}
+% \begin{equation}
+%     C_e\_norm = \frac{C_e}{Class\_count}
+%     \label{eq:c_e_normalized}
+% \end{equation}
 
 \autoref{fig:combined_ca} presents the normalized $C_a$ per application. The CRUD application generally has higher Afferent coupling across its packages (a 33\% higher median and higher 75th \gls{percentile}). Most packages in the ES-CQRS architecture have low Afferent coupling, but some packages areas are more coupled than any package found in the CRUD app.
 

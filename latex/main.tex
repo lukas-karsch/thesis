@@ -15,6 +15,7 @@
 \usepackage{enumitem}
 \usepackage{subcaption}
 \usepackage{makecell}
+\usepackage[bottom]{footmisc} % push footnotes to the bottom 
 
 \hfuzz=5.6pt 
 
@@ -174,7 +175,7 @@
 {
     name=Atomicity,
     text=atomicity,
-    description={means that an action is either fully executed or not at all. Atomic operations make sure the application is not left in an invalid state \cite[10]{bernstein_principles_2009}}
+    description={means that an action is either fully executed or not at all. Atomic operations ensure the application is not left in an invalid state \cite[10]{bernstein_principles_2009}}
 }
 
 \newglossaryentry{cap}
@@ -203,12 +204,6 @@
     text={GPath expression},
     plural={GPath expressions},
     description={A Groovy-based path language for navigating and querying nested object graphs (such as JSON or XML) using concise, expressive selectors and closures  \cite{groovy-gpath}}
-}
-
-\newglossaryentry{restassured}
-{
-    name={REST Assured},
-    description={A library for testing HTTP servers}
 }
 
 \newglossaryentry{dockerfile}

@@ -6,11 +6,11 @@ To provide a comprehensive framework for the technical implementation discussed 
 
 \section{WWW, Web APIs, REST}
 
-The \acrfull{www} is a connected information network used to exchange data. Resources are can be accessed via \glspl{uri} which are transferred using formats like \acrshort{json} or \acrshort{html} via protocols like \gls{http}. \gls{http} is a stateless protocol based on a request-response structure. It supports standardized request types, such as \texttt{GET} and \texttt{POST}, which convey a semantic meaning~\cite{jacobs_architecture_2004}.
+The \acrfull{www} is a connected information network used to exchange data. Resources can be accessed via \glspl{uri} which are transferred using formats like \acrshort{json} or \acrshort{html} via protocols like \gls{http}. \gls{http} is a stateless protocol based on a request-response structure. It supports standardized request types, such as \texttt{GET} and \texttt{POST}, which convey a semantic meaning~\cite{jacobs_architecture_2004}.
 
-Web \acrshortpl{api} are interfaces that enable applications to communicate. They use \gls{http} as a network-based \acrshort{api}~\cite[138]{fielding_architectural_2000}. Modern \acrshortpl{api} typically follow \gls{rest} principles. \gls{rest} stands for "Representational State Transfer" and describes an architectural style for distributed hypermedia systems~\cite[76]{fielding_architectural_2000}.
+Web \glspl{api} are interfaces that enable applications to communicate. They use \gls{http} as a network-based \gls{api}~\cite[138]{fielding_architectural_2000}. Modern \acrshortpl{api} typically follow \gls{rest} principles. \gls{rest} stands for "Representational State Transfer" and describes an architectural style for distributed hypermedia systems~\cite[76]{fielding_architectural_2000}.
 
-\gls{rest} \acrshortpl{api} adhere to principles derived from a set of constraints imposed by the \gls{http} protocol, for example. One such constraint is "stateless communication": Communication between clients and the server must be \emph{stateless}, meaning the client must provide all the necessary information for the server to fully understand the request.
+\gls{rest} \glspl{api} adhere to principles derived from a set of constraints imposed by the \gls{http} protocol, for example. One such constraint is "stateless communication": Communication between clients and the server must be \emph{stateless}, meaning the client must provide all the necessary information for the server to fully understand the request.
 
 Furthermore, every resource in \gls{rest} applications must be addressable via a unique ID, which can then be used to derive a \acrshort{uri} to access the resource. \autoref{table:resource-metadata-mapping} presents examples for resources and \glspl{uri} which could be derived from them:
 
@@ -31,7 +31,7 @@ Furthermore, every resource in \gls{rest} applications must be addressable via a
 
 Every resource must support the same interface, usually \gls{http} methods (GET, POST, PUT, etc.) where operations on the resource correspond to one method of the interface. For example, a POST operation on a customer might map to the \texttt{createCustomer()} operation on a service.
 
-In \gls{rest}, Resources are decoupled from their representations. Clients can request different representations of a resource, depending on their needs~\cite{fielding_architectural_2000}. For example, a web browser might request \acrshort{html}, while another server or application might request \acrshort{xml} or \acrshort{json}.
+In \gls{rest}, resources are decoupled from their representations. Clients can request different representations of a resource, depending on their needs~\cite{fielding_architectural_2000}. For example, a web browser might request \acrshort{html}, while another server or application might request \acrshort{xml} or \acrshort{json}.
 
 \section{Layered Architecture}
 \label{sec:layered}
@@ -128,17 +128,17 @@ Aggregates are clusters of associated objects (Entities and Value Objects) that 
 
 \hyperref[sec:layered]{\gls{layered-architecture}s} often follow a \emph{\gls{crud}} architecture. \gls{crud} is an acronym coined by \textcite[Chapter 21]{martin_managing_1983}. These four actions can be applied to any record of data.
 
-The state of domain objects in a \acrshort{crud} architecture is often mapped to tables in a relational database, though other storage mechanisms maybe used. The application acts on the current state of the data, with all actions (reads and writes) acting on the same data~\cite[Chapter 21]{martin_managing_1983}.
+The state of domain objects in a \acrshort{crud} architecture is often mapped to tables in a relational database, though other storage mechanisms may be used. The application acts on the current state of the data, with all actions (reads and writes) acting on the same data~\cite[Chapter 21]{martin_managing_1983}.
 
-\acrshort{acid} (\acrlong{acid}) are an important feature of \acrshort{crud} applications. They can be guaranteed using transactions, ensuring that data stays consistent and operations are \glslink{atomicity}{atomic}~\cite[10,11]{bernstein_principles_2009}.
+The \emph{\gls{acid}} principles are an important feature of \acrshort{crud} applications. They can be guaranteed using transactions, ensuring that data stays consistent and operations are \glslink{atomicity}{atomic}~\cite[10,11]{bernstein_principles_2009}.
 
-Databases in CRUD systems are typically normalized. Normalization is a process of organizing data into separate tables, removing redundancies and creating relationships through "foreign keys". It is the best practice for relational databases. There are several normal forms that can be achieved, each form building on the previous one: to achieve the second normal form, the first normal form has to be achieved first~\cite[203]{martin_managing_1983}.
+Databases in CRUD systems are typically normalized. Normalization is a process of organizing data into separate tables, removing redundancies and creating relationships through "foreign keys." It is the best practice for relational databases. There are several normal forms that can be achieved, each form building on the previous one: to achieve the second normal form, the first normal form has to be achieved first~\cite[203]{martin_managing_1983}.
 
 \begin{itemize}
     \item 1NF (First Normal Form): Each table cell contains a single (atomic) value, every record is unique
     \item 2NF (Second Normal Form): Remove partial dependencies by requiring that all \emph{non-key} columns are fully dependent on the primary key
     \item 3NF (Third Normal Form): Removes transitive dependencies by requiring that non-key columns depend \emph{only} on the primary key
-    \item Further Normal Forms (4NF, 5NF): Require a table can not be broken down into smaller tables without losing data
+    \item Further Normal Forms (4NF, 5NF) require that a table can not be broken down into smaller tables without losing data
 \end{itemize}
 
 \section{Eventual Consistency}
@@ -216,9 +216,9 @@ Traceability and auditing are legal requirements across various sectors, as they
 \subsection{Audit Logs}
 \label{sec:audit-log}
 
-An audit log (often called audit trail) is a chronological record which provides evidence of a sequence of activities on an entity~\cite{committee_on_national_security_systems_national_2010}. In information security, the audit log stores a record of system activities, enabling the reconstruction of events~\cite{atis_committee_atis_2013}. A trustworthy audit log in a system can guarantee the principle of traceability which states that actions can be tracked and traced back to the entity who is responsible for them~\cite[266]{joint_task_force_interagency_working_group_security_2020}.
+An audit log (often called audit trail) is a chronological record which provides evidence of a sequence of activities on an entity~\cite{committee_on_national_security_systems_national_2010}. In information security, the audit log stores a record of system activities, enabling the reconstruction of events~\cite{atis_committee_atis_2013}. A trustworthy audit log in a system can guarantee the principle of traceability which states that actions can be tracked and traced back to the entity that is responsible for them~\cite[266]{joint_task_force_interagency_working_group_security_2020}.
 
-\textcite{fowler_audit_2004} describes an audit log as simple and effective way of storing temporal information. Changes are tracked by writing a record indicating \emph{what} changed \emph{when}. A basic implementation of an audit log can have many forms, for example a text file, database tables or \acrshort{xml} documents. Fowler also mentions that while the audit log is easy to write, it is harder to read and process. While occasional reads can be done by eye, complex processing and reconstruction of historical state can be resource-intensive.
+\textcite{fowler_audit_2004} describes an audit log as a simple and effective way of storing temporal information. Changes are tracked by writing a record indicating \emph{what} changed \emph{when}. A basic implementation of an audit log can have many forms, for example a text file, database tables or \acrshort{xml} documents. Fowler also mentions that while the audit log is easy to write, it is harder to read and process. While occasional reads can be done by eye, complex processing and reconstruction of historical state can be resource-intensive.
 
 In distributed environments or complex application architectures, the implementation of an audit log often introduces the "dual-write" problem. This occurs when an application is responsible for updating the primary database (the current state) and simultaneously emitting a record to a separate audit log or messaging system. As \textcite[452,453]{kleppmann_designing_2017} notes, ensuring \gls{atomicity} across these two distinct writes is technically challenging. If the primary database update succeeds, but the audit log write fails, or vice versa, the two systems will diverge, leading to a loss of data integrity where the audit trail no longer reflects the "real" state of the system.
 
@@ -294,7 +294,7 @@ Resource saturation occurs when a system approaches its maximum capacity, a stat
 
 Scalability is influenced by the alignment between the technology and the organization that builds it. \textcite[2]{abbott_art_2009} argue that scalability issues often originate with people and management rather than technology alone, as the organizational structure dictates communication flows and decision-making efficiency. Consequently, an architecture's ability to scale depends on whether the organization is structured to support growth without creating bottlenecks.
 
-Generally, there are two ways to scale a system: "Scaling out" (horizontal scaling) and "scaling up" (vertical scaling). \emph{Scaling out} relies on adding more units of commodity hardware, which is cheaper, standard equipment, to handle increased load, whereas \emph{scaling up} depends on purchasing larger, faster, and more expensive individual systems. According to \textcite[203, 207]{abbott_art_2009}, scaling out using commodity hardware should be preferred, because it demonstrates that a system is not viable through faster, more expensive hardware. Instead, a system designed to be split horizontally is more resilient as it does not rely on high-performance third-party technologies or technological progress.
+Generally, there are two ways to scale a system: "Scaling out" (horizontal scaling) and "scaling up" (vertical scaling). \emph{Scaling out} relies on adding more units of commodity hardware (cheap standard equipment) to handle increased load, whereas \emph{scaling up} depends on purchasing larger, faster, and more expensive individual systems. According to \textcite[203, 207]{abbott_art_2009}, scaling out using commodity hardware should be preferred, because it demonstrates that a system is not viable through faster, more expensive hardware. Instead, a system designed to be split horizontally is more resilient as it does not rely on high-performance third-party technologies or technological progress.
 
 Code architecture further impacts scalability through the implementation of fault isolation, asynchronous design, and statelessness. Fault isolative architectures, often described as "swim lanes," ensure that a failure in one component does not propagate to others, preserving the availability of the broader system~\cite[Chapter 21]{abbott_art_2009}. Additionally, asynchronous designs are more tolerant of slowdowns, as the speed of the entire system is not determined by its slowest component. This makes asynchronous systems easier to scale~\cite[205]{abbott_art_2009}. Finally, stateless systems allow requests to be distributed freely across any available server, making them more scalable. \textcite[206]{abbott_art_2009} argue that stateful applications should be avoided, when possible.
 
@@ -325,7 +325,7 @@ Coupling metrics are based on graph theory. They measure how dependent component
     \label{eq:abstractness}
 \end{equation}
 
-Finally, the \emph{Distance from the Main Sequence} combines abstractness and instability to determine if a component is optimally balanced or falls into problematic "Zones of Uselessness or Pain"~\cite[261-268]{martin_agile_2003}. Martin considers a stable, concrete package to fall into the "Zone of Pain", while instable, highly abstract packages fall into the "Zone of Uselessness". The Main Sequence is illustrated in \autoref{fig:method-main-sequence}.
+Finally, the \emph{Distance from the Main Sequence} combines abstractness and instability to determine if a component is optimally balanced or falls into problematic "Zones of Uselessness or Pain"~\cite[261-268]{martin_agile_2003}. Martin considers a stable, concrete package to fall into the "Zone of Pain", while instable, highly abstract packages fall into the "Zone of Uselessness." The Main Sequence is illustrated in \autoref{fig:method-main-sequence}.
 
 \begin{figure}[H]
     \centering

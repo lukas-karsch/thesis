@@ -7,7 +7,7 @@ After defining functional and non-functional requirements, the two applications 
 \section{Endpoints}
 \label{sec:endpoints}
 
-Table \autoref{table:endpoints} presents a feature matrix, mapping \acrshort{http} endpoints to their functionality. As this thesis focuses not on the functionality of an application, but instead an architectural comparison, only the endpoints which will later be load-tested are listed.
+\autoref{table:endpoints} presents a feature matrix, mapping \acrshort{http} endpoints to their functionality. As this thesis does not focus on the functionality of an application, but rather on an architectural comparison, only the endpoints which will later be load-tested are listed.
 
 \begin{table}[H]
     \small
@@ -15,11 +15,15 @@ Table \autoref{table:endpoints} presents a feature matrix, mapping \acrshort{htt
     \begin{tabularx}{\linewidth}{lXc}
         \toprule
         \textbf{Endpoint}                     & \textbf{Description}                                        & \textbf{Response} \\ \midrule
+        \texttt{POST /courses}                & Creates a course                                            & 201               \\
+        \addlinespace
+        \texttt{POST /lectures/create}        & Creates a lecture                                           & 201               \\
+        \addlinespace
+        \texttt{GET /lectures/\{id\}}         & Gets a lecture's details by ID                              & 200               \\
+        \addlinespace
         \texttt{GET /lectures}                & Returns all lectures a student is enrolled or waitlisted in & 200               \\
         \addlinespace
         \texttt{GET /lectures/all}            & Returns details for all lectures                            & 200               \\
-        \addlinespace
-        \texttt{POST /courses}                & Creates a course                                            & 201               \\
         \addlinespace
         \texttt{POST /lectures/\{id\}/enroll} & Enroll to a lecture                                         & 201               \\
         \addlinespace
@@ -43,7 +47,7 @@ SpringBoot\footnote{\url{https://spring.io/projects/spring-boot}} is an open-sou
 
 SpringBoot builds on top of the Spring platform by applying a "convention-over-configuration" approach, intended to minimize the need for configuration. In a 2023 survey by JetBrains, SpringBoot was the most popular choice of web framework~\cite{jetbrains_java_2023}.
 
-SpringBoot starters are specialized dependency descriptors designed to simplify dependency management by aggregating commonly used libraries into feature-defined packages. Rather than requiring developers to manually identify and maintain a list of individual group IDs, artifact IDs, and compatible version numbers for every necessary library, starters use transitive dependency resolution to pull in all required components under a single entry. To quickly bootstrap a web application, a developer can simply add the \javaname{spring-boot-starter-web} dependency to their Maven or Gradle build file. By requesting this specific functionality, Spring Boot automatically includes essential dependencies such as Spring MVC, Jackson for JSON processing, and an embedded Tomcat server, ensuring that all included libraries have been tested together for compatibility. This approach shifts the developer's focus from managing individual JAR files to simply defining the high-level capabilities the application requires, minimizing configuration overhead and reducing risk of version mismatches~\cite[Chapter~1.1.2]{walls_spring_2016}.
+SpringBoot starters are specialized dependency descriptors designed to simplify dependency management by aggregating commonly used libraries into feature-defined packages. Rather than requiring developers to manually identify and maintain a list of individual group IDs, artifact IDs, and compatible version numbers for every necessary library, starters use transitive dependency resolution to pull in all required components under a single entry. To quickly bootstrap a web application, a developer can simply add the \javaname{spring-boot-starter-web} dependency to their Maven or Gradle build file. By requesting this specific functionality, SpringBoot automatically includes essential dependencies such as Spring MVC, Jackson for JSON processing, and an embedded Tomcat server, ensuring that all included libraries have been tested together for compatibility. This approach shifts the developer's focus from managing individual JAR files to simply defining the high-level capabilities the application requires, minimizing configuration overhead and reducing risk of version mismatches~\cite[Chapter~1.1.2]{walls_spring_2016}.
 
 \subsection{PostgreSQL}
 \label{sec:postgresql}
@@ -53,7 +57,7 @@ PostgreSQL\footnote{\url{https://www.postgresql.org/}} is an open-source relatio
 \subsection{JPA}
 \label{sec:jpa}
 
-\gls{jpa}\footnote{\url{https://jakarta.ee/specifications/persistence/}}, formerly \emph{Java Persistence \gls{api}} is a Java specification which provides a mechanism for managing persistence and object-relational mapping. \glspl{orm} act as a mapper between the relational world of SQL databases and the object-oriented world of Java~\cite[Chapter~1]{bauer_java_2016}.
+\gls{jpa}\footnote{\url{https://jakarta.ee/specifications/persistence/}}, formerly Java Persistence \gls{api} is a Java specification which provides a mechanism for managing persistence and object-relational mapping. \glspl{orm} act as a mapper between the relational world of SQL databases and the object-oriented world of Java~\cite[Chapter~1]{bauer_java_2016}.
 
 Instead of writing SQL to create the database schema, entities can be described using special Java classes, supported by annotations, which can be mapped to an SQL schema. Using an \keyw{EntityManager}, these entities can be persisted and queried~\cite[Chapter~3]{bauer_java_2016}.
 
@@ -62,15 +66,13 @@ When using \acrshort{jpa} with SpringBoot by including the \javaname{spring-boot
 \subsection{Hibernate Envers}
 \label{sec:envers}
 
-Envers\footnote{\url{https://hibernate.org/orm/envers/}} is a Hibernate project designed for audit logging and versioning of historic data. When using Envers, a copy of data (a "revision") is stored in specific revision tables managed by Envers~\cite[Chapter~13.3]{bauer_java_2016}.
-
-Envers offers an API, primarily accessed through the \keyw{AuditReader}, to query historic versions of data~\cite[Chapter~13.3]{bauer_java_2016}.
+Envers\footnote{\url{https://hibernate.org/orm/envers/}} is a Hibernate project designed for audit logging and versioning of historic data. When using Envers, a copy of data (a "revision") is stored in specific revision tables managed by Envers~\cite[Chapter~13.3]{bauer_java_2016}. Envers offers an API, primarily accessed through the \keyw{AuditReader}, to query historic versions of data~\cite[Chapter~13.3]{bauer_java_2016}.
 
 To use Hibernate Envers, the \javaname{org.hibernate.orm:hibernate-envers} dependency must be added to the project's classpath.
 
 \subsection{Jackson}
 
-Jackson\footnote{\url{https://github.com/FasterXML/jackson}} is a high-performance, feature-rich \acrshort{json} processing library for Java. It is the default \acrshort{json} library used within the Spring Boot ecosystem. Its primary purpose is to provide a seamless bridge between Java objects and JSON data through three main processing models: the Streaming API for incremental parsing, the Tree Model for a flexible node-based representation, and the most commonly used Data Binding module. This data binding capability allows developers to automatically convert (\emph{marshal}) Java \acrshortpl{pojo} into JSON and vice versa (\emph{unmarshal}) with minimal configuration. Beyond its speed and efficiency, Jackson is highly extensible, offering modules to handle complex Java types like Java 8 Date/Time and Optional classes. Jackson also supports various other data formats such as XML, YAML and CSV~\cite{oracle_jackson_nodate, fasterxml_jackson_2025}.
+Jackson\footnote{\url{https://github.com/FasterXML/jackson}} is a high-performance, feature-rich \acrshort{json} processing library for Java. It is the default \acrshort{json} library used within the SpringBoot ecosystem. Its primary purpose is to provide a seamless bridge between Java objects and JSON data. Its data binding capabilities allow developers to automatically convert (\emph{marshal}) Java \acrshortpl{pojo} into JSON and vice versa (\emph{unmarshal}) with minimal configuration. Beyond its speed and efficiency, Jackson is highly extensible, offering modules to handle complex Java types like Java 8 Date/Time and Optional classes. Jackson also supports various other data formats such as \gls{xml}, YAML and CSV~\cite{oracle_jackson_nodate, fasterxml_jackson_2025}.
 
 \subsection{Axon}
 \label{sec:axon}
@@ -87,8 +89,6 @@ This subsection describes core concepts of Axon. Diagrams illustrating the data 
 Command dispatching is the starting point for handling a command message in Axon. Axon handles commands by routing them to the appropriate command handler. The command dispatching infrastructure can be interacted with using the low-level \keyw{CommandBus} and a more convenient \keyw{CommandGateway}~\cite{axoniq_command_2025}.
 
 \keyw{CommandBus} is the infrastructure mechanism responsible for finding and invoking the correct command handler. At most one handler is invoked for each command; if no handler is found, an exception is thrown~\cite{axoniq_command_2025}.
-
-% Using \keyw{CommandGateway} simplifies command dispatching by hiding the manual creation of \keyw{CommandMessages}. The gateway offers two main methods for synchronous and asynchronous patterns. The \keyw{send} method returns a \keyw{CompletableFuture}, which is an asynchronous mechanism in Java. If the thread needs to wait for the command result, the \keyw{sendAndWait} method can be used.
 
 In general, command handling functions return \keyw{null} if handling was successful, except for command handlers which \emph{create} Aggregates. These return the Aggregate identifier. Otherwise, a \keyw{CommandExecutionException} is propagated to the caller. While returning values from a command handler is not forbidden, it is used sparsely as it contradicts with \gls{cqrs} semantics~\cite{axoniq_command_2025,axoniq_infrastructure_2025}.
 
@@ -148,11 +148,11 @@ A Saga is associated with one or more association values, which are key-value pa
 \subsection{SpringBoot Actuator}
 \label{sec:actuator}
 
-Spring Boot Actuator\footnote{\url{https://docs.spring.io/spring-boot/reference/actuator/index.html}} is a tool designed to help monitor and manage Spring Boot applications running in a production environment. It provides several built-in features that allow developers to check the status of the application, gather performance data, and track \gls{http} requests. These features can be accessed using either \gls{http} or \acrshort{jmx} (\acrlong{jmx}), which is a standard Java management technology. By using Actuator, developers can quickly see if an application is running correctly without the need to write custom monitoring code~\cite{broadcom_inc_production-ready_2026,broadcom_inc_metrics_2026}.
+SpringBoot Actuator\footnote{\url{https://docs.spring.io/spring-boot/reference/actuator/index.html}} is a tool designed to help monitor and manage SpringBoot applications running in a production environment. It provides several built-in features that allow developers to check the status of the application, gather performance data, and track \gls{http} requests. These features can be accessed using either \gls{http} or \acrshort{jmx} (\acrlong{jmx}), which is a standard Java management technology. By using Actuator, developers can quickly see if an application is running correctly without the need to write custom monitoring code~\cite{broadcom_inc_production-ready_2026,broadcom_inc_metrics_2026}.
 
 The most common way to use Actuator is through its "endpoints", which are specific web addresses that provide different types of information. For example, the health endpoint shows whether the application and its connected services, like databases, are functioning correctly, while the metrics endpoint displays detailed data on memory and CPU usage. Beyond the standard options, developers can also create their own custom endpoints or connect the data to external monitoring software to visualize how an application is performing over time~\cite{broadcom_inc_endpoints_2026}.
 
-Actuator can be enabled in a Spring Boot project by including the \javaname{spring-boot-starter-actuator} dependency~\cite{broadcom_inc_enabling_2026}.
+Actuator can be enabled in a SpringBoot project by including the \javaname{spring-boot-starter-actuator} dependency~\cite{broadcom_inc_enabling_2026}.
 
 \subsection{Prometheus}
 
@@ -170,12 +170,51 @@ A \gls{dockerfile} is a text-based document containing a series of instructions 
 
 Docker Compose is a tool used to define and manage applications consisting of multiple containers. A single configuration file is used to specify the services, networks, and volumes required for the entire application stack. The lifecycle of complex applications can be managed with this tool, enabling all associated services to be started, stopped, and coordinated with a single command~\cite{what-is-docker-compose}.
 
+\subsection{Testing Tools}
+\label{sec:testing-tools}
+
+JUnit\footnote{\url{https://docs.junit.org/5.11.0/user-guide/index.html}} is an open-source testing framework for Java. It offers a structured way of writing tests, driven by lifecycle methods like \texttt{beforeEach} or \texttt{afterAll}. Tests are annotated with \texttt{@Test}. They can also be parametrized and run repeatedly. Results can be asserted using assertion methods like \texttt{assertTrue()}~\cite{noauthor_junit_nodate}.
+
+REST Assured\footnote{\url{https://rest-assured.io/}} is a Java library that provides a highly fluent \acrshort{dsl} for testing and validating REST APIs in a readable, chainable style. It allows complex assertions to be written inline using \gls{groovy} expressions, making it easy to deeply verify JSON responses beyond simple field checks~\cite{restassured-documentation}.
+
 \subsection{k6}
 \label{sec:k6}
 
 Grafana k6\footnote{\url{https://grafana.com/docs/k6/latest/}} is an open-source performance testing tool designed to evaluate the reliability and performance of a system. It simulates various traffic patterns, such as constant load, sudden stress spikes, and long-term soak tests, to identify slow response times and system failures during development and continuous integration. Metrics are collected during execution and can be visualized through platforms like Grafana or exported to various data backends for detailed reporting~\cite{k6-overview}.
 
 k6 allows tests to be written in JavaScript, making it accessible and easy to integrate into existing codebases. Every k6 test follows a common structure. The main component is a function that contains the core logic of the test. This function should be the default export of the JavaScript file. It is executed concurrently for each \acrlong{VU} (\acrshort{VU}), which act as independent execution threads to repeatedly apply the test logic. The tests can be enhanced using k6's lifecycle functions, such as a setup function, which is executed only once and may be utilized to insert seed data into the system. The test execution can be configured using an "options" object, where \acrshortpl{VU}, test duration and performance thresholds can be set~\cite{k6-write-your-first-test}.
+
+\subsection{Mapping Technologies to Requirements}
+
+These technologies are used applied to implement the requirements defined in \autoref{ch:requirement-analysis}. \autoref{tab:requirements-to-technology} presents a mapping of those requirements to each used technology.
+
+\begin{table}[H]
+    \small
+    \centering
+    \begin{tabularx}{\linewidth}{llX}
+        \toprule
+        \textbf{Requirement} & \textbf{Technologies}          & \textbf{Role}                                                                                                    \\
+        \midrule
+        Public Interface     & SpringBoot, Jackson            & SpringBoot provides the Web interface using Jackson for \gls{dto} serialization.                                 \\
+        \addlinespace
+        Entities             & PostgreSQL, JPA, Axon, Jackson & Used to model data and entities.                                                                                 \\
+        \addlinespace
+        Business Rules       & SpringBoot, Axon               & SpringBoot and Axon provide the framework to handle requests and enforce business rules.                         \\
+        \addlinespace
+        \glspl{slo}          & k6                             & Develop and run load tests to validate \glspl{slo}.                                                              \\
+        \addlinespace
+        Auditing             & Envers, Axon                   & In CRUD, Envers provides an audit log. In ES-CQRS, Axon's event log serves as an audit trail.                    \\
+        \addlinespace
+        Observability        & Actuator, Prometheus           & Actuator provides metric endpoints that can be scraped by Prometheus, which then presents the data for querying. \\
+        \addlinespace
+        Contract             & JUnit, REST Assured            & Tests enforce an identical contract for both implementations.                                                    \\
+        \addlinespace
+        Environment          & Docker                         & Used to containerize the implementations and provide a controlled environment.                                   \\
+        \bottomrule
+    \end{tabularx}
+    \caption{Mapping of requirements to technologies}
+    \label{tab:requirements-to-technology}
+\end{table}
 
 \section{Contract Test Implementation}
 \label{sec:contract-test-implementation}
@@ -409,7 +448,7 @@ public GradeHistoryResponse getGradeHistory(
 
 \subsection{Tracing Request Flow}
 
-\autoref{fig:crud-diagram} presents the flow of two requests through the \acrshort{crud} implementation. The first request is a \texttt{POST} request, meaning it writes something. The client sends their request to the web controller, which calls a service using the request body and, optionally, additional information about the requesting user. The service uses its own or external service methods to validate the request. If validation passes, the service creates a \gls{jpa} entity and persists it to its \gls{jpa} repository. Afterward, the service returns the \texttt{UUID} of the created entity to the controller, which finally responds to the client by wrapping the service result in an \gls{http} response.
+\autoref{fig:crud-diagram} presents the flow of two requests through the \acrshort{crud} implementation. The first request is a \texttt{POST} request, meaning it writes something. The client sends its request to the web controller, which calls a service using the request body and, optionally, additional information about the requesting user. The service uses its own or external service methods to validate the request. If validation passes, the service creates a \gls{jpa} entity and persists it to its \gls{jpa} repository. Afterward, the service returns the \texttt{UUID} of the created entity to the controller, which finally responds to the client by wrapping the service result in an \gls{http} response.
 
 As reads pass through the same components as writes, a subsequent read request is also present in the diagram. The client sends a \texttt{GET} request, which is received by the controller that then calls a service method to fetch the requested data. The service may apply additional logic, e.g. filters. Then, it selects the data from the repository, maps the result to a \gls{dto} and returns it to the controller. The controller sends an \gls{http} response with status code 200, containing the response body.
 
@@ -423,7 +462,6 @@ As reads pass through the same components as writes, a subsequent read request i
 \label{sec:es-cqrs-implementation}
 
 \subsection{Architectural Overview}
-\label{sec:architecture-overview}
 
 The architecture of the \texttt{impl-es-cqrs} application\footnote{\javaname{impl-es-cqrs/src/main/java/karsch.lukas}} differs from the traditional Layered Architecture seen in the \texttt{impl-crud} application. While the CRUD implementation also has some vertical slicing, the ES-CQRS implementation is much more explicit about it. The code is organized into "features", each representing a vertical slice of the application's functionality (e.g., \texttt{course}, \texttt{enrollment}, \texttt{lectures}). Each feature is self-contained and includes its own command handlers, event sourcing handlers, query handlers, and its own web controller, if needed.
 
@@ -557,7 +595,7 @@ A \keyw{postgres:18-alpine} container provides the relational database used by b
 
 An \keyw{axoniq/axonserver} container provides the necessary infrastructure for the Event Sourcing and CQRS implementation, handling event storage and message routing. It is configured to run in development mode.
 
-The CRUD and ES-CQRS applications are containerized using \keyw{Dockerfile}s. Both use \keyw{amazoncorretto:25} as the base image, and the compiled Java application (\keyw{.jar} file) is copied into the container and executed.
+Both implementations are containerized using \glspl{dockerfile}. Both use \keyw{amazoncorretto:25} as the base image, and the compiled Java application is copied into the container to be executed.
 
 Configuration details, such as database connection strings and server hostnames, are externalized from the \keyw{application.properties} files. They are injected into the application containers at runtime as environment variables via the \keyw{docker-compose.yml} file, allowing for flexible configuration without modifying the application code.
 
@@ -566,11 +604,7 @@ Configuration details, such as database connection strings and server hostnames,
 
 To ensure a stable and isolated environment for performance benchmarks, a dedicated \acrshort{vm} setup is used. The process of creating and provisioning these \acrshortpl{vm} on a Proxmox host is fully automated.
 
-A shell script, \keyw{create-vm.sh},\footnote{\javaname{performance-tests/vm/scripts/create-vm.sh}} orchestrates the creation of a \acrshort{vm} template from an Ubuntu 24.04 cloud image. Cloud images are pre-configured, lightweight variants of operating systems. This script works in conjunction with a CloudInit\footnote{\url{https://cloudinit.readthedocs.io/en/latest/}} configuration file that handles the provisioning of the \acrshort{vm} upon its first boot.\footnote{\javaname{performance-tests/vm/scripts/cloud-init.yml}}
-
-During the provisioning process, a number of steps are executed. First, it is made sure that the system is up-to-date by installing any available software updates. Next, a `thesis` user is created for which the environment is configured. Afterward, the script installs all necessary software, including \gls{docker}, git, Conda, Python, k6, Maven, and Java 25. Once all necessary software is installed, the project's git repository is cloned and a Maven build is triggered. Finally, the \gls{docker} images are built. After these steps are completed, the provisioned \acrshort{vm} is ready to run the applications and load tests.
-
-Instead of starting the \acrshort{vm} directly, the script shuts the \acrshort{vm} down and converts it into a Proxmox template, which can be re-created efficiently. This template is used to create the client and server \glspl{vm}.
+A shell script, \keyw{create-vm.sh},\footnote{\javaname{performance-tests/vm/scripts/create-vm.sh}} orchestrates the creation of a \acrshort{vm} template from an Ubuntu 24.04 cloud image. Cloud images are pre-configured, lightweight variants of operating systems. This script works with a CloudInit\footnote{\url{https://cloudinit.readthedocs.io/en/latest/}} configuration file that handles the provisioning of the \acrshort{vm} upon its first boot\footnote{\javaname{performance-tests/vm/scripts/cloud-init.yml}}. During the provisioning process, all required software is installed and the source code for the applications is downloaded and built. The script ultimately creates a Proxmox template which can efficiently be recreated.
 
 The test environment and scenarios are defined as code to ensure reproducibility. Tests are executed in an isolated environment with fixed hardware allocations as specified in \autoref{table:hardware-specs}.
 
@@ -646,8 +680,10 @@ export default function (data) {
     checkResponseIs201(res);
 }
 \end{lstlisting}
-{\captionof{lstlisting}[k6 script, simplified code example]{Simplified code example of a k6 script to test course creation. Adapted from \javaname{performance-tests/k6/writes/create-course-prerequisites/create-course-prerequisites.js}}}
+{
+\captionof{lstlisting}[k6 script, simplified code example]{Simplified code example of a k6 script to test course creation. Adapted from \javaname{performance-tests/k6/writes/create-course-prerequisites/create-course-prerequisites.js}}
 \label{lst:create-course-k6-script}
+}
 
 \subsection{Load Test Lifecycle}
 
@@ -716,7 +752,7 @@ The implementation of this scalability function is available in \javaname{scalab
 
 Each \gls{l} is listed in table \autoref{tab:all-load-tests}.
 
-\begin{table}[H]
+\begin{table}[h!]
     \small
     \centering
     \begin{tabularx}{\linewidth}{clXX}
@@ -752,7 +788,7 @@ The IntelliJ plugin \emph{MetricsReloaded}\footnote{\url{https://plugins.jetbrai
 
 The afferent ($C_a$) and efferent ($C_e$) coupling metrics, previously described in \autoref{sec:coupling-metrics}, can be calculated by MetricsReloaded on a per-package basis. Furthermore, the plugin can calculate metrics for incoming and outgoing dependencies on a class-basis. These can be mapped to the afferent and efferent coupling metrics, as shown in \autoref{table:dependency-metrics}. Additionally, MetricsReloaded calculates transitive (indirect) dependencies, allowing for a broader view of the system's dependencies, describing the number of packages a class depends on or the number of packages depending on a class.
 
-\begin{table}[H]
+\begin{table}[h!]
     \centering
     \small
     \begin{tabularx}{\linewidth}{llX}
