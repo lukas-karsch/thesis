@@ -81,7 +81,7 @@ Axon Framework\footnote{\url{https://www.axoniq.io/framework}} is an open-source
 
 Axon also supports \acrlong{ddd} by providing tools to manage entities and domain logic~\cite{axoniq_introduction_2025,axoniq_messaging_2025}.
 
-Axon Server\footnote{\url{https://www.axoniq.io/server}} is a platform designed specifically for Event-driven systems. It functions as both a high-performance Event Store and a dedicated Message Router for commands, queries, and events. By bundling these responsibilities into a single service, Axon Server replaces the need for separate infrastructures such as a relational database for events and a message broker like Kafka or RabbitMQ for communication. Axon Server is designed to seamlessly integrate with Axon Framework. When using the Axon Server Connector, the application automatically finds and connects to the Axon Server. It is then possible to use the Axon server without further configuration~\cite{axoniq_introduction_2025-1,axoniq_axon_2025}.
+Axon Server\footnote{\url{https://www.axoniq.io/server}} is a platform designed specifically for Event-driven systems. It functions as both a high-performance Event Store and a dedicated Message Router for commands, queries, and events. By bundling these responsibilities into a single service, Axon Server replaces the need for separate infrastructures such as a relational database for events and a message broker like Kafka\footnote{\url{https://kafka.apache.org/}} or RabbitMQ\footnote{\url{https://www.rabbitmq.com/}} for communication. Axon Server is designed to seamlessly integrate with Axon Framework. When using the Axon Server Connector, the application automatically finds and connects to the Axon Server. It is then possible to use Axon server without further configuration~\cite{axoniq_introduction_2025-1,axoniq_axon_2025}.
 
 This subsection describes core concepts of Axon. Diagrams illustrating the data flow through an application built with Axon are available in \autoref{sec:es-cqrs-tracing-request-flow}.
 
@@ -95,9 +95,9 @@ In general, command handling functions return \keyw{null} if handling was succes
 \subsubsection*{Query Handling}
 Axon dispatches queries through its messaging infrastructure. Just like the command infrastructure, Axon offers a low-level \keyw{QueryBus} which requires manual query message creation and a more high-level \keyw{QueryGateway}. When no query handler is found, an exception is thrown~\cite{axoniq_query_2025}.
 
-The \keyw{QueryGateway} includes different dispatching methods. For regular "point-to-point" queries, the \keyw{query} method can be used. For large result sets, streaming queries should be used. All query methods are asynchronous by nature and return Java's \keyw{CompletableFuture}~\cite{axoniq_query_2025}.
+The \keyw{QueryGateway} includes different dispatching methods. For regular "point-to-point" queries, the \keyw{query()} method can be used. For large result sets, streaming queries should be used. All query methods are asynchronous by nature and return Java's \keyw{CompletableFuture}~\cite{axoniq_query_2025}.
 
-Subscription queries provide an initial result and continuous updates as data changes. These queries work well with reactive programming. By using a subscription query inside a web controller, a synchronous interface can be provided to clients, while keeping the internal command and event handling process asynchronous. While this approach does provide the desired synchronous user experience, it has the downside of coupling the client to the event processing flow. Alternatively, developers might employ WebSockets or other client-side notification mechanisms to inform the user about the result of their action asynchronously, after the initial request was accepted~\cite{axoniq_query_2025}.
+Subscription queries provide an initial result and continuous updates as data changes. These queries work with reactive programming~\cite{axoniq_query_2025}. Through the use of subscription queries in a web controller, a synchronous user experience can be achieved while embracing Axon's asynchronous internals, by waiting for the result of a command to be reflected in a read model and then returning that updated value to the client.
 
 \subsubsection*{Aggregates}
 \label{sec:aggregates}
@@ -106,8 +106,6 @@ Aggregates are a core concept of \gls{ddd}, which was described in \autoref{sec:
 Every Aggregate is annotated with \keyw{@Aggregate} and must declare exactly one field annotated with \keyw{@AggregateIdentifier}. This identifier uniquely identifies the Aggregate instance. Axon uses it to route incoming commands to the correct Aggregate and to load the corresponding event stream when rebuilding Aggregate state~\cite{axoniq_aggregates_2025}.
 
 By default, Axon uses Event-sourced Aggregates. This means that Aggregates are not persisted as a simple snapshot of their fields. Instead, their current state is reconstructed by replaying all previously stored events. Methods annotated with \keyw{@EventSourcingHandler} are called by Axon during this replay process to update the aggregate’s internal state based on event data. Since events represent facts that already occurred, event sourcing handlers must not contain business logic or make decisions~\cite{axoniq_aggregates_2025}.
-
-Axon also supports multi-entity Aggregates, where an Aggregate may contain child entities that participate in command handling. Such entities are registered using \keyw{@AggregateMember}, and each entity must define a unique identifier annotated with \keyw{@EntityId}. Based on this identifier, Axon is able to route commands to the correct entity instance within the Aggregate~\cite{axoniq_multi-entity_2025}.
 
 \subsubsection*{External Command Handlers}
 \label{sec:external-command-handlers}
@@ -120,7 +118,7 @@ In these external command handlers, Aggregates can be loaded manually from Axon'
 
 Event handlers are methods annotated with \keyw{@EventHandler} which react to occurrences within the app by handling Axon's event messages. Each event handler specifies the types of events it is interested in. When no handler for a given event type exists in the application, the event is ignored~\cite{axoniq_event_2025}.
 
-Axon's \keyw{@EventBus} is the infrastructure mechanism dispatching events to the subscribed event handlers. Event stores offer these functionalities and additionally persist and retrieve published events~\cite{axoniq_event_2025-1}.
+Axon's \keyw{EventBus} is the infrastructure mechanism dispatching events to the subscribed event handlers. Event stores offer these functionalities and additionally persist and retrieve published events~\cite{axoniq_event_2025-1}.
 
 Event processors take care of the technical part aspects of event processing. Axon's \keyw{EventBus} implementations support both subscribing and tracking event processors~\cite{axoniq_event_2025-1}. Subscribing event processors subscribe to a message source, which delivers (pushes) events to the processor. The event is then processed in the same thread that published the event. This makes subscribing event processors suitable for real-time updates of models. However, they can only be used to receive current events and do not support event replay. Additionally, as they run on the same thread, they can not be parallelized~\cite{axoniq_subscribing_2025}.
 
@@ -134,7 +132,7 @@ Set-based implementation in Axon can be implemented using \emph{lookup tables}. 
 
 To ensure that this lookup table remains synchronized and provides the necessary consistency for validation, Axon employs subscribing event processors, which are described in \autoref{sec:axon-events}. Unlike tracking event processors which operate asynchronously and introduce eventual consistency, subscribing event processors execute within the same thread and transaction as the event publication. This mechanism ensures that the lookup table is updated immediately after an event is applied to the Aggregate. Consequently, if the update to the lookup table fails due to a constraint violation or database error, the entire transaction is rolled back, preventing the system from reaching an inconsistent state~\cite{axoniq_subscribing_2025,axoniq_event_2025-1}.
 
-In practice, this validation logic is often encapsulated within a domain service or a validator interface that is injected directly into the Aggregate's command handler. This service interacts with the lookup table repository to verify global invariants before the Aggregate state is modified. By separating the lookup logic from the read-model, the system avoids the latency of eventual consistency while maintaining the architectural integrity of the Aggregate as a boundary for consistency. This pattern helps to enforce validation across individual aggregates and allows for global state verification~\cite{ceelie_set_2020}.
+In practice, this validation logic can be encapsulated within a domain service or a validator interface that is injected directly into command handlers. The validator interacts with the lookup table repository to verify global invariants before the Aggregate state is modified. By separating the lookup logic from the read-model, the system avoids the latency of eventual consistency while maintaining the architectural integrity of the Aggregate as a boundary for consistency. This pattern helps to enforce validation across individual aggregates and allows for global state verification~\cite{ceelie_set_2020}.
 
 \subsubsection*{Sagas}
 \label{sec:sagas}
@@ -180,7 +178,7 @@ REST Assured\footnote{\url{https://rest-assured.io/}} is a Java library that pro
 \subsection{k6}
 \label{sec:k6}
 
-Grafana k6\footnote{\url{https://grafana.com/docs/k6/latest/}} is an open-source performance testing tool designed to evaluate the reliability and performance of a system. It simulates various traffic patterns, such as constant load, sudden stress spikes, and long-term soak tests, to identify slow response times and system failures during development and continuous integration. Metrics are collected during execution and can be visualized through platforms like Grafana or exported to various data backends for detailed reporting~\cite{k6-overview}.
+Grafana k6\footnote{\url{https://grafana.com/docs/k6/latest/}} is an open-source load testing tool designed to evaluate the reliability and performance of a system. It simulates various traffic patterns, such as constant load, sudden stress spikes, and long-term soak tests, to identify slow response times and system failures during development and continuous integration. Metrics are collected during execution and can be visualized through platforms like Grafana or exported to various data backends for detailed reporting~\cite{k6-overview}.
 
 k6 allows tests to be written in JavaScript, making it accessible and easy to integrate into existing codebases. Every k6 test follows a common structure. The main component is a function that contains the core logic of the test. This function should be the default export of the JavaScript file. It is executed concurrently for each \acrlong{VU} (\acrshort{VU}), which act as independent execution threads to repeatedly apply the test logic. The tests can be enhanced using k6's lifecycle functions, such as a setup function, which is executed only once and may be utilized to insert seed data into the system. The test execution can be configured using an "options" object, where \acrshortpl{VU}, test duration and performance thresholds can be set~\cite{k6-write-your-first-test}.
 
@@ -508,7 +506,7 @@ Read requests (Queries) are also received by a SpringBoot controller, which crea
 \subsection{Encapsulation and API Boundaries}
 \label{sec:cqrs-encapsulation-and-api-boundaries}
 
-Like the \acrshort{crud} application, this prototype also implements Controller interfaces defined by the shared \texttt{api} module. However, each feature slice contains its own \texttt{api} package that is shared between web controllers, command side and read side. This "internal" \gls{api} maps the application's public interface to \gls{cqrs} semantics by defining specific command and query classes which target command and query Handlers. These feature-specific \texttt{api} packages are the only public packages in a feature slice, meaning communication across package boundaries is only possible using the defined \gls{api} classes.
+Like the \acrshort{crud} application, this prototype also implements Controller interfaces defined by the shared \texttt{api} module. However, each feature slice contains its own \texttt{api} package that is shared between web controllers, command-side and read-side. This "internal" \gls{api} maps the application's public interface to \gls{cqrs} semantics by defining specific command and query classes which target command and query Handlers. These feature-specific \texttt{api} packages are the only public packages in a feature slice, meaning communication across package boundaries is only possible using the defined \gls{api} classes.
 
 The public \gls{api} of the application is exposed through its Controllers, which only interact with the \keyw{CommandGateway} and \keyw{QueryGateway}. This ensures that all interactions with the system internals go through the proper channels and that underlying implementations can be changed without affecting the clients.
 
@@ -584,7 +582,7 @@ After being applied, Axon routes the event to all subscribed handlers. The aggre
 \section{Infrastructure}
 \label{sec:infrastructure}
 
-The project's infrastructure is designed for consistency and reproducibility across development and testing environments. It is composed of a containerized environment for running the applications and their dependencies, an automated \gls{vm} provisioning setup for performance testing, as well as an integration testing strategy using \glspl{testcontainer}, described in \autoref{sec:contract-test-implementation}.
+The project's infrastructure is designed for consistency and reproducibility across development and testing environments. It is composed of a containerized environment for running the applications and their dependencies, an automated \gls{vm} provisioning setup for load testing, as well as an integration testing strategy using \glspl{testcontainer}, described in \autoref{sec:contract-test-implementation}.
 
 \subsection{Containerized Services}
 \label{sec:containerized-services}

@@ -29,7 +29,7 @@ Kleppmann highlights the evolutionary advantages of \acrlong{es}. He argues that
 
 While Kleppmann emphasizes the architectural freedom to evolve views on existing data, \textcite{overeem_empirical_2021} discuss 19 event-sourced systems and point out that many engineers struggle with \emph{\gls{schema-evolution}} in \acrlong{es}, which is the process of changing the schema of events. The challenge is that the immutable history of the event log must remain compatible with evolving business logic, which turns the flexibility of the read-side into difficulties on the write-side. Schema evolution is not a goal of this thesis. While worth mentioning, this aspect will not be taken into consideration when providing a final comparison of the two architectures.
 
-While \textcite{jayaraman_implementing_2024} noted increased performance and scalability when using \gls{cqrs} with \acrlong{es}, they also found higher maintenance complexity and higher operational costs.
+\textcite{jayaraman_implementing_2024} noted increased performance and scalability when using \gls{cqrs} with \acrlong{es}, however they also found higher maintenance complexity and higher operational costs.
 
 \section{RQ 3: Historical Traceability}
 \label{sec:traceability-related-work}

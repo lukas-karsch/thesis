@@ -2,7 +2,7 @@
 > **Performance, flexibility and traceability:** Evaluating the Impact of Event Sourcing and CQRS compared to traditional systems with an audit log.
 
 **Primary research question**
-> How does an Event Sourcing architecture compare to CRUD systems with an independent audit log regarding performance, scalability, flexibility and traceability?
+> How does an Event-sourced CQRS architecture compare to CRUD systems with an independent audit log regarding performance, scalability, flexibility and traceability?
 
 Three sub-questions: 
 - **Performance and Scalability:** How do CRUD and ES-CQRS implementations perform under increasing load, and what are the resulting implications for system scalability and resource efficiency? 

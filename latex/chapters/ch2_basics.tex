@@ -152,7 +152,7 @@ Databases in CRUD systems are typically normalized. Normalization is a process o
     \label{fig:eventual-consistency}
 \end{figure}
 
-Consistency guarantees described by \textcite{terry_session_1994} such as \emph{Read Your Writes}, \emph{Monotonic Reads}, \emph{Writes Follow Reads} or \emph{Monotonic Writes} can mitigate these problems by providing applications with a view of the database that is consistent with their own actions. By associating operations with a session, these guarantees ensure that a client’s sequence of reads and writes remains logical and predictable, even when they interact with various, potentially inconsistent servers. For instance, these strategies can ensure that a client always perceives their own updates or sees an increasingly up-to-date version of the database. However, these guarantees are applied on a per-session basis and do not resolve the issue for other clients. Users in different sessions may still observe stale data or inconsistent orderings until the system eventually achieves consistency through successful synchronization.
+Consistency guarantees described by \textcite{terry_session_1994} such as \emph{Read Your Writes}, \emph{Monotonic Reads}, \emph{Writes Follow Reads} or \emph{Monotonic Writes} can mitigate these problems by providing applications with a view of the database that is consistent with their own actions. By associating operations with a session, these guarantees ensure that a client’s sequence of reads and writes remains logical and predictable. For instance, these strategies can ensure that a client always perceives their own updates or sees an increasingly up-to-date version of the database. However, these guarantees are applied on a per-session basis and do not resolve the issue for other clients. Users in different sessions may still observe stale data or inconsistent orderings until the system eventually achieves consistency through successful synchronization.
 
 \section{CQRS Architecture}
 \label{sec:cqrs}
@@ -204,7 +204,7 @@ To optimize the reconstruction of state, developers often employ \textit{rolling
 \begin{figure}[H]
     \centering
     \includegraphics[width=0.8\textwidth]{images/cqrs_architecture/Snapshotting.drawio.pdf}
-    \caption[Snapshots in ES/CQRS]{Snapshots in \acrlong{es} / \gls{cqrs} . Only the events between the most recent snapshot and the most recent event need to be applied to rehydrate the Aggregate~\cite[20]{young_cqrs_2010}}
+    \caption[Snapshots in ES-CQRS]{Snapshots in \acrlong{es} / \gls{cqrs} . Only the events between the most recent snapshot and the most recent event need to be applied to rehydrate the Aggregate~\cite[20]{young_cqrs_2010}}
     \label{fig:snapshotting}
 \end{figure}
 
