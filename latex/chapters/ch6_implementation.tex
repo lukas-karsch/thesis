@@ -9,7 +9,7 @@ After defining functional and non-functional requirements, the two applications 
 
 Table \autoref{table:endpoints} presents a feature matrix, mapping \acrshort{http} endpoints to their functionality. As this thesis focuses not on the functionality of an application, but instead an architectural comparison, only the endpoints which will later be load-tested are listed.
 
-\begin{table}[htp!]
+\begin{table}[H]
     \small
     \centering
     \begin{tabularx}{\linewidth}{lXc}
@@ -215,7 +215,7 @@ While adhering to this layered structure, \emph{feature slicing} was additionall
 
 All data in the CRUD implementation is present in the form of database / \gls{jpa} entities. Other objects like services and controllers are \emph{stateless}. The application uses a \hyperref[sec:crud]{normalized database} in the Third Normal Form.
 
-\begin{figure}[h]
+\begin{figure}[H]
     \includegraphics[width=\textwidth]{images/diagrams_crud/CRUD_ER_Diagram.drawio.png}
     \caption{Entity Relationship Diagram for the CRUD App}
     \label{fig:crud-er-diagram}
@@ -574,7 +574,7 @@ Instead of starting the \acrshort{vm} directly, the script shuts the \acrshort{v
 
 The test environment and scenarios are defined as code to ensure reproducibility. Tests are executed in an isolated environment with fixed hardware allocations as specified in \autoref{table:hardware-specs}.
 
-\begin{table}[htp!]
+\begin{table}[H]
     \small
     \centering
     \begin{tabularx}{\linewidth}{lX}
@@ -602,7 +602,7 @@ The core of the load testing suite are the load-generating scripts developed usi
 
 After defining necessary imports, the test script extracts execution parameters from the \keyw{\_\_ENV} object which is injected by the k6 test runner. Most k6 scripts written for this project rely on \gls{rps}, representing the target iteration rate, and \texttt{TARGET\_HOST}, which is the URL the application under test is reachable at.
 
-The value of \gls{rps} is used to define test options. Namely, a scenario, optional thresholds and the statistics to collect are defined. A test may have several scenarios, however in the k6 scripts used in this project, only one scenario per test is defined. Each scenario has a specific executor. In this case, the "ramping-arrival-rate" executor is used, as opposed to the "ramping-vus" executor. While the "ramping-vus" executor defines the number of virtual users interacting with the application (closed model), "ramping-arrival-rate" executors define the number of iterations per second (open model). This important distinction is described in more detail in \autoref{sec:load-test-theory}. Stages in a scenario define the "timeline" of \gls{rps}. In the given example, \gls{rps} are increased from 0 to the target \gls{rps} over a duration of 20 seconds. This \gls{rps} is then held for a duration of 80 seconds, before decreasing \acrshort{rps} back to 0 over a span of 20 seconds.
+The value of \gls{rps} is used to define test options. Namely, a scenario, optional thresholds and the statistics to collect are defined. A test may have several scenarios, however in the k6 scripts used in this project, only one scenario per test is defined. Each scenario has a specific executor. In this case, the "ramping-arrival-rate" executor is used, as opposed to the "ramping-vus" executor. While the "ramping-vus" executor defines the number of virtual users interacting with the application (closed model), "ramping-arrival-rate" executors define the number of iterations per second (open model). This important distinction is described in more detail in \autoref{sec:load-testing-theory}. Stages in a scenario define the "timeline" of \gls{rps}. In the given example, \gls{rps} are increased from 0 to the target \gls{rps} over a duration of 20 seconds. This \gls{rps} is then held for a duration of 80 seconds, before decreasing \acrshort{rps} back to 0 over a span of 20 seconds.
 
 After defining test options, an optional setup function is implemented. It is executed once by k6, before running the load-generating "export default" function. In the setup function, seed data can be created. The given code example uses the setup function to create 10 prerequisite courses. Their IDs are returned from the setup function.
 
@@ -752,7 +752,7 @@ The IntelliJ plugin \emph{MetricsReloaded}\footnote{\url{https://plugins.jetbrai
 
 The afferent ($C_a$) and efferent ($C_e$) coupling metrics, previously described in \autoref{sec:coupling-metrics}, can be calculated by MetricsReloaded on a per-package basis. Furthermore, the plugin can calculate metrics for incoming and outgoing dependencies on a class-basis. These can be mapped to the afferent and efferent coupling metrics, as shown in \autoref{table:dependency-metrics}. Additionally, MetricsReloaded calculates transitive (indirect) dependencies, allowing for a broader view of the system's dependencies, describing the number of packages a class depends on or the number of packages depending on a class.
 
-\begin{table}[htp!]
+\begin{table}[H]
     \centering
     \small
     \begin{tabularx}{\linewidth}{llX}

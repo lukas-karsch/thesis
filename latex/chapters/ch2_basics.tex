@@ -14,7 +14,7 @@ Web \acrshortpl{api} are interfaces that enable applications to communicate. The
 
 Furthermore, every resource in \gls{rest} applications must be addressable via a unique ID, which can then be used to derive a \acrshort{uri} to access the resource. \autoref{table:resource-metadata-mapping} presents examples for resources and \glspl{uri} which could be derived from them:
 
-\begin{table}[htp]
+\begin{table}[H]
     \centering
     \begin{tabularx}{\textwidth}{llX}
         \toprule
@@ -38,7 +38,7 @@ In \gls{rest}, Resources are decoupled from their representations. Clients can r
 
 \textcite{richards_software_2015} describes \gls{layered-architecture} as the most common architecture pattern in enterprise applications. Applications following a \gls{layered-architecture} are divided into \emph{horizontal layers}, with each layer performing a specific role. A standard implementation consists of the layers described in~\autoref{table:crud-layers}.
 
-\begin{table}[htp!]
+\begin{table}[H]
     \small
     \centering
     \begin{tabularx}{\linewidth}{lX}
@@ -65,7 +65,7 @@ The database responds with raw data, which is turned into a \acrlong{dao} (\acrs
 
 \autoref{fig:layered-architecture} illustrates the flow of a request through a typical \gls{layered-architecture}.
 
-\begin{figure}[h]
+\begin{figure}[H]
     \includegraphics[width=\textwidth]{images/layered-architecture/mermaid-diagram-2026-02-12-110948.png}
     \caption{\gls{layered-architecture} sequence diagram, adapted from~\cite[6]{richards_software_2015}.}
     \label{fig:layered-architecture}
@@ -90,7 +90,7 @@ As described in \autoref{sec:layered}, \gls{layered-architecture} organizes code
 
 Using a \gls{rdm} does not mean that there should be no layers, the opposite is the case. \textcite{evans_domain-driven_2004} advocates for using layers in domain driven designs. He proposes the layers presented in \autoref{table:ddd-layers}.
 
-\begin{table}[htp!]
+\begin{table}[H]
     \small
     \centering
     \begin{tabularx}{\linewidth}{lX}
@@ -146,7 +146,7 @@ Databases in CRUD systems are typically normalized. Normalization is a process o
 
 \textcite{gray_dangers_1996} explain that large-scale systems become unstable if they are held consistent at all times according to \acrshort{acid} principles. This is mostly due to the large amount of communication necessary to handle atomic transactions in distributed systems. To address these issues, modern distributed systems often adopt the \gls{base} model~\cite{brewer_towards_2000} which explicitly trades off isolation and strong consistency for availability. Eventually consistent systems are allowed to exist in a so-called "soft state" which eventually converges over time through the use of synchronization mechanisms rather than being strongly consistent at all times~\cite{braun_tackling_2021, vogels_eventually_2009}. This creates an inconsistency window in which data is not consistent across the system. During this window, stale data may be read~\cite{vogels_eventually_2009}. This concept is visualized in~\autoref{fig:eventual-consistency}.
 
-\begin{figure}[h]
+\begin{figure}[H]
     \includegraphics[width=\textwidth]{images/eventual-consistency/mermaid-diagram-2026-02-12-095221.png}
     \caption[Sequence diagram illustrating the inconsistency window ($\Delta t$)]{Sequence diagram illustrating the inconsistency window ($\Delta t$) in eventually consistent systems where read results depend on the selected replica. Based on~\cite{vogels_eventually_2009}}
     \label{fig:eventual-consistency}
@@ -174,7 +174,7 @@ Each read service independently updates its model by consuming notifications or 
 
 \autoref{fig:cqrs-architecture} presents the \gls{cqrs} architecture in a flowchart, visually highlighting the separation of read- and write-side.
 
-\begin{figure}[h]
+\begin{figure}[H]
     \centering
     \includegraphics[width=0.8\textwidth]{images/cqrs_architecture/CQRS_Architecture.drawio.pdf}
     \caption{CQRS Architecture, adapted from~\cite[24]{young_cqrs_2010}.}
@@ -192,7 +192,7 @@ The current state of any entity in such a system can be rebuilt by replaying the
 
 \autoref{fig:rehydration} demonstrates the process of state reconstruction in an event-sourced \gls{cqrs} system using \gls{ddd}. To process a new command, the Aggregate must first be rehydrated to its current state. It (e.g., $ID=1$) is rehydrated by iterating through the event stream and applying those events that target its unique identifier. Events belonging to other aggregates are ignored during this process. Through applications of the events, the Aggregate transitions from its initial blank state to its current, functional state.
 
-\begin{figure}[h]
+\begin{figure}[H]
     \centering
     \includegraphics[width=0.9\textwidth]{images/cqrs_architecture/ES_Apply_Events.drawio.png}
     \caption{Applying events to rehydrate Aggregates in \acrlong{es}.}
@@ -201,7 +201,7 @@ The current state of any entity in such a system can be rebuilt by replaying the
 
 To optimize the reconstruction of state, developers often employ \textit{rolling snapshots}. These snapshots represent a serialized state of an aggregate at a specific point in time, allowing the system to restore the state quicker and only replay the delta of events that occurred after the snapshot was taken~\cite[20]{young_cqrs_2010}. This approach caps the maximum number of events to be processed during Aggregate rehydration, providing a performance gain. It is worth noting that the event stream stays intact and is not impacted by a snapshot. \autoref{fig:snapshotting} illustrates the state reconstruction process using snapshots. Instead of replaying the entire event stream from the initial state, the system loads the most recent serialized state from the Snapshot Store. Therefore, only the delta needs to be applied to the Aggregate.
 
-\begin{figure}[h]
+\begin{figure}[H]
     \centering
     \includegraphics[width=0.8\textwidth]{images/cqrs_architecture/Snapshotting.drawio.pdf}
     \caption[Snapshots in ES/CQRS]{Snapshots in \acrlong{es} / \gls{cqrs} . Only the events between the most recent snapshot and the most recent event need to be applied to rehydrate the Aggregate~\cite[20]{young_cqrs_2010}}
@@ -327,7 +327,7 @@ Coupling metrics are based on graph theory. They measure how dependent component
 
 Finally, the \emph{Distance from the Main Sequence} combines abstractness and instability to determine if a component is optimally balanced or falls into problematic "Zones of Uselessness or Pain"~\cite[261-268]{martin_agile_2003}. Martin considers a stable, concrete package to fall into the "Zone of Pain", while instable, highly abstract packages fall into the "Zone of Uselessness". The Main Sequence is illustrated in \autoref{fig:method-main-sequence}.
 
-\begin{figure}[h]
+\begin{figure}[H]
     \centering
     \includegraphics[width=0.7\textwidth]{images/Abstractness-Instability-Main_Sequence.png}
     \caption[Main Sequence, Zones of Pain and Uselessness]{Main Sequence, Zones of Pain and Uselessness. Adapted from \cite[266]{martin_agile_2003}}

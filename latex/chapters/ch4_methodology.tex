@@ -49,7 +49,7 @@ To obtain significant results, each \emph{test configuration} (the combination o
 
 All metrics collected during load testing are listed in \autoref{table:collected-metrics}. The column "Metric" shows the name that will be used to refer to this metric from now on. "Location" describes where the metric is being recorded.
 
-As described in \autoref{sec:load-test-theory}, not just the average latency is measured, but \glspl{percentile} are used to accurately report the number of users experiencing the respective latency.
+As described in \autoref{sec:load-testing-theory}, not just the average latency is measured, but \glspl{percentile} are used to accurately report the number of users experiencing the respective latency.
 
 While internal metrics, like CPU usage, RAM usage, the number of database connections ($hikari\_connections$) and the number of Tomcat worker threads are not measures for user-perceived performance, they can give an indicator about bottlenecks inside the applications.
 
@@ -57,7 +57,7 @@ Even though latencies are measured on both the client and the server, the client
 
 $axon\_event\_size$ and $axon\_snapshot\_size$ are metrics extracted from the event store (Axon Server). They are only recorded for the ES-CQRS application. $postgres\_size$, the size of the relational database can be recorded for both applications. The CRUD implementation stores its entities and audit log in PostgreSQL, while the ES-CQRS implementation uses PostgreSQL as a secondary data store for denormalized projections and lookup tables. These metrics are relevant when assessing a system's long-term performance, scalability and maintainability.
 
-\begin{table}[htp!]
+\begin{table}[H]
     \small
     \centering
     \begin{tabularx}{\linewidth}{lXl}
