@@ -26,7 +26,7 @@ Both implementations use the same underlying technologies:
 - SpringBoot
 - Postgres
 - JPA
-- Testcontainers for integration tests
+- Testcontainers
 
 ### ES-CQRS App
 
@@ -90,9 +90,31 @@ When running with docker-compose:
 
 ---
 
+## Executing Load Tests 
+
+[performance-tests](/performance-tests) contains the load tests which were developed using k6. They can be run directly with the k6 binary. Both environment variables can be omitted, defaulting to `HOST=http://localhost:8080` and `VUS=20`.
+
+```bash 
+cd performance-tests/k6 
+k6 run -e HOST=<host> -e VUS=100 path/to/script.js 
+```
+
+[perf_runner-runner.py](/performance-tests/perf_runner.py) can be used to run the test including its lifecycle functions. The script will start the Docker container and Prometheus, run the test and finally collect server-side metrics. Requires an appropriate Python environment (see [requirements.txt](/performance-tests/requirements.txt)). 
+
+```bash
+python perf_runner.py --app "crud" \ 
+   --metric "k6/reads/read-all-lectures/metric.json"
+```
+
+The `metric.json` files are colocated with the k6 scripts and provide additional configuration to the test runner. It can be adjusted to change the number of VUs (RPS). 
+
+When running tests over the network (server running on a different machine), a config file must be provided using this argument: `--config .config`. A template for this config file can be found in [performance-tests/vm/.config](/performance-tests/vm/.config). The only necessary argument in this file is the server's IP address. 
+
+---
+
 ## Technical Documentation, Architectural Decisions
 
-`vault` contains the entire documentation and notes that I wrote during my work on the thesis. Potentially interesting architectural desicions are documented [here](vault/Thesis/Technical%20Design%20Log). Best viewed inside of [Obsidian](https://obsidian.md/).
+`vault` contains the entire documentation and notes that I wrote during my work on the thesis. Potentially interesting architectural desicions are documented [inside the Vault](vault/Thesis/Technical%20Design%20Log). Best viewed inside of [Obsidian](https://obsidian.md/).
 
 ## Thesis
 
@@ -103,3 +125,4 @@ The latex file for the thesis can be found [here](latex/main.tex); the pdf file 
 - https://spring.io/projects/spring-boot
 - https://www.postgresql.org/
 - https://www.axoniq.io/ 
+- https://k6.io/
